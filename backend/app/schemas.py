@@ -1,0 +1,101 @@
+from pydantic import BaseModel, EmailStr, Field, validator
+from typing import Optional
+from datetime import datetime
+
+
+# Auth schemas
+class SignupRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(..., min_length=8)
+    verify_password: str
+    
+    @validator("verify_password")
+    def passwords_match(cls, v, values):
+        if "password" in values and v != values.get("password"):
+            raise ValueError("Passwords do not match")
+        return v
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+# User schemas
+class UserResponse(BaseModel):
+    id: str
+    email: str
+    credits_balance: int
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+# Upload schemas
+class UploadResponse(BaseModel):
+    image_url: str
+
+
+# Generation schemas
+class GenerateRequest(BaseModel):
+    prompt: str = Field(..., min_length=1, max_length=1000)
+    image_url: str
+    aspect_ratio: str = Field(default="1:1", regex="^(1:1|4:5|16:9)$")
+    resolution: str = Field(default="8k", regex="^(4k|8k)$")
+    device_id: Optional[str] = None
+
+
+class GenerateResponse(BaseModel):
+    generation_id: str
+    status: str
+    output_image_url: Optional[str] = None
+    error_message: Optional[str] = None
+
+
+# Credit schemas
+class CreditPack(BaseModel):
+    id: str
+    name: str
+    credits: int
+    price_per_credit: float
+    total_price: float
+
+
+class PurchaseRequest(BaseModel):
+    pack_id: str = Field(..., regex="^(starter|standard|pro|power)$")
+
+
+class PurchaseResponse(BaseModel):
+    success: bool
+    credits_added: int
+    new_balance: int
+
+
+# Generation history
+class GenerationHistoryItem(BaseModel):
+    id: str
+    input_image_url: str
+    output_image_url: Optional[str]
+    prompt: str
+    resolution: str
+    aspect_ratio: str
+    is_free: bool
+    status: str
+    created_at: datetime
+    completed_at: Optional[datetime]
+    
+    class Config:
+        from_attributes = True
+
+
+class GenerationHistoryResponse(BaseModel):
+    items: list[GenerationHistoryItem]
+    total: int
+    page: int
+    page_size: int
