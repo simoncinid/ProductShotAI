@@ -1,0 +1,144 @@
+# Guida al Deployment - ProductShotAI
+
+## 🚀 Deploy su Render (Backend)
+
+1. Vai su [Render.com](https://render.com) e crea un account
+2. Clicca su "New +" → "Web Service"
+3. Connetti il repository GitHub: `simoncinid/ProductShotAI`
+4. Configura il servizio:
+   - **Name:** `productshotai-backend` (o il nome che preferisci)
+   - **Environment:** `Python 3`
+   - **Build Command:** `cd backend && pip install -r requirements.txt`
+   - **Start Command:** `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - **Root Directory:** `backend` (IMPORTANTE!)
+
+5. Aggiungi un database PostgreSQL:
+   - Clicca "New +" → "PostgreSQL"
+   - Render genererà automaticamente la variabile `DATABASE_URL`
+
+6. Configura le variabili d'ambiente (vedi `ENV_VARIABLES.md`)
+
+7. Clicca "Create Web Service"
+
+---
+
+## 🎨 Deploy su Vercel (Frontend)
+
+1. Vai su [Vercel.com](https://vercel.com) e crea un account
+2. Clicca "Add New..." → "Project"
+3. Importa il repository GitHub: `simoncinid/ProductShotAI`
+4. Configura il progetto:
+   - **Framework Preset:** Next.js (dovrebbe essere rilevato automaticamente)
+   - **Root Directory:** `frontend` ⚠️ **IMPORTANTE!**
+   - **Build Command:** `npm run build` (o lascia default)
+   - **Output Directory:** `.next` (o lascia default)
+   - **Install Command:** `npm install` (o lascia default)
+
+5. Aggiungi la variabile d'ambiente:
+   - `NEXT_PUBLIC_API_URL` = URL del tuo backend Render (es. `https://productshotai-backend.onrender.com`)
+
+6. Clicca "Deploy"
+
+---
+
+## ⚙️ Configurazione Root Directory
+
+### Render (Backend)
+Nelle impostazioni del servizio Render:
+- **Root Directory:** `backend`
+
+Questo dice a Render di eseguire i comandi dalla cartella `backend/`.
+
+### Vercel (Frontend)
+Nelle impostazioni del progetto Vercel:
+- **Root Directory:** `frontend`
+
+Oppure Vercel rileverà automaticamente dal file `vercel.json` nella root del repository.
+
+---
+
+## 🔗 Collegare Backend e Frontend
+
+1. **Backend URL:** Dopo il deploy su Render, ottieni l'URL (es. `https://productshotai-backend.onrender.com`)
+
+2. **Frontend:** Aggiungi in Vercel la variabile:
+   ```
+   NEXT_PUBLIC_API_URL=https://productshotai-backend.onrender.com
+   ```
+
+3. **CORS:** Nel backend Render, assicurati che `CORS_ORIGINS` includa:
+   ```
+   https://tuo-progetto.vercel.app
+   https://www.tuo-dominio.com (se hai un dominio custom)
+   ```
+
+---
+
+## 📝 Checklist Pre-Deploy
+
+### Backend (Render)
+- [ ] Repository connesso
+- [ ] Root Directory impostata su `backend`
+- [ ] Build Command: `cd backend && pip install -r requirements.txt`
+- [ ] Start Command: `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- [ ] Database PostgreSQL creato
+- [ ] Tutte le variabili d'ambiente configurate (vedi `ENV_VARIABLES.md`)
+- [ ] Storage configurato (locale o S3)
+
+### Frontend (Vercel)
+- [ ] Repository connesso
+- [ ] Root Directory impostata su `frontend`
+- [ ] Framework: Next.js
+- [ ] Variabile `NEXT_PUBLIC_API_URL` configurata con URL backend Render
+
+---
+
+## 🐛 Troubleshooting
+
+### Backend non si avvia
+- Verifica che `Root Directory` sia `backend`
+- Controlla i log su Render per errori
+- Verifica che tutte le variabili d'ambiente siano configurate
+
+### Frontend non trova il backend
+- Verifica che `NEXT_PUBLIC_API_URL` sia corretto
+- Controlla che il backend sia online su Render
+- Verifica CORS_ORIGINS nel backend
+
+### Errori di build
+- **Backend:** Verifica che `requirements.txt` sia nella cartella `backend/`
+- **Frontend:** Verifica che `package.json` sia nella cartella `frontend/`
+- Controlla i log di build per dettagli
+
+### Immagini non si caricano
+- Se usi storage locale, verifica che la cartella `storage/` esista
+- Se usi S3, verifica le credenziali AWS
+- Controlla i permessi del filesystem su Render
+
+---
+
+## 🔄 Aggiornamenti
+
+Dopo ogni push su GitHub:
+- **Render:** Si aggiorna automaticamente (se hai abilitato auto-deploy)
+- **Vercel:** Si aggiorna automaticamente (default)
+
+Per forzare un nuovo deploy:
+- Render: Dashboard → Manual Deploy
+- Vercel: Dashboard → Redeploy
+
+---
+
+## 🌐 Domini Custom
+
+### Render
+1. Dashboard → Settings → Custom Domain
+2. Aggiungi il tuo dominio
+3. Segui le istruzioni per configurare DNS
+
+### Vercel
+1. Dashboard → Settings → Domains
+2. Aggiungi il tuo dominio
+3. Configura DNS come indicato
+
+**Ricorda:** Aggiorna `CORS_ORIGINS` nel backend con il nuovo dominio!
