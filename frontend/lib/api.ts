@@ -107,9 +107,11 @@ export const creditsApi = {
     const response = await api.get('/api/credits/packs')
     return response.data
   },
-  purchase: async (packId: string) => {
+  purchase: async (packId: string, successUrl: string, cancelUrl: string) => {
     const response = await api.post('/api/credits/purchase', {
       pack_id: packId,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
     })
     return response.data
   },

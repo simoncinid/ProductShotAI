@@ -30,6 +30,14 @@ class Settings(BaseSettings):
     # Free tier
     free_generations_per_month: int = 3
     
+    # Stripe
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    stripe_price_starter: str = ""
+    stripe_price_standard: str = ""
+    stripe_price_pro: str = ""
+    stripe_price_power: str = ""
+    
     # Upload limits
     max_upload_size_mb: int = 10
     allowed_image_types: List[str] = ["image/jpeg", "image/png"]

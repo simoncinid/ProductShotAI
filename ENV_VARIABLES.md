@@ -58,6 +58,20 @@ CORS_ORIGINS=https://tuo-dominio-vercel.vercel.app,https://www.tuo-dominio.com
 FREE_GENERATIONS_PER_MONTH=3
 ```
 
+### Stripe (pagamenti e accredito crediti)
+```
+STRIPE_SECRET_KEY=sk_live_xxxxxxxxxxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxx
+STRIPE_PRICE_STARTER=price_xxxxxxxxxxxxxxxx
+STRIPE_PRICE_STANDARD=price_xxxxxxxxxxxxxxxx
+STRIPE_PRICE_PRO=price_xxxxxxxxxxxxxxxx
+STRIPE_PRICE_POWER=price_xxxxxxxxxxxxxxxx
+```
+**Nota:**
+- **STRIPE_SECRET_KEY:** chiave segreta Stripe (Dashboard → Developers → API keys). Usa `sk_test_...` in sviluppo, `sk_live_...` in produzione.
+- **STRIPE_WEBHOOK_SECRET:** signing secret dell’endpoint webhook (Dashboard → Developers → Webhooks). Crea un endpoint che punta a `https://tuo-backend.onrender.com/api/webhooks/stripe` e seleziona l’evento `checkout.session.completed`. Copia il “Signing secret” (inizia con `whsec_`).
+- **STRIPE_PRICE_***: Price ID Stripe per ogni pack (Starter, Standard, Pro, Power). Crea in Dashboard → Products i 4 prodotti con i rispettivi prezzi (es. $4.95, $13.35, $31.60, $69.00) e incolla i Price ID (iniziano con `price_`).
+
 ### Upload Limits (opzionali, hanno valori di default)
 ```
 MAX_UPLOAD_SIZE_MB=10
@@ -104,6 +118,12 @@ NEXT_PUBLIC_API_URL=https://tuo-backend.onrender.com
 - [ ] `ENVIRONMENT` - `production`
 - [ ] `CORS_ORIGINS` - URL del frontend Vercel (separati da virgola)
 - [ ] `FREE_GENERATIONS_PER_MONTH` - `3`
+- [ ] `STRIPE_SECRET_KEY` - chiave segreta Stripe
+- [ ] `STRIPE_WEBHOOK_SECRET` - signing secret del webhook (evento `checkout.session.completed`)
+- [ ] `STRIPE_PRICE_STARTER` - Price ID pack Starter
+- [ ] `STRIPE_PRICE_STANDARD` - Price ID pack Standard
+- [ ] `STRIPE_PRICE_PRO` - Price ID pack Pro
+- [ ] `STRIPE_PRICE_POWER` - Price ID pack Power
 
 ### Vercel Frontend
 - [ ] `NEXT_PUBLIC_API_URL` - URL completo del backend Render (con https://)
@@ -158,8 +178,16 @@ STORAGE_PATH=./storage
 ENVIRONMENT=development
 CORS_ORIGINS=http://localhost:3000
 FREE_GENERATIONS_PER_MONTH=3
+
+# Stripe (usa sk_test_ e price_ di test in sviluppo)
+STRIPE_SECRET_KEY=sk_test_xxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxx
+STRIPE_PRICE_STARTER=price_xxxxxxxx
+STRIPE_PRICE_STANDARD=price_xxxxxxxx
+STRIPE_PRICE_PRO=price_xxxxxxxx
+STRIPE_PRICE_POWER=price_xxxxxxxx
 ```
-**Nota:** Lo storage locale funziona anche in produzione su Render (hanno storage persistente).
+**Nota:** Lo storage locale funziona anche in produzione su Render (hanno storage persistente). Per Stripe in locale usa `stripe listen --forward-to localhost:8000/api/webhooks/stripe` per ricevere i webhook.
 
 ### `frontend/.env.local`
 ```env
@@ -180,3 +208,4 @@ Prima del deploy finale:
 6. ✅ JWT_SECRET_KEY generato e sicuro
 7. ✅ WaveSpeed API key valida
 8. ✅ Test di connessione backend-frontend
+9. ✅ Stripe: webhook `checkout.session.completed` su `https://tuo-backend.onrender.com/api/webhooks/stripe`

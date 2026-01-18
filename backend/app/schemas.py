@@ -69,12 +69,12 @@ class CreditPack(BaseModel):
 
 class PurchaseRequest(BaseModel):
     pack_id: str = Field(..., regex="^(starter|standard|pro|power)$")
+    success_url: str  # URL a cui Stripe reindirizza dopo pagamento (es. https://tuosito.com/pricing?success=1)
+    cancel_url: str   # URL a cui Stripe reindirizza se l'utente annulla (es. https://tuosito.com/pricing)
 
 
 class PurchaseResponse(BaseModel):
-    success: bool
-    credits_added: int
-    new_balance: int
+    checkout_url: str  # URL Stripe Checkout per completare il pagamento
 
 
 # Generation history

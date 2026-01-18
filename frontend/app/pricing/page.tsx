@@ -1,6 +1,8 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 import { creditsApi, userApi } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
@@ -8,6 +10,7 @@ import toast from 'react-hot-toast'
 
 export default function PricingPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const authenticated = isAuthenticated()
   const queryClient = useQueryClient()
 
@@ -23,27 +26,40 @@ export default function PricingPage() {
     retry: false,
   })
 
-  const purchaseMutation = useMutation({
-    mutationFn: creditsApi.purchase,
-    onSuccess: (data) => {
-      toast.success(`Successfully purchased ${data.credits_added} credits!`)
+  // Messaggio di successo al ritorno da Stripe (success_url con ?success=1)
+  useEffect(() => {
+    if (searchParams.get('success') === '1') {
+      toast.success('Pagamento completato! I crediti sono stati accreditati.')
       queryClient.invalidateQueries({ queryKey: ['user'] })
-      if (!authenticated) {
-        router.push('/signup')
+      window.history.replaceState({}, '', '/pricing')
+    }
+  }, [searchParams, queryClient])
+
+  const purchaseMutation = useMutation({
+    mutationFn: ({ packId, successUrl, cancelUrl }: { packId: string; successUrl: string; cancelUrl: string }) =>
+      creditsApi.purchase(packId, successUrl, cancelUrl),
+    onSuccess: (data) => {
+      if (data?.checkout_url) {
+        window.location.href = data.checkout_url
       }
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.detail || 'Purchase failed')
+      toast.error(error.response?.data?.detail || 'Acquisto fallito')
     },
   })
 
   const handlePurchase = (packId: string) => {
     if (!authenticated) {
-      toast.error('Please sign up to purchase credits')
+      toast.error('Accedi o registrati per acquistare crediti')
       router.push('/signup')
       return
     }
-    purchaseMutation.mutate(packId)
+    const base = typeof window !== 'undefined' ? window.location.origin : ''
+    purchaseMutation.mutate({
+      packId,
+      successUrl: `${base}/pricing?success=1`,
+      cancelUrl: `${base}/pricing`,
+    })
   }
 
   const packs = packsData?.packs || []

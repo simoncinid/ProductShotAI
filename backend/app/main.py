@@ -10,6 +10,7 @@ from slowapi.errors import RateLimitExceeded
 import httpx
 from datetime import datetime
 import logging
+import stripe
 
 from app.config import settings
 from app.database import get_db, engine, Base
@@ -453,9 +454,9 @@ async def get_credit_packs():
 async def purchase_credits(
     request: schemas.PurchaseRequest,
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
 ):
-    """Purchase credits (simulated - integrate Stripe later)"""
+    """Crea una Stripe Checkout Session: l'utente viene reindirizzato a Stripe per pagare.
+    I crediti vengono accreditati solo quando Stripe invia il webhook checkout.session.completed."""
     try:
         pack = credit_packs.get_credit_pack(request.pack_id)
     except ValueError:
@@ -463,28 +464,83 @@ async def purchase_credits(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid pack_id"
         )
-    
-    # TODO: Integrate with Stripe here
-    # For now, simulate successful purchase
-    
-    # Add credits to user
-    current_user.credits_balance += pack.credits
-    
-    # Create transaction record
-    transaction = CreditTransaction(
-        user_id=current_user.id,
-        change_amount=pack.credits,
-        type="purchase",
-        reference_id=f"pack_{pack.id}"
-    )
-    db.add(transaction)
-    await db.commit()
-    await db.refresh(current_user)
-    
-    logger.info(f"User {current_user.id} purchased {pack.credits} credits")
-    
-    return {
-        "success": True,
-        "credits_added": pack.credits,
-        "new_balance": current_user.credits_balance
+    price_ids = {
+        "starter": settings.stripe_price_starter,
+        "standard": settings.stripe_price_standard,
+        "pro": settings.stripe_price_pro,
+        "power": settings.stripe_price_power,
     }
+    price_id = price_ids.get(request.pack_id)
+    if not settings.stripe_secret_key or not price_id:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Stripe non configurato per questo pack. Imposta STRIPE_SECRET_KEY e STRIPE_PRICE_*."
+        )
+    stripe.api_key = settings.stripe_secret_key
+    session = stripe.checkout.Session.create(
+        line_items=[{"price": price_id, "quantity": 1}],
+        mode="payment",
+        success_url=request.success_url,
+        cancel_url=request.cancel_url,
+        metadata={
+            "user_id": str(current_user.id),
+            "pack_id": request.pack_id,
+            "credits": str(pack.credits),
+        },
+    )
+    logger.info(f"Checkout session created for user {current_user.id} pack={request.pack_id} session={session.id}")
+    return {"checkout_url": session.url}
+
+
+# Webhook Stripe: elabora checkout.session.completed e accredita i crediti
+@app.post("/api/webhooks/stripe")
+async def stripe_webhook(raw_request: Request, db: AsyncSession = Depends(get_db)):
+    """Riceve gli eventi Stripe. Verifica la firma, su checkout.session.completed accredita i crediti.
+    Non usa autenticazione JWT: Stripe firma il payload con STRIPE_WEBHOOK_SECRET."""
+    if not settings.stripe_webhook_secret:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="STRIPE_WEBHOOK_SECRET non configurato")
+    body = await raw_request.body()
+    sig = raw_request.headers.get("stripe-signature", "")
+    try:
+        event = stripe.Webhook.construct_event(body, sig, settings.stripe_webhook_secret)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Payload non valido: {e}")
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Firma webhook non valida: {e}")
+    if event["type"] != "checkout.session.completed":
+        return {"received": True}
+    session = event["data"]["object"]
+    session_id = session.get("id")
+    metadata = session.get("metadata") or {}
+    user_id = metadata.get("user_id")
+    pack_id = metadata.get("pack_id")
+    credits_s = metadata.get("credits", "0")
+    try:
+        credits = int(credits_s)
+    except ValueError:
+        logger.error(f"Webhook Stripe: credits non numerico in metadata: {credits_s}")
+        return {"received": True}
+    if not user_id or not pack_id or credits <= 0:
+        logger.error(f"Webhook Stripe: metadata mancanti o non validi session={session_id} metadata={metadata}")
+        return {"received": True}
+    # Idempotenza: evita di accreditare due volte per lo stesso checkout
+    r = await db.execute(select(CreditTransaction).where(CreditTransaction.reference_id == session_id))
+    if r.scalar_one_or_none():
+        logger.info(f"Webhook Stripe: checkout già elaborato session={session_id}")
+        return {"received": True}
+    r = await db.execute(select(User).where(User.id == user_id))
+    user = r.scalar_one_or_none()
+    if not user:
+        logger.error(f"Webhook Stripe: user non trovato user_id={user_id} session={session_id}")
+        return {"received": True}
+    user.credits_balance += credits
+    t = CreditTransaction(
+        user_id=user.id,
+        change_amount=credits,
+        type="purchase",
+        reference_id=session_id,
+    )
+    db.add(t)
+    await db.commit()
+    logger.info(f"Webhook Stripe: accreditati {credits} crediti a user={user_id} pack={pack_id} session={session_id}")
+    return {"received": True}

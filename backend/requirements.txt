@@ -14,3 +14,4 @@ pydantic-settings==2.1.0
 alembic==1.12.1
 slowapi==0.1.9
 aiofiles==23.2.1
+stripe>=7.0.0
