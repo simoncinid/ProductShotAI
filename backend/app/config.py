@@ -1,5 +1,19 @@
+import json
 from pydantic_settings import BaseSettings
 from typing import List
+
+
+def _parse_list_str(s: str) -> List[str]:
+    """Parse CORS_ORIGINS / ALLOWED_IMAGE_TYPES: comma-separated o JSON array."""
+    if not s or not s.strip():
+        return []
+    s = s.strip()
+    if s.startswith("["):
+        try:
+            return list(json.loads(s))
+        except json.JSONDecodeError:
+            pass
+    return [x.strip() for x in s.split(",") if x.strip()]
 
 
 class Settings(BaseSettings):
@@ -25,7 +39,10 @@ class Settings(BaseSettings):
     
     # App
     environment: str = "development"
-    cors_origins: List[str] = ["http://localhost:3000"]
+    cors_origins: str = "http://localhost:3000"
+
+    def get_cors_origins_list(self) -> List[str]:
+        return _parse_list_str(self.cors_origins)
     
     # Free tier
     free_generations_per_month: int = 3
@@ -40,7 +57,10 @@ class Settings(BaseSettings):
     
     # Upload limits
     max_upload_size_mb: int = 10
-    allowed_image_types: List[str] = ["image/jpeg", "image/png"]
+    allowed_image_types: str = "image/jpeg,image/png"
+
+    def get_allowed_image_types_list(self) -> List[str]:
+        return _parse_list_str(self.allowed_image_types)
     
     class Config:
         env_file = ".env"

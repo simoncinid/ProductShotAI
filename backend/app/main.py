@@ -29,7 +29,7 @@ app = FastAPI(title="ProductShotAI API", version="1.0.0")
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins=settings.get_cors_origins_list(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -176,10 +176,11 @@ async def upload_image(
 ):
     """Upload product image"""
     # Validate file type
-    if file.content_type not in settings.allowed_image_types:
+    allowed = settings.get_allowed_image_types_list()
+    if file.content_type not in allowed:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid file type. Allowed: {', '.join(settings.allowed_image_types)}"
+            detail=f"Invalid file type. Allowed: {', '.join(allowed)}"
         )
     
     # Read file content
