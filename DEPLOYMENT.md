@@ -8,7 +8,7 @@
 4. Configura il servizio:
    - **Name:** `productshotai-backend` (o il nome che preferisci)
    - **Environment:** `Python 3`
-   - **Python Version:** `3.11` (IMPORTANTE! Seleziona manualmente nelle impostazioni avanzate)
+   - **Python Version:** `3.11` (IMPORTANTE! Vai su Settings → Advanced → Python Version e seleziona 3.11)
    - **Build Command:** `pip install -r requirements.txt`
    - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - **Root Directory:** `backend` (IMPORTANTE!)
