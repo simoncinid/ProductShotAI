@@ -46,8 +46,8 @@ class UploadResponse(BaseModel):
 class GenerateRequest(BaseModel):
     prompt: str = Field(..., min_length=1, max_length=1000)
     image_url: str
-    aspect_ratio: str = Field(default="1:1", regex="^(1:1|4:5|16:9)$")
-    resolution: str = Field(default="8k", regex="^(4k|8k)$")
+    aspect_ratio: str = Field(default="1:1", pattern="^(1:1|4:5|16:9)$")
+    resolution: str = Field(default="8k", pattern="^(4k|8k)$")
     device_id: Optional[str] = None
 
 
@@ -68,7 +68,7 @@ class CreditPack(BaseModel):
 
 
 class PurchaseRequest(BaseModel):
-    pack_id: str = Field(..., regex="^(starter|standard|pro|power)$")
+    pack_id: str = Field(..., pattern="^(starter|standard|pro|power)$")
     success_url: str  # URL a cui Stripe reindirizza dopo pagamento (es. https://tuosito.com/pricing?success=1)
     cancel_url: str   # URL a cui Stripe reindirizza se l'utente annulla (es. https://tuosito.com/pricing)
 
