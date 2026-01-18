@@ -53,6 +53,12 @@ CORS_ORIGINS=https://tuo-dominio-vercel.vercel.app,https://www.tuo-dominio.com
 ```
 **Nota:** Aggiungi tutti i domini Vercel che userai (preview, production, etc.)
 
+### Python Version (solo se serve override)
+```
+PYTHON_VERSION=3.11.9
+```
+**Nota:** Opzionale. Il file `.python-version` nella root del repo imposta già 3.11.9. Usa questa variabile se Render ignora il file o per forzare una versione diversa. **Non usare 3.13** (causa errori di build con le dipendenze).
+
 ### Free Tier
 ```
 FREE_GENERATIONS_PER_MONTH=3

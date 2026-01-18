@@ -8,7 +8,7 @@
 4. Configura il servizio:
    - **Name:** `productshotai-backend` (o il nome che preferisci)
    - **Environment:** `Python 3`
-   - **Python Version:** `3.11` (IMPORTANTE! Vai su Settings → Advanced → Python Version e seleziona 3.11)
+   - **Python Version:** `3.11` — I file `.python-version` (root del repo e `backend/`, contenuto: `3.11.9`) forzano Render a usare Python 3.11. In alternativa, imposta `PYTHON_VERSION=3.11.9` in Environment. ⚠️ **Non usare Python 3.13**: alcune dipendenze (es. Pillow) causano `KeyError: '__version__'` durante il build. `runtime.txt` **non è supportato** da Render.
    - **Build Command:** `pip install -r requirements.txt`
    - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - **Root Directory:** `backend` (IMPORTANTE!)
@@ -111,6 +111,9 @@ Il file `vercel.json` non supporta la proprietà `rootDirectory` - va configurat
 - **Backend:** Verifica che `requirements.txt` sia nella cartella `backend/`
 - **Frontend:** Verifica che `package.json` sia nella cartella `frontend/`
 - Controlla i log di build per dettagli
+
+### `KeyError: '__version__'` durante il build del backend
+Succede se Render usa **Python 3.13**. Soluzione: assicurati che esista `.python-version` con `3.11.9` nella root del repo (o in `backend/`) oppure imposta `PYTHON_VERSION=3.11.9` in Environment su Render. `runtime.txt` **non** è supportato da Render.
 
 ### Immagini non si caricano
 - Se usi storage locale, verifica che la cartella `storage/` esista
