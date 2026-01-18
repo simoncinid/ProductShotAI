@@ -12,7 +12,8 @@ CA_CERTIFICATE=-----BEGIN CERTIFICATE-----
 -----END CERTIFICATE-----
 ```
 **Nota:** 
-- Render fornisce automaticamente `DATABASE_URL` se usi il loro PostgreSQL. Se usi un database esterno (es. DigitalOcean), inserisci manualmente la connection string completa.
+- Render fornisce automaticamente `DATABASE_URL` (formato `postgresql://`). L'app lo converte in `postgresql+asyncpg://` in automatico, non serve modificarlo.
+- Se usi un database esterno (es. DigitalOcean), inserisci `postgresql+asyncpg://user:password@host:5432/dbname`.
 - `CA_CERTIFICATE` è opzionale ma richiesto per database che richiedono SSL con certificato CA personalizzato. Inserisci il certificato completo incluso `-----BEGIN CERTIFICATE-----` e `-----END CERTIFICATE-----`.
 
 ### JWT Authentication

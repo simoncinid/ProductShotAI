@@ -30,8 +30,14 @@ def get_ssl_config():
 # Build connection args for asyncpg
 connect_args = get_ssl_config()
 
+# Render fornisce DATABASE_URL come postgresql:// → SQLAlchemy userebbe psycopg2.
+# Forziamo postgresql+asyncpg:// per usare asyncpg (in requirements, psycopg2 no).
+_db_url = settings.database_url
+if _db_url.startswith("postgresql://") and not _db_url.startswith("postgresql+"):
+    _db_url = "postgresql+asyncpg://" + _db_url[len("postgresql://"):]
+
 engine = create_async_engine(
-    settings.database_url,
+    _db_url,
     echo=settings.environment == "development",
     future=True,
     connect_args=connect_args
