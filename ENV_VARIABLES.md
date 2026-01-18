@@ -7,8 +7,13 @@ Configura queste variabili d'ambiente nella dashboard di Render per il servizio 
 ### Database
 ```
 DATABASE_URL=postgresql+asyncpg://user:password@host:5432/dbname
+CA_CERTIFICATE=-----BEGIN CERTIFICATE-----
+...certificato completo...
+-----END CERTIFICATE-----
 ```
-**Nota:** Render fornisce automaticamente questa variabile se usi il loro PostgreSQL. Se usi un database esterno (es. DigitalOcean), inserisci manualmente la connection string completa.
+**Nota:** 
+- Render fornisce automaticamente `DATABASE_URL` se usi il loro PostgreSQL. Se usi un database esterno (es. DigitalOcean), inserisci manualmente la connection string completa.
+- `CA_CERTIFICATE` è opzionale ma richiesto per database che richiedono SSL con certificato CA personalizzato. Inserisci il certificato completo incluso `-----BEGIN CERTIFICATE-----` e `-----END CERTIFICATE-----`.
 
 ### JWT Authentication
 ```
@@ -83,6 +88,7 @@ NEXT_PUBLIC_API_URL=https://tuo-backend.onrender.com
 
 ### Render.com Backend
 - [ ] `DATABASE_URL` - Connection string PostgreSQL
+- [ ] `CA_CERTIFICATE` - (Opzionale) Certificato CA per connessione SSL al database
 - [ ] `JWT_SECRET_KEY` - Chiave segreta per JWT (genera una nuova!)
 - [ ] `JWT_ALGORITHM` - `HS256`
 - [ ] `JWT_EXPIRATION_HOURS` - `24`

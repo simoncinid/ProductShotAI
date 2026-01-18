@@ -5,6 +5,7 @@ from typing import List
 class Settings(BaseSettings):
     # Database
     database_url: str
+    ca_certificate: str = ""  # Optional CA certificate for SSL connection (full cert content with BEGIN/END)
     
     # JWT
     jwt_secret_key: str
