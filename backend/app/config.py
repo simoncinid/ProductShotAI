@@ -1,4 +1,5 @@
 import json
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 from typing import List
 
@@ -20,7 +21,17 @@ class Settings(BaseSettings):
     # Database
     database_url: str
     ca_certificate: str = ""  # Optional CA certificate for SSL connection (full cert content with BEGIN/END)
-    
+    database_ssl_reject_unauthorized: bool = True  # Se False, accetta certificati self-signed (es. Render)
+
+    @field_validator("database_ssl_reject_unauthorized", mode="before")
+    @classmethod
+    def _parse_reject_unauthorized(cls, v):
+        if isinstance(v, bool):
+            return v
+        if isinstance(v, str):
+            return v.strip().lower() not in ("false", "0", "no", "off", "")
+        return True
+
     # JWT
     jwt_secret_key: str
     jwt_algorithm: str = "HS256"

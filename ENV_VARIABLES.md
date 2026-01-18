@@ -10,11 +10,13 @@ DATABASE_URL=postgresql+asyncpg://user:password@host:5432/dbname
 CA_CERTIFICATE=-----BEGIN CERTIFICATE-----
 ...certificato completo...
 -----END CERTIFICATE-----
+DATABASE_SSL_REJECT_UNAUTHORIZED=false
 ```
 **Nota:** 
 - Render fornisce automaticamente `DATABASE_URL` (formato `postgresql://`). L'app lo converte in `postgresql+asyncpg://` in automatico, non serve modificarlo.
 - Se usi un database esterno (es. DigitalOcean), inserisci `postgresql+asyncpg://user:password@host:5432/dbname`.
 - `CA_CERTIFICATE` è opzionale ma richiesto per database che richiedono SSL con certificato CA personalizzato. Inserisci il certificato completo incluso `-----BEGIN CERTIFICATE-----` e `-----END CERTIFICATE-----`.
+- **`DATABASE_SSL_REJECT_UNAUTHORIZED`**: su **Render** (PostgreSQL con certificati self-signed) imposta `false` per evitare `SSL: CERTIFICATE_VERIFY_FAILED`. Default: `true`.
 
 ### JWT Authentication
 ```
@@ -110,6 +112,7 @@ NEXT_PUBLIC_API_URL=https://tuo-backend.onrender.com
 ### Render.com Backend
 - [ ] `DATABASE_URL` - Connection string PostgreSQL
 - [ ] `CA_CERTIFICATE` - (Opzionale) Certificato CA per connessione SSL al database
+- [ ] `DATABASE_SSL_REJECT_UNAUTHORIZED` - Su Render: `false` (certificati self-signed). Default: `true`
 - [ ] `JWT_SECRET_KEY` - Chiave segreta per JWT (genera una nuova!)
 - [ ] `JWT_ALGORITHM` - `HS256`
 - [ ] `JWT_EXPIRATION_HOURS` - `24`
