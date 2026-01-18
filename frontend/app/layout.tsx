@@ -1,11 +1,28 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { DM_Sans, Playfair_Display, Great_Vibes } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 
-const inter = Inter({ subsets: ['latin'] })
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-dm-sans',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400'],
+  style: ['italic'],
+  variable: '--font-playfair',
+})
+
+const greatVibes = Great_Vibes({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-great-vibes',
+})
 
 export const metadata: Metadata = {
   title: 'ProductShotAI - AI Amazon Product Photos',
@@ -18,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={`${dmSans.variable} ${playfair.variable} ${greatVibes.variable}`}>
+      <body className="font-sans antialiased text-primary">
         <Providers>
           <Navbar />
           <main className="min-h-screen">

@@ -5,7 +5,15 @@ import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { userApi, authApi } from '@/lib/api'
 import { isAuthenticated, clearAuth } from '@/lib/auth'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
+const navLinks = [
+  { href: '/how-it-works', label: 'How it works' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/create', label: 'Try free' },
+  { href: '/login', label: 'Login' },
+]
 
 export function Navbar() {
   const router = useRouter()
@@ -19,123 +27,130 @@ export function Navbar() {
     retry: false,
   })
 
+  useEffect(() => {
+    if (isMenuOpen) document.body.style.overflow = 'hidden'
+    else document.body.style.overflow = ''
+    return () => { document.body.style.overflow = '' }
+  }, [isMenuOpen])
+
   const handleLogout = async () => {
     await authApi.logout()
     clearAuth()
     router.push('/')
+    setIsMenuOpen(false)
   }
 
   return (
-    <nav className="bg-white border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold text-rich-black">
-                Product<span className="text-vivid-yellow">Shot</span>AI
-              </span>
-            </Link>
-          </div>
+    <header className="sticky top-0 z-50 h-[72px] bg-white shadow-[0_1px_0_0_rgba(15,23,42,0.06)]">
+      <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-6 md:px-10 lg:px-14">
+        <Link href="/" className="flex items-center" onClick={() => setIsMenuOpen(false)}>
+          <span className="font-extrabold tracking-wide text-primary">
+            Product<span className="text-brand">Shot</span>AI
+          </span>
+        </Link>
 
-          <div className="hidden md:flex items-center space-x-4">
-            <Link
-              href="/how-it-works"
-              className="text-rich-black hover:text-vivid-yellow px-3 py-2 rounded-md text-sm font-medium transition"
-            >
-              How It Works
-            </Link>
-            <Link
-              href="/pricing"
-              className="text-rich-black hover:text-vivid-yellow px-3 py-2 rounded-md text-sm font-medium transition"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/faq"
-              className="text-rich-black hover:text-vivid-yellow px-3 py-2 rounded-md text-sm font-medium transition"
-            >
-              FAQ
-            </Link>
-            {authenticated ? (
-              <>
-                {user && (
-                  <span className="text-rich-black px-3 py-2 text-sm">
-                    Credits: <span className="font-bold">{user.credits_balance}</span>
-                  </span>
-                )}
+        {/* Desktop menu */}
+        <nav className="hidden items-center gap-1 md:flex">
+          {authenticated ? (
+            <>
+              <Link href="/how-it-works" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
+                How it works
+              </Link>
+              <Link href="/pricing" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
+                Pricing
+              </Link>
+              <Link href="/faq" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
+                FAQ
+              </Link>
+              <Link href="/create" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
+                Try free
+              </Link>
+              {user && (
+                <span className="px-3 py-2 text-[14px] text-secondary">
+                  Credits: <span className="font-semibold text-primary">{user.credits_balance}</span>
+                </span>
+              )}
+              <Link
+                href="/dashboard"
+                className="ml-2 rounded-full bg-anthracite px-5 py-2.5 text-[14px] font-medium text-white transition-smooth hover:shadow-soft-hover"
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              {navLinks.map(({ href, label }) => (
                 <Link
-                  href="/dashboard"
-                  className="bg-rich-black text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition"
+                  key={href}
+                  href={href}
+                  className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary"
                 >
-                  Dashboard
+                  {label}
                 </Link>
-                <button
-                  onClick={handleLogout}
-                  className="text-rich-black hover:text-vivid-yellow px-3 py-2 rounded-md text-sm font-medium transition"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/create"
-                  className="text-rich-black hover:text-vivid-yellow px-3 py-2 rounded-md text-sm font-medium transition"
-                >
-                  Try Free
-                </Link>
-                <Link
-                  href="/login"
-                  className="text-rich-black hover:text-vivid-yellow px-3 py-2 rounded-md text-sm font-medium transition"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/signup"
-                  className="bg-vivid-yellow text-rich-black px-4 py-2 rounded-md text-sm font-medium hover:bg-opacity-90 transition"
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </div>
+              ))}
+              <Link
+                href="/signup"
+                className="ml-2 rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-primary transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
+        </nav>
 
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-rich-black p-2"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-        </div>
+        {/* Hamburger */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden flex h-10 w-10 items-center justify-center rounded-lg text-primary hover:bg-page-bg"
+          aria-label="Menu"
+        >
+          {isMenuOpen ? (
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
       </div>
 
-      {isMenuOpen && (
-        <div className="md:hidden border-t border-gray-200">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link href="/how-it-works" className="block px-3 py-2 text-rich-black">How It Works</Link>
-            <Link href="/pricing" className="block px-3 py-2 text-rich-black">Pricing</Link>
-            <Link href="/faq" className="block px-3 py-2 text-rich-black">FAQ</Link>
-            {authenticated ? (
-              <>
-                <Link href="/dashboard" className="block px-3 py-2 text-rich-black">Dashboard</Link>
-                <button onClick={handleLogout} className="block w-full text-left px-3 py-2 text-rich-black">
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/create" className="block px-3 py-2 text-rich-black">Try Free</Link>
-                <Link href="/login" className="block px-3 py-2 text-rich-black">Login</Link>
-                <Link href="/signup" className="block px-3 py-2 text-rich-black">Sign Up</Link>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </nav>
+      {/* Mobile drawer */}
+      <div
+        className={`fixed inset-0 top-[72px] z-40 bg-white md:hidden ${
+          isMenuOpen ? 'visible opacity-100' : 'invisible opacity-0'
+        } transition-all duration-200`}
+      >
+        <nav className="flex flex-col gap-1 px-6 py-6">
+          {authenticated ? (
+            <>
+              <Link href="/how-it-works" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>How it works</Link>
+              <Link href="/pricing" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
+              <Link href="/faq" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
+              <Link href="/create" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>Try free</Link>
+              {user && <span className="py-3 text-base text-secondary">Credits: {user.credits_balance}</span>}
+              <Link href="/dashboard" className="mt-2 block rounded-full bg-anthracite px-6 py-3 text-center font-medium text-white" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+              <button onClick={handleLogout} className="py-3 text-left text-base font-medium text-primary">Logout</button>
+            </>
+          ) : (
+            <>
+              {navLinks.map(({ href, label }) => (
+                <Link key={href} href={href} className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>
+                  {label}
+                </Link>
+              ))}
+              <Link href="/signup" className="mt-4 block rounded-full bg-brand px-6 py-3 text-center font-semibold text-primary" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+            </>
+          )}
+        </nav>
+      </div>
+    </header>
   )
 }

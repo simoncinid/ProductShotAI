@@ -3,17 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 17, 17, 17;
+  --background-rgb: 245, 245, 247;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #F5F5F7;
+}
+
+/* Transizioni fluide per pulsanti e card */
+@layer utilities {
+  .transition-smooth {
+    @apply transition-all duration-[175ms] ease-out;
+  }
 }
