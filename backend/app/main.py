@@ -13,7 +13,7 @@ import logging
 import stripe
 
 from app.config import settings
-from app.database import get_db, engine, Base
+from app.database import get_db
 from app import models, schemas, auth, storage, wavespeed, watermark, utils, credit_packs
 from app.auth import get_current_user, get_current_user_optional
 from app.models import User, Generation, CreditTransaction
@@ -46,14 +46,6 @@ if settings.storage_type == "local":
     storage_dir = os.path.abspath(settings.storage_path)
     os.makedirs(storage_dir, exist_ok=True)
     app.mount("/storage", StaticFiles(directory=storage_dir), name="storage")
-
-
-@app.on_event("startup")
-async def startup():
-    """Create database tables on startup"""
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    logger.info("Database tables created")
 
 
 # Health check

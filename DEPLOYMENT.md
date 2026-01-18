@@ -17,9 +17,15 @@
    - Clicca "New +" → "PostgreSQL"
    - Render genererà automaticamente la variabile `DATABASE_URL`
 
-6. Configura le variabili d'ambiente (vedi `ENV_VARIABLES.md`)
+6. **Crea le tabelle a mano (una sola volta):** l'app non esegue DDL all’avvio. Dalla root del repo:
+   ```bash
+   psql "$DATABASE_URL" -f backend/scripts/init_schema.sql
+   ```
+   (Su Render: Dashboard del DB → Connect → copia External Database URL e usalo come `DATABASE_URL`.)
 
-7. Clicca "Create Web Service"
+7. Configura le variabili d'ambiente (vedi `ENV_VARIABLES.md`)
+
+8. Clicca "Create Web Service"
 
 ---
 

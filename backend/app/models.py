@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Numeric, Text, Index
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Text, Index
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -10,9 +11,9 @@ def generate_uuid():
 
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "users_photoshotai"
     
-    id = Column(String, primary_key=True, default=generate_uuid)
+    id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
     credits_balance = Column(Integer, default=0, nullable=False)
@@ -25,10 +26,10 @@ class User(Base):
 
 
 class CreditTransaction(Base):
-    __tablename__ = "credit_transactions"
+    __tablename__ = "credit_transactions_photoshotai"
     
-    id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=False)
+    id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
+    user_id = Column(UUID(as_uuid=False), ForeignKey("users_photoshotai.id"), nullable=False)
     change_amount = Column(Integer, nullable=False)  # Positive for purchase, negative for usage
     type = Column(String, nullable=False)  # "purchase", "generation", "adjust"
     reference_id = Column(String, nullable=True)  # Links to generation_id or purchase_id
@@ -38,10 +39,10 @@ class CreditTransaction(Base):
 
 
 class Generation(Base):
-    __tablename__ = "generations"
+    __tablename__ = "generations_photoshotai"
     
-    id = Column(String, primary_key=True, default=generate_uuid)
-    user_id = Column(String, ForeignKey("users.id"), nullable=True)
+    id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
+    user_id = Column(UUID(as_uuid=False), ForeignKey("users_photoshotai.id"), nullable=True)
     device_id = Column(String, nullable=True, index=True)
     ip_address = Column(String, nullable=True, index=True)
     input_image_url = Column(String, nullable=False)
@@ -59,14 +60,14 @@ class Generation(Base):
     user = relationship("User", back_populates="generations")
     
     __table_args__ = (
-        Index("idx_generations_user_created", "user_id", "created_at"),
+        Index("idx_generations_user_created_photoshotai", "user_id", "created_at"),
     )
 
 
 class FreeGenerationLog(Base):
-    __tablename__ = "free_generation_log"
+    __tablename__ = "free_generation_log_photoshotai"
     
-    id = Column(String, primary_key=True, default=generate_uuid)
+    id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
     device_id = Column(String, nullable=False, index=True)
     ip_address = Column(String, nullable=False, index=True)
     month_year = Column(String, nullable=False)  # Format: "2024-01"
@@ -75,5 +76,5 @@ class FreeGenerationLog(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
     __table_args__ = (
-        Index("idx_free_gen_device_ip_month", "device_id", "ip_address", "month_year", unique=True),
+        Index("idx_free_gen_device_ip_month_photoshotai", "device_id", "ip_address", "month_year", unique=True),
     )
