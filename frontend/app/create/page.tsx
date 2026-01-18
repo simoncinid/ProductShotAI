@@ -49,7 +49,7 @@ export default function CreatePage() {
       const errorMsg = error && typeof error === 'object' && 'response' in error
         ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
         : 'Generation failed'
-      toast.error(errorMsg)
+      toast.error(errorMsg ?? 'Generation failed')
       if (typeof errorMsg === 'string' && errorMsg.includes('limit reached')) {
         setTimeout(() => router.push('/signup'), 2000)
       }
