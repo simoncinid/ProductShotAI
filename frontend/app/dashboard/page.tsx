@@ -4,7 +4,8 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { userApi, isAuthenticated } from '@/lib/api'
+import { userApi } from '@/lib/api'
+import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 
 export default function DashboardPage() {

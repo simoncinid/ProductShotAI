@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
-import { userApi, authApi, isAuthenticated, clearAuth } from '@/lib/api'
+import { userApi, authApi } from '@/lib/api'
+import { isAuthenticated, clearAuth } from '@/lib/auth'
 import { useState } from 'react'
 
 export function Navbar() {
