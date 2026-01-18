@@ -50,10 +50,11 @@ Nelle impostazioni del servizio Render:
 Questo dice a Render di eseguire i comandi dalla cartella `backend/`.
 
 ### Vercel (Frontend)
-Nelle impostazioni del progetto Vercel:
-- **Root Directory:** `frontend`
+**IMPORTANTE:** Devi impostare manualmente nelle impostazioni del progetto Vercel:
+- Vai su **Settings** → **General**
+- Imposta **Root Directory:** `frontend`
 
-Oppure Vercel rileverà automaticamente dal file `vercel.json` nella root del repository.
+Il file `vercel.json` non supporta la proprietà `rootDirectory` - va configurata manualmente nel dashboard.
 
 ---
 

@@ -63,10 +63,11 @@ ALLOWED_IMAGE_TYPES=image/jpeg,image/png
 
 ## 🔵 VERCEL (Frontend)
 
-**IMPORTANTE:** Nelle impostazioni del progetto Vercel, imposta:
-- **Root Directory:** `frontend`
+**IMPORTANTE:** Nelle impostazioni del progetto Vercel:
+- Vai su **Settings** → **General**
+- Imposta **Root Directory:** `frontend`
 
-Oppure Vercel lo rileverà automaticamente dal file `vercel.json` nella root.
+⚠️ Deve essere configurato manualmente - non è supportato in `vercel.json`.
 
 Configura queste variabili d'ambiente nella dashboard di Vercel:
 
