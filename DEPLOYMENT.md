@@ -8,8 +8,9 @@
 4. Configura il servizio:
    - **Name:** `productshotai-backend` (o il nome che preferisci)
    - **Environment:** `Python 3`
-   - **Build Command:** `cd backend && pip install -r requirements.txt`
-   - **Start Command:** `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - **Python Version:** `3.11` (IMPORTANTE! Seleziona manualmente nelle impostazioni avanzate)
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - **Root Directory:** `backend` (IMPORTANTE!)
 
 5. Aggiungi un database PostgreSQL:
