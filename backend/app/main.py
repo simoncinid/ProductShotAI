@@ -27,13 +27,20 @@ logger = logging.getLogger(__name__)
 # Initialize FastAPI app
 app = FastAPI(title="ProductShotAI API", version="1.0.0")
 
-# CORS middleware (registrato prima delle route; OPTIONS per preflight, Content-Type/Authorization per JSON e JWT)
+# CORS: allow_origins da CORS_ORIGINS env; allow_origin_regex come fallback per *.vercel.app
+# (su Render a volte l'env non è disponibile all'avvio o il cold start risponde prima di FastAPI)
+_cors_origins = settings.get_cors_origins_list()
+if _cors_origins:
+    logger.info("CORS allow_origins: %s", _cors_origins)
+else:
+    logger.warning("CORS_ORIGINS vuota o non impostata; si usa solo allow_origin_regex per *.vercel.app")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.get_cors_origins_list(),
+    allow_origins=_cors_origins if _cors_origins else [],
+    allow_origin_regex=r"^https://([a-zA-Z0-9-]+\.)*vercel\.app$",
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["*"],
 )
 
 # Rate limiting
