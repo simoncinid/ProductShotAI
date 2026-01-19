@@ -22,8 +22,11 @@ export default function SignupPage() {
       toast.success('Account created successfully!')
       router.push('/dashboard')
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || 'Signup failed')
+    onError: (error: unknown) => {
+      const msg = error && typeof error === 'object' && 'response' in error
+        ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
+        : null
+      toast.error(msg || 'Signup failed')
     },
   })
 
@@ -41,23 +44,25 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-4xl font-bold text-rich-black">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link href="/login" className="font-medium text-vivid-yellow hover:text-yellow-600">
-              sign in to your existing account
-            </Link>
-          </p>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
+    <div className="flex min-h-[calc(100vh-72px)] items-center justify-center bg-page-bg px-6 py-12 md:py-16">
+      <div className="w-full max-w-md">
+        <div className="rounded-[20px] border border-gray-100 bg-white p-8 shadow-soft md:p-10">
+          <div className="flex flex-col items-center text-center">
+            <div className="flex items-center gap-4">
+              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <p className="font-script text-2xl text-primary md:text-3xl">Create account</p>
+              <span className="h-px w-8 bg-gray-300 md:w-12" />
+            </div>
+            <h1 className="mt-3 text-[24px] font-bold text-primary md:text-[28px]">Create your account</h1>
+            <p className="mt-2 text-[15px] text-secondary">
+              Or{' '}
+              <Link href="/login" className="font-semibold text-brand hover:underline">sign in to your existing account</Link>
+            </p>
+          </div>
+
+          <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="sr-only">
+              <label htmlFor="email" className="mb-1.5 block text-[14px] font-medium text-primary">
                 Email address
               </label>
               <input
@@ -68,12 +73,12 @@ export default function SignupPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-vivid-yellow focus:border-vivid-yellow focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                placeholder="you@example.com"
+                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary placeholder:text-gray-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label htmlFor="password" className="mb-1.5 block text-[14px] font-medium text-primary">
                 Password
               </label>
               <input
@@ -85,13 +90,13 @@ export default function SignupPage() {
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-vivid-yellow focus:border-vivid-yellow focus:z-10 sm:text-sm"
-                placeholder="Password (min 8 characters)"
+                placeholder="Min 8 characters"
+                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary placeholder:text-gray-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
             </div>
             <div>
-              <label htmlFor="verify-password" className="sr-only">
-                Verify Password
+              <label htmlFor="verify-password" className="mb-1.5 block text-[14px] font-medium text-primary">
+                Verify password
               </label>
               <input
                 id="verify-password"
@@ -101,43 +106,37 @@ export default function SignupPage() {
                 required
                 value={verifyPassword}
                 onChange={(e) => setVerifyPassword(e.target.value)}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-vivid-yellow focus:border-vivid-yellow focus:z-10 sm:text-sm"
-                placeholder="Verify password"
+                placeholder="••••••••"
+                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary placeholder:text-gray-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
             </div>
-          </div>
 
-          <div className="flex items-center">
-            <input
-              id="terms"
-              name="terms"
-              type="checkbox"
-              checked={acceptedTerms}
-              onChange={(e) => setAcceptedTerms(e.target.checked)}
-              className="h-4 w-4 text-vivid-yellow focus:ring-vivid-yellow border-gray-300 rounded"
-            />
-            <label htmlFor="terms" className="ml-2 block text-sm text-gray-900">
-              I agree to the{' '}
-              <Link href="/terms" className="text-vivid-yellow hover:underline">
-                Terms and Conditions
-              </Link>{' '}
-              and{' '}
-              <Link href="/privacy" className="text-vivid-yellow hover:underline">
-                Privacy Policy
-              </Link>
-            </label>
-          </div>
+            <div className="flex items-start gap-3">
+              <input
+                id="terms"
+                name="terms"
+                type="checkbox"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-brand focus:ring-2 focus:ring-brand/20"
+              />
+              <label htmlFor="terms" className="text-[14px] text-secondary">
+                I agree to the{' '}
+                <Link href="/terms" className="font-semibold text-brand hover:underline">Terms</Link>
+                {' '}and{' '}
+                <Link href="/privacy" className="font-semibold text-brand hover:underline">Privacy Policy</Link>
+              </label>
+            </div>
 
-          <div>
             <button
               type="submit"
               disabled={signupMutation.isPending || !acceptedTerms}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-rich-black bg-vivid-yellow hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-vivid-yellow disabled:opacity-50"
+              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
             >
               {signupMutation.isPending ? 'Creating account...' : 'Create account'}
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   )
