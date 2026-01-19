@@ -1,5 +1,5 @@
 import json
-from pydantic import field_validator
+from pydantic import Field, AliasChoices, field_validator
 from pydantic_settings import BaseSettings
 from typing import List
 
@@ -50,7 +50,10 @@ class Settings(BaseSettings):
     
     # App
     environment: str = "development"
-    cors_origins: str = "http://localhost:3000"
+    cors_origins: str = Field(
+        default="http://localhost:3000",
+        validation_alias=AliasChoices("CORS_ORIGIN", "CORS_ORIGINS"),
+    )
 
     def get_cors_origins_list(self) -> List[str]:
         return _parse_list_str(self.cors_origins)

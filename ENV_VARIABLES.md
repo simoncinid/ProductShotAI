@@ -52,9 +52,16 @@ S3_BUCKET_NAME=nome-del-tuo-bucket-s3
 ### App Configuration
 ```
 ENVIRONMENT=production
-CORS_ORIGINS=https://tuo-dominio-vercel.vercel.app,https://www.tuo-dominio.com
+CORS_ORIGIN=https://product-shot-ai.vercel.app
 ```
-**Nota:** Aggiungi tutti i domini Vercel che userai (preview, production, etc.)
+Oppure (equivalente), per più domini separati da virgola:
+```
+CORS_ORIGINS=https://product-shot-ai.vercel.app,https://www.tuo-dominio.com,https://tuo-progetto-preview.vercel.app
+```
+**Note:**
+- Puoi usare **CORS_ORIGIN** (un solo URL) o **CORS_ORIGINS** (più URL separati da virgola). Stesso formato: **senza trailing slash** (es. `https://product-shot-ai.vercel.app`).
+- Includi tutti i domini frontend (production, preview Vercel, ecc.). In sviluppo: `http://localhost:3000`.
+- **Dopo aver modificato CORS su Render, esegui un redeploy** del servizio backend.
 
 ### Python Version (solo se serve override)
 ```
@@ -136,7 +143,7 @@ NEXT_PUBLIC_API_URL=https://tuo-backend.onrender.com
   - [ ] `AWS_REGION`
   - [ ] `S3_BUCKET_NAME`
 - [ ] `ENVIRONMENT` - `production`
-- [ ] `CORS_ORIGINS` - URL del frontend Vercel (separati da virgola)
+- [ ] `CORS_ORIGIN` o `CORS_ORIGINS` - URL del frontend Vercel (es. `https://product-shot-ai.vercel.app` senza slash finale; più domini separati da virgola con CORS_ORIGINS)
 - [ ] `FREE_GENERATIONS_PER_MONTH` - `3`
 - [ ] `STRIPE_SECRET_KEY` - chiave segreta Stripe
 - [ ] `STRIPE_WEBHOOK_SECRET` - signing secret del webhook (evento `checkout.session.completed`)
@@ -175,9 +182,9 @@ openssl rand -hex 32
 
 1. **NON committare mai** file `.env` nel repository
 2. **JWT_SECRET_KEY** deve essere diverso per ogni ambiente (dev, staging, production)
-3. **CORS_ORIGINS** deve includere tutti i domini che userai:
-   - Production: `https://tuo-dominio.com`
-   - Preview: `https://productshotai-git-main-tuo-username.vercel.app`
+3. **CORS_ORIGIN** o **CORS_ORIGINS** devono includere tutti i domini frontend (senza trailing slash). Dopo una modifica su Render, fare **redeploy** del backend:
+   - Production: `https://product-shot-ai.vercel.app` o `https://tuo-dominio.com`
+   - Preview: `https://tuo-progetto-preview.vercel.app`
    - Development: `http://localhost:3000` (solo per test locali)
 4. **DATABASE_URL** su Render viene fornita automaticamente se usi il loro PostgreSQL
 5. **NEXT_PUBLIC_API_URL** deve essere pubblico (prefisso `NEXT_PUBLIC_`) perché viene usato nel browser
@@ -198,7 +205,7 @@ WAVESPEED_API_KEY=your-wavespeed-api-key
 STORAGE_TYPE=local
 STORAGE_PATH=./storage
 ENVIRONMENT=development
-CORS_ORIGINS=http://localhost:3000
+CORS_ORIGIN=http://localhost:3000
 FREE_GENERATIONS_PER_MONTH=3
 
 # Stripe (usa sk_test_ e price_ di test in sviluppo)
@@ -230,7 +237,7 @@ Prima del deploy finale:
 2. ✅ Tutte le variabili d'ambiente configurate su Vercel
 3. ✅ Database PostgreSQL creato e accessibile
 4. ✅ Storage configurato (locale o S3 - locale è più semplice per iniziare)
-5. ✅ CORS_ORIGINS include tutti i domini necessari
+5. ✅ CORS_ORIGIN / CORS_ORIGINS includono tutti i domini necessari (e redeploy dopo eventuali modifiche)
 6. ✅ JWT_SECRET_KEY generato e sicuro
 7. ✅ WaveSpeed API key valida
 8. ✅ Test di connessione backend-frontend
