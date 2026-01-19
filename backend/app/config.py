@@ -70,6 +70,10 @@ class Settings(BaseSettings):
     max_upload_size_mb: int = 10
     allowed_image_types: str = "image/jpeg,image/png"
 
+    # Gmail SMTP (verification OTP)
+    gmail_user: str = ""
+    gmail_pass: str = ""
+
     def get_allowed_image_types_list(self) -> List[str]:
         return _parse_list_str(self.allowed_image_types)
     

@@ -18,6 +18,11 @@ export default function SignupPage() {
   const signupMutation = useMutation({
     mutationFn: () => authApi.signup(email, password, verifyPassword),
     onSuccess: (data) => {
+      if (data.require_verification && data.email) {
+        toast.success('Check your email for the verification code')
+        router.push(`/verifyEmail?email=${encodeURIComponent(data.email)}`)
+        return
+      }
       setAuthToken(data.access_token)
       toast.success('Account created successfully!')
       router.push('/dashboard')

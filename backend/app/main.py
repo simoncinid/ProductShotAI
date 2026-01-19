@@ -8,13 +8,14 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 import httpx
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import logging
+import secrets
 import stripe
 
 from app.config import settings
 from app.database import get_db
-from app import models, schemas, auth, storage, wavespeed, watermark, utils, credit_packs
+from app import models, schemas, auth, storage, wavespeed, watermark, utils, credit_packs, email_sender
 from app.auth import get_current_user, get_current_user_optional
 from app.models import User, Generation, CreditTransaction
 from app.storage import get_storage_adapter
@@ -55,34 +56,109 @@ async def health():
 
 
 # Auth endpoints
-@app.post("/api/auth/signup", response_model=schemas.TokenResponse)
+OTP_EXPIRY_MINUTES = 15
+
+
+@app.post("/api/auth/signup", response_model=schemas.SignupResponse)
 async def signup(
     request: schemas.SignupRequest,
     db: AsyncSession = Depends(get_db)
 ):
-    """Sign up a new user"""
-    # Check if user exists
+    """Sign up: crea utente, invia OTP via email, richiede verifica su /verifyEmail."""
     result = await db.execute(select(User).where(User.email == request.email))
-    existing_user = result.scalar_one_or_none()
-    if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
-        )
-    
-    # Create new user
-    password_hash = auth.get_password_hash(request.password)
+    if result.scalar_one_or_none():
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+
+    otp = "".join(secrets.choice("0123456789") for _ in range(6))
+    otp_hash = auth.get_password_hash(otp)
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=OTP_EXPIRY_MINUTES)
+
     user = User(
         email=request.email,
-        password_hash=password_hash
+        password_hash=auth.get_password_hash(request.password),
+        email_verified=False,
+        verification_otp_hash=otp_hash,
+        verification_otp_expires_at=expires_at,
     )
     db.add(user)
     await db.commit()
     await db.refresh(user)
-    
-    # Create access token
+
+    try:
+        email_sender.send_verification_otp(request.email, otp)
+    except Exception as e:
+        logger.exception("Failed to send verification email")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Could not send verification email. Check GMAIL_USER and GMAIL_PASS."
+        ) from e
+
+    return schemas.SignupResponse(require_verification=True, email=request.email)
+
+
+@app.post("/api/auth/verify-otp", response_model=schemas.TokenResponse)
+@limiter.limit("10/minute")
+async def verify_otp(
+    request: Request,
+    body: schemas.VerifyOtpRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Verifica OTP: se valido imposta email_verified e restituisce JWT."""
+    result = await db.execute(select(User).where(User.email == body.email))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Email not found")
+    if user.email_verified:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already verified")
+    if not user.verification_otp_hash or not user.verification_otp_expires_at:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No OTP pending. Request a new one.")
+    if user.verification_otp_expires_at < datetime.now(timezone.utc):
+        user.verification_otp_hash = None
+        user.verification_otp_expires_at = None
+        await db.commit()
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="OTP expired. Request a new one.")
+    if not auth.verify_password(body.otp, user.verification_otp_hash):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid OTP")
+
+    user.email_verified = True
+    user.verification_otp_hash = None
+    user.verification_otp_expires_at = None
+    await db.commit()
+
     access_token = auth.create_access_token(data={"sub": user.id})
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.post("/api/auth/resend-otp")
+@limiter.limit("3/minute")
+async def resend_otp(
+    request: Request,
+    body: schemas.ResendOtpRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Invia un nuovo OTP all'email (solo se utente non ancora verificato)."""
+    result = await db.execute(select(User).where(User.email == body.email))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Email not found")
+    if user.email_verified:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already verified")
+
+    otp = "".join(secrets.choice("0123456789") for _ in range(6))
+    user.verification_otp_hash = auth.get_password_hash(otp)
+    user.verification_otp_expires_at = datetime.now(timezone.utc) + timedelta(minutes=OTP_EXPIRY_MINUTES)
+    await db.commit()
+
+    try:
+        email_sender.send_verification_otp(body.email, otp)
+    except Exception as e:
+        logger.exception("Failed to resend verification email")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Could not send verification email."
+        ) from e
+
+    return {"message": "OTP sent"}
 
 
 @app.post("/api/auth/login", response_model=schemas.TokenResponse)
@@ -90,21 +166,22 @@ async def login(
     request: schemas.LoginRequest,
     db: AsyncSession = Depends(get_db)
 ):
-    """Login user"""
+    """Login user. Richiede email verificata."""
     result = await db.execute(select(User).where(User.email == request.email))
     user = result.scalar_one_or_none()
-    
+
     if not user or not auth.verify_password(request.password, user.password_hash):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+
+    if not user.email_verified:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Please verify your email first. Check your inbox for the verification code."
         )
-    
-    # Update last login
+
     user.last_login_at = datetime.utcnow()
     await db.commit()
-    
-    # Create access token
+
     access_token = auth.create_access_token(data={"sub": user.id})
     return {"access_token": access_token, "token_type": "bearer"}
 

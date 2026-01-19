@@ -26,6 +26,21 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
 
 
+class SignupResponse(BaseModel):
+    """Dopo signup: richiede verifica OTP via email."""
+    require_verification: bool = True
+    email: str
+
+
+class VerifyOtpRequest(BaseModel):
+    email: EmailStr
+    otp: str = Field(..., min_length=6, max_length=6, pattern=r"^[0-9]{6}$")
+
+
+class ResendOtpRequest(BaseModel):
+    email: EmailStr
+
+
 # User schemas
 class UserResponse(BaseModel):
     id: str

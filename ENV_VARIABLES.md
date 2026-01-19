@@ -87,6 +87,16 @@ MAX_UPLOAD_SIZE_MB=10
 ALLOWED_IMAGE_TYPES=image/jpeg,image/png
 ```
 
+### Gmail SMTP (invio OTP verifica email al signup)
+```
+GMAIL_USER=your-email@gmail.com
+GMAIL_PASS=xxxx-xxxx-xxxx-xxxx
+```
+**Nota:**
+- Usa l’indirizzo Gmail che invierà le email (es. `noreply@tuodominio.com` se usi Google Workspace).
+- **GMAIL_PASS:** se hai la 2FA attiva, genera una **App Password** in [Google Account → Sicurezza → Verifica in 2 passaggi → Password per le app](https://myaccount.google.com/apppasswords). Inserisci la password a 16 caratteri (es. `abcd efgh ijkl mnop`).
+- Se `GMAIL_USER` o `GMAIL_PASS` non sono impostati, la registrazione risponderà con errore 503.
+
 ---
 
 ## 🔵 VERCEL (Frontend)
@@ -134,6 +144,8 @@ NEXT_PUBLIC_API_URL=https://tuo-backend.onrender.com
 - [ ] `STRIPE_PRICE_STANDARD` - Price ID pack Standard
 - [ ] `STRIPE_PRICE_PRO` - Price ID pack Pro
 - [ ] `STRIPE_PRICE_POWER` - Price ID pack Power
+- [ ] `GMAIL_USER` - Indirizzo Gmail per invio OTP
+- [ ] `GMAIL_PASS` - Password Gmail o App Password (se 2FA)
 
 ### Vercel Frontend
 - [ ] `NEXT_PUBLIC_API_URL` - URL completo del backend Render (con https://)
@@ -196,8 +208,12 @@ STRIPE_PRICE_STARTER=price_xxxxxxxx
 STRIPE_PRICE_STANDARD=price_xxxxxxxx
 STRIPE_PRICE_PRO=price_xxxxxxxx
 STRIPE_PRICE_POWER=price_xxxxxxxx
+
+# Gmail SMTP (OTP verifica email; in locale usa App Password se 2FA)
+GMAIL_USER=your-email@gmail.com
+GMAIL_PASS=xxxx-xxxx-xxxx-xxxx
 ```
-**Nota:** Lo storage locale funziona anche in produzione su Render (hanno storage persistente). Per Stripe in locale usa `stripe listen --forward-to localhost:8000/api/webhooks/stripe` per ricevere i webhook.
+**Nota:** Lo storage locale funziona anche in produzione su Render (hanno storage persistente). Per Stripe in locale usa `stripe listen --forward-to localhost:8000/api/webhooks/stripe` per ricevere i webhook. Per le email in sviluppo imposta `GMAIL_USER` e `GMAIL_PASS` (App Password da Google se hai 2FA).
 
 ### `frontend/.env.local`
 ```env

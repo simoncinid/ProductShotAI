@@ -34,6 +34,14 @@ export const authApi = {
     })
     return response.data
   },
+  verifyOtp: async (email: string, otp: string) => {
+    const response = await api.post('/api/auth/verify-otp', { email, otp })
+    return response.data
+  },
+  resendOtp: async (email: string) => {
+    const response = await api.post('/api/auth/resend-otp', { email })
+    return response.data
+  },
   login: async (email: string, password: string) => {
     const response = await api.post('/api/auth/login', {
       email,
