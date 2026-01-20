@@ -133,13 +133,15 @@ export default function Home() {
 
         <div className={`${CONTAINER} relative`}>
           {/* Mobile: titolo → sottotitolo → esempi (BeforeAfter) → CTA. Desktop: 2 col con testo+CTA a sinistra, BeforeAfter a destra. */}
-          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:grid-rows-2 lg:gap-x-16 lg:gap-y-6">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:grid-rows-2 lg:gap-x-16 lg:gap-y-6">
             {/* A: titolo + sottotitolo */}
             <div className="order-1 flex flex-col items-center text-center lg:col-start-1 lg:row-start-1 lg:items-start lg:text-left">
               <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-secondary sm:text-xs">Product Photo AI & AI Image Product</p>
               <h1 className="font-extrabold leading-tight text-primary [font-size:clamp(26px,5vw,52px)]">
-                Studio-Quality Product <span className="font-playfair-italic text-brand">Shots</span>
-                <br className="hidden lg:block" />
+                Studio-Quality
+                <br className="lg:hidden" />
+                Product <span className="font-playfair-italic text-brand">Shots</span>
+                <br />
                 in <span className="font-playfair-italic text-brand">Seconds</span>
               </h1>
               <p className="mt-3 max-w-md text-[14px] leading-relaxed text-secondary sm:text-[16px] md:text-[18px] mx-auto lg:mx-0">
@@ -147,12 +149,12 @@ export default function Home() {
               </p>
             </div>
 
-            {/* B: BeforeAfter — mobile compatto e centrato, desktop a destra (più grande) */}
-            <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:flex lg:items-center lg:justify-end">
+            {/* B: BeforeAfter — mobile compatto, desktop occupa tutta la colonna destra */}
+            <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:flex lg:items-center lg:min-w-0">
               <div className="lg:hidden">
                 <BeforeAfter compact />
               </div>
-              <div className="hidden lg:block relative">
+              <div className="hidden lg:block relative w-full min-w-0">
                 <div className="absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl pointer-events-none" aria-hidden />
                 <BeforeAfter />
               </div>

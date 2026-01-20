@@ -96,7 +96,7 @@ export default function ExampleGallery() {
         </div>
 
         {/* Mobile: carousel orizzontale, uno alla volta, auto + swipe */}
-        <div className="md:hidden">
+        <div className="md:hidden w-full min-w-0 overflow-hidden">
           <div
             ref={containerRef}
             onScroll={handleScroll}
@@ -105,7 +105,7 @@ export default function ExampleGallery() {
             {slides.map((s) => (
               <div
                 key={s.n}
-                className="min-w-full flex-shrink-0 snap-center overflow-hidden px-1"
+                className="w-full min-w-full max-w-full flex-shrink-0 snap-center overflow-hidden px-1"
               >
                 <SlideContent s={s} />
               </div>
@@ -129,7 +129,7 @@ export default function ExampleGallery() {
         {/* Desktop: griglia a 3 colonne, tutte stessa altezza */}
         <div className="hidden md:grid md:grid-cols-3 md:gap-6 md:items-stretch">
           {slides.map((s) => (
-            <div key={s.n} className="h-full">
+            <div key={s.n} className="h-full min-w-0">
               <SlideContent s={s} />
             </div>
           ))}
@@ -145,24 +145,24 @@ function SlideContent({
   s: (typeof slides)[0]
 }) {
   return (
-    <div className="flex h-full flex-col rounded-xl border border-gray-100 bg-white p-4 shadow-soft">
+    <div className="flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden rounded-xl border border-gray-100 bg-white p-4 shadow-soft">
       <div className="mb-3 flex shrink-0 items-center gap-2">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-primary">
           {s.n}
         </div>
-        <span className="text-sm font-medium text-primary">{s.label}</span>
+        <span className="min-w-0 flex-1 break-words text-sm font-medium text-primary">{s.label}</span>
       </div>
       {s.type === 'image' ? (
-        <div className="overflow-hidden rounded-lg h-[50vw] max-h-[260px] md:h-auto md:max-h-none md:flex-1 md:min-h-0">
+        <div className="min-w-0 overflow-hidden rounded-lg h-[50vw] max-h-[260px] md:h-auto md:max-h-none md:flex-1 md:min-h-0">
           <img
             src={s.src}
             alt={s.label}
-            className="h-full w-full object-contain"
+            className="h-full w-full max-w-full object-contain"
           />
         </div>
       ) : (
-        <div className="min-h-0 min-w-0 flex-1">
-          <p className="break-words text-sm leading-relaxed text-secondary">
+        <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
+          <p className="min-w-0 break-words text-[13px] leading-relaxed text-secondary md:text-sm">
             &ldquo;{s.text}&rdquo;
           </p>
         </div>
