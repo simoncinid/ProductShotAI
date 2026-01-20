@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import { uploadApi, generationApi, getDeviceId } from '@/lib/api'
@@ -14,6 +14,7 @@ export default function DashboardCreatePage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [prompt, setPrompt] = useState('')
   const [aspectRatio, setAspectRatio] = useState('1:1')
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -23,7 +24,8 @@ export default function DashboardCreatePage() {
 
   const uploadMutation = useMutation({
     mutationFn: uploadApi.uploadImage,
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
+      if (variables !== selectedFile) return
       setImageUrl(data.image_url)
       toast.success('Image uploaded successfully!')
     },
@@ -46,16 +48,19 @@ export default function DashboardCreatePage() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
       setSelectedFile(file)
-      const url = URL.createObjectURL(file)
-      setPreviewUrl(url)
+      setPreviewUrl(URL.createObjectURL(file))
       setImageUrl(null)
+      uploadMutation.mutate(file)
     }
   }
 
-  const handleUpload = () => {
-    if (!selectedFile) return
-    uploadMutation.mutate(selectedFile)
+  const handleChangeImage = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+      fileInputRef.current.click()
+    }
   }
 
   const handleGenerate = () => {
@@ -96,6 +101,14 @@ export default function DashboardCreatePage() {
               Upload Product Image
             </label>
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <input
+                ref={fileInputRef}
+                type="file"
+                id="file-upload"
+                accept="image/jpeg,image/png"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
               {previewUrl ? (
                 <div className="space-y-4">
                   <img
@@ -103,53 +116,54 @@ export default function DashboardCreatePage() {
                     alt="Preview"
                     className="max-w-full h-auto mx-auto rounded-lg"
                   />
-                  {!imageUrl && (
-                    <button
-                      onClick={handleUpload}
-                      disabled={uploadMutation.isPending}
-                      className="bg-vivid-yellow text-rich-black px-4 py-2 rounded-md font-semibold hover:bg-opacity-90 disabled:opacity-50"
-                    >
-                      {uploadMutation.isPending ? 'Uploading...' : 'Upload Image'}
-                    </button>
+                  {uploadMutation.isPending && (
+                    <p className="text-sm text-gray-600">Uploading…</p>
+                  )}
+                  {uploadMutation.isError && (
+                    <p className="text-sm">
+                      <span className="text-red-600">Upload failed.</span>{' '}
+                      <button
+                        type="button"
+                        onClick={() => selectedFile && uploadMutation.mutate(selectedFile)}
+                        className="font-semibold text-vivid-yellow underline hover:no-underline"
+                      >
+                        Retry
+                      </button>
+                    </p>
                   )}
                   {imageUrl && (
                     <p className="text-sm text-green-600">✓ Image uploaded</p>
                   )}
+                  <button
+                    type="button"
+                    onClick={handleChangeImage}
+                    className="text-xs text-gray-500 underline hover:text-gray-700"
+                  >
+                    Change image
+                  </button>
                 </div>
               ) : (
-                <div>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png"
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <label
-                    htmlFor="file-upload"
-                    className="cursor-pointer block"
+                <label htmlFor="file-upload" className="cursor-pointer block">
+                  <svg
+                    className="mx-auto h-12 w-12 text-gray-400"
+                    stroke="currentColor"
+                    fill="none"
+                    viewBox="0 0 48 48"
                   >
-                    <svg
-                      className="mx-auto h-12 w-12 text-gray-400"
-                      stroke="currentColor"
-                      fill="none"
-                      viewBox="0 0 48 48"
-                    >
-                      <path
-                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span className="mt-2 block text-sm font-medium text-gray-900">
-                      Click to upload
-                    </span>
-                    <span className="mt-1 block text-xs text-gray-500">
-                      JPEG or PNG (max 10MB)
-                    </span>
-                  </label>
-                </div>
+                    <path
+                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className="mt-2 block text-sm font-medium text-gray-900">
+                    Click to upload
+                  </span>
+                  <span className="mt-1 block text-xs text-gray-500">
+                    JPEG or PNG (max 10MB)
+                  </span>
+                </label>
               )}
             </div>
           </div>

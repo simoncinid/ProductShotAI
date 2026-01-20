@@ -47,6 +47,11 @@ class Settings(BaseSettings):
     aws_secret_access_key: str = ""
     aws_region: str = "us-east-1"
     s3_bucket_name: str = ""
+    # URL pubblici per API esterne (es. WaveSpeed). Obbligatori per evitare "image url is not allowed":
+    # - LOCAL: public_base_url = https://tuo-backend.onrender.com (URL assoluto /storage/...)
+    # - S3: cloudfront_domain = d1q70pf5vjeyhc.cloudfront.net (opzionale, altrimenti si usa URL S3 diretto)
+    public_base_url: str = ""   # per storage_type=local
+    cloudfront_domain: str = "" # per storage_type=s3 (es. d1q70pf5vjeyhc.cloudfront.net, senza https://)
     
     # App
     environment: str = "development"

@@ -2,6 +2,7 @@ import os
 import uuid
 from typing import Optional
 from pathlib import Path
+from urllib.parse import urlparse
 import aiofiles
 from app.config import settings
 import boto3
@@ -42,6 +43,11 @@ class LocalStorageAdapter(StorageAdapter):
         async with aiofiles.open(file_path, "wb") as f:
             await f.write(file_content)
         
+        # Per WaveSpeed e altre API esterne servono URL assoluti e pubblici.
+        # Con public_base_url (es. https://tuo-backend.onrender.com) si evita "image url is not allowed".
+        if settings.public_base_url:
+            base = settings.public_base_url.rstrip("/")
+            return f"{base}/storage/{filename}"
         return f"{self.base_url}/{filename}"
     
     async def download_file(self, url: str) -> bytes:
@@ -90,17 +96,24 @@ class S3StorageAdapter(StorageAdapter):
             ContentType="image/jpeg" if file_extension == ".jpg" else "image/png"
         )
         
+        # CloudFront: URL pubblico tipo https://d1q70pf5vjeyhc.cloudfront.net/key (richiesto da WaveSpeed).
+        # Se non impostato, si usa l'URL S3 diretto (già pubblico).
+        if settings.cloudfront_domain:
+            domain = settings.cloudfront_domain.strip().rstrip("/")
+            return f"https://{domain}/{filename}"
         return f"{self.base_url}/{filename}"
     
+    def _url_to_key(self, url: str) -> str:
+        """Estrae la key S3 da URL S3 (s3...amazonaws.com/key) o CloudFront (dxxx.cloudfront.net/key)."""
+        return urlparse(url).path.lstrip("/")
+
     async def download_file(self, url: str) -> bytes:
-        # Extract key from URL
-        key = url.split(".com/")[-1]
-        
+        key = self._url_to_key(url)
         response = self.s3_client.get_object(Bucket=self.bucket_name, Key=key)
         return response["Body"].read()
-    
+
     async def delete_file(self, url: str) -> None:
-        key = url.split(".com/")[-1]
+        key = self._url_to_key(url)
         try:
             self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
         except ClientError:

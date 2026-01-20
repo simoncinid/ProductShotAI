@@ -37,8 +37,10 @@ WAVESPEED_API_KEY=il-tuo-api-key-wavespeed
 ```
 STORAGE_TYPE=local
 STORAGE_PATH=./storage
+PUBLIC_BASE_URL=https://tuo-backend.onrender.com
 ```
-**Nota:** Render ha storage persistente per i servizi web, quindi lo storage locale funziona perfettamente anche in produzione. Usa questa opzione se non vuoi configurare AWS.
+**Nota:** Render ha storage persistente per i servizi web, quindi lo storage locale funziona perfettamente anche in produzione. Usa questa opzione se non vuoi configurare AWS.  
+**`PUBLIC_BASE_URL`** è **obbligatorio** se usi WaveSpeed (e altre API che devono scaricare l’immagine da URL): evita l’errore *"image url is not allowed"*. Inserisci l’URL del backend (es. `https://productshotai-backend.onrender.com`, senza slash finale).
 
 **Opzione 2: AWS S3 (opzionale - solo se hai bisogno di scalabilità avanzata)**
 ```
@@ -47,7 +49,9 @@ AWS_ACCESS_KEY_ID=il-tuo-aws-access-key-id
 AWS_SECRET_ACCESS_KEY=il-tuo-aws-secret-access-key
 AWS_REGION=us-east-1
 S3_BUCKET_NAME=nome-del-tuo-bucket-s3
+CLOUDFRONT_DOMAIN=d1q70pf5vjeyhc.cloudfront.net
 ```
+**Nota su CloudFront:** `CLOUDFRONT_DOMAIN` è opzionale. Se lo imposti (solo il dominio, es. `d1q70pf5vjeyhc.cloudfront.net`, senza `https://`), gli URL delle immagini useranno CloudFront invece dell’URL S3 diretto. Utile per CDN e per soddisfare requisiti di URL “pubblici” come WaveSpeed. CloudFront ha un free tier.
 
 ### App Configuration
 ```
@@ -94,15 +98,26 @@ MAX_UPLOAD_SIZE_MB=10
 ALLOWED_IMAGE_TYPES=image/jpeg,image/png
 ```
 
-### Gmail SMTP (invio OTP verifica email al signup)
+### Email OTP verifica (signup / resend-otp)
+
+**Su Render l'SMTP (Gmail) è bloccato.** Usa **Resend** (API HTTP su porta 443).
+
+**Opzione 1: Resend (consigliato su Render)**
+```
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxx
+EMAIL_FROM=ProductShotAI <onboarding@resend.dev>
+```
+- Crea un account su [resend.com](https://resend.com), ricava la API key nel Dashboard.
+- `EMAIL_FROM` è opzionale: di default `ProductShotAI <onboarding@resend.dev>`. In produzione, dopo aver verificato il dominio su Resend, usa es. `noreply@tuodominio.com`.
+
+**Opzione 2: Gmail SMTP (solo in locale, non su Render)**
 ```
 GMAIL_USER=your-email@gmail.com
 GMAIL_PASS=xxxx-xxxx-xxxx-xxxx
 ```
-**Nota:**
-- Usa l’indirizzo Gmail che invierà le email (es. `noreply@tuodominio.com` se usi Google Workspace).
-- **GMAIL_PASS:** se hai la 2FA attiva, genera una **App Password** in [Google Account → Sicurezza → Verifica in 2 passaggi → Password per le app](https://myaccount.google.com/apppasswords). Inserisci la password a 16 caratteri (es. `abcd efgh ijkl mnop`).
-- Se `GMAIL_USER` o `GMAIL_PASS` non sono impostati, la registrazione risponderà con errore 503.
+- **GMAIL_PASS:** con 2FA, genera una **App Password** in [Google Account → Sicurezza → Password per le app](https://myaccount.google.com/apppasswords).
+
+L'app usa **Resend** se `RESEND_API_KEY` è impostato, altrimenti **Gmail** se entrambi `GMAIL_USER` e `GMAIL_PASS` sono impostati. Se nessuno dei due è configurato: errore 503.
 
 ---
 
@@ -137,11 +152,13 @@ NEXT_PUBLIC_API_URL=https://tuo-backend.onrender.com
 - [ ] `STORAGE_TYPE` - `local` (consigliato) o `s3` (opzionale)
 - [ ] Se `STORAGE_TYPE=local`:
   - [ ] `STORAGE_PATH` - `./storage` (default, funziona su Render)
+  - [ ] `PUBLIC_BASE_URL` - `https://tuo-backend.onrender.com` (obbligatorio per WaveSpeed, evita "image url is not allowed")
 - [ ] Se `STORAGE_TYPE=s3` (solo se necessario):
   - [ ] `AWS_ACCESS_KEY_ID`
   - [ ] `AWS_SECRET_ACCESS_KEY`
   - [ ] `AWS_REGION`
   - [ ] `S3_BUCKET_NAME`
+  - [ ] `CLOUDFRONT_DOMAIN` - (opzionale) es. `d1q70pf5vjeyhc.cloudfront.net` per URL CDN
 - [ ] `ENVIRONMENT` - `production`
 - [ ] `CORS_ORIGIN` o `CORS_ORIGINS` - URL del frontend Vercel (es. `https://product-shot-ai.vercel.app` senza slash finale; più domini separati da virgola con CORS_ORIGINS)
 - [ ] `FREE_GENERATIONS_PER_MONTH` - `3`
@@ -204,6 +221,7 @@ JWT_EXPIRATION_HOURS=24
 WAVESPEED_API_KEY=your-wavespeed-api-key
 STORAGE_TYPE=local
 STORAGE_PATH=./storage
+PUBLIC_BASE_URL=http://localhost:8000
 ENVIRONMENT=development
 CORS_ORIGIN=http://localhost:3000
 FREE_GENERATIONS_PER_MONTH=3

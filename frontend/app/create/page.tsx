@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useMutation } from '@tanstack/react-query'
@@ -18,10 +18,12 @@ export default function CreatePage() {
   const [prompt, setPrompt] = useState('')
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const authenticated = isAuthenticated()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const uploadMutation = useMutation({
     mutationFn: uploadApi.uploadImage,
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
+      if (variables !== selectedFile) return
       setImageUrl(data.image_url)
       toast.success('Image uploaded successfully!')
     },
@@ -59,15 +61,19 @@ export default function CreatePage() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
       setSelectedFile(file)
       setPreviewUrl(URL.createObjectURL(file))
       setImageUrl(null)
+      uploadMutation.mutate(file)
     }
   }
 
-  const handleUpload = () => {
-    if (!selectedFile) return
-    uploadMutation.mutate(selectedFile)
+  const handleChangeImage = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+      fileInputRef.current.click()
+    }
   }
 
   const handleGenerate = () => {
@@ -134,6 +140,14 @@ export default function CreatePage() {
                 Upload Product Image
               </label>
               <div className="mt-3 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/50 p-6 transition-colors hover:border-gray-300 md:p-8">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  id="file-upload"
+                  accept="image/jpeg,image/png"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
                 {previewUrl ? (
                   <div className="space-y-4">
                     <img
@@ -141,14 +155,20 @@ export default function CreatePage() {
                       alt="Preview"
                       className="mx-auto max-h-64 w-auto rounded-xl object-contain"
                     />
-                    {!imageUrl && (
-                      <button
-                        onClick={handleUpload}
-                        disabled={uploadMutation.isPending}
-                        className="mx-auto flex rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-primary transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
-                      >
-                        {uploadMutation.isPending ? 'Uploading...' : 'Upload Image'}
-                      </button>
+                    {uploadMutation.isPending && (
+                      <p className="flex items-center justify-center gap-1.5 text-[14px] text-secondary">Uploading…</p>
+                    )}
+                    {uploadMutation.isError && (
+                      <p className="flex flex-wrap items-center justify-center gap-2 text-[14px]">
+                        <span className="text-red-600">Upload failed.</span>
+                        <button
+                          type="button"
+                          onClick={() => selectedFile && uploadMutation.mutate(selectedFile)}
+                          className="font-semibold text-brand underline hover:no-underline"
+                        >
+                          Retry
+                        </button>
+                      </p>
                     )}
                     {imageUrl && (
                       <p className="flex items-center justify-center gap-1.5 text-[14px] text-green-600">
@@ -158,24 +178,22 @@ export default function CreatePage() {
                         Image uploaded
                       </p>
                     )}
+                    <button
+                      type="button"
+                      onClick={handleChangeImage}
+                      className="block w-full text-center text-[13px] text-secondary underline hover:text-primary"
+                    >
+                      Change image
+                    </button>
                   </div>
                 ) : (
-                  <>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                      id="file-upload"
-                    />
-                    <label htmlFor="file-upload" className="flex cursor-pointer flex-col items-center">
-                      <svg className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 48 48" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
-                      </svg>
-                      <span className="mt-3 block text-[14px] font-medium text-primary">Click to upload</span>
-                      <span className="mt-1 block text-[12px] text-secondary">JPEG or PNG (max 10MB)</span>
-                    </label>
-                  </>
+                  <label htmlFor="file-upload" className="flex cursor-pointer flex-col items-center">
+                    <svg className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 48 48" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
+                    </svg>
+                    <span className="mt-3 block text-[14px] font-medium text-primary">Click to upload</span>
+                    <span className="mt-1 block text-[12px] text-secondary">JPEG or PNG (max 10MB)</span>
+                  </label>
                 )}
               </div>
 
