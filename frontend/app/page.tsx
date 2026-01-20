@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import BeforeAfter from '@/components/BeforeAfter'
-import ExampleGallery from '@/components/ExampleGallery'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-4 sm:px-6 md:px-10 lg:px-14'
 
@@ -16,10 +15,39 @@ function SectionH2({ children }: { children: React.ReactNode }) {
 }
 
 const HOW_STEPS = [
-  { n: 1, title: 'Upload Your Photo', desc: 'Upload a photo of your product. JPEG and PNG. Works for any product photo.' },
-  { n: 2, title: 'Describe Your Vision', desc: 'Write a prompt for your ai image product. Our AI understands e‑commerce and Amazon style.' },
-  { n: 3, title: 'Get Your Image', desc: 'Receive 8K image in seconds. Optimized for Amazon and any marketplace. Download and use.' },
+  { n: 1, title: 'Upload Your Photo', desc: 'Upload a photo of your product. JPEG and PNG. Works for any product photo.', exampleImage: '/images/before6.png', examplePrompt: null as string | null },
+  { n: 2, title: 'Describe Your Vision', desc: 'Write a prompt for your ai image product. Our AI understands e‑commerce and Amazon style.', exampleImage: null as string | null, examplePrompt: 'a group of young boys and girls playing with the game in the photo. christmas holidays. living room' },
+  { n: 3, title: 'Get Your Image', desc: 'Receive 8K image in seconds. Optimized for Amazon and any marketplace. Download and use.', exampleImage: '/images/after6.png', examplePrompt: null as string | null },
 ]
+
+function StepCard({ step }: { step: (typeof HOW_STEPS)[0] }) {
+  const { n, title, desc, exampleImage, examplePrompt } = step
+  return (
+    <div className="flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-soft md:p-6">
+      <div className="mb-3 flex shrink-0 items-center gap-2">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-base font-bold text-primary md:h-12 md:w-12 md:text-lg">
+          {n}
+        </div>
+        <h3 className="min-w-0 flex-1 break-words text-[15px] font-semibold text-primary md:text-base">{title}</h3>
+      </div>
+      <p className="min-w-0 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">
+        {desc}
+      </p>
+      <div className="mt-4 min-w-0 flex-1">
+        {exampleImage && (
+          <div className="overflow-hidden rounded-lg">
+            <img src={exampleImage} alt="" className="max-h-[200px] w-full max-w-full object-contain md:max-h-[260px]" />
+          </div>
+        )}
+        {examplePrompt && (
+          <p className="min-w-0 break-words text-[13px] leading-relaxed text-secondary md:text-sm">
+            &ldquo;{examplePrompt}&rdquo;
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
 
 function HowItWorksCarousel() {
   const [index, setIndex] = useState(0)
@@ -44,20 +72,14 @@ function HowItWorksCarousel() {
   }, [index])
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-full min-w-0 overflow-hidden">
       <div
         ref={containerRef}
         className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-webkit-overflow-scrolling:touch]"
       >
-        {HOW_STEPS.map(({ n, title, desc }) => (
-          <div key={n} className="min-w-full flex-shrink-0 snap-center px-1">
-            <div className="flex flex-col items-center rounded-2xl bg-white/80 p-6 shadow-soft">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand">
-                <span className="text-lg font-bold text-primary">{n}</span>
-              </div>
-              <h3 className="text-[15px] font-semibold text-primary">{title}</h3>
-              <p className="mt-1.5 text-center text-[13px] leading-relaxed text-secondary">{desc}</p>
-            </div>
+        {HOW_STEPS.map((step) => (
+          <div key={step.n} className="w-full min-w-full max-w-full flex-shrink-0 snap-center px-1">
+            <StepCard step={step} />
           </div>
         ))}
       </div>
@@ -176,29 +198,17 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Mobile: carousel 3 slide che ruotano ogni 3s. Desktop: griglia 3 colonne. */}
+          {/* Mobile: carousel 3 slide (step+esempio) che ruotano ogni 3s. Desktop: griglia 3 colonne. */}
           <div className="mt-8 md:mt-14">
             <div className="md:hidden">
               <HowItWorksCarousel />
             </div>
-            <div className="hidden md:grid md:grid-cols-3 md:gap-8">
-              {HOW_STEPS.map(({ n, title, desc }) => (
-                <div
-                  key={n}
-                  className="group flex flex-col items-center rounded-2xl p-8 transition-smooth hover:-translate-y-1 hover:shadow-soft"
-                >
-                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-brand">
-                    <span className="text-xl font-bold text-primary">{n}</span>
-                  </div>
-                  <h3 className="text-base font-semibold text-primary">{title}</h3>
-                  <p className="mt-2 text-center text-[14px] leading-relaxed text-secondary">{desc}</p>
-                </div>
+            <div className="hidden md:grid md:grid-cols-3 md:gap-6 md:items-stretch">
+              {HOW_STEPS.map((step) => (
+                <StepCard key={step.n} step={step} />
               ))}
             </div>
           </div>
-
-          {/* Example: before6 → prompt → after6 (gallery mobile, griglia desktop) */}
-          <ExampleGallery />
         </div>
       </section>
 
