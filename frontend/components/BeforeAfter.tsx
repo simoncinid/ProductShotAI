@@ -36,13 +36,11 @@ export default function BeforeAfter() {
   }, [updatePosition])
 
   const onContainerMouseDown = useCallback((e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('[data-example-bar]')) return
     e.preventDefault()
     startDrag(e.clientX)
   }, [startDrag])
 
   const onContainerTouchStart = useCallback((e: React.TouchEvent) => {
-    if ((e.target as HTMLElement).closest('[data-example-bar]')) return
     if (e.touches[0]) {
       e.preventDefault()
       startDrag(e.touches[0].clientX)
@@ -131,40 +129,26 @@ export default function BeforeAfter() {
         <div className="absolute bottom-3 right-3 px-2 py-1 rounded bg-black/50 text-white text-xs font-medium pointer-events-none">
           After
         </div>
+      </div>
 
-        {/* Pulsanti Example DENTRO il container: mousedown/touchstart + stopPropagation così il drag non li cattura */}
-        <div
-          data-example-bar
-          className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-lg bg-black/70 px-2 py-1.5 shadow-lg"
-          onMouseDown={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
-        >
-          <span className="text-[11px] font-medium text-white/90">Example:</span>
-          {EXAMPLES.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onMouseDown={(e) => {
-                e.stopPropagation()
-                setExample(i)
-              }}
-              onTouchStart={(e) => {
-                e.stopPropagation()
-                e.preventDefault()
-                setExample(i)
-              }}
-              onClick={(e) => {
-                e.stopPropagation()
-                setExample(i)
-              }}
-              className={`min-w-[36px] h-9 rounded-full text-xs font-semibold cursor-pointer transition-smooth ${
-                activeIndex === i ? 'bg-brand text-primary' : 'bg-white/25 text-white hover:bg-white/40'
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
+      {/* Barra Example sotto l'immagine */}
+      <div className="relative z-30 mt-4 flex items-center justify-center gap-2">
+        <span className="text-xs text-secondary mr-1">Example:</span>
+        {EXAMPLES.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              setExample(i)
+            }}
+            className={`min-w-[44px] min-h-[44px] w-10 h-10 rounded-full text-sm font-semibold transition-smooth cursor-pointer ${
+              activeIndex === i ? 'bg-brand text-primary shadow-soft' : 'bg-gray-200 text-secondary hover:bg-gray-300'
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
       </div>
     </div>
   )
