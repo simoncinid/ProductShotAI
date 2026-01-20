@@ -2,10 +2,16 @@ import axios from 'axios'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-/** Converte URL relative (es. /storage/xxx) in assoluti usando il backend, così le img funzionano da frontend su altro dominio. */
+/**
+ * Restituisce un URL usabile per <img> e download, gestito come /images/before1.png:
+ * - /storage/xxx → /images/generated/xxx (stessa origine, proxy verso il backend)
+ * - https?://... → invariato (S3/CloudFront già assoluti)
+ */
 export function getAbsoluteImageUrl(url: string | null | undefined): string | null {
   if (!url) return null
   if (url.startsWith('http://') || url.startsWith('https://')) return url
+  if (url.startsWith('/storage') || url.startsWith('/storage/'))
+    return url.replace(/^\/storage\/?/, '/images/generated/')
   const base = API_URL.replace(/\/$/, '')
   return `${base}${url.startsWith('/') ? url : '/' + url}`
 }
