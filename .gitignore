@@ -23,6 +23,7 @@ build/
 
 # Storage (ignora upload/generated, non i statici in frontend)
 backend/storage/
+!backend/storage/.gitkeep
 *.jpg
 *.jpeg
 *.png
