@@ -92,10 +92,10 @@ export default function HowItWorksPage() {
               <span className="h-px w-8 bg-gray-300 md:w-12" />
             </div>
             <h1 className="mt-3 text-[28px] font-bold leading-tight text-primary md:text-[34px]">
-              Three simple steps to Amazon-ready images
+              Three Steps to AI Product Photo & Image Product AI
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-[16px] text-secondary md:text-[18px]">
-              Transform your product photos into high-quality 8K images in three simple steps
+              Turn any photo into 8K ai image product and image product ai. Our product photo AI works for e‑commerce and Amazon product photos.
             </p>
           </div>
         </div>

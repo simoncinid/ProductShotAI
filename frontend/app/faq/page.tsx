@@ -35,7 +35,7 @@ export default function FAQPage() {
               <span className="h-px w-8 bg-gray-300 md:w-12" />
             </div>
             <h1 className="mt-3 text-[28px] font-bold leading-tight text-primary md:text-[34px]">
-              Everything you need to know about ProductShotAI
+              AI Product Photo & Product Photo AI – FAQ
             </h1>
           </div>
         </div>

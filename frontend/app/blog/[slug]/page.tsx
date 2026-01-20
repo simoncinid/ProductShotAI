@@ -1,10 +1,14 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 
-const blogPosts: Record<string, { title: string; date: string; content: string }> = {
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'
+
+const blogPosts: Record<string, { title: string; date: string; excerpt?: string; content: string }> = {
   'amazon-product-images-best-practices': {
     title: 'Amazon Product Images Best Practices',
     date: '2024-01-15',
+    excerpt: 'Best practices for Amazon product images: lighting, composition, formats. AI product photo and product photo AI tips for Amazon listings.',
     content: `
       <p>Creating high-quality product images is crucial for success on Amazon. Your main product image is often the first thing potential customers see, and it can make or break a sale. Here are the essential best practices for Amazon product images.</p>
       
@@ -41,6 +45,7 @@ const blogPosts: Record<string, { title: string; date: string; content: string }
   'ai-vs-photographer-for-ecommerce': {
     title: 'AI vs Photographer: Which is Better for E-commerce?',
     date: '2024-01-10',
+    excerpt: 'AI product photo vs photographer: cost, speed, quality. When to use product photo AI and ai image product for e‑commerce.',
     content: `
       <p>The debate between AI-generated product photos and traditional photography is heating up in the e-commerce world. Both approaches have their merits, and the best choice depends on your specific needs.</p>
       
@@ -82,6 +87,7 @@ const blogPosts: Record<string, { title: string; date: string; content: string }
   'improve-click-through-rate-better-images': {
     title: 'How to Improve Click-Through Rate with Better Main Images',
     date: '2024-01-05',
+    excerpt: 'Improve CTR with better product images. AI product photo and image product ai tips for e‑commerce and Amazon product photos.',
     content: `
       <p>Your main product image is your first impression on Amazon. It's what customers see in search results, and it directly impacts whether they click through to your listing. Here's how to optimize it for maximum click-through rate.</p>
       
@@ -114,6 +120,24 @@ const blogPosts: Record<string, { title: string; date: string; content: string }
   },
 }
 
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const post = blogPosts[params.slug]
+  if (!post) return {}
+  const desc = post.excerpt || 'AI product photo, product photo AI, and Amazon product photo tips from ProductShotAI.'
+  return {
+    title: post.title,
+    description: desc,
+    openGraph: {
+      title: post.title,
+      description: desc,
+      url: `${SITE_URL}/blog/${params.slug}`,
+      type: 'article',
+      publishedTime: post.date,
+    },
+    alternates: { canonical: `${SITE_URL}/blog/${params.slug}` },
+  }
+}
+
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = blogPosts[params.slug]
 
@@ -121,9 +145,21 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     notFound()
   }
 
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    datePublished: post.date,
+    description: post.excerpt || 'AI product photo, product photo AI, and Amazon product photo tips from ProductShotAI.',
+    url: `${SITE_URL}/blog/${params.slug}`,
+    publisher: { '@type': 'Organization', name: 'ProductShotAI', logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.png` } },
+  }
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <Link
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <Link
         href="/blog"
         className="text-vivid-yellow hover:underline mb-8 inline-block"
       >
@@ -146,6 +182,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </article>
-    </div>
+      </div>
+    </>
   )
 }

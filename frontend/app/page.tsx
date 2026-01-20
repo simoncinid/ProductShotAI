@@ -51,12 +51,12 @@ export default function Home() {
         <div className={`${CONTAINER} relative`}>
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div className="order-2 text-center lg:order-1 lg:text-left">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">AI-Powered Product Photos</p>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">Product Photo AI & AI Image Product</p>
               <h1 className="mb-5 font-bold leading-tight text-primary [font-size:clamp(32px,5vw,52px)]">
-                <span className="text-brand">Amazon Ready</span> in Seconds
+                <span className="text-brand">AI Product Photo</span> in Seconds
               </h1>
               <p className="mb-8 max-w-md text-[16px] leading-relaxed text-secondary md:text-[18px] mx-auto lg:mx-0">
-                Transform your product photos into high-quality 8K images optimized for Amazon listings. No photographer needed. No monthly fees. Pay only for what you use.
+                Create stunning product photo AI and image product ai in 8K. Our ai image product tool works for e‑commerce and Amazon product photos. No photographer. No subscription. Pay per image.
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center lg:justify-start">
                 <Link
@@ -106,9 +106,9 @@ export default function Home() {
 
           <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
             {[
-              { n: 1, title: 'Upload Your Photo', desc: 'Upload a photo of your product. We support JPEG and PNG formats.' },
-              { n: 2, title: 'Describe Your Vision', desc: 'Write a prompt describing how you want your product to look. Our AI understands Amazon product photography.' },
-              { n: 3, title: 'Get Your Image', desc: 'Receive a high-quality 8K image optimized for Amazon. Download and use it immediately.' },
+              { n: 1, title: 'Upload Your Photo', desc: 'Upload a photo of your product. We support JPEG and PNG. Works for any ai product photo or product photo ai use.' },
+              { n: 2, title: 'Describe Your Vision', desc: 'Write a prompt for your ai image product. Our product photo AI understands e‑commerce and Amazon product photo style.' },
+              { n: 3, title: 'Get Your Image', desc: 'Receive 8K image product ai in seconds. Optimized for Amazon product photos and any marketplace. Download and use.' },
             ].map(({ n, title, desc }) => (
               <div
                 key={n}
@@ -189,6 +189,9 @@ export default function Home() {
         <div className={CONTAINER}>
           <div className="text-center">
             <SectionScript>Trusted by Amazon Sellers</SectionScript>
+            <p className="mx-auto mt-3 max-w-xl text-[15px] text-secondary md:text-[16px]">
+              Our product photo AI and ai image product help sellers create <strong className="text-primary">Amazon product photos</strong> that convert. Image product ai in 8K.
+            </p>
           </div>
 
           <div className="mt-14 grid gap-8 lg:grid-cols-2 lg:gap-12">
@@ -292,8 +295,8 @@ export default function Home() {
       <section className="relative overflow-hidden bg-anthracite py-20 md:py-24">
         <div className="absolute inset-0 bg-gradient-to-br from-anthracite via-anthracite to-primary/90" aria-hidden />
         <div className={`${CONTAINER} relative text-center`}>
-          <h2 className="text-3xl font-bold leading-tight text-white md:text-4xl">Ready to Transform Your Product Photos?</h2>
-          <p className="mx-auto mt-4 max-w-md text-[16px] text-gray-400">Start with 3 free images today. No credit card required.</p>
+          <h2 className="text-3xl font-bold leading-tight text-white md:text-4xl">Ready to Create Your AI Product Photo?</h2>
+          <p className="mx-auto mt-4 max-w-md text-[16px] text-gray-400">Try our product photo AI with 3 free images. No credit card. ai image product and image product ai in seconds.</p>
           <Link
             href="/create"
             className="mt-8 inline-flex items-center justify-center rounded-full bg-brand px-10 py-4 text-lg font-semibold text-primary shadow-soft-hover transition-smooth hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-card-hover"

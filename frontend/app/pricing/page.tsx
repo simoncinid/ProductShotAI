@@ -93,7 +93,7 @@ export default function PricingPage() {
               Pay only for the images you need
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-[16px] text-secondary md:text-[18px]">
-              No monthly subscriptions. The more credits you buy, the less you pay per image.
+              No monthly subscriptions. Pay per ai product photo and image product ai. The more credits, the less per image.
             </p>
             {authenticated && user && (
               <p className="mt-5 rounded-full bg-anthracite/5 px-5 py-2 text-[15px] font-medium text-primary">

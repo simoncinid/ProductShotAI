@@ -105,10 +105,10 @@ export default function CreatePage() {
               <span className="h-px w-8 bg-gray-300 md:w-12" />
             </div>
             <h1 className="mt-3 text-[28px] font-bold leading-tight text-primary md:text-[34px]">
-              Your Product Photo
+              Create Your AI Product Photo
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-[16px] text-secondary md:text-[18px]">
-              Upload your product image and describe how you want it transformed
+              Upload your product image—our product photo AI creates ai image product and image product ai in 8K. Amazon product photo ready.
             </p>
             {!authenticated && (
               <p className="mt-3 text-[13px] text-secondary">

@@ -26,10 +26,10 @@ export default function BlogPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
         <h1 className="text-5xl font-bold text-rich-black mb-4">
-          Blog
+          AI Product Photo & Amazon Product Photo Blog
         </h1>
         <p className="text-xl text-gray-600">
-          Tips, guides, and insights for Amazon sellers
+          Product photo AI tips, ai image product guides, and image product ai best practices for e‑commerce and Amazon sellers
         </p>
       </div>
 

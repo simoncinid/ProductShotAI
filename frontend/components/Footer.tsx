@@ -10,6 +10,11 @@ export function Footer() {
           Product<span className="text-brand">Shot</span>AI
         </Link>
         <nav className="flex flex-wrap items-center justify-center gap-6 text-[13px]">
+          <Link href="/how-it-works" className="hover:text-white transition">How it works</Link>
+          <Link href="/pricing" className="hover:text-white transition">Pricing</Link>
+          <Link href="/faq" className="hover:text-white transition">FAQ</Link>
+          <Link href="/blog" className="hover:text-white transition">Blog</Link>
+          <Link href="/create" className="hover:text-white transition">Create</Link>
           <Link href="/privacy" className="hover:text-white transition">Privacy</Link>
           <Link href="/terms" className="hover:text-white transition">Terms</Link>
           <a href="mailto:reservationwebbitz@gmail.com" className="hover:text-white transition">Contact</a>

@@ -12,6 +12,7 @@ const navLinks = [
   { href: '/how-it-works', label: 'How it works' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/faq', label: 'FAQ' },
+  { href: '/blog', label: 'Blog' },
   { href: '/create', label: 'Try free' },
 ]
 
@@ -62,6 +63,9 @@ export function Navbar() {
               </Link>
               <Link href="/faq" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
                 FAQ
+              </Link>
+              <Link href="/blog" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
+                Blog
               </Link>
               <Link href="/create" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
                 Try free
@@ -141,6 +145,7 @@ export function Navbar() {
               <Link href="/how-it-works" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>How it works</Link>
               <Link href="/pricing" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
               <Link href="/faq" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
+              <Link href="/blog" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>Blog</Link>
               <Link href="/create" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>Try free</Link>
               {user && <span className="py-3 text-base text-secondary">Credits: {user.credits_balance}</span>}
               <Link href="/dashboard" className="mt-2 block rounded-full bg-anthracite px-6 py-3 text-center font-medium text-white" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
