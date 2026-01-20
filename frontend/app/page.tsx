@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import BeforeAfter from '@/components/BeforeAfter'
+import ExampleGallery from '@/components/ExampleGallery'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
@@ -122,6 +123,9 @@ export default function Home() {
               </div>
             ))}
           </div>
+
+          {/* Example: before6 → prompt → after6 (gallery mobile, griglia desktop) */}
+          <ExampleGallery />
         </div>
       </section>
 
