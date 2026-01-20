@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import BeforeAfter from '@/components/BeforeAfter'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
@@ -77,35 +78,9 @@ export default function Home() {
             </div>
 
             <div className="order-1 lg:order-2 relative">
-              {/* Alone giallo tenue dietro il laptop */}
+              {/* Alone giallo tenue dietro */}
               <div className="absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl" aria-hidden />
-              <div className="relative mx-auto w-[90%] max-w-[420px] drop-shadow-[0_25px_50px_rgba(15,23,42,0.15)]">
-                {/* Mockup laptop */}
-                <div className="rounded-xl border border-gray-200/80 bg-white p-2 shadow-soft">
-                  <div className="aspect-video overflow-hidden rounded-lg bg-gradient-to-br from-gray-50 to-gray-100">
-                    {/* Schermo: e-commerce finto con foto prodotto */}
-                    <div className="flex h-full flex-col p-3">
-                      <div className="mb-2 flex gap-2">
-                        <div className="h-2 w-12 rounded bg-gray-200" />
-                        <div className="h-2 flex-1 rounded bg-gray-100" />
-                      </div>
-                      <div className="grid flex-1 grid-cols-3 gap-2">
-                        {['/images/img1.png', '/images/img2.png', '/images/img3.png'].map((src, i) => (
-                          <div key={i} className="flex flex-col rounded-lg bg-white p-1 shadow-sm">
-                            <div className="relative aspect-square overflow-hidden rounded">
-                              <img src={src} alt="" className="h-full w-full object-cover" />
-                            </div>
-                            <div className="mt-1 h-1.5 w-3/4 rounded bg-gray-100" />
-                            <div className="mt-0.5 h-1 w-1/2 rounded bg-gray-50" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Base del laptop */}
-                <div className="mx-auto mt-1 h-2 w-3/4 rounded-b-lg bg-gray-200/90 shadow-md" />
-              </div>
+              <BeforeAfter />
             </div>
           </div>
         </div>
