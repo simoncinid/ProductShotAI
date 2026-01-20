@@ -3,7 +3,7 @@
 type ResultPopupProps = {
   imageUrl: string
   onClose: () => void
-  /** True per utenti free: l'immagine ha già watermark dal backend; mostriamo un'etichetta opzionale */
+  /** True for free users: image has watermark from backend; we show an optional label */
   isFree?: boolean
 }
 
@@ -24,7 +24,7 @@ export function ResultPopup({ imageUrl, onClose, isFree }: ResultPopupProps) {
           type="button"
           onClick={onClose}
           className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-600 shadow transition hover:bg-white hover:text-primary"
-          aria-label="Chiudi"
+          aria-label="Close"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -33,17 +33,17 @@ export function ResultPopup({ imageUrl, onClose, isFree }: ResultPopupProps) {
 
         <div className="p-6 pt-14">
           <h2 id="result-title" className="mb-4 text-center text-lg font-semibold text-primary">
-            Immagine generata
+            Image generated
           </h2>
           {isFree && (
             <p className="mb-3 text-center text-[13px] text-secondary">
-              Versione sample con watermark. Registrati per immagini senza watermark.
+              Sample version with watermark. Sign up for clean images without watermark.
             </p>
           )}
           <div className="flex justify-center">
             <img
               src={imageUrl}
-              alt="Immagine generata"
+              alt="Generated image"
               className="max-h-[60vh] w-auto max-w-full rounded-xl object-contain"
             />
           </div>
@@ -56,7 +56,7 @@ export function ResultPopup({ imageUrl, onClose, isFree }: ResultPopupProps) {
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              Scarica immagine
+              Download image
             </a>
           </div>
         </div>

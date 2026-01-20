@@ -10,7 +10,7 @@ const EXAMPLES = [
   { before: '/images/before5.png', after: '/images/after5.png' },
 ] as const
 
-export default function BeforeAfter() {
+export default function BeforeAfter({ compact }: { compact?: boolean }) {
   const [position, setPosition] = useState(50)
   const [activeIndex, setActiveIndex] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
@@ -78,10 +78,10 @@ export default function BeforeAfter() {
   const { before, after } = EXAMPLES[activeIndex]
 
   return (
-    <div className="w-full max-w-[420px] mx-auto">
+    <div className={`mx-auto w-full ${compact ? 'max-w-[280px] sm:max-w-[340px]' : 'max-w-[420px]'}`}>
       <div
         ref={containerRef}
-        className="relative aspect-square overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-soft select-none cursor-ew-resize"
+        className={`relative overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-soft select-none cursor-ew-resize ${compact ? 'aspect-[4/3] sm:aspect-[1/1]' : 'aspect-square'}`}
         onMouseDown={onContainerMouseDown}
         onTouchStart={onContainerTouchStart}
       >
@@ -132,8 +132,8 @@ export default function BeforeAfter() {
       </div>
 
       {/* Barra Example sotto l'immagine */}
-      <div className="relative z-30 mt-4 flex items-center justify-center gap-2">
-        <span className="text-xs text-secondary mr-1">Example:</span>
+      <div className={`relative z-30 flex items-center justify-center gap-1.5 ${compact ? 'mt-3' : 'mt-4'}`}>
+        <span className="text-xs text-secondary mr-0.5">Example:</span>
         {EXAMPLES.map((_, i) => (
           <button
             key={i}
@@ -142,9 +142,9 @@ export default function BeforeAfter() {
               e.stopPropagation()
               setExample(i)
             }}
-            className={`min-w-[44px] min-h-[44px] w-10 h-10 rounded-full text-sm font-semibold transition-smooth cursor-pointer ${
-              activeIndex === i ? 'bg-brand text-primary shadow-soft' : 'bg-gray-200 text-secondary hover:bg-gray-300'
-            }`}
+            className={`rounded-full text-sm font-semibold transition-smooth cursor-pointer ${
+              compact ? 'min-w-[36px] min-h-[36px] w-9 h-9' : 'min-w-[44px] min-h-[44px] w-10 h-10'
+            } ${activeIndex === i ? 'bg-brand text-primary shadow-soft' : 'bg-gray-200 text-secondary hover:bg-gray-300'}`}
           >
             {i + 1}
           </button>
