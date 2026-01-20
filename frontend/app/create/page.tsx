@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useMutation } from '@tanstack/react-query'
@@ -10,6 +10,8 @@ import toast from 'react-hot-toast'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
+const LOADING_MESSAGES = ['Processing your image…', 'Adding the finishing touches...', 'Almost there...']
+
 export default function CreatePage() {
   const router = useRouter()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -17,6 +19,7 @@ export default function CreatePage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [prompt, setPrompt] = useState('')
   const [aspectRatio, setAspectRatio] = useState('1:1')
+  const [loadingIndex, setLoadingIndex] = useState(0)
   const authenticated = isAuthenticated()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -42,10 +45,7 @@ export default function CreatePage() {
     },
     onSuccess: (data) => {
       toast.success('Generation completed!')
-      if (authenticated) {
-        router.push(`/dashboard?generation=${data.generation_id}`)
-      }
-      // Free users: risultato mostrato sotto via generateMutation.data.output_image_url
+      if (authenticated) router.push(`/dashboard?generation=${data.generation_id}`)
     },
     onError: (error: unknown) => {
       const errorMsg = error && typeof error === 'object' && 'response' in error
@@ -57,6 +57,14 @@ export default function CreatePage() {
       }
     },
   })
+
+  // Messaggi rotanti durante l'attesa (solo UX, nessun polling verso il backend)
+  useEffect(() => {
+    if (!generateMutation.isPending) return
+    setLoadingIndex(0)
+    const t = setInterval(() => setLoadingIndex((i) => i + 1), 1500)
+    return () => clearInterval(t)
+  }, [generateMutation.isPending])
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -91,6 +99,7 @@ export default function CreatePage() {
   }
 
   const outputUrl = getAbsoluteImageUrl(generateMutation.data?.output_image_url) ?? generateMutation.data?.output_image_url
+  const loadingMessage = generateMutation.isPending ? LOADING_MESSAGES[loadingIndex % LOADING_MESSAGES.length] : ''
 
   return (
     <div className="bg-page-bg">
@@ -236,7 +245,7 @@ export default function CreatePage() {
               </button>
 
               {generateMutation.isPending && (
-                <p className="mt-4 text-center text-[14px] text-secondary">Processing your image…</p>
+                <p className="mt-4 text-center text-[14px] text-secondary">{loadingMessage}</p>
               )}
             </div>
           </div>

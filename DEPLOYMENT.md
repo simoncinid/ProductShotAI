@@ -127,12 +127,12 @@ Succede se Render usa **Python 3.13**. Soluzione: assicurati che esista `.python
 - Controlla i permessi del filesystem su Render
 
 ### "Generation failed" / "error generating image" benché il backend completi
-La generazione free/paid resta in attesa 30–60+ secondi (polling WaveSpeed). Se il **request timeout** del servizio Render è troppo basso (es. 30s di default), il proxy chiude la connessione **prima** che il backend risponda: il frontend va in timeout e mostra l’errore, mentre il backend termina in secondo piano.
+Il **polling è solo lato backend** (verso WaveSpeed): il frontend invia una POST e aspetta la risposta. Per evitare timeout "a metà" i limiti sono **allineati a 2 minuti**:
+- **Frontend (axios):** 120 000 ms per `generate-free` e `generate-paid`
+- **Backend (wavespeed):** `poll_for_completion` con `poll_interval=500` ms e `timeout_ms=120_000`
+- **Render (proxy):** il request timeout del servizio deve essere **≥ 120 s**. Dashboard → **Settings** → **Advanced** → **Request timeout**
 
-**Soluzioni:**
-1. **Aumentare il Request timeout su Render:** Dashboard del servizio → **Settings** → **Advanced** → **Request timeout** (o equivalente). Impostalo ad almeno **120–180 secondi**.
-2. Il frontend ha già un timeout axios di 3 minuti per le chiamate di generazione; il collo di bottiglia è in genere il proxy Render.
-3. (Futuro) Passare a un flusso asincrono: `POST /generate-free` risponde subito con `generation_id` e `status: "processing"`, e il frontend fa polling su `GET /api/generations/{id}` fino a `completed`. Così nessuna richiesta resta aperta per oltre 1–2 secondi.
+Se il proxy Render è < 120 s, chiude la connessione prima che il backend risponda (504 senza CORS, il browser mostra errore CORS).
 
 ---
 

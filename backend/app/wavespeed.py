@@ -59,23 +59,20 @@ class WaveSpeedClient:
     async def poll_for_completion(
         self,
         request_id: str,
-        max_poll_attempts: int = 300,
-        poll_interval: float = 1.0
+        poll_interval: float = 0.5,
+        timeout_ms: int = 120_000,
     ) -> Dict[str, Any]:
-        """Poll for task completion and return final result"""
-        for attempt in range(max_poll_attempts):
+        """Poll GET /predictions/{id}/result fino a completed/failed o timeout. Timeout e intervallo allineati a 2 min."""
+        max_attempts = max(1, timeout_ms // int(poll_interval * 1000))
+        for _ in range(max_attempts):
             result = await self.get_prediction_result(request_id)
             status = result.get("status")
-            
             if status == "completed":
                 return result
-            elif status == "failed":
+            if status == "failed":
                 error = result.get("error", "Unknown error")
                 raise Exception(f"WaveSpeed task failed: {error}")
-            
-            # Still processing
             await asyncio.sleep(poll_interval)
-        
         raise Exception("WaveSpeed task timed out")
 
 
