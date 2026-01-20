@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import ExampleGallery from '@/components/ExampleGallery'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
@@ -131,6 +132,9 @@ export default function HowItWorksPage() {
           </div>
         </div>
       </section>
+
+      {/* ——— Example (before → prompt → after) ——— */}
+      <ExampleGallery />
 
       {/* Divisore curvo ——— */}
       <div className="relative h-10 w-full overflow-hidden bg-white md:h-14">
