@@ -28,6 +28,10 @@ const greatVibes = Great_Vibes({
 export const metadata: Metadata = {
   title: 'ProductShotAI - AI Amazon Product Photos',
   description: 'Transform your product photos into high-quality 8K Amazon-ready images with AI',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 }
 
 export default function RootLayout({
