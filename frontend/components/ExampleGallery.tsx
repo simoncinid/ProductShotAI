@@ -86,11 +86,11 @@ export default function ExampleGallery() {
   )
 
   return (
-    <section className="bg-page-bg px-4 py-12 md:py-16">
+    <section className="bg-page-bg px-4 py-8 md:py-16">
       <div className="mx-auto max-w-[1200px]">
-        <div className="mb-6 text-center">
-          <p className="font-script text-xl text-primary md:text-2xl">Example</p>
-          <h2 className="mt-1 text-lg font-semibold text-primary md:text-xl">
+        <div className="mb-4 text-center md:mb-6">
+          <p className="font-script text-lg text-primary md:text-2xl">Example</p>
+          <h2 className="mt-0.5 text-base font-semibold text-primary md:mt-1 md:text-xl">
             From your photo to the result
           </h2>
         </div>
