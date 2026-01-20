@@ -34,7 +34,7 @@ export default function Home() {
   ]
 
   const pricing = [
-    { name: 'Starter', price: '$4.95', credits: 5, each: '$0.99', dark: true },
+    { name: 'Starter', price: '$4.95', credits: 5, each: '$0.99', dark: false },
     { name: 'Standard', price: '$13.35', credits: 15, each: '$0.89', popular: true },
     { name: 'Pro', price: '$31.60', credits: 40, each: '$0.79', dark: false },
     { name: 'Power', price: '$69.00', credits: 100, each: '$0.69', dark: false },
