@@ -78,7 +78,7 @@ export default function BeforeAfter({ compact }: { compact?: boolean }) {
   const { before, after } = EXAMPLES[activeIndex]
 
   return (
-    <div className={`mx-auto w-full ${compact ? 'max-w-[280px] sm:max-w-[340px]' : 'max-w-[420px]'}`}>
+    <div className={`mx-auto w-full ${compact ? 'max-w-[280px] sm:max-w-[340px]' : 'max-w-[420px] lg:max-w-[500px] xl:max-w-[560px]'}`}>
       <div
         ref={containerRef}
         className={`relative overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-soft select-none cursor-ew-resize ${compact ? 'aspect-[4/3] sm:aspect-[1/1]' : 'aspect-square'}`}

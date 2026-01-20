@@ -138,15 +138,17 @@ export default function Home() {
             <div className="order-1 flex flex-col items-center text-center lg:col-start-1 lg:row-start-1 lg:items-start lg:text-left">
               <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-secondary sm:text-xs">Product Photo AI & AI Image Product</p>
               <h1 className="font-extrabold leading-tight text-primary [font-size:clamp(26px,5vw,52px)]">
-                <span className="font-black text-brand [text-shadow:0_1px_3px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.1)]">Studio-Quality Product Shots</span> in Seconds
+                Studio-Quality Product <span className="font-playfair-italic text-brand">Shots</span>
+                <br className="hidden lg:block" />
+                in <span className="font-playfair-italic text-brand">Seconds</span>
               </h1>
               <p className="mt-3 max-w-md text-[14px] leading-relaxed text-secondary sm:text-[16px] md:text-[18px] mx-auto lg:mx-0">
                 Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
               </p>
             </div>
 
-            {/* B: BeforeAfter — mobile compatto e centrato, desktop a destra */}
-            <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:flex lg:items-center">
+            {/* B: BeforeAfter — mobile compatto e centrato, desktop a destra (più grande) */}
+            <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:flex lg:items-center lg:justify-end">
               <div className="lg:hidden">
                 <BeforeAfter compact />
               </div>
