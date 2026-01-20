@@ -15,8 +15,8 @@ const config: Config = {
       },
       colors: {
         'rich-black': '#101820',
-        'vivid-yellow': '#FEE715',
-        brand: '#FFC93A',
+        'vivid-yellow': '#FEE716',
+        brand: '#FEE716',
         primary: '#111111',
         secondary: '#4B5563',
         anthracite: '#111827',
