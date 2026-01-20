@@ -138,8 +138,9 @@ export default function Home() {
             <div className="order-1 flex flex-col items-center text-center lg:col-start-1 lg:row-start-1 lg:items-start lg:text-left">
               <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-secondary sm:text-xs">Product Photo AI & AI Image Product</p>
               <h1 className="font-extrabold leading-tight text-primary [font-size:clamp(26px,5vw,52px)]">
-                Studio-Quality
-                <br className="lg:hidden" />
+                <span className="lg:hidden">Studio-Quality</span>
+                <span className="hidden lg:inline">Studio Quality</span>
+                <br />
                 Product <span className="font-playfair-italic text-brand">Shots</span>
                 <br />
                 in <span className="font-playfair-italic text-brand">Seconds</span>
@@ -149,14 +150,14 @@ export default function Home() {
               </p>
             </div>
 
-            {/* B: BeforeAfter — mobile compatto, desktop occupa tutta la colonna destra */}
-            <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:flex lg:items-center lg:min-w-0">
+            {/* B: BeforeAfter — mobile compatto; desktop: allineato in alto, altezza fino al paragrafo */}
+            <div className="order-2 lg:col-start-2 lg:row-start-1 lg:flex lg:items-start lg:min-w-0 lg:self-start">
               <div className="lg:hidden">
                 <BeforeAfter compact />
               </div>
               <div className="hidden lg:block relative w-full min-w-0">
                 <div className="absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl pointer-events-none" aria-hidden />
-                <BeforeAfter />
+                <BeforeAfter containerClassName="max-h-[340px] max-w-[340px]" />
               </div>
             </div>
 

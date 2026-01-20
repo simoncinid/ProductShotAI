@@ -10,7 +10,7 @@ const EXAMPLES = [
   { before: '/images/before5.png', after: '/images/after5.png' },
 ] as const
 
-export default function BeforeAfter({ compact }: { compact?: boolean }) {
+export default function BeforeAfter({ compact, containerClassName }: { compact?: boolean; containerClassName?: string }) {
   const [position, setPosition] = useState(50)
   const [activeIndex, setActiveIndex] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
@@ -81,7 +81,7 @@ export default function BeforeAfter({ compact }: { compact?: boolean }) {
     <div className={`mx-auto w-full ${compact ? 'max-w-[280px] sm:max-w-[340px]' : 'max-w-[420px] lg:max-w-none lg:w-full'}`}>
       <div
         ref={containerRef}
-        className={`relative overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-soft select-none cursor-ew-resize ${compact ? 'aspect-[4/3] sm:aspect-[1/1]' : 'aspect-square'}`}
+        className={`relative overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-soft select-none cursor-ew-resize ${compact ? 'aspect-[4/3] sm:aspect-[1/1]' : 'aspect-square'} ${containerClassName || ''}`}
         onMouseDown={onContainerMouseDown}
         onTouchStart={onContainerTouchStart}
       >
