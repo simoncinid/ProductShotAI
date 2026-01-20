@@ -137,6 +137,12 @@ NEXT_PUBLIC_API_URL=https://tuo-backend.onrender.com
 ```
 **Nota:** Sostituisci con l'URL effettivo del tuo backend su Render (es. `https://productshotai-backend.onrender.com`)
 
+### Sito (Sitemap / SEO)
+```
+NEXT_PUBLIC_SITE_URL=https://productshotai.com
+```
+**Nota:** (Opzionale) URL pubblico del frontend. Usato nella sitemap (`/sitemap.xml`) per Google Search Console. Se non impostato, si usa `https://productshotai.com`.
+
 ---
 
 ## 📋 Checklist Completa
