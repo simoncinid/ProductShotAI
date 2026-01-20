@@ -3,9 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
-import { uploadApi, generationApi, getDeviceId } from '@/lib/api'
+import { uploadApi, generationApi, getDeviceId, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
+import { ResultPopup } from '@/components/ResultPopup'
 
 export default function DashboardCreatePage() {
   const router = useRouter()
@@ -14,6 +15,7 @@ export default function DashboardCreatePage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [prompt, setPrompt] = useState('')
   const [aspectRatio, setAspectRatio] = useState('1:1')
+  const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -37,8 +39,9 @@ export default function DashboardCreatePage() {
   const generateMutation = useMutation({
     mutationFn: (data: any) => generationApi.generatePaid(data),
     onSuccess: (data) => {
-      toast.success('Generation completed!')
-      router.push(`/dashboard?generation=${data.generation_id}`)
+      toast.success('Generazione completata!')
+      const url = getAbsoluteImageUrl(data.output_image_url) ?? data.output_image_url
+      if (url) setResultImageUrl(url)
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.detail || 'Generation failed')
@@ -220,6 +223,14 @@ export default function DashboardCreatePage() {
           )}
         </div>
       </div>
+
+      {resultImageUrl && (
+        <ResultPopup
+          imageUrl={resultImageUrl}
+          onClose={() => setResultImageUrl(null)}
+          isFree={false}
+        />
+      )}
     </div>
   )
 }

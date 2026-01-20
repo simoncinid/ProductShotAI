@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query'
 import { uploadApi, generationApi, getDeviceId, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
+import { ResultPopup } from '@/components/ResultPopup'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
@@ -20,6 +21,7 @@ export default function CreatePage() {
   const [prompt, setPrompt] = useState('')
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [loadingIndex, setLoadingIndex] = useState(0)
+  const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const authenticated = isAuthenticated()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -44,8 +46,9 @@ export default function CreatePage() {
       return generationApi.generateFree(data)
     },
     onSuccess: (data) => {
-      toast.success('Generation completed!')
-      if (authenticated) router.push(`/dashboard?generation=${data.generation_id}`)
+      toast.success('Generazione completata!')
+      const url = getAbsoluteImageUrl(data.output_image_url) ?? data.output_image_url
+      if (url) setResultImageUrl(url)
     },
     onError: (error: unknown) => {
       const errorMsg = error && typeof error === 'object' && 'response' in error
@@ -98,7 +101,6 @@ export default function CreatePage() {
     })
   }
 
-  const outputUrl = getAbsoluteImageUrl(generateMutation.data?.output_image_url) ?? generateMutation.data?.output_image_url
   const loadingMessage = generateMutation.isPending ? LOADING_MESSAGES[loadingIndex % LOADING_MESSAGES.length] : ''
 
   return (
@@ -252,44 +254,13 @@ export default function CreatePage() {
         </div>
       </section>
 
-      {/* ——— Risultato (solo free user, i paid vanno in dashboard) ——— */}
-      {outputUrl && (
-        <>
-          <div className="relative h-10 w-full overflow-hidden bg-white md:h-14">
-            <svg viewBox="0 0 1200 48" fill="none" className="absolute top-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
-              <path d="M0 0v48h1200V0c-200 0-400 24-600 24S200 0 0 0z" fill="currentColor" />
-            </svg>
-          </div>
-          <section className="bg-white py-16 md:py-20">
-            <div className={CONTAINER}>
-              <div className="flex flex-col items-center text-center">
-                <div className="flex items-center gap-4">
-                  <span className="h-px w-8 bg-gray-300 md:w-12" />
-                  <p className="font-script text-2xl text-primary md:text-3xl">Your Result</p>
-                  <span className="h-px w-8 bg-gray-300 md:w-12" />
-                </div>
-                <h2 className="mt-3 text-[24px] font-bold text-primary md:text-[28px]">Your Generated Image</h2>
-              </div>
-
-              <div className="mx-auto mt-12 max-w-2xl rounded-[20px] border border-gray-100 bg-white p-6 shadow-soft md:p-8">
-                <img
-                  src={outputUrl}
-                  alt="Generated"
-                  className="mx-auto max-w-full rounded-xl"
-                />
-                <div className="mt-6 text-center">
-                  <a
-                    href={outputUrl}
-                    download
-                    className="inline-flex items-center justify-center rounded-full border-2 border-anthracite bg-anthracite px-6 py-2.5 text-[14px] font-semibold text-white transition-smooth hover:bg-anthracite/90 hover:shadow-soft-hover"
-                  >
-                    Download Image
-                  </a>
-                </div>
-              </div>
-            </div>
-          </section>
-        </>
+      {/* Popup risultato: sia per utenti loggati (senza watermark) sia free (con watermark da backend) */}
+      {resultImageUrl && (
+        <ResultPopup
+          imageUrl={resultImageUrl}
+          onClose={() => setResultImageUrl(null)}
+          isFree={!authenticated}
+        />
       )}
     </div>
   )
