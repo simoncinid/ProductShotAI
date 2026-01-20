@@ -5,6 +5,8 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 
 const EXAMPLES = [
   { before: '/images/before1.png', after: '/images/after1.png' },
+  { before: '/images/before2.png', after: '/images/after2.png' },
+  { before: '/images/before3.png', after: '/images/after3.png' },
 ] as const
 
 export default function BeforeAfter() {
@@ -22,11 +24,22 @@ export default function BeforeAfter() {
     setPosition(pct)
   }, [])
 
-  const onMouseDown = useCallback(() => setIsDragging(true), [])
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
+  const startDrag = useCallback((clientX: number) => {
     setIsDragging(true)
-    updatePosition(e.touches[0].clientX)
+    updatePosition(clientX)
   }, [updatePosition])
+
+  const onContainerMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    startDrag(e.clientX)
+  }, [startDrag])
+
+  const onContainerTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches[0]) {
+      e.preventDefault()
+      startDrag(e.touches[0].clientX)
+    }
+  }, [startDrag])
 
   const onMouseMove = useCallback((e: MouseEvent) => {
     if (isDragging) updatePosition(e.clientX)
@@ -62,38 +75,40 @@ export default function BeforeAfter() {
     <div className="w-full max-w-[420px] mx-auto">
       <div
         ref={containerRef}
-        className="relative aspect-square overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-soft select-none touch-none"
+        className="relative aspect-square overflow-hidden rounded-xl border border-gray-200/80 bg-white shadow-soft select-none cursor-ew-resize"
+        onMouseDown={onContainerMouseDown}
+        onTouchStart={onContainerTouchStart}
       >
-        {/* Before (sotto) */}
-        <div className="absolute inset-0">
-          <Image
-            src={before}
-            alt="Before"
-            fill
-            className="object-cover"
-            sizes="(max-width: 480px) 90vw, 420px"
-          />
-        </div>
-        {/* After (sopra, clippato) */}
-        <div
-          className="absolute inset-0 overflow-hidden"
-          style={{ width: `${position}%` }}
-        >
+        {/* After (sotto, base) — visibile a destra della levetta */}
+        <div className="absolute inset-0 pointer-events-none">
           <Image
             src={after}
             alt="After"
             fill
+            className="object-cover object-right"
+            sizes="(max-width: 480px) 90vw, 420px"
+            draggable={false}
+          />
+        </div>
+        {/* Before (sopra, clippato) — visibile a sinistra della levetta */}
+        <div
+          className="absolute inset-0 overflow-hidden pointer-events-none"
+          style={{ width: `${position}%` }}
+        >
+          <Image
+            src={before}
+            alt="Before"
+            fill
             className="object-cover object-left"
             sizes="(max-width: 480px) 90vw, 420px"
+            draggable={false}
           />
         </div>
 
-        {/* Levetta verticale draggabile */}
+        {/* Levetta verticale (solo visiva, il drag è su tutto il container) */}
         <div
-          className="absolute top-0 bottom-0 w-10 cursor-ew-resize z-10 flex items-center justify-center -translate-x-1/2"
+          className="absolute top-0 bottom-0 w-10 z-10 flex items-center justify-center -translate-x-1/2 pointer-events-none"
           style={{ left: `${position}%` }}
-          onMouseDown={onMouseDown}
-          onTouchStart={onTouchStart}
         >
           <div className="w-10 h-10 rounded-full bg-white border-2 border-gray-200 shadow-md flex items-center justify-center flex-shrink-0">
             <div className="flex gap-0.5">
@@ -119,6 +134,7 @@ export default function BeforeAfter() {
           {EXAMPLES.map((_, i) => (
             <button
               key={i}
+              type="button"
               onClick={() => setActiveIndex(i)}
               className={`w-8 h-8 rounded-full text-sm font-semibold transition-smooth ${
                 activeIndex === i
