@@ -70,7 +70,7 @@ export default function BeforeAfter() {
         <div className="absolute inset-0">
           <Image
             src={before}
-            alt="Prima"
+            alt="Before"
             fill
             className="object-cover"
             sizes="(max-width: 480px) 90vw, 420px"
@@ -83,7 +83,7 @@ export default function BeforeAfter() {
         >
           <Image
             src={after}
-            alt="Dopo"
+            alt="After"
             fill
             className="object-cover object-left"
             sizes="(max-width: 480px) 90vw, 420px"
@@ -107,16 +107,16 @@ export default function BeforeAfter() {
 
         {/* Etichette Before / After */}
         <div className="absolute bottom-3 left-3 px-2 py-1 rounded bg-black/50 text-white text-xs font-medium">
-          Prima
+          Before
         </div>
         <div className="absolute bottom-3 right-3 px-2 py-1 rounded bg-black/50 text-white text-xs font-medium">
-          Dopo
+          After
         </div>
       </div>
 
       {/* Switch tra i 3 esempi */}
       <div className="mt-4 flex items-center justify-center gap-2">
-        <span className="text-xs text-secondary mr-1">Esempio:</span>
+        <span className="text-xs text-secondary mr-1">Example:</span>
         {EXAMPLES.map((_, i) => (
           <button
             key={i}
