@@ -53,8 +53,8 @@ export default function Home() {
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div className="order-2 text-center lg:order-1 lg:text-left">
               <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-secondary">Product Photo AI & AI Image Product</p>
-              <h1 className="mb-5 font-bold leading-tight text-primary [font-size:clamp(32px,5vw,52px)]">
-                <span className="text-brand">AI Product Photo</span> in Seconds
+              <h1 className="mb-5 font-extrabold leading-tight text-primary [font-size:clamp(32px,5vw,52px)]">
+                <span className="font-black text-brand [text-shadow:0_1px_3px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.1)]">Studio-Quality Product Shots</span> in Seconds
               </h1>
               <p className="mb-8 max-w-md text-[16px] leading-relaxed text-secondary md:text-[18px] mx-auto lg:mx-0">
                 Create stunning product photo AI and image product ai in 8K. Our ai image product tool works for e‑commerce and Amazon product photos. No photographer. No subscription. Pay per image.
