@@ -15,6 +15,11 @@ export default function BeforeAfter() {
   const [isDragging, setIsDragging] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
+  const setExample = useCallback((i: number) => {
+    setActiveIndex(i)
+    setPosition(50)
+  }, [])
+
   const updatePosition = useCallback((clientX: number) => {
     const el = containerRef.current
     if (!el) return
@@ -82,6 +87,7 @@ export default function BeforeAfter() {
         {/* After (sotto, base) — visibile a destra della levetta */}
         <div className="absolute inset-0 pointer-events-none">
           <Image
+            key={after}
             src={after}
             alt="After"
             fill
@@ -96,6 +102,7 @@ export default function BeforeAfter() {
           style={{ width: `${position}%` }}
         >
           <Image
+            key={before}
             src={before}
             alt="Before"
             fill
@@ -135,7 +142,7 @@ export default function BeforeAfter() {
             <button
               key={i}
               type="button"
-              onClick={() => setActiveIndex(i)}
+              onClick={() => setExample(i)}
               className={`w-8 h-8 rounded-full text-sm font-semibold transition-smooth ${
                 activeIndex === i
                   ? 'bg-brand text-primary shadow-soft'
