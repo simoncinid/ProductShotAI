@@ -5,8 +5,6 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 
 const EXAMPLES = [
   { before: '/images/before1.png', after: '/images/after1.png' },
-  { before: '/images/before2.png', after: '/images/after2.png' },
-  { before: '/images/before3.png', after: '/images/after3.png' },
 ] as const
 
 export default function BeforeAfter() {
@@ -114,23 +112,25 @@ export default function BeforeAfter() {
         </div>
       </div>
 
-      {/* Switch tra i 3 esempi */}
-      <div className="mt-4 flex items-center justify-center gap-2">
-        <span className="text-xs text-secondary mr-1">Example:</span>
-        {EXAMPLES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setActiveIndex(i)}
-            className={`w-8 h-8 rounded-full text-sm font-semibold transition-smooth ${
-              activeIndex === i
-                ? 'bg-brand text-primary shadow-soft'
-                : 'bg-gray-200 text-secondary hover:bg-gray-300'
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
+      {/* Switch esempi (nascosto se ce n'è uno solo) */}
+      {EXAMPLES.length > 1 && (
+        <div className="mt-4 flex items-center justify-center gap-2">
+          <span className="text-xs text-secondary mr-1">Example:</span>
+          {EXAMPLES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIndex(i)}
+              className={`w-8 h-8 rounded-full text-sm font-semibold transition-smooth ${
+                activeIndex === i
+                  ? 'bg-brand text-primary shadow-soft'
+                  : 'bg-gray-200 text-secondary hover:bg-gray-300'
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

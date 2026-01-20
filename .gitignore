@@ -21,11 +21,15 @@ build/
 *.db
 *.sqlite
 
-# Storage
+# Storage (ignora upload/generated, non i statici in frontend)
 backend/storage/
 *.jpg
 *.jpeg
 *.png
+# Eccezione: asset statici in frontend/public devono essere committati e deployati
+!frontend/public/**/*.png
+!frontend/public/**/*.jpg
+!frontend/public/**/*.jpeg
 
 # Node
 node_modules/
