@@ -44,9 +44,9 @@ export default function Home() {
     <div className="bg-page-bg">
       {/* ——— Hero ——— */}
       <section className="relative overflow-hidden bg-white pt-16 pb-20 md:pt-20 md:pb-28 lg:pt-24 lg:pb-32">
-        {/* Forma fluida in basso */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 md:h-52 bg-gradient-to-t from-page-bg/80 to-transparent" />
-        <div className="absolute -bottom-20 left-1/2 h-64 w-[140%] -translate-x-1/2 rounded-[50%] bg-[#FFF9E6]/60 blur-2xl" aria-hidden />
+        {/* Forma fluida in basso — pointer-events-none per non intercettare i click */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 md:h-52 bg-gradient-to-t from-page-bg/80 to-transparent pointer-events-none" />
+        <div className="absolute -bottom-20 left-1/2 h-64 w-[140%] -translate-x-1/2 rounded-[50%] bg-[#FFF9E6]/60 blur-2xl pointer-events-none" aria-hidden />
 
         <div className={`${CONTAINER} relative`}>
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
@@ -78,8 +78,8 @@ export default function Home() {
             </div>
 
             <div className="order-1 lg:order-2 relative">
-              {/* Alone giallo tenue dietro */}
-              <div className="absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl" aria-hidden />
+              {/* Alone giallo tenue dietro — pointer-events-none per non intercettare i click */}
+              <div className="absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl pointer-events-none" aria-hidden />
               <BeforeAfter />
             </div>
           </div>
