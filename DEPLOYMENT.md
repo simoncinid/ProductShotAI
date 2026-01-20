@@ -126,6 +126,14 @@ Succede se Render usa **Python 3.13**. Soluzione: assicurati che esista `.python
 - Se usi S3, verifica le credenziali AWS
 - Controlla i permessi del filesystem su Render
 
+### "Generation failed" / "error generating image" benché il backend completi
+La generazione free/paid resta in attesa 30–60+ secondi (polling WaveSpeed). Se il **request timeout** del servizio Render è troppo basso (es. 30s di default), il proxy chiude la connessione **prima** che il backend risponda: il frontend va in timeout e mostra l’errore, mentre il backend termina in secondo piano.
+
+**Soluzioni:**
+1. **Aumentare il Request timeout su Render:** Dashboard del servizio → **Settings** → **Advanced** → **Request timeout** (o equivalente). Impostalo ad almeno **120–180 secondi**.
+2. Il frontend ha già un timeout axios di 3 minuti per le chiamate di generazione; il collo di bottiglia è in genere il proxy Render.
+3. (Futuro) Passare a un flusso asincrono: `POST /generate-free` risponde subito con `generation_id` e `status: "processing"`, e il frontend fa polling su `GET /api/generations/{id}` fino a `completed`. Così nessuna richiesta resta aperta per oltre 1–2 secondi.
+
 ---
 
 ## 🔄 Aggiornamenti

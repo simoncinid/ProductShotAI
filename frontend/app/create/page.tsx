@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useMutation } from '@tanstack/react-query'
-import { uploadApi, generationApi, getDeviceId } from '@/lib/api'
+import { uploadApi, generationApi, getDeviceId, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 
@@ -90,7 +90,7 @@ export default function CreatePage() {
     })
   }
 
-  const outputUrl = generateMutation.data?.output_image_url
+  const outputUrl = getAbsoluteImageUrl(generateMutation.data?.output_image_url) ?? generateMutation.data?.output_image_url
 
   return (
     <div className="bg-page-bg">

@@ -99,6 +99,10 @@ export const uploadApi = {
   },
 }
 
+// Generation — timeout 3 min: WaveSpeed polling può richiedere 60+ secondi.
+// Se il backend è dietro un proxy (es. Render), aumentare anche il "Request timeout" del servizio.
+const GENERATE_TIMEOUT_MS = 180_000
+
 // Generation
 export const generationApi = {
   generateFree: async (data: {
@@ -108,7 +112,9 @@ export const generationApi = {
     resolution?: string
     device_id: string
   }) => {
-    const response = await api.post('/api/generate-free', data)
+    const response = await api.post('/api/generate-free', data, {
+      timeout: GENERATE_TIMEOUT_MS,
+    })
     return response.data
   },
   generatePaid: async (data: {
@@ -118,7 +124,9 @@ export const generationApi = {
     resolution?: string
     device_id: string
   }) => {
-    const response = await api.post('/api/generate-paid', data)
+    const response = await api.post('/api/generate-paid', data, {
+      timeout: GENERATE_TIMEOUT_MS,
+    })
     return response.data
   },
 }
