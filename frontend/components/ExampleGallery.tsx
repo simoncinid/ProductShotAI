@@ -126,10 +126,10 @@ export default function ExampleGallery() {
           </div>
         </div>
 
-        {/* Desktop: griglia a 3 colonne */}
-        <div className="hidden md:grid md:grid-cols-3 md:gap-6">
+        {/* Desktop: griglia a 3 colonne, tutte stessa altezza */}
+        <div className="hidden md:grid md:grid-cols-3 md:gap-6 md:items-stretch">
           {slides.map((s) => (
-            <div key={s.n}>
+            <div key={s.n} className="h-full">
               <SlideContent s={s} />
             </div>
           ))}
@@ -145,25 +145,27 @@ function SlideContent({
   s: (typeof slides)[0]
 }) {
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-soft">
-      <div className="mb-3 flex items-center gap-2">
+    <div className="flex h-full flex-col rounded-xl border border-gray-100 bg-white p-4 shadow-soft">
+      <div className="mb-3 flex shrink-0 items-center gap-2">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-primary">
           {s.n}
         </div>
         <span className="text-sm font-medium text-primary">{s.label}</span>
       </div>
       {s.type === 'image' ? (
-        <div className="aspect-square overflow-hidden rounded-lg">
+        <div className="overflow-hidden rounded-lg h-[50vw] max-h-[260px] md:h-auto md:max-h-none md:flex-1 md:min-h-0">
           <img
             src={s.src}
             alt={s.label}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain"
           />
         </div>
       ) : (
-        <p className="text-sm leading-relaxed text-secondary">
-          &ldquo;{s.text}&rdquo;
-        </p>
+        <div className="min-h-0 flex-1">
+          <p className="text-sm leading-relaxed text-secondary">
+            &ldquo;{s.text}&rdquo;
+          </p>
+        </div>
       )}
     </div>
   )
