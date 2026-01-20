@@ -53,8 +53,8 @@ def send_verification_otp(to_email: str, otp: str) -> None:
     msg["From"] = settings.gmail_user
     msg["To"] = to_email
 
-    msg.attach(MIMEText(BODY_PLAIN.format(otp=otp), "plain"))
-    msg.attach(MIMEText(BODY_HTML.format(otp=otp), "html"))
+    msg.attach(MIMEText(BODY_PLAIN.replace("{otp}", otp), "plain"))
+    msg.attach(MIMEText(BODY_HTML.replace("{otp}", otp), "html"))
 
     with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
         smtp.starttls()
