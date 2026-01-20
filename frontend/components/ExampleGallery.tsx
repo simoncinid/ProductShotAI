@@ -105,7 +105,7 @@ export default function ExampleGallery() {
             {slides.map((s) => (
               <div
                 key={s.n}
-                className="min-w-full flex-shrink-0 snap-center px-1"
+                className="min-w-full flex-shrink-0 snap-center overflow-hidden px-1"
               >
                 <SlideContent s={s} />
               </div>
@@ -161,8 +161,8 @@ function SlideContent({
           />
         </div>
       ) : (
-        <div className="min-h-0 flex-1">
-          <p className="text-sm leading-relaxed text-secondary">
+        <div className="min-h-0 min-w-0 flex-1">
+          <p className="break-words text-sm leading-relaxed text-secondary">
             &ldquo;{s.text}&rdquo;
           </p>
         </div>
