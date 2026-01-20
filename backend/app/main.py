@@ -1,5 +1,7 @@
+import asyncio
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
@@ -13,7 +15,7 @@ import secrets
 import stripe
 
 from app.config import settings
-from app.database import get_db
+from app.database import get_db, AsyncSessionLocal
 from app import models, schemas, auth, storage, wavespeed, watermark, utils, credit_packs, email_sender
 from app.auth import get_current_user, get_current_user_optional
 from app.models import User, Generation, CreditTransaction
@@ -241,6 +243,32 @@ async def get_user_generations(
     }
 
 
+@app.get("/api/generations/{generation_id}")
+async def get_generation_status(
+    generation_id: str,
+    device_id: str | None = None,
+    current_user: User | None = Depends(get_current_user_optional),
+    db: AsyncSession = Depends(get_db),
+):
+    """Stato di una generation (per polling dopo 202). Paid: auth. Free: device_id in query."""
+    r = await db.execute(select(Generation).where(Generation.id == generation_id))
+    gen = r.scalar_one_or_none()
+    if not gen:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Generation not found")
+    if current_user:
+        if gen.user_id != current_user.id:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Generation not found")
+    else:
+        if not gen.is_free or not device_id or gen.device_id != device_id:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Generation not found")
+    return {
+        "id": str(gen.id),
+        "status": gen.status,
+        "output_image_url": gen.output_image_url,
+        "error_message": gen.error_message,
+    }
+
+
 # Upload endpoint
 @app.post("/api/upload", response_model=schemas.UploadResponse)
 @limiter.limit("10/minute")
@@ -291,46 +319,108 @@ def _ensure_absolute_image_url(url: str) -> str:
     return url
 
 
-async def _run_wavespeed_and_fetch_output(
-    image_url: str,
-    prompt: str,
-    resolution: str,
-    aspect_ratio: str,
-) -> bytes:
-    """
-    Logica condivisa: crea task WaveSpeed, poll fino a completed, scarica output.
-    Stesso identico flusso per free e paid. Ritorna i bytes dell'immagine generata.
-    Solleva in caso di errore o timeout.
-    """
-    ws = wavespeed.get_wavespeed_client()
-    task_result = await ws.create_edit_task(
-        image_url=image_url,
-        prompt=prompt,
-        resolution=resolution,
-        aspect_ratio=aspect_ratio,
-    )
-    request_id = task_result["id"]
-    final_result = await ws.poll_for_completion(request_id)
-    if final_result.get("status") != "completed":
-        err = final_result.get("error", "Unknown error")
-        raise Exception(f"WaveSpeed status not completed: {err}")
-    output_url = final_result["outputs"][0]
-    async with httpx.AsyncClient(timeout=httpx.Timeout(60.0)) as client:
-        resp = await client.get(output_url)
-        resp.raise_for_status()
-        return resp.content
+def _get_wavespeed_webhook_url() -> str:
+    """URL pubblico HTTPS per il webhook WaveSpeed. Richiede PUBLIC_BASE_URL."""
+    base = (settings.public_base_url or "").rstrip("/")
+    if not base or not base.startswith("https://"):
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="PUBLIC_BASE_URL non configurato (HTTPS). Necessario per webhook WaveSpeed.",
+        )
+    return f"{base}/api/webhooks/wavespeed"
 
 
-# Free generation: stesso flusso di paid (WaveSpeed + fetch). Unica differenza: watermark prima dell'upload.
-# Timeout: frontend 2 min, wavespeed 2 min; su Render request timeout ≥120s.
-@app.post("/api/generate-free", response_model=schemas.GenerateResponse)
+async def _process_wavespeed_webhook_task(
+    wavespeed_id: str,
+    status: str,
+    output_url: str | None,
+    error: str | None,
+) -> None:
+    """
+    Elabora il risultato del webhook WaveSpeed in background. Scorre output, watermark (free),
+    upload, aggiorna Generation. Idempotente: se già completed/failed non fa nulla.
+    """
+    async with AsyncSessionLocal() as db:
+        try:
+            r = await db.execute(select(Generation).where(Generation.wavespeed_request_id == wavespeed_id))
+            gen = r.scalar_one_or_none()
+            if not gen:
+                logger.warning(f"Webhook WaveSpeed: generation non trovata per wavespeed_id={wavespeed_id}")
+                return
+            if gen.status in ("completed", "failed"):
+                return  # idempotenza
+
+            if status == "failed":
+                gen.status = "failed"
+                gen.error_message = error or "WaveSpeed task failed"
+                gen.completed_at = datetime.now(timezone.utc)
+                await db.commit()
+                logger.info(f"Webhook WaveSpeed: generation {gen.id} failed: {error}")
+                return
+
+            if status != "completed" or not output_url:
+                return
+
+            # completed: download, (watermark se free), upload, aggiorna
+            async with httpx.AsyncClient(timeout=httpx.Timeout(60.0)) as client:
+                resp = await client.get(output_url)
+                resp.raise_for_status()
+                output_bytes = resp.content
+
+            if gen.is_free:
+                output_bytes = await watermark.apply_watermark(output_bytes)
+
+            storage_adapter = get_storage_adapter()
+            final_url = await storage_adapter.upload_file(output_bytes, ".jpg")
+
+            gen.status = "completed"
+            gen.output_image_url = final_url
+            gen.completed_at = datetime.now(timezone.utc)
+            await db.commit()
+
+            if gen.is_free and gen.device_id and gen.ip_address:
+                try:
+                    await utils.increment_free_generation_count(db, gen.device_id, gen.ip_address)
+                except Exception as inc:
+                    logger.warning(f"increment_free_generation_count failed (gen {gen.id}): {inc}")
+
+            if not gen.is_free and gen.user_id:
+                r2 = await db.execute(select(User).where(User.id == gen.user_id))
+                user = r2.scalar_one_or_none()
+                if user:
+                    user.credits_balance -= 1
+                    db.add(CreditTransaction(
+                        user_id=user.id,
+                        change_amount=-1,
+                        type="generation",
+                        reference_id=gen.id,
+                    ))
+                    await db.commit()
+
+            logger.info(f"Webhook WaveSpeed: generation {gen.id} completed")
+        except Exception as e:
+            logger.exception(f"Webhook WaveSpeed: errore elaborazione wavespeed_id={wavespeed_id}: {e}")
+            try:
+                r = await db.execute(select(Generation).where(Generation.wavespeed_request_id == wavespeed_id))
+                gen = r.scalar_one_or_none()
+                if gen:
+                    gen.status = "failed"
+                    gen.error_message = str(e)
+                    gen.completed_at = datetime.now(timezone.utc)
+                    await db.commit()
+            except Exception:
+                pass
+
+
+# Free generation: WaveSpeed con webhook. POST ritorna 202, frontend fa polling su GET /api/generations/{id}.
+@app.post("/api/generate-free")
 @limiter.limit("10/minute")
 async def generate_free(
     request: Request,
     generate_request: schemas.GenerateRequest,
     db: AsyncSession = Depends(get_db)
 ):
-    """Generate image for free (with watermark). Stessa pipeline di generate_paid + watermark."""
+    """Generate image for free (with watermark). Crea task WaveSpeed con webhook, ritorna 202."""
     ip_address = utils.get_client_ip(request)
     if not generate_request.device_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="device_id is required")
@@ -345,7 +435,7 @@ async def generate_free(
         ip_address=ip_address,
         input_image_url=generate_request.image_url,
         prompt=generate_request.prompt,
-        resolution=generate_request.resolution,
+        resolution="4k",  # Free: sempre 4k per ridurre costi WaveSpeed (paid può usare 8k)
         aspect_ratio=generate_request.aspect_ratio,
         is_free=True,
         status="pending",
@@ -356,31 +446,23 @@ async def generate_free(
     try:
         image_url = _ensure_absolute_image_url(generate_request.image_url)
         generation.status = "processing"
-        await db.commit()
-
-        logger.info(f"Creating WaveSpeed task for free generation {generation.id}")
-        output_image_bytes = await _run_wavespeed_and_fetch_output(
+        webhook_url = _get_wavespeed_webhook_url()
+        ws = wavespeed.get_wavespeed_client()
+        task_result = await ws.create_edit_task(
             image_url=image_url,
             prompt=generate_request.prompt,
-            resolution=generate_request.resolution or "8k",
+            resolution="4k",
             aspect_ratio=generate_request.aspect_ratio or "1:1",
+            webhook_url=webhook_url,
         )
-        watermarked_bytes = await watermark.apply_watermark(output_image_bytes)
-        storage_adapter = get_storage_adapter()
-        final_image_url = await storage_adapter.upload_file(watermarked_bytes, ".jpg")
-
-        generation.status = "completed"
-        generation.output_image_url = final_image_url
-        generation.completed_at = datetime.utcnow()
+        generation.wavespeed_request_id = task_result.get("id")
         await db.commit()
 
-        try:
-            await utils.increment_free_generation_count(db, generate_request.device_id, ip_address)
-        except Exception as inc:
-            logger.warning(f"increment_free_generation_count failed (generation {generation.id}): {inc}")
-
-        logger.info(f"Free generation {generation.id} completed successfully")
-        return {"generation_id": generation.id, "status": "completed", "output_image_url": final_image_url}
+        logger.info(f"WaveSpeed task created for free generation {generation.id} wavespeed_id={generation.wavespeed_request_id}")
+        return JSONResponse(
+            content={"generation_id": str(generation.id), "status": "processing", "output_image_url": None, "error_message": None},
+            status_code=202,
+        )
     except HTTPException:
         raise
     except Exception as e:
@@ -392,8 +474,8 @@ async def generate_free(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Generation failed: {str(e)}")
 
 
-# Paid generation: stesso flusso di free (WaveSpeed + fetch). Unica differenza: niente watermark.
-@app.post("/api/generate-paid", response_model=schemas.GenerateResponse)
+# Paid generation: WaveSpeed con webhook. POST ritorna 202, frontend fa polling su GET /api/generations/{id}.
+@app.post("/api/generate-paid")
 @limiter.limit("10/minute")
 async def generate_paid(
     request: Request,
@@ -401,7 +483,7 @@ async def generate_paid(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """Generate image for paid users (no watermark). Stessa pipeline di generate_free senza watermark."""
+    """Generate image for paid users (no watermark). Crea task WaveSpeed con webhook, ritorna 202."""
     if current_user.credits_balance < 1:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -414,7 +496,7 @@ async def generate_paid(
         ip_address=ip_address,
         input_image_url=generate_request.image_url,
         prompt=generate_request.prompt,
-        resolution=generate_request.resolution,
+        resolution=generate_request.resolution or "8k",
         aspect_ratio=generate_request.aspect_ratio,
         is_free=False,
         status="pending"
@@ -425,33 +507,23 @@ async def generate_paid(
     try:
         image_url = _ensure_absolute_image_url(generate_request.image_url)
         generation.status = "processing"
-        await db.commit()
-
-        logger.info(f"Creating WaveSpeed task for paid generation {generation.id}")
-        output_image_bytes = await _run_wavespeed_and_fetch_output(
+        webhook_url = _get_wavespeed_webhook_url()
+        ws = wavespeed.get_wavespeed_client()
+        task_result = await ws.create_edit_task(
             image_url=image_url,
             prompt=generate_request.prompt,
             resolution=generate_request.resolution or "8k",
             aspect_ratio=generate_request.aspect_ratio or "1:1",
+            webhook_url=webhook_url,
         )
-        storage_adapter = get_storage_adapter()
-        final_image_url = await storage_adapter.upload_file(output_image_bytes, ".jpg")
-
-        generation.status = "completed"
-        generation.output_image_url = final_image_url
-        generation.completed_at = datetime.utcnow()
-        current_user.credits_balance -= 1
-        transaction = CreditTransaction(
-            user_id=current_user.id,
-            change_amount=-1,
-            type="generation",
-            reference_id=generation.id
-        )
-        db.add(transaction)
+        generation.wavespeed_request_id = task_result.get("id")
         await db.commit()
 
-        logger.info(f"Paid generation {generation.id} completed successfully")
-        return {"generation_id": generation.id, "status": "completed", "output_image_url": final_image_url}
+        logger.info(f"WaveSpeed task created for paid generation {generation.id} wavespeed_id={generation.wavespeed_request_id}")
+        return JSONResponse(
+            content={"generation_id": str(generation.id), "status": "processing", "output_image_url": None, "error_message": None},
+            status_code=202,
+        )
     except HTTPException:
         raise
     except Exception as e:
@@ -510,6 +582,28 @@ async def purchase_credits(
     )
     logger.info(f"Checkout session created for user {current_user.id} pack={request.pack_id} session={session.id}")
     return {"checkout_url": session.url}
+
+
+# Webhook WaveSpeed: riceve completed/failed, ritorna 2xx subito, elabora in background.
+# Requisiti: HTTPS, 2xx entro 20 min (noi rispondiamo in ms), pubblico.
+# Vedi https://wavespeed.ai/docs/how-to-use-webhooks
+@app.post("/api/webhooks/wavespeed")
+async def wavespeed_webhook(raw: Request):
+    """Riceve POST da WaveSpeed con id, status, outputs?, error?. Risponde 200 subito, elabora in background."""
+    try:
+        body = await raw.json()
+    except Exception:
+        return JSONResponse(content={"received": False}, status_code=400)
+    wid = body.get("id")
+    stat = body.get("status")
+    if not wid or not stat:
+        return JSONResponse(content={"received": True}, status_code=200)
+    outputs = body.get("outputs") or []
+    output_url = outputs[0] if outputs and stat == "completed" else None
+    error = body.get("error")
+
+    asyncio.create_task(_process_wavespeed_webhook_task(wid, stat, output_url, error))
+    return JSONResponse(content={"received": True}, status_code=200)
 
 
 # Webhook Stripe: elabora checkout.session.completed e accredita i crediti

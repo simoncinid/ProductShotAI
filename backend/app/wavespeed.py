@@ -19,9 +19,10 @@ class WaveSpeedClient:
         resolution: str = "8k",
         aspect_ratio: str = "1:1",
         enable_base64_output: bool = False,
-        enable_sync_mode: bool = False
+        enable_sync_mode: bool = False,
+        webhook_url: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Create an edit task and return request_id"""
+        """Create an edit task. Con webhook_url WaveSpeed invia il risultato via POST (no polling)."""
         url = f"{self.base_url}/google/nano-banana-pro/edit-ultra"
         headers = {
             "Content-Type": "application/json",
@@ -36,11 +37,12 @@ class WaveSpeedClient:
             "prompt": prompt,
             "resolution": resolution
         }
-        
+        params = {"webhook": webhook_url} if webhook_url else None
+
         async with httpx.AsyncClient(timeout=self.timeout) as client:
-            response = await client.post(url, headers=headers, json=payload)
+            response = await client.post(url, headers=headers, params=params, json=payload)
             response.raise_for_status()
-            result = response.json()["data"]
+            result = response.json().get("data") or response.json()
             return result
     
     async def get_prediction_result(self, request_id: str) -> Dict[str, Any]:
@@ -59,10 +61,11 @@ class WaveSpeedClient:
     async def poll_for_completion(
         self,
         request_id: str,
-        poll_interval: float = 0.5,
-        timeout_ms: int = 120_000,
+        poll_interval: float = 10.0,
+        timeout_ms: int = 240_000,
     ) -> Dict[str, Any]:
-        """Poll GET /predictions/{id}/result fino a completed/failed o timeout. Timeout e intervallo allineati a 2 min."""
+        """Poll GET /predictions/{id}/result fino a completed/failed o timeout.
+        Intervallo 10s riduce richieste/memoria (evita OOM 512MB su Render). Timeout 4 min."""
         max_attempts = max(1, timeout_ms // int(poll_interval * 1000))
         for _ in range(max_attempts):
             result = await self.get_prediction_result(request_id)

@@ -13,6 +13,32 @@ const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
 const LOADING_MESSAGES = ['Processing your image…', 'Adding the finishing touches...', 'Almost there...']
 
+const POLL_INTERVAL_MS = 3000
+
+function startPolling(
+  generationId: string,
+  deviceId: string | undefined,
+  onCompleted: (imageUrl: string) => void,
+  onFailed: (message: string) => void,
+) {
+  const id = setInterval(async () => {
+    try {
+      const res = await generationApi.getGeneration(generationId, deviceId)
+      if (res.status === 'completed') {
+        clearInterval(id)
+        const url = getAbsoluteImageUrl(res.output_image_url) ?? res.output_image_url ?? ''
+        if (url) onCompleted(url)
+      } else if (res.status === 'failed') {
+        clearInterval(id)
+        onFailed(res.error_message || 'Generation failed')
+      }
+    } catch {
+      // retry al prossimo giro
+    }
+  }, POLL_INTERVAL_MS)
+  return () => clearInterval(id)
+}
+
 export default function CreatePage() {
   const router = useRouter()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -22,8 +48,10 @@ export default function CreatePage() {
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [loadingIndex, setLoadingIndex] = useState(0)
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
   const authenticated = isAuthenticated()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const stopPollingRef = useRef<(() => void) | null>(null)
 
   const uploadMutation = useMutation({
     mutationFn: uploadApi.uploadImage,
@@ -46,11 +74,31 @@ export default function CreatePage() {
       return generationApi.generateFree(data)
     },
     onSuccess: (data) => {
-      toast.success('Generazione completata!')
-      const url = getAbsoluteImageUrl(data.output_image_url) ?? data.output_image_url
-      if (url) setResultImageUrl(url)
+      if (data?.status === 'processing' && data?.generation_id) {
+        const stop = startPolling(
+          data.generation_id,
+          authenticated ? undefined : getDeviceId(),
+          (url) => {
+            setIsGenerating(false)
+            toast.success('Generazione completata!')
+            setResultImageUrl(url)
+          },
+          (msg) => {
+            setIsGenerating(false)
+            toast.error(msg)
+          },
+        )
+        stopPollingRef.current = stop
+      } else if (data?.status === 'completed' && data?.output_image_url) {
+        setIsGenerating(false)
+        toast.success('Generazione completata!')
+        setResultImageUrl(getAbsoluteImageUrl(data.output_image_url) ?? data.output_image_url ?? null)
+      } else {
+        setIsGenerating(false)
+      }
     },
     onError: (error: unknown) => {
+      setIsGenerating(false)
       const errorMsg = error && typeof error === 'object' && 'response' in error
         ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
         : 'Generation failed'
@@ -61,13 +109,19 @@ export default function CreatePage() {
     },
   })
 
-  // Messaggi rotanti durante l'attesa (solo UX, nessun polling verso il backend)
   useEffect(() => {
-    if (!generateMutation.isPending) return
+    return () => {
+      stopPollingRef.current?.()
+    }
+  }, [])
+
+  // Messaggi rotanti durante l'attesa
+  useEffect(() => {
+    if (!isGenerating) return
     setLoadingIndex(0)
     const t = setInterval(() => setLoadingIndex((i) => i + 1), 1500)
     return () => clearInterval(t)
-  }, [generateMutation.isPending])
+  }, [isGenerating])
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -92,6 +146,7 @@ export default function CreatePage() {
       toast.error('Please upload an image and enter a prompt')
       return
     }
+    setIsGenerating(true)
     generateMutation.mutate({
       prompt: prompt.trim(),
       image_url: imageUrl,
@@ -101,7 +156,7 @@ export default function CreatePage() {
     })
   }
 
-  const loadingMessage = generateMutation.isPending ? LOADING_MESSAGES[loadingIndex % LOADING_MESSAGES.length] : ''
+  const loadingMessage = isGenerating ? LOADING_MESSAGES[loadingIndex % LOADING_MESSAGES.length] : ''
 
   return (
     <div className="bg-page-bg">
@@ -240,13 +295,13 @@ export default function CreatePage() {
 
               <button
                 onClick={handleGenerate}
-                disabled={!imageUrl || !prompt.trim() || generateMutation.isPending}
+                disabled={!imageUrl || !prompt.trim() || isGenerating}
                 className="mt-6 w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {generateMutation.isPending ? 'Generating... (30–60 sec)' : 'Generate Image'}
+                {isGenerating ? 'Generating... (30–90 sec)' : 'Generate Image'}
               </button>
 
-              {generateMutation.isPending && (
+              {isGenerating && (
                 <p className="mt-4 text-center text-[14px] text-secondary">{loadingMessage}</p>
               )}
             </div>

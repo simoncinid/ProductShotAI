@@ -8,6 +8,31 @@ import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
 
+const POLL_INTERVAL_MS = 3000
+
+function startPolling(
+  generationId: string,
+  onCompleted: (imageUrl: string) => void,
+  onFailed: (message: string) => void,
+) {
+  const id = setInterval(async () => {
+    try {
+      const res = await generationApi.getGeneration(generationId, undefined)
+      if (res.status === 'completed') {
+        clearInterval(id)
+        const url = getAbsoluteImageUrl(res.output_image_url) ?? res.output_image_url ?? ''
+        if (url) onCompleted(url)
+      } else if (res.status === 'failed') {
+        clearInterval(id)
+        onFailed(res.error_message || 'Generation failed')
+      }
+    } catch {
+      // retry al prossimo giro
+    }
+  }, POLL_INTERVAL_MS)
+  return () => clearInterval(id)
+}
+
 export default function DashboardCreatePage() {
   const router = useRouter()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -16,13 +41,21 @@ export default function DashboardCreatePage() {
   const [prompt, setPrompt] = useState('')
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const stopPollingRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated()) {
       router.push('/login')
     }
   }, [router])
+
+  useEffect(() => {
+    return () => {
+      stopPollingRef.current?.()
+    }
+  }, [])
 
   const uploadMutation = useMutation({
     mutationFn: uploadApi.uploadImage,
@@ -31,20 +64,44 @@ export default function DashboardCreatePage() {
       setImageUrl(data.image_url)
       toast.success('Image uploaded successfully!')
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || 'Upload failed')
+    onError: (error: unknown) => {
+      const msg = error && typeof error === 'object' && 'response' in error
+        ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
+        : null
+      toast.error(msg || 'Upload failed')
     },
   })
 
   const generateMutation = useMutation({
-    mutationFn: (data: any) => generationApi.generatePaid(data),
+    mutationFn: (data: Parameters<typeof generationApi.generatePaid>[0]) => generationApi.generatePaid(data),
     onSuccess: (data) => {
-      toast.success('Generazione completata!')
-      const url = getAbsoluteImageUrl(data.output_image_url) ?? data.output_image_url
-      if (url) setResultImageUrl(url)
+      if (data?.status === 'processing' && data?.generation_id) {
+        stopPollingRef.current = startPolling(
+          data.generation_id,
+          (url) => {
+            setIsGenerating(false)
+            toast.success('Generazione completata!')
+            setResultImageUrl(url)
+          },
+          (msg) => {
+            setIsGenerating(false)
+            toast.error(msg)
+          },
+        )
+      } else if (data?.status === 'completed' && data?.output_image_url) {
+        setIsGenerating(false)
+        toast.success('Generazione completata!')
+        setResultImageUrl(getAbsoluteImageUrl(data.output_image_url) ?? data.output_image_url ?? null)
+      } else {
+        setIsGenerating(false)
+      }
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.detail || 'Generation failed')
+    onError: (error: unknown) => {
+      setIsGenerating(false)
+      const msg = error && typeof error === 'object' && 'response' in error
+        ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
+        : null
+      toast.error(msg || 'Generation failed')
     },
   })
 
@@ -71,14 +128,13 @@ export default function DashboardCreatePage() {
       toast.error('Please upload an image and enter a prompt')
       return
     }
-
-    const deviceId = getDeviceId()
+    setIsGenerating(true)
     generateMutation.mutate({
       prompt: prompt.trim(),
       image_url: imageUrl,
       aspect_ratio: aspectRatio,
       resolution: '8k',
-      device_id: deviceId,
+      device_id: getDeviceId(),
     })
   }
 
@@ -207,18 +263,18 @@ export default function DashboardCreatePage() {
 
           <button
             onClick={handleGenerate}
-            disabled={!imageUrl || !prompt.trim() || generateMutation.isPending}
+            disabled={!imageUrl || !prompt.trim() || isGenerating}
             className="w-full bg-vivid-yellow text-rich-black px-6 py-3 rounded-md font-semibold hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {generateMutation.isPending
-              ? 'Generating... (this may take a minute)'
+            {isGenerating
+              ? 'Generating... (30–90 sec)'
               : 'Generate Image'}
           </button>
 
-          {generateMutation.isPending && (
+          {isGenerating && (
             <div className="text-center text-sm text-gray-600">
               <p>Processing your image...</p>
-              <p className="text-xs mt-1">This usually takes 30-60 seconds</p>
+              <p className="text-xs mt-1">This usually takes 30–90 seconds</p>
             </div>
           )}
         </div>

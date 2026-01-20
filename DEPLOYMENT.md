@@ -126,13 +126,12 @@ Succede se Render usa **Python 3.13**. Soluzione: assicurati che esista `.python
 - Se usi S3, verifica le credenziali AWS
 - Controlla i permessi del filesystem su Render
 
-### "Generation failed" / "error generating image" benché il backend completi
-Il **polling è solo lato backend** (verso WaveSpeed): il frontend invia una POST e aspetta la risposta. Per evitare timeout "a metà" i limiti sono **allineati a 2 minuti**:
-- **Frontend (axios):** 120 000 ms per `generate-free` e `generate-paid`
-- **Backend (wavespeed):** `poll_for_completion` con `poll_interval=500` ms e `timeout_ms=120_000`
-- **Render (proxy):** il request timeout del servizio deve essere **≥ 120 s**. Dashboard → **Settings** → **Advanced** → **Request timeout**
+### "Generation failed" / "error generating image"
+Con **webhook WaveSpeed** il flusso è: POST `generate-free`/`generate-paid` → 202 e `generation_id` → WaveSpeed elabora e invia POST a `/api/webhooks/wavespeed` → il frontend fa polling su GET `/api/generations/{id}`.
 
-Se il proxy Render è < 120 s, chiude la connessione prima che il backend risponda (504 senza CORS, il browser mostra errore CORS).
+- **PUBLIC_BASE_URL** (HTTPS) è obbligatorio: serve per costruire l’URL del webhook (`{PUBLIC_BASE_URL}/api/webhooks/wavespeed`). WaveSpeed richiede HTTPS e indirizzo pubblico.
+- **Render (proxy):** il request timeout può restare 300 s; la POST di generazione ritorna 202 in pochi secondi, non serve attesa lunga.
+- **Migration:** esegui `backend/scripts/migration_wavespeed_webhook.sql` (aggiunge `wavespeed_request_id` a `generations_photoshotai`).
 
 ---
 

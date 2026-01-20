@@ -99,8 +99,15 @@ export const uploadApi = {
   },
 }
 
-// Generation: una sola POST, polling solo backend→WaveSpeed. Timeout 2 min allineati (frontend, WaveSpeed, server).
-const GENERATE_TIMEOUT_MS = 120_000
+// Generation: POST con webhook WaveSpeed ritorna 202 subito; frontend fa polling su getGeneration.
+const GENERATE_TIMEOUT_MS = 60_000  // POST è veloce (solo create task), polling è separato
+
+export type GenerationStatus = {
+  id: string
+  status: string
+  output_image_url?: string | null
+  error_message?: string | null
+}
 
 // Generation
 export const generationApi = {
@@ -123,6 +130,13 @@ export const generationApi = {
   }) => {
     const response = await api.post('/api/generate-paid', data, { timeout: GENERATE_TIMEOUT_MS })
     return response.data
+  },
+  /** Polling sullo stato dopo 202. Per free passare deviceId, per paid usare auth. */
+  getGeneration: async (generationId: string, deviceId?: string): Promise<GenerationStatus> => {
+    const res = await api.get<GenerationStatus>(`/api/generations/${generationId}`, {
+      params: deviceId != null ? { device_id: deviceId } : undefined,
+    })
+    return res.data
   },
 }
 

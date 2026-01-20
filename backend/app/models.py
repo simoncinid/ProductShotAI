@@ -57,6 +57,7 @@ class Generation(Base):
     is_free = Column(Boolean, default=False)
     status = Column(String, default="pending")  # "pending", "processing", "completed", "failed"
     error_message = Column(Text, nullable=True)
+    wavespeed_request_id = Column(String, nullable=True, index=True)  # id WaveSpeed per webhook
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     completed_at = Column(DateTime(timezone=True), nullable=True)
     
