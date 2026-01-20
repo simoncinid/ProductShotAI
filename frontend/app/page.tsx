@@ -133,37 +133,68 @@ export default function Home() {
 
         <div className={`${CONTAINER} relative`}>
           {/* Mobile: titolo → sottotitolo → esempi (BeforeAfter) → CTA. Desktop: 2 col con testo+CTA a sinistra, BeforeAfter a destra. */}
-          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:grid-rows-2 lg:gap-x-16 lg:gap-y-6">
-            {/* A: titolo + sottotitolo */}
-            <div className="order-1 flex flex-col items-center text-center lg:col-start-1 lg:row-start-1 lg:items-start lg:text-left">
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-x-16">
+            {/* Desktop: blocco unico sinistra (titolo + paragrafo + CTA subito sotto, senza spazio) */}
+            <div className="hidden lg:flex lg:col-start-1 lg:row-start-1 lg:flex-col lg:items-start">
               <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-secondary sm:text-xs">Product Photo AI & AI Image Product</p>
               <h1 className="font-extrabold leading-tight text-primary [font-size:clamp(26px,5vw,52px)]">
-                <span className="lg:hidden">Studio-Quality</span>
-                <span className="hidden lg:inline">Studio Quality</span>
+                Studio Quality
                 <br />
                 Product <span className="font-playfair-italic text-brand">Shots</span>
                 <br />
                 in <span className="font-playfair-italic text-brand">Seconds</span>
               </h1>
-              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-secondary sm:text-[16px] md:text-[18px] mx-auto lg:mx-0">
+              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-secondary sm:text-[16px] md:text-[18px]">
+                Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
+              </p>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:gap-4">
+                <Link
+                  href="/create"
+                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                >
+                  Try Free Now
+                </Link>
+                <Link
+                  href="/how-it-works"
+                  className="inline-flex items-center justify-center rounded-full bg-anthracite px-6 py-3 text-[14px] font-semibold text-white transition-smooth hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                >
+                  Learn More
+                </Link>
+              </div>
+              <p className="mt-4 text-[11px] text-secondary sm:text-[12px] md:text-[13px]">
+                Get 3 free watermarked images per month. No credit card required.
+              </p>
+            </div>
+
+            {/* A: titolo + sottotitolo — solo mobile */}
+            <div className="order-1 flex flex-col items-center text-center lg:hidden">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-secondary sm:text-xs">Product Photo AI & AI Image Product</p>
+              <h1 className="font-extrabold leading-tight text-primary [font-size:clamp(26px,5vw,52px)]">
+                Studio-Quality
+                <br />
+                Product <span className="font-playfair-italic text-brand">Shots</span>
+                <br />
+                in <span className="font-playfair-italic text-brand">Seconds</span>
+              </h1>
+              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-secondary sm:text-[16px] md:text-[18px] mx-auto">
                 Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
               </p>
             </div>
 
-            {/* B: BeforeAfter — mobile compatto; desktop: allineato in alto, altezza fino al paragrafo */}
+            {/* B: BeforeAfter — mobile compatto; desktop: allineato in alto, centrato sulla barra Example */}
             <div className="order-2 lg:col-start-2 lg:row-start-1 lg:flex lg:items-start lg:min-w-0 lg:self-start">
               <div className="lg:hidden">
                 <BeforeAfter compact />
               </div>
               <div className="hidden lg:block relative w-full min-w-0">
                 <div className="absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl pointer-events-none" aria-hidden />
-                <BeforeAfter containerClassName="max-h-[340px] max-w-[340px]" />
+                <BeforeAfter containerClassName="max-h-[340px] max-w-[340px] mx-auto" />
               </div>
             </div>
 
-            {/* C: CTA + footnote */}
-            <div className="order-3 flex flex-col items-center lg:col-start-1 lg:row-start-2 lg:items-start">
-              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center lg:justify-start">
+            {/* C: CTA + footnote — solo mobile */}
+            <div className="order-3 flex flex-col items-center lg:hidden">
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center">
                 <Link
                   href="/create"
                   className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
