@@ -4,7 +4,8 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { userApi, getAbsoluteImageUrl } from '@/lib/api'
+import { userApi } from '@/lib/api'
+// import { getAbsoluteImageUrl } from '@/lib/api' // per Recent Generations
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 
@@ -25,11 +26,12 @@ export default function DashboardPage() {
     retry: false,
   })
 
-  const { data: generations, isLoading: gensLoading } = useQuery({
-    queryKey: ['generations'],
-    queryFn: () => userApi.getGenerations(1, 10),
-    enabled: authenticated,
-  })
+  // Recent Generations: disattivato (commentato)
+  // const { data: generations, isLoading: gensLoading } = useQuery({
+  //   queryKey: ['generations'],
+  //   queryFn: () => userApi.getGenerations(1, 10),
+  //   enabled: authenticated,
+  // })
 
   if (!authenticated || userLoading) {
     return (
@@ -92,8 +94,8 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* Recent Generations */}
-      <div>
+      {/* Recent Generations — disattivato (commentato). Per riattivare: decommentare useQuery generations, import getAbsoluteImageUrl e questo blocco. */}
+      {/* <div>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-rich-black">Recent Generations</h2>
           {generations && generations.total > 0 && (
@@ -155,7 +157,7 @@ export default function DashboardPage() {
             </Link>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   )
 }
