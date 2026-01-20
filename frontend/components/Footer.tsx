@@ -12,9 +12,9 @@ export function Footer() {
         <nav className="flex flex-wrap items-center justify-center gap-6 text-[13px]">
           <Link href="/privacy" className="hover:text-white transition">Privacy</Link>
           <Link href="/terms" className="hover:text-white transition">Terms</Link>
-          <a href="mailto:support@productshotai.com" className="hover:text-white transition">Contact</a>
+          <a href="mailto:reservationwebbitz@gmail.com" className="hover:text-white transition">Contact</a>
         </nav>
-        <p className="text-[13px]">© ProductShotAI, All rights reserved</p>
+        <p className="text-[13px]">© 2026 ProductShotAI. All rights reserved.</p>
       </div>
     </footer>
   )

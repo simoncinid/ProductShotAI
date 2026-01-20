@@ -7,79 +7,132 @@ export default function TermsPage() {
 
       <div className="prose prose-lg max-w-none">
         <p className="text-gray-600 mb-6">
-          <strong>Last updated:</strong> January 2024
+          <strong>Last updated:</strong> January 2026
         </p>
 
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-rich-black mb-4">1. Acceptance of Terms</h2>
           <p className="text-gray-700 leading-relaxed">
-            By accessing and using ProductShotAI, you accept and agree to be bound by the terms and provision of this agreement.
+            By accessing or using ProductShotAI (&quot;Service&quot;, &quot;we&quot;, &quot;us&quot;, &quot;our&quot;), you agree to be bound by these Terms and Conditions and our Privacy Policy. If you do not agree, do not use the Service. If you use the Service on behalf of an organization, you represent that you have authority to bind that organization.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-bold text-rich-black mb-4">2. Use License</h2>
+          <h2 className="text-2xl font-bold text-rich-black mb-4">2. Description of the Service</h2>
+          <p className="text-gray-700 leading-relaxed">
+            ProductShotAI provides AI‑powered tools to transform product images (e.g. for e‑commerce). The Service involves uploading images, storing them in our systems and on cloud infrastructure, delivering them via a content delivery network (e.g. CloudFront), and processing them through third‑party AI services (e.g. WaveSpeed) to generate new images.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-rich-black mb-4">3. Your Content and Images — Important Disclaimer</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            Permission is granted to temporarily use ProductShotAI for personal and commercial purposes. This is the grant of a license, not a transfer of title, and under this license you may not:
+            <strong>You are solely responsible for the content you upload.</strong> You represent that you have all necessary rights to upload and process such content and that it does not infringe third‑party rights or violate any law.
+          </p>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            <strong>Image processing and storage:</strong> Your images are stored in our database (as references and metadata), in our cloud storage, and are delivered via a CDN. They are transmitted to WaveSpeed (or similar AI providers) for processing. These systems and third parties may be subject to access, security incidents, or other risks.
+          </p>
+          <p className="text-gray-700 leading-relaxed p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <strong>Do not upload private, confidential, or sensitive images</strong> if you are not willing to accept the risks of storage, CDN delivery, and transmission to AI providers. We implement reasonable security measures but cannot guarantee that your images will never be accessed, disclosed, or used by unauthorized parties. By uploading images, you acknowledge these risks and agree that we are not liable for any such access, disclosure, or use except where prohibited by mandatory law.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-rich-black mb-4">4. Licence to Use the Service</h2>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            We grant you a limited, non‑exclusive, non‑transferable, revocable licence to use the Service for personal or commercial use in accordance with these Terms. You may not:
           </p>
           <ul className="list-disc list-inside text-gray-700 space-y-2">
-            <li>Modify or copy the materials</li>
-            <li>Use the materials for any commercial purpose without proper authorization</li>
-            <li>Attempt to reverse engineer any software contained in ProductShotAI</li>
-            <li>Remove any copyright or other proprietary notations from the materials</li>
+            <li>Reverse engineer, decompile, or extract the source code of the Service (except to the extent permitted by mandatory law)</li>
+            <li>Circumvent usage limits, security, or access controls</li>
+            <li>Use the Service for illegal, harmful, or abusive purposes, or to infringe others&apos; rights</li>
+            <li>Resell, sublicense, or provide the Service as a managed service to third parties without our prior written consent</li>
+            <li>Remove or alter any copyright, trademark, or proprietary notices</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-bold text-rich-black mb-4">3. Generated Images</h2>
+          <h2 className="text-2xl font-bold text-rich-black mb-4">5. Generated Images and Intellectual Property</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            When you generate an image using ProductShotAI:
+            Subject to your compliance with these Terms and your rights in the input content, you may use the images generated by the Service for your commercial or personal purposes. You remain responsible for ensuring that such use complies with platform rules (e.g. Amazon, marketplaces) and applicable law. We do not guarantee that generated images will meet any specific platform or legal requirements.
+          </p>
+          <p className="text-gray-700 leading-relaxed">
+            Free‑tier or trial outputs may include watermarks and are for evaluation only. The Service, its software, design, and branding remain our property or our licensors&apos;; nothing in these Terms transfers any such rights to you.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-rich-black mb-4">6. Credits, Payments, and Refunds</h2>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            Use of certain features may require credits or paid plans. Credits and fees are as displayed at the time of purchase. Unless otherwise stated:
           </p>
           <ul className="list-disc list-inside text-gray-700 space-y-2">
-            <li>You own the rights to use the generated image for commercial purposes</li>
-            <li>You are responsible for ensuring the image complies with platform requirements (e.g., Amazon's policies)</li>
-            <li>We do not guarantee that generated images will meet all platform requirements</li>
-            <li>Free tier images include watermarks and are for evaluation purposes</li>
+            <li>Credits purchased are generally non‑refundable and do not expire unless we specify otherwise.</li>
+            <li>You are responsible for maintaining the security of your account and for all activity under it.</li>
+            <li>We may change pricing or credit rules with reasonable notice; continued use after changes constitutes acceptance.</li>
+          </ul>
+          <p className="text-gray-700 leading-relaxed mt-4">
+            Refund requests may be considered on a case‑by‑case basis; contact <strong>reservationwebbitz@gmail.com</strong>. Mandatory consumer rights in your jurisdiction remain unaffected.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-rich-black mb-4">7. Disclaimer of Warranties</h2>
+          <p className="text-gray-700 leading-relaxed">
+            THE SERVICE IS PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot;. TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON‑INFRINGEMENT. WE DO NOT WARRANT THAT THE SERVICE WILL BE UNINTERRUPTED, ERROR‑FREE, OR SECURE. YOU USE THE SERVICE AND UPLOAD CONTENT AT YOUR OWN RISK.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-rich-black mb-4">8. Limitation of Liability</h2>
+          <p className="text-gray-700 leading-relaxed mb-4">
+            TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW:
+          </p>
+          <ul className="list-disc list-inside text-gray-700 space-y-2">
+            <li>WE AND OUR AFFILIATES, DIRECTORS, EMPLOYEES, AND AGENTS SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES (INCLUDING LOSS OF DATA, PROFITS, REVENUE, OR BUSINESS) ARISING FROM OR RELATED TO THE SERVICE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</li>
+            <li>OUR TOTAL AGGREGATE LIABILITY FOR ALL CLAIMS ARISING FROM OR RELATED TO THE SERVICE SHALL NOT EXCEED THE AMOUNT YOU PAID US IN THE 12 MONTHS PRECEDING THE CLAIM (OR 100 EUR/USD IF GREATER), EXCEPT WHERE MANDATORY LAW REQUIRES A HIGHER LIABILITY.</li>
+          </ul>
+          <p className="text-gray-700 leading-relaxed mt-4">
+            Some jurisdictions do not allow the exclusion or limitation of certain warranties or liabilities; in those jurisdictions, our liability is limited to the maximum extent permitted by law.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-rich-black mb-4">9. Indemnification</h2>
+          <p className="text-gray-700 leading-relaxed">
+            You agree to indemnify, defend, and hold harmless ProductShotAI, its affiliates, and their respective directors, employees, and agents from and against any claims, damages, losses, and costs (including reasonable legal fees) arising from (a) your use of the Service, (b) your content or images, (c) your breach of these Terms or any law, or (d) your infringement of third‑party rights.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-rich-black mb-4">10. Termination and Suspension</h2>
+          <p className="text-gray-700 leading-relaxed">
+            We may suspend or terminate your access to the Service at any time, with or without cause or notice, including for breach of these Terms. You may stop using the Service and request account deletion at any time. Upon termination, your right to use the Service ceases. Provisions that by their nature should survive (e.g. disclaimers, limitation of liability, indemnification, governing law) shall survive.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-rich-black mb-4">11. Modifications to the Terms</h2>
+          <p className="text-gray-700 leading-relaxed">
+            We may modify these Terms from time to time. We will post the updated Terms on this page and update the &quot;Last updated&quot; date. Material changes may be communicated by email or a notice on the Service where required. Continued use after the effective date constitutes acceptance. If you do not agree, you must stop using the Service.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-rich-black mb-4">12. General</h2>
+          <ul className="list-disc list-inside text-gray-700 space-y-2">
+            <li><strong>Entire agreement:</strong> These Terms and the Privacy Policy constitute the entire agreement between you and ProductShotAI regarding the Service.</li>
+            <li><strong>Severability:</strong> If any provision is held invalid or unenforceable, the remaining provisions remain in effect.</li>
+            <li><strong>Waiver:</strong> Our failure to enforce any right does not waive that right.</li>
+            <li><strong>Assignment:</strong> You may not assign these Terms; we may assign them in connection with a merger, acquisition, or sale of assets.</li>
+            <li><strong>Governing law and disputes:</strong> These Terms are governed by the laws of the country in which the operator of ProductShotAI is established, without regard to conflict‑of‑law rules. Disputes shall be subject to the exclusive jurisdiction of the courts of that country, without prejudice to any mandatory rights you may have as a consumer in your country of residence.</li>
           </ul>
         </section>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-bold text-rich-black mb-4">4. Credits and Payments</h2>
-          <p className="text-gray-700 leading-relaxed mb-4">
-            Credits purchased are non-refundable but never expire. You are responsible for:
-          </p>
-          <ul className="list-disc list-inside text-gray-700 space-y-2">
-            <li>Maintaining the security of your account</li>
-            <li>All activities that occur under your account</li>
-            <li>Ensuring you have sufficient credits before generating images</li>
-          </ul>
-        </section>
-
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-rich-black mb-4">5. Disclaimer</h2>
+          <h2 className="text-2xl font-bold text-rich-black mb-4">13. Contact</h2>
           <p className="text-gray-700 leading-relaxed">
-            The materials on ProductShotAI are provided on an 'as is' basis. ProductShotAI makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
-          </p>
-        </section>
-
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-rich-black mb-4">6. Limitations</h2>
-          <p className="text-gray-700 leading-relaxed">
-            In no event shall ProductShotAI or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on ProductShotAI, even if ProductShotAI or a ProductShotAI authorized representative has been notified orally or in writing of the possibility of such damage.
-          </p>
-        </section>
-
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-rich-black mb-4">7. Revisions</h2>
-          <p className="text-gray-700 leading-relaxed">
-            ProductShotAI may revise these terms of service at any time without notice. By using this website you are agreeing to be bound by the then current version of these terms of service.
-          </p>
-        </section>
-
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-rich-black mb-4">8. Contact Information</h2>
-          <p className="text-gray-700 leading-relaxed">
-            If you have any questions about these Terms and Conditions, please contact us at support@productshotai.com
+            For questions about these Terms and Conditions: <strong>reservationwebbitz@gmail.com</strong>.
           </p>
         </section>
       </div>
