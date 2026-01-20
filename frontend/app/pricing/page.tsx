@@ -75,7 +75,6 @@ export default function PricingPage() {
   }
 
   const packs = packsData?.packs || []
-  const isDark = (id: string) => (id || '').toLowerCase() === 'starter'
   const isPopular = (id: string) => (id || '').toLowerCase() === 'standard'
 
   return (
@@ -117,25 +116,24 @@ export default function PricingPage() {
         <div className={CONTAINER}>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {packs.map((pack: { id: string; name: string; total_price: number; credits: number; price_per_credit: number }) => {
-              const dark = isDark(pack.id)
               const popular = isPopular(pack.id)
               return (
                 <div
                   key={pack.id}
-                  className={`group relative flex flex-col rounded-[20px] p-6 transition-smooth ${
-                    dark ? 'bg-anthracite text-white' : 'bg-white shadow-soft'
-                  } ${popular ? 'ring-2 ring-brand ring-offset-2' : ''} hover:-translate-y-1 hover:shadow-card-hover`}
+                  className={`group relative flex flex-col rounded-[20px] bg-white p-6 shadow-soft transition-smooth ${
+                    popular ? 'ring-2 ring-brand ring-offset-2' : ''
+                  } hover:-translate-y-1 hover:shadow-card-hover`}
                 >
                   {popular && (
                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-primary">
                       Most Popular
                     </span>
                   )}
-                  <h3 className="text-base font-semibold capitalize">{pack.name}</h3>
-                  <p className={`mt-3 text-[32px] font-bold ${dark ? 'text-white' : 'text-brand'}`}>
+                  <h3 className="text-base font-semibold capitalize text-primary">{pack.name}</h3>
+                  <p className="mt-3 text-[32px] font-bold text-brand">
                     ${pack.total_price.toFixed(2)}
                   </p>
-                  <p className={dark ? 'text-[13px] text-gray-400' : 'text-[13px] text-secondary'}>
+                  <p className="text-[13px] text-secondary">
                     {pack.credits} credits – ${pack.price_per_credit.toFixed(2)} each
                   </p>
                   <button
@@ -144,8 +142,6 @@ export default function PricingPage() {
                     className={`mt-6 w-full rounded-full py-3 text-center text-[14px] font-semibold transition-smooth disabled:opacity-50 ${
                       popular
                         ? 'bg-brand text-primary hover:scale-[1.02] hover:shadow-soft-hover'
-                        : dark
-                        ? 'border border-white/40 text-white hover:bg-white/10'
                         : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-white'
                     }`}
                   >
