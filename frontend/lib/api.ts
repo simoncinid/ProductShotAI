@@ -2,6 +2,14 @@ import axios from 'axios'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
+/** Converte URL relative (es. /storage/xxx) in assoluti usando il backend, così le img funzionano da frontend su altro dominio. */
+export function getAbsoluteImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  const base = API_URL.replace(/\/$/, '')
+  return `${base}${url.startsWith('/') ? url : '/' + url}`
+}
+
 const api = axios.create({
   baseURL: API_URL,
   headers: {

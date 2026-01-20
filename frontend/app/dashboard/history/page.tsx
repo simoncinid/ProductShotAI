@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { userApi } from '@/lib/api'
+import { userApi, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 
 const PAGE_SIZE = 12
@@ -71,7 +71,7 @@ export default function DashboardHistoryPage() {
               >
                 {gen.output_image_url ? (
                   <img
-                    src={gen.output_image_url}
+                    src={getAbsoluteImageUrl(gen.output_image_url) ?? gen.output_image_url}
                     alt="Generated"
                     className="w-full h-48 object-cover"
                   />
@@ -86,7 +86,7 @@ export default function DashboardHistoryPage() {
                     <span>{new Date(gen.created_at).toLocaleDateString()}</span>
                     {gen.output_image_url && (
                       <a
-                        href={gen.output_image_url}
+                        href={getAbsoluteImageUrl(gen.output_image_url) ?? gen.output_image_url}
                         download
                         className="text-vivid-yellow hover:underline font-medium"
                       >
