@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useMutation } from '@tanstack/react-query'
 import { authApi } from '@/lib/api'
 import { setAuthToken } from '@/lib/auth'
@@ -38,7 +39,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="rounded-[20px] border border-gray-100 bg-white p-8 shadow-soft md:p-10">
           <div className="flex flex-col items-center text-center">
-            <div className="flex items-center gap-4">
+            <Image src="/logo.png" alt="" width={48} height={48} className="object-contain" />
+            <div className="mt-4 flex items-center gap-4">
               <span className="h-px w-8 bg-gray-300 md:w-12" />
               <p className="font-script text-2xl text-primary md:text-3xl">Sign in</p>
               <span className="h-px w-8 bg-gray-300 md:w-12" />

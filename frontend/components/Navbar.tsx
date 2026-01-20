@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { userApi, authApi } from '@/lib/api'
@@ -12,7 +13,6 @@ const navLinks = [
   { href: '/pricing', label: 'Pricing' },
   { href: '/faq', label: 'FAQ' },
   { href: '/create', label: 'Try free' },
-  { href: '/login', label: 'Login' },
 ]
 
 export function Navbar() {
@@ -43,7 +43,8 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 h-[72px] bg-white shadow-[0_1px_0_0_rgba(15,23,42,0.06)]">
       <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-6 md:px-10 lg:px-14">
-        <Link href="/" className="flex items-center" onClick={() => setIsMenuOpen(false)}>
+        <Link href="/" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+          <Image src="/logo.png" alt="" width={36} height={36} className="object-contain" />
           <span className="font-extrabold tracking-wide text-primary">
             Product<span className="text-brand">Shot</span>AI
           </span>
@@ -95,8 +96,14 @@ export function Navbar() {
                 </Link>
               ))}
               <Link
+                href="/login"
+                className="ml-2 rounded-full bg-sky-200 px-6 py-2.5 text-[14px] font-semibold text-sky-900 transition-smooth hover:scale-[1.02] hover:bg-sky-300 hover:shadow-soft-hover"
+              >
+                Login
+              </Link>
+              <Link
                 href="/signup"
-                className="ml-2 rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-primary transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+                className="rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-primary transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
               >
                 Sign Up
               </Link>
@@ -146,7 +153,8 @@ export function Navbar() {
                   {label}
                 </Link>
               ))}
-              <Link href="/signup" className="mt-4 block rounded-full bg-brand px-6 py-3 text-center font-semibold text-primary" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+              <Link href="/login" className="mt-4 block rounded-full bg-sky-200 px-6 py-3 text-center font-semibold text-sky-900" onClick={() => setIsMenuOpen(false)}>Login</Link>
+              <Link href="/signup" className="mt-2 block rounded-full bg-brand px-6 py-3 text-center font-semibold text-primary" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
             </>
           )}
         </nav>
