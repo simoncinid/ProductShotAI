@@ -280,16 +280,57 @@ async def upload_image(
     return {"image_url": image_url}
 
 
-# Free generation: una POST, polling solo backend→WaveSpeed (500ms, 2 min), risposta con output_image_url.
-# Timeout allineati: frontend 2 min, wavespeed poll 2 min; su Render impostare request timeout ≥120s.
+def _ensure_absolute_image_url(url: str) -> str:
+    """WaveSpeed richiede URL assoluti e pubblici. Converte /storage/... in base+url se serve."""
+    if not url:
+        return url
+    if url.startswith("http://") or url.startswith("https://"):
+        return url
+    if url.startswith("/") and settings.public_base_url:
+        return settings.public_base_url.rstrip("/") + url
+    return url
+
+
+async def _run_wavespeed_and_fetch_output(
+    image_url: str,
+    prompt: str,
+    resolution: str,
+    aspect_ratio: str,
+) -> bytes:
+    """
+    Logica condivisa: crea task WaveSpeed, poll fino a completed, scarica output.
+    Stesso identico flusso per free e paid. Ritorna i bytes dell'immagine generata.
+    Solleva in caso di errore o timeout.
+    """
+    ws = wavespeed.get_wavespeed_client()
+    task_result = await ws.create_edit_task(
+        image_url=image_url,
+        prompt=prompt,
+        resolution=resolution,
+        aspect_ratio=aspect_ratio,
+    )
+    request_id = task_result["id"]
+    final_result = await ws.poll_for_completion(request_id)
+    if final_result.get("status") != "completed":
+        err = final_result.get("error", "Unknown error")
+        raise Exception(f"WaveSpeed status not completed: {err}")
+    output_url = final_result["outputs"][0]
+    async with httpx.AsyncClient(timeout=httpx.Timeout(60.0)) as client:
+        resp = await client.get(output_url)
+        resp.raise_for_status()
+        return resp.content
+
+
+# Free generation: stesso flusso di paid (WaveSpeed + fetch). Unica differenza: watermark prima dell'upload.
+# Timeout: frontend 2 min, wavespeed 2 min; su Render request timeout ≥120s.
 @app.post("/api/generate-free", response_model=schemas.GenerateResponse)
-@limiter.limit("5/minute")
+@limiter.limit("10/minute")
 async def generate_free(
     request: Request,
     generate_request: schemas.GenerateRequest,
     db: AsyncSession = Depends(get_db)
 ):
-    """Generate image for free (with watermark). Polling verso WaveSpeed solo in backend; risposta in stessa richiesta."""
+    """Generate image for free (with watermark). Stessa pipeline di generate_paid + watermark."""
     ip_address = utils.get_client_ip(request)
     if not generate_request.device_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="device_id is required")
@@ -313,45 +354,37 @@ async def generate_free(
     await db.commit()
     await db.refresh(generation)
     try:
-        wavespeed_client = wavespeed.get_wavespeed_client()
-        logger.info(f"Creating WaveSpeed task for generation {generation.id}")
-        task_result = await wavespeed_client.create_edit_task(
-            image_url=generate_request.image_url,
-            prompt=generate_request.prompt,
-            resolution=generate_request.resolution,
-            aspect_ratio=generate_request.aspect_ratio,
-        )
-        request_id = task_result["id"]
+        image_url = _ensure_absolute_image_url(generate_request.image_url)
         generation.status = "processing"
         await db.commit()
-        logger.info(f"Polling for completion of generation {generation.id}")
-        final_result = await wavespeed_client.poll_for_completion(request_id)
-        if final_result.get("status") == "completed":
-            output_url = final_result["outputs"][0]
-            async with httpx.AsyncClient() as client:
-                resp = await client.get(output_url)
-                resp.raise_for_status()
-                output_image_bytes = resp.content
-            watermarked_bytes = await watermark.apply_watermark(output_image_bytes)
-            storage_adapter = get_storage_adapter()
-            final_image_url = await storage_adapter.upload_file(watermarked_bytes, ".jpg")
-            generation.status = "completed"
-            generation.output_image_url = final_image_url
-            generation.completed_at = datetime.utcnow()
-            await db.commit()
-            await utils.increment_free_generation_count(db, generate_request.device_id, ip_address)
-            logger.info(f"Generation {generation.id} completed successfully")
-            return {"generation_id": generation.id, "status": "completed", "output_image_url": final_image_url}
-        error_msg = final_result.get("error", "Unknown error")
-        generation.status = "failed"
-        generation.error_message = error_msg
+
+        logger.info(f"Creating WaveSpeed task for free generation {generation.id}")
+        output_image_bytes = await _run_wavespeed_and_fetch_output(
+            image_url=image_url,
+            prompt=generate_request.prompt,
+            resolution=generate_request.resolution or "8k",
+            aspect_ratio=generate_request.aspect_ratio or "1:1",
+        )
+        watermarked_bytes = await watermark.apply_watermark(output_image_bytes)
+        storage_adapter = get_storage_adapter()
+        final_image_url = await storage_adapter.upload_file(watermarked_bytes, ".jpg")
+
+        generation.status = "completed"
+        generation.output_image_url = final_image_url
         generation.completed_at = datetime.utcnow()
         await db.commit()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Generation failed: {error_msg}")
+
+        try:
+            await utils.increment_free_generation_count(db, generate_request.device_id, ip_address)
+        except Exception as inc:
+            logger.warning(f"increment_free_generation_count failed (generation {generation.id}): {inc}")
+
+        logger.info(f"Free generation {generation.id} completed successfully")
+        return {"generation_id": generation.id, "status": "completed", "output_image_url": final_image_url}
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error in generation {generation.id}: {str(e)}")
+        logger.exception(f"Error in free generation {generation.id}: {e}")
         generation.status = "failed"
         generation.error_message = str(e)
         generation.completed_at = datetime.utcnow()
@@ -359,7 +392,7 @@ async def generate_free(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Generation failed: {str(e)}")
 
 
-# Paid generation endpoint
+# Paid generation: stesso flusso di free (WaveSpeed + fetch). Unica differenza: niente watermark.
 @app.post("/api/generate-paid", response_model=schemas.GenerateResponse)
 @limiter.limit("10/minute")
 async def generate_paid(
@@ -368,18 +401,13 @@ async def generate_paid(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """Generate image for paid users (no watermark)"""
-    # Check credits
+    """Generate image for paid users (no watermark). Stessa pipeline di generate_free senza watermark."""
     if current_user.credits_balance < 1:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Insufficient credits. Please purchase credits to continue."
         )
-    
-    # Get client IP
     ip_address = utils.get_client_ip(request)
-    
-    # Create generation record
     generation = Generation(
         user_id=current_user.id,
         device_id=generate_request.device_id,
@@ -394,86 +422,45 @@ async def generate_paid(
     db.add(generation)
     await db.commit()
     await db.refresh(generation)
-    
     try:
-        # Call WaveSpeed API
-        wavespeed_client = wavespeed.get_wavespeed_client()
-        
-        logger.info(f"Creating WaveSpeed task for paid generation {generation.id}")
-        task_result = await wavespeed_client.create_edit_task(
-            image_url=generate_request.image_url,
-            prompt=generate_request.prompt,
-            resolution=generate_request.resolution,
-            aspect_ratio=generate_request.aspect_ratio
-        )
-        request_id = task_result["id"]
-        
-        # Update generation status
+        image_url = _ensure_absolute_image_url(generate_request.image_url)
         generation.status = "processing"
         await db.commit()
-        
-        # Poll for completion
-        logger.info(f"Polling for completion of generation {generation.id}")
-        final_result = await wavespeed_client.poll_for_completion(request_id)
-        
-        if final_result.get("status") == "completed":
-            output_url = final_result["outputs"][0]
-            
-            # Download output image
-            async with httpx.AsyncClient() as client:
-                response = await client.get(output_url)
-                response.raise_for_status()
-                output_image_bytes = response.content
-            
-            # Upload final image (no watermark)
-            storage_adapter = get_storage_adapter()
-            final_image_url = await storage_adapter.upload_file(output_image_bytes, ".jpg")
-            
-            # Update generation
-            generation.status = "completed"
-            generation.output_image_url = final_image_url
-            generation.completed_at = datetime.utcnow()
-            
-            # Deduct credit and create transaction
-            current_user.credits_balance -= 1
-            transaction = CreditTransaction(
-                user_id=current_user.id,
-                change_amount=-1,
-                type="generation",
-                reference_id=generation.id
-            )
-            db.add(transaction)
-            await db.commit()
-            
-            logger.info(f"Paid generation {generation.id} completed successfully")
-            return {
-                "generation_id": generation.id,
-                "status": "completed",
-                "output_image_url": final_image_url
-            }
-        else:
-            error_msg = final_result.get("error", "Unknown error")
-            generation.status = "failed"
-            generation.error_message = error_msg
-            generation.completed_at = datetime.utcnow()
-            await db.commit()
-            
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Generation failed: {error_msg}"
-            )
-    
+
+        logger.info(f"Creating WaveSpeed task for paid generation {generation.id}")
+        output_image_bytes = await _run_wavespeed_and_fetch_output(
+            image_url=image_url,
+            prompt=generate_request.prompt,
+            resolution=generate_request.resolution or "8k",
+            aspect_ratio=generate_request.aspect_ratio or "1:1",
+        )
+        storage_adapter = get_storage_adapter()
+        final_image_url = await storage_adapter.upload_file(output_image_bytes, ".jpg")
+
+        generation.status = "completed"
+        generation.output_image_url = final_image_url
+        generation.completed_at = datetime.utcnow()
+        current_user.credits_balance -= 1
+        transaction = CreditTransaction(
+            user_id=current_user.id,
+            change_amount=-1,
+            type="generation",
+            reference_id=generation.id
+        )
+        db.add(transaction)
+        await db.commit()
+
+        logger.info(f"Paid generation {generation.id} completed successfully")
+        return {"generation_id": generation.id, "status": "completed", "output_image_url": final_image_url}
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Error in paid generation {generation.id}: {str(e)}")
+        logger.exception(f"Error in paid generation {generation.id}: {e}")
         generation.status = "failed"
         generation.error_message = str(e)
         generation.completed_at = datetime.utcnow()
         await db.commit()
-        
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Generation failed: {str(e)}"
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Generation failed: {str(e)}")
 
 
 # Credit endpoints

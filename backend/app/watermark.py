@@ -21,21 +21,30 @@ async def apply_watermark(image_bytes: bytes) -> bytes:
     # Watermark text
     watermark_text = "AI SAMPLE – UPGRADE FOR CLEAN IMAGE"
     
-    # Try to load a font, fallback to default if not available
-    try:
-        # Try to use a bold font
-        font_size = max(width, height) // 20
-        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size)
-    except:
+    # Font: percorsi per macOS, Linux (Debian/Ubuntu/Render), fallback default
+    font_size = max(width, height) // 20
+    font = None
+    for path in (
+        "/System/Library/Fonts/Helvetica.ttc",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+    ):
         try:
-            font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", font_size)
-        except:
-            font = ImageFont.load_default()
-    
-    # Get text bounding box
-    bbox = draw.textbbox((0, 0), watermark_text, font=font)
-    text_width = bbox[2] - bbox[0]
-    text_height = bbox[3] - bbox[1]
+            font = ImageFont.truetype(path, font_size)
+            break
+        except Exception:
+            continue
+    if font is None:
+        font = ImageFont.load_default()
+
+    # Bounding box testo (textbbox in Pillow 8+; fallback per versioni vecchie)
+    try:
+        bbox = draw.textbbox((0, 0), watermark_text, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+    except AttributeError:
+        text_width = width // 2
+        text_height = max(font_size, height // 20)
     
     # Calculate diagonal position (from top-left to bottom-right)
     # Position text in center with rotation
