@@ -141,6 +141,7 @@ class BrandIdentityUpdate(BaseModel):
     photo_style: Optional[dict] = None
     color_palette: Optional[dict] = None
     brand_notes: Optional[str] = None
+    analysis_text: Optional[str] = None
 
 
 class BrandIdentityResponse(BaseModel):
@@ -185,6 +186,7 @@ class ProductUpdate(BaseModel):
     category: Optional[str] = None
     default_apply_brand_identity: Optional[bool] = None
     product_prompt: Optional[str] = None
+    analysis_text: Optional[str] = None
 
 
 class ProductListItem(BaseModel):

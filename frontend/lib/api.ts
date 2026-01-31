@@ -99,6 +99,7 @@ export const brandIdentityApi = {
     photo_style?: Record<string, unknown>
     color_palette?: Record<string, unknown>
     brand_notes?: string
+    analysis_text?: string
   }) => {
     const response = await api.post('/api/brand-identity', data)
     return response.data
@@ -151,6 +152,7 @@ export const productsApi = {
     category?: string
     default_apply_brand_identity?: boolean
     product_prompt?: string
+    analysis_text?: string
   }) => {
     const response = await api.put(`/api/products/${id}`, data)
     return response.data

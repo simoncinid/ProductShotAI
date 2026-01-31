@@ -90,6 +90,8 @@ async def create_or_update_brand_identity(
             bi.color_palette = body.color_palette
         if body.brand_notes is not None:
             bi.brand_notes = body.brand_notes
+        if body.analysis_text is not None:
+            bi.analysis_text = body.analysis_text
         db.add(bi)
     else:
         bi = BrandIdentity(

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
+import Link from 'next/link'
 import { generationsApi, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 
@@ -32,8 +32,7 @@ export default function GenerationsNoProductPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <Link href="/dashboard" className="text-vivid-yellow hover:underline mb-6 inline-block">← Dashboard</Link>
-      <h1 className="text-2xl font-bold text-rich-black mb-6">Generations (No product)</h1>
+      <h1 className="text-2xl font-bold text-rich-black mb-6">Generazioni (senza prodotto)</h1>
       <p className="text-gray-600 mb-6">Generations created without selecting a product.</p>
 
       {isLoading ? (

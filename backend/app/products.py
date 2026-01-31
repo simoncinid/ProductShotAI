@@ -142,6 +142,8 @@ async def update_product(
         product.default_apply_brand_identity = body.default_apply_brand_identity
     if body.product_prompt is not None:
         product.product_prompt = body.product_prompt.strip() or product.product_prompt
+    if body.analysis_text is not None:
+        product.analysis_text = body.analysis_text
     db.add(product)
     await db.commit()
     await db.refresh(product)
