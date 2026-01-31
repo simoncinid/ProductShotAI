@@ -217,6 +217,7 @@ export type GenerationStatus = {
   status: string
   output_image_url?: string | null
   error_message?: string | null
+  product_id?: string | null
 }
 
 // Generation
@@ -266,6 +267,40 @@ export const creditsApi = {
       cancel_url: cancelUrl,
     })
     return response.data
+  },
+}
+
+// Shooting (product photoshooting)
+export const shootingApi = {
+  createPrompts: async (data: { product_id: string; shooting_style: string; count: number }) => {
+    const response = await api.post('/api/shooting/prompts', data)
+    return response.data as { prompts: string[] }
+  },
+  generate: async (data: { product_id: string; reference_image_url: string; prompts: string[]; aspect_ratio?: string }) => {
+    const response = await api.post('/api/shooting/generate', {
+      ...data,
+      aspect_ratio: data.aspect_ratio || '1:1',
+    })
+    return response.data as { shooting_id: string; generation_ids: string[] }
+  },
+  get: async (shootingId: string) => {
+    const response = await api.get(`/api/shooting/${shootingId}`)
+    return response.data as {
+      id: string
+      product_id: string | null
+      reference_image_url: string
+      prompts: string[]
+      status: string
+      created_at: string
+      generations: Array<{
+        id: string
+        status: string
+        output_image_url: string | null
+        error_message: string | null
+        prompt: string
+        created_at: string
+      }>
+    }
   },
 }
 

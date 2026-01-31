@@ -36,7 +36,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
+      <div className="grid md:grid-cols-2 gap-6 mb-6">
         <Link
           href="/dashboard/create"
           className="bg-rich-black text-white p-6 rounded-lg hover:bg-opacity-90 transition"
@@ -56,6 +56,17 @@ export default function DashboardPage() {
           </p>
         </Link>
       </div>
+
+      {/* Product Photoshooting - full width */}
+      <Link
+        href="/dashboard/shooting"
+        className="block w-full bg-vivid-yellow text-rich-black p-6 rounded-lg hover:bg-opacity-90 transition mb-8"
+      >
+        <h3 className="text-xl font-semibold mb-2">Genera product photoshooting</h3>
+        <p className="text-rich-black opacity-90">
+          Crea un intero set di foto prodotto (2–10 scatti) con stile coerente: zoom sui dettagli, lifestyle, studio, mix. Scegli il prodotto, una foto di riferimento e i prompt generati da AI.
+        </p>
+      </Link>
     </div>
   )
 }

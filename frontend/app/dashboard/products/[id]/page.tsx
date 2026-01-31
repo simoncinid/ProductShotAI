@@ -136,22 +136,19 @@ export default function ProductDetailPage() {
         />
       )}
 
-      {/* Pulsante Salva in alto quando in edit (submit del form) */}
-      {editing && (
-        <div className="mb-6 flex justify-end">
-          <button type="submit" form="product-edit-form" disabled={updateMutation.isPending} className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">
-            {updateMutation.isPending ? 'Salvataggio…' : 'Salva'}
-          </button>
-        </div>
-      )}
-
       <div className="mt-8">
         <h2 className="text-lg font-semibold text-rich-black mb-2">Immagini di riferimento (max 3)</h2>
+        <p className="text-sm text-gray-500 mb-2">Clicca su un&apos;immagine per aprire il Creative Hub e generare varianti o modifiche.</p>
         <div className="flex flex-wrap gap-4">
           {images.map((img: { id: string; image_url: string }) => (
-            <div key={img.id} className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200">
-              <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="w-full h-full object-cover" />
-              <button type="button" onClick={() => deleteImageMutation.mutate(img.id)} className="absolute top-1 right-1 bg-red-500 text-white rounded p-1 text-xs">Rimuovi</button>
+            <div key={img.id} className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 group">
+              <Link
+                href={`/dashboard/hub?product_id=${id}&image_id=${img.id}`}
+                className="block w-full h-full focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:ring-offset-2 rounded-lg"
+              >
+                <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="w-full h-full object-cover group-hover:opacity-90 transition" />
+              </Link>
+              <button type="button" onClick={(e) => { e.preventDefault(); deleteImageMutation.mutate(img.id); }} className="absolute top-1 right-1 bg-red-500 text-white rounded p-1 text-xs hover:bg-red-600">Rimuovi</button>
             </div>
           ))}
           {images.length < maxImages && (
@@ -202,7 +199,7 @@ export default function ProductDetailPage() {
         )}
       </div>
 
-      <div className="mt-8 pt-6 border-t flex items-center gap-4">
+      <div className="mt-8 pt-6 border-t">
         <button
           type="button"
           onClick={() => window.confirm('Eliminare questo prodotto?') && deleteMutation.mutate()}
@@ -211,11 +208,6 @@ export default function ProductDetailPage() {
         >
           Elimina prodotto
         </button>
-        {editing && (
-          <button type="submit" form="product-edit-form" disabled={updateMutation.isPending} className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">
-            {updateMutation.isPending ? 'Salvataggio…' : 'Salva'}
-          </button>
-        )}
       </div>
     </div>
   )

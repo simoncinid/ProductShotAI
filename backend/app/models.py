@@ -28,6 +28,7 @@ class User(Base):
     generations = relationship("Generation", back_populates="user")
     brand_identity = relationship("BrandIdentity", back_populates="user", uselist=False)
     products = relationship("Product", back_populates="user")
+    product_shootings = relationship("ProductShooting", back_populates="user")
 
 
 class CreditTransaction(Base):
@@ -94,6 +95,7 @@ class Product(Base):
     user = relationship("User", back_populates="products")
     images = relationship("ProductImage", back_populates="product", cascade="all, delete-orphan")
     generations = relationship("Generation", back_populates="product")
+    product_shootings = relationship("ProductShooting", back_populates="product")
 
 
 class ProductImage(Base):
@@ -106,6 +108,23 @@ class ProductImage(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     product = relationship("Product", back_populates="images")
+
+
+class ProductShooting(Base):
+    __tablename__ = "product_shootings_photoshotai"
+
+    id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
+    user_id = Column(UUID(as_uuid=False), ForeignKey("users_photoshotai.id"), nullable=False)
+    product_id = Column(UUID(as_uuid=False), ForeignKey("products_photoshotai.id", ondelete="SET NULL"), nullable=True)
+    reference_image_url = Column(Text, nullable=False)
+    shooting_style = Column(Text, nullable=True)
+    prompts = Column(JSONB, nullable=False)  # list of strings
+    status = Column(String, default="pending")  # pending, processing, completed, partial, failed
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="product_shootings")
+    product = relationship("Product", back_populates="product_shootings")
+    generations = relationship("Generation", back_populates="shooting_session", foreign_keys="Generation.shooting_session_id")
 
 
 class Generation(Base):
@@ -135,9 +154,11 @@ class Generation(Base):
     product_prompt_snapshot = Column(Text, nullable=True)
     final_prompt = Column(Text, nullable=True)
     input_params = Column(JSONB, nullable=True)
-    
+    shooting_session_id = Column(UUID(as_uuid=False), ForeignKey("product_shootings_photoshotai.id", ondelete="SET NULL"), nullable=True)
+
     user = relationship("User", back_populates="generations")
     product = relationship("Product", back_populates="generations")
+    shooting_session = relationship("ProductShooting", back_populates="generations", foreign_keys=[shooting_session_id])
     
     __table_args__ = (
         Index("idx_generations_user_created_photoshotai", "user_id", "created_at"),

@@ -20,7 +20,7 @@ from app import models, schemas, auth, storage, wavespeed, watermark, utils, cre
 from app.auth import get_current_user, get_current_user_optional
 from app.models import User, Generation, CreditTransaction, BrandIdentity, Product
 from app.storage import get_storage_adapter
-from app import brand_identity, products
+from app import brand_identity, products, shooting
 from app.prompt_composer import compose_final_prompt, brand_identity_to_snapshot
 
 # Setup logging
@@ -60,6 +60,7 @@ if settings.storage_type == "local":
 
 app.include_router(brand_identity.router)
 app.include_router(products.router)
+app.include_router(shooting.router)
 
 
 # Health check
@@ -304,6 +305,7 @@ async def get_generation_status(
         "status": gen.status,
         "output_image_url": gen.output_image_url,
         "error_message": gen.error_message,
+        "product_id": str(gen.product_id) if gen.product_id else None,
     }
 
 
