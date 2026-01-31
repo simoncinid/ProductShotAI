@@ -266,13 +266,7 @@ function BrandIdentityForm({
       {existing && (
         <div>
           <h3 className="font-semibold text-rich-black mb-2">Analisi stile (modificabile)</h3>
-          <div className="relative">
-            <textarea value={analysis} onChange={(e) => setAnalysis(e.target.value)} rows={6} className="w-full border border-gray-300 rounded px-3 py-2 pr-24" placeholder="Analisi generata dalle immagini o scrivi qui..." />
-            <button type="submit" disabled={isSaving} className="absolute bottom-2 right-2 px-3 py-1.5 bg-vivid-yellow text-rich-black rounded text-sm font-semibold disabled:opacity-50">
-              {isSaving ? 'Salvataggio…' : 'Salva'}
-            </button>
-          </div>
-          <p className="text-xs text-gray-500 mt-1">Salva per aggiornare tutti i campi e l’analisi nel database.</p>
+          <textarea value={analysis} onChange={(e) => setAnalysis(e.target.value)} rows={16} className="w-full border border-gray-300 rounded px-3 py-2 resize-y" placeholder="Analisi generata dalle immagini o scrivi qui..." />
         </div>
       )}
 

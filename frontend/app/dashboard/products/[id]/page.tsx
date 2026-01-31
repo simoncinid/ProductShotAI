@@ -278,13 +278,7 @@ function EditProductForm({
       </div>
       <div>
         <label className="block text-sm font-medium text-rich-black mb-1">Analisi stile (modificabile)</label>
-        <div className="relative">
-          <textarea value={analysisText} onChange={(e) => setAnalysisText(e.target.value)} rows={5} className="w-full border border-gray-300 rounded px-3 py-2 pr-24" placeholder="Analisi generata o modificata..." />
-          <button type="submit" disabled={isSaving} className="absolute bottom-2 right-2 px-3 py-1.5 bg-vivid-yellow text-rich-black rounded text-sm font-semibold disabled:opacity-50">
-            {isSaving ? 'Salvataggio…' : 'Salva'}
-          </button>
-        </div>
-        <p className="text-xs text-gray-500 mt-1">Salva per aggiornare tutti i campi e l’analisi (prompt) nel database.</p>
+        <textarea value={analysisText} onChange={(e) => setAnalysisText(e.target.value)} rows={16} className="w-full border border-gray-300 rounded px-3 py-2 resize-y" placeholder="Analisi generata o modificata..." />
       </div>
       <div className="flex gap-2">
         <button type="submit" disabled={isSaving} className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">Salva</button>

@@ -49,11 +49,16 @@ export default function CreatePage() {
   const [loadingIndex, setLoadingIndex] = useState(0)
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
-  const authenticated = isAuthenticated()
+  const [mounted, setMounted] = useState(false)
+  const authenticated = mounted && isAuthenticated()
   const [selectedProductId, setSelectedProductId] = useState<string>('')
   const [applyBrandIdentity, setApplyBrandIdentity] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const stopPollingRef = useRef<(() => void) | null>(null)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
