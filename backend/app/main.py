@@ -20,7 +20,7 @@ from app import models, schemas, auth, storage, wavespeed, watermark, utils, cre
 from app.auth import get_current_user, get_current_user_optional
 from app.models import User, Generation, CreditTransaction, BrandIdentity, Product, StoredFile
 from app.storage import get_storage_adapter
-from app import brand_identity, products, shooting
+from app import brand_identity, products, shooting, prompt_edit
 from app.prompt_composer import compose_final_prompt, brand_identity_to_snapshot
 
 # Setup logging
@@ -365,6 +365,14 @@ async def upload_image(
     
     logger.info(f"Image uploaded: {image_url}")
     return {"image_url": image_url}
+
+
+@app.post("/api/prompt/edit", response_model=schemas.PromptEditResponse)
+@limiter.limit("20/minute")
+async def edit_prompt_with_ai(request: Request, body: schemas.PromptEditRequest):
+    """Modifica un prompt con istruzioni utente via OpenAI. Restituisce il prompt rivisto."""
+    edited = await prompt_edit.edit_prompt(body.original_prompt, body.edit_instructions)
+    return schemas.PromptEditResponse(edited_prompt=edited)
 
 
 def _ensure_absolute_image_url(url: str) -> str:

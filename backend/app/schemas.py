@@ -77,6 +77,15 @@ class GenerateResponse(BaseModel):
     error_message: Optional[str] = None
 
 
+class PromptEditRequest(BaseModel):
+    original_prompt: str = Field(..., max_length=8000)
+    edit_instructions: str = Field(..., min_length=1, max_length=2000)
+
+
+class PromptEditResponse(BaseModel):
+    edited_prompt: str
+
+
 # Credit schemas
 class CreditPack(BaseModel):
     id: str

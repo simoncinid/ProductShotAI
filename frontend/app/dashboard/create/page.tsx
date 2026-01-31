@@ -7,6 +7,7 @@ import { uploadApi, generationApi, getDeviceId, getAbsoluteImageUrl } from '@/li
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
+import { EditPromptWithAI } from '@/components/EditPromptWithAI'
 
 const POLL_INTERVAL_MS = 3000
 
@@ -246,9 +247,12 @@ export default function DashboardCreatePage() {
         {/* Prompt Section */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-rich-black mb-2">
-              Describe Your Vision
-            </label>
+            <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
+              <label className="block text-sm font-medium text-rich-black">
+                Describe Your Vision
+              </label>
+              <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
+            </div>
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}

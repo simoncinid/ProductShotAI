@@ -7,6 +7,7 @@ import { useQuery, useMutation } from '@tanstack/react-query'
 import { productsApi, uploadApi, shootingApi, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
+import { EditPromptWithAI } from '@/components/EditPromptWithAI'
 
 const SHOOTING_STYLE_OPTIONS = [
   { value: 'Zoom into details', label: 'Zoom sui dettagli (close-up, texture)' },
@@ -274,9 +275,21 @@ export default function ShootingWizardPage() {
       {/* Step 3: Review/edit prompts one by one */}
       {step === 3 && prompts.length > 0 && (
         <div className="space-y-6">
-          <h2 className="text-lg font-semibold text-rich-black">
-            Prompt {promptIndex + 1} di {prompts.length}
-          </h2>
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <h2 className="text-lg font-semibold text-rich-black">
+              Prompt {promptIndex + 1} di {prompts.length}
+            </h2>
+            <EditPromptWithAI
+              value={prompts[promptIndex] ?? ''}
+              onChange={(newVal) => {
+                const next = [...prompts]
+                next[promptIndex] = newVal
+                setPrompts(next)
+              }}
+              buttonLabel="Modifica prompt con AI"
+              applyLabel="Applica"
+            />
+          </div>
           <p className="text-sm text-gray-600">Modifica se serve (es. aggiungere testo sulla foto, dettagli zoom) e conferma.</p>
           <textarea
             value={prompts[promptIndex] ?? ''}

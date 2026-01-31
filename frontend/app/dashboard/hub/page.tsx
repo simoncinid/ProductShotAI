@@ -8,6 +8,7 @@ import { productsApi, generationApi, getAbsoluteImageUrl, getDeviceId } from '@/
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
+import { EditPromptWithAI } from '@/components/EditPromptWithAI'
 
 const POLL_INTERVAL_MS = 3000
 
@@ -230,9 +231,12 @@ export default function HubPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-rich-black mb-2">
-              {mode === 'similar' ? 'Descrizione variazione (opzionale)' : 'Cosa modificare'}
-            </label>
+            <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
+              <label className="block text-sm font-medium text-rich-black">
+                {mode === 'similar' ? 'Descrizione variazione (opzionale)' : 'Cosa modificare'}
+              </label>
+              <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Modifica prompt con AI" applyLabel="Applica" />
+            </div>
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}

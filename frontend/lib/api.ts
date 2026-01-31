@@ -85,6 +85,17 @@ export const userApi = {
   },
 }
 
+// Prompt edit with AI (no auth required)
+export const promptApi = {
+  edit: async (originalPrompt: string, editInstructions: string) => {
+    const response = await api.post('/api/prompt/edit', {
+      original_prompt: originalPrompt,
+      edit_instructions: editInstructions,
+    })
+    return response.data as { edited_prompt: string }
+  },
+}
+
 // Brand Identity (auth required)
 export const brandIdentityApi = {
   get: async () => {

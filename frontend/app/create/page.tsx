@@ -8,6 +8,7 @@ import { uploadApi, generationApi, productsApi, brandIdentityApi, getDeviceId, g
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
+import { EditPromptWithAI } from '@/components/EditPromptWithAI'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
@@ -359,9 +360,12 @@ export default function CreatePage() {
                   <div className="mt-4" />
                 </>
               )}
-              <label className="block text-[15px] font-semibold text-primary md:text-base">
-                {selectedProductId ? 'Additional instructions (optional)' : 'Describe Your Vision'}
-              </label>
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <label className="block text-[15px] font-semibold text-primary md:text-base">
+                  {selectedProductId ? 'Additional instructions (optional)' : 'Describe Your Vision'}
+                </label>
+                <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
+              </div>
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}

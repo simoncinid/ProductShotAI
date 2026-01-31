@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { productsApi, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
+import { EditPromptWithAI } from '@/components/EditPromptWithAI'
 
 export default function ProductDetailPage() {
   const router = useRouter()
@@ -273,7 +274,10 @@ function EditProductForm({
         <label htmlFor="editBi" className="text-sm text-rich-black">Applica Brand Identity di default</label>
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Prompt prodotto</label>
+        <div className="flex items-center justify-between gap-2 flex-wrap mb-1">
+          <label className="block text-sm font-medium text-rich-black">Prompt prodotto</label>
+          <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Modifica prompt con AI" applyLabel="Applica" />
+        </div>
         <textarea value={productPrompt} onChange={(e) => setProductPrompt(e.target.value)} rows={4} className="w-full border border-gray-300 rounded px-3 py-2" />
       </div>
       <div>
