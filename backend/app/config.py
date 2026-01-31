@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     wavespeed_api_key: str
     
     # Storage
-    storage_type: str = "auto"  # "auto" | "local" | "s3". Con "auto": S3 se configurato, altrimenti local (locale è effimero su Render)
+    storage_type: str = "auto"  # "auto" | "database" | "local" | "s3". auto = S3 se configurato, altrimenti database (persistente, gratis)
     storage_path: str = "./storage"
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
@@ -70,12 +70,17 @@ class Settings(BaseSettings):
         )
 
     def get_effective_storage_type(self) -> str:
-        """'s3' se si usa S3 (persistente), 'local' altrimenti (effimero su Render)."""
+        """'database' = persistente nel DB (gratis), 's3' = S3, 'local' = filesystem (effimero su Render)."""
+        if self.storage_type in ("database", "db"):
+            return "database"
         if self.storage_type == "s3" or (
             self.storage_type == "auto" and self.is_s3_configured()
         ):
             return "s3"
-        return "local"
+        if self.storage_type == "local":
+            return "local"
+        # auto senza S3: database (persistente e senza costi)
+        return "database"
     
     # Free tier
     free_generations_per_month: int = 3

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Text, Index
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Text, Index, LargeBinary
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -179,3 +179,14 @@ class FreeGenerationLog(Base):
     __table_args__ = (
         Index("idx_free_gen_device_ip_month_photoshotai", "device_id", "ip_address", "month_year", unique=True),
     )
+
+
+class StoredFile(Base):
+    """File salvati nel DB (foto prodotti, generazioni, brand identity) per persistenza senza S3."""
+    __tablename__ = "stored_files_photoshotai"
+
+    id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
+    path_key = Column(Text, nullable=True)  # path logico es. users/xxx/products/yyy/uuid.png
+    content = Column(LargeBinary, nullable=False)
+    content_type = Column(String(100), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

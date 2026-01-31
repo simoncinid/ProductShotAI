@@ -31,15 +31,14 @@ JWT_EXPIRATION_HOURS=24
 WAVESPEED_API_KEY=il-tuo-api-key-wavespeed
 ```
 
-### Storage Configuration
+### Storage Configuration (foto persistenti senza AWS)
 
-**Opzione 1: Storage Locale (CONSIGLIATO per iniziare - funziona anche in produzione)**
+**Opzione 1: Database – CONSIGLIATO (persistente, gratis)**
 ```
-STORAGE_TYPE=local
-STORAGE_PATH=./storage
+STORAGE_TYPE=auto
 PUBLIC_BASE_URL=https://tuo-backend.onrender.com
 ```
-**Nota:** Render ha storage persistente per i servizi web, quindi lo storage locale funziona perfettamente anche in produzione. Usa questa opzione se non vuoi configurare AWS.  
+**Nota:** Le foto vanno nel DB (persistente, gratis). Esegui una sola volta: `psql "$DATABASE_URL" -f backend/scripts/migration_stored_files.sql`  
 **`PUBLIC_BASE_URL`** è **obbligatorio** se usi WaveSpeed (e altre API che devono scaricare l’immagine da URL): evita l’errore *"image url is not allowed"*. Inserisci l’URL del backend (es. `https://productshotai-backend.onrender.com`, senza slash finale).
 
 **Opzione 2: AWS S3 (opzionale - solo se hai bisogno di scalabilità avanzata)**
@@ -51,7 +50,7 @@ AWS_REGION=us-east-1
 S3_BUCKET_NAME=nome-del-tuo-bucket-s3
 CLOUDFRONT_DOMAIN=d1q70pf5vjeyhc.cloudfront.net
 ```
-**Nota su CloudFront:** `CLOUDFRONT_DOMAIN` è opzionale. Se lo imposti (solo il dominio, es. `d1q70pf5vjeyhc.cloudfront.net`, senza `https://`), gli URL delle immagini useranno CloudFront invece dell’URL S3 diretto. Utile per CDN e per soddisfare requisiti di URL “pubblici” come WaveSpeed. CloudFront ha un free tier.
+**Opzione 3: Storage locale** (solo sviluppo; su Render i file in `./storage` si perdono a redeploy). **Nota su CloudFront:** `CLOUDFRONT_DOMAIN` è opzionale. Se lo imposti (solo il dominio, es. `d1q70pf5vjeyhc.cloudfront.net`, senza `https://`), gli URL delle immagini useranno CloudFront invece dell’URL S3 diretto. Utile per CDN e per soddisfare requisiti di URL “pubblici” come WaveSpeed. CloudFront ha un free tier.
 
 ### App Configuration
 ```
@@ -155,16 +154,10 @@ NEXT_PUBLIC_SITE_URL=https://productshotai.com
 - [ ] `JWT_ALGORITHM` - `HS256`
 - [ ] `JWT_EXPIRATION_HOURS` - `24`
 - [ ] `WAVESPEED_API_KEY` - API key da WaveSpeed
-- [ ] `STORAGE_TYPE` - `local` (consigliato) o `s3` (opzionale)
-- [ ] Se `STORAGE_TYPE=local`:
-  - [ ] `STORAGE_PATH` - `./storage` (default, funziona su Render)
-  - [ ] `PUBLIC_BASE_URL` - `https://tuo-backend.onrender.com` (obbligatorio per WaveSpeed, evita "image url is not allowed")
-- [ ] Se `STORAGE_TYPE=s3` (solo se necessario):
-  - [ ] `AWS_ACCESS_KEY_ID`
-  - [ ] `AWS_SECRET_ACCESS_KEY`
-  - [ ] `AWS_REGION`
-  - [ ] `S3_BUCKET_NAME`
-  - [ ] `CLOUDFRONT_DOMAIN` - (opzionale) es. `d1q70pf5vjeyhc.cloudfront.net` per URL CDN
+- [ ] `STORAGE_TYPE` - `auto` (default: foto nel DB, persistente e gratis) oppure `database` | `s3` | `local`
+- [ ] `PUBLIC_BASE_URL` - `https://tuo-backend.onrender.com` (obbligatorio per WaveSpeed)
+- [ ] Migrazione per storage nel DB (una sola volta): `psql "$DATABASE_URL" -f backend/scripts/migration_stored_files.sql`
+- [ ] Opzionale S3: se imposti variabili AWS e `STORAGE_TYPE=s3` (o `auto` con S3 configurato)
 - [ ] `ENVIRONMENT` - `production`
 - [ ] `CORS_ORIGIN` o `CORS_ORIGINS` - URL del frontend Vercel (es. `https://product-shot-ai.vercel.app` senza slash finale; più domini separati da virgola con CORS_ORIGINS)
 - [ ] `FREE_GENERATIONS_PER_MONTH` - `3`
@@ -244,7 +237,7 @@ STRIPE_PRICE_POWER=price_xxxxxxxx
 GMAIL_USER=your-email@gmail.com
 GMAIL_PASS=xxxx-xxxx-xxxx-xxxx
 ```
-**Nota:** Lo storage locale funziona anche in produzione su Render (hanno storage persistente). Per Stripe in locale usa `stripe listen --forward-to localhost:8000/api/webhooks/stripe` per ricevere i webhook. Per le email in sviluppo imposta `GMAIL_USER` e `GMAIL_PASS` (App Password da Google se hai 2FA).
+**Nota:** Con `STORAGE_TYPE=auto` (default) le foto vanno nel DB (persistente, gratis). In locale puoi usare `local` o `auto`. Per Stripe in locale: `stripe listen --forward-to localhost:8000/api/webhooks/stripe`. Per le email in sviluppo: `GMAIL_USER` e `GMAIL_PASS` (App Password da Google se hai 2FA).
 
 ### `frontend/.env.local`
 ```env
@@ -260,7 +253,7 @@ Prima del deploy finale:
 1. ✅ Tutte le variabili d'ambiente configurate su Render
 2. ✅ Tutte le variabili d'ambiente configurate su Vercel
 3. ✅ Database PostgreSQL creato e accessibile
-4. ✅ Storage configurato (locale o S3 - locale è più semplice per iniziare)
+4. ✅ Storage: con `auto` (default) le foto sono nel DB (persistente, gratis). Eseguita migrazione `migration_stored_files.sql`
 5. ✅ CORS_ORIGIN / CORS_ORIGINS includono tutti i domini necessari (e redeploy dopo eventuali modifiche)
 6. ✅ JWT_SECRET_KEY generato e sicuro
 7. ✅ WaveSpeed API key valida

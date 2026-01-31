@@ -1,7 +1,7 @@
 import asyncio
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
@@ -18,7 +18,7 @@ from app.config import settings
 from app.database import get_db, AsyncSessionLocal
 from app import models, schemas, auth, storage, wavespeed, watermark, utils, credit_packs, email_sender
 from app.auth import get_current_user, get_current_user_optional
-from app.models import User, Generation, CreditTransaction, BrandIdentity, Product
+from app.models import User, Generation, CreditTransaction, BrandIdentity, Product, StoredFile
 from app.storage import get_storage_adapter
 from app import brand_identity, products, shooting
 from app.prompt_composer import compose_final_prompt, brand_identity_to_snapshot
@@ -51,7 +51,7 @@ limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Mount static files solo per storage locale (con S3 non servono)
+# Mount static files solo per storage locale (con S3 o database non servono)
 _effective_storage = settings.get_effective_storage_type()
 if _effective_storage == "local":
     import os
@@ -59,8 +59,10 @@ if _effective_storage == "local":
     os.makedirs(storage_dir, exist_ok=True)
     app.mount("/storage", StaticFiles(directory=storage_dir), name="storage")
     logger.warning(
-        "Storage: local (effimero su Render). Per persistenza imposta AWS S3 (STORAGE_TYPE=auto + variabili S3)."
+        "Storage: local (effimero su Render). Usa STORAGE_TYPE=database per persistenza nel DB (gratis)."
     )
+elif _effective_storage == "database":
+    logger.info("Storage: database (persistente, nel DB)")
 else:
     logger.info("Storage: S3 (persistente)")
 
@@ -73,6 +75,17 @@ app.include_router(shooting.router)
 @app.get("/health")
 async def health():
     return {"status": "ok"}
+
+
+# Servire immagini salvate nel DB (storage_type=database)
+@app.get("/api/storage/{file_id}")
+async def serve_stored_file(file_id: str, db: AsyncSession = Depends(get_db)):
+    """Restituisce il file salvato nel DB (foto prodotti, generazioni, brand identity)."""
+    r = await db.execute(select(StoredFile).where(StoredFile.id == file_id))
+    row = r.scalar_one_or_none()
+    if not row:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
+    return Response(content=bytes(row.content), media_type=row.content_type)
 
 
 # Auth endpoints
