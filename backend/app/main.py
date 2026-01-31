@@ -18,8 +18,10 @@ from app.config import settings
 from app.database import get_db, AsyncSessionLocal
 from app import models, schemas, auth, storage, wavespeed, watermark, utils, credit_packs, email_sender
 from app.auth import get_current_user, get_current_user_optional
-from app.models import User, Generation, CreditTransaction
+from app.models import User, Generation, CreditTransaction, BrandIdentity, Product
 from app.storage import get_storage_adapter
+from app import brand_identity, products
+from app.prompt_composer import compose_final_prompt, brand_identity_to_snapshot
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -55,6 +57,9 @@ if settings.storage_type == "local":
     storage_dir = os.path.abspath(settings.storage_path)
     os.makedirs(storage_dir, exist_ok=True)
     app.mount("/storage", StaticFiles(directory=storage_dir), name="storage")
+
+app.include_router(brand_identity.router)
+app.include_router(products.router)
 
 
 # Health check
@@ -243,6 +248,39 @@ async def get_user_generations(
     }
 
 
+@app.get("/api/generations", response_model=schemas.GenerationHistoryResponse)
+async def get_generations_no_product(
+    page: int = 1,
+    page_size: int = 20,
+    scope: str = "no_product",
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Generations senza prodotto (NO PRODUCT). scope=no_product filtra product_id IS NULL."""
+    if scope != "no_product":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Use scope=no_product")
+    offset = (page - 1) * page_size
+    count_result = await db.execute(
+        select(func.count(Generation.id)).where(
+            Generation.user_id == current_user.id,
+            Generation.product_id.is_(None),
+        )
+    )
+    total = count_result.scalar_one()
+    result = await db.execute(
+        select(Generation)
+        .where(
+            Generation.user_id == current_user.id,
+            Generation.product_id.is_(None),
+        )
+        .order_by(Generation.created_at.desc())
+        .offset(offset)
+        .limit(page_size)
+    )
+    generations = result.scalars().all()
+    return {"items": generations, "total": total, "page": page, "page_size": page_size}
+
+
 @app.get("/api/generations/{generation_id}")
 async def get_generation_status(
     generation_id: str,
@@ -309,14 +347,7 @@ async def upload_image(
 
 
 def _ensure_absolute_image_url(url: str) -> str:
-    """WaveSpeed richiede URL assoluti e pubblici. Converte /storage/... in base+url se serve."""
-    if not url:
-        return url
-    if url.startswith("http://") or url.startswith("https://"):
-        return url
-    if url.startswith("/") and settings.public_base_url:
-        return settings.public_base_url.rstrip("/") + url
-    return url
+    return utils.ensure_absolute_image_url(url)
 
 
 def _get_wavespeed_webhook_url() -> str:
@@ -474,7 +505,7 @@ async def generate_free(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Generation failed: {str(e)}")
 
 
-# Paid generation: WaveSpeed con webhook. POST ritorna 202, frontend fa polling su GET /api/generations/{id}.
+# Paid generation: WaveSpeed con webhook. Supporta product_id, apply_brand_identity, composizione final_prompt.
 @app.post("/api/generate-paid")
 @limiter.limit("10/minute")
 async def generate_paid(
@@ -483,23 +514,85 @@ async def generate_paid(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """Generate image for paid users (no watermark). Crea task WaveSpeed con webhook, ritorna 202."""
+    """Generate image for paid users (no watermark). Product/Brand Identity: composizione prompt e snapshot."""
     if current_user.credits_balance < 1:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Insufficient credits. Please purchase credits to continue."
         )
     ip_address = utils.get_client_ip(request)
+
+    product_id = getattr(generate_request, "product_id", None) or None
+    apply_brand_identity: bool
+    base_prompt: str
+    product_name_snapshot: str | None = None
+    product_prompt_snapshot: str | None = None
+    product_analysis_text: str | None = None
+
+    if product_id:
+        rp = await db.execute(select(Product).where(Product.id == product_id, Product.user_id == current_user.id))
+        product = rp.scalar_one_or_none()
+        if not product:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+        apply_brand_identity = product.default_apply_brand_identity
+        base_prompt = product.product_prompt
+        product_name_snapshot = product.name
+        product_prompt_snapshot = product.product_prompt
+        product_analysis_text = product.analysis_text
+    else:
+        apply_brand_identity = generate_request.apply_brand_identity if generate_request.apply_brand_identity is not None else False
+        base_prompt = generate_request.prompt
+        product_name_snapshot = None
+        product_prompt_snapshot = None
+        product_analysis_text = None
+
+    if apply_brand_identity:
+        rbi = await db.execute(select(BrandIdentity).where(BrandIdentity.user_id == current_user.id))
+        bi = rbi.scalar_one_or_none()
+        if not bi:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Define Brand Identity in dashboard first, or turn off 'Apply Brand Identity'.",
+            )
+        brand_snapshot = brand_identity_to_snapshot(bi)
+        brand_analysis_text = bi.analysis_text
+    else:
+        brand_snapshot = None
+        brand_analysis_text = None
+
+    user_prompt_input = getattr(generate_request, "user_prompt_input", None) or None
+    final_prompt = compose_final_prompt(
+        user_prompt_input=user_prompt_input,
+        product_prompt=product_prompt_snapshot,
+        product_analysis_text=product_analysis_text,
+        brand_identity_snapshot=brand_snapshot if apply_brand_identity else None,
+        brand_analysis_text=brand_analysis_text if apply_brand_identity else None,
+        base_prompt=base_prompt,
+    )
+
+    input_params = {
+        "resolution": generate_request.resolution or "8k",
+        "aspect_ratio": generate_request.aspect_ratio or "1:1",
+        "model_name": "nano-banana-pro/edit-ultra",
+    }
+
     generation = Generation(
         user_id=current_user.id,
         device_id=generate_request.device_id,
         ip_address=ip_address,
         input_image_url=generate_request.image_url,
-        prompt=generate_request.prompt,
+        prompt=final_prompt,
         resolution=generate_request.resolution or "8k",
         aspect_ratio=generate_request.aspect_ratio,
         is_free=False,
-        status="pending"
+        status="pending",
+        product_id=product_id,
+        product_name_snapshot=product_name_snapshot,
+        apply_brand_identity=apply_brand_identity,
+        brand_identity_snapshot=brand_snapshot if apply_brand_identity else None,
+        product_prompt_snapshot=product_prompt_snapshot,
+        final_prompt=final_prompt,
+        input_params=input_params,
     )
     db.add(generation)
     await db.commit()
@@ -511,7 +604,7 @@ async def generate_paid(
         ws = wavespeed.get_wavespeed_client()
         task_result = await ws.create_edit_task(
             image_url=image_url,
-            prompt=generate_request.prompt,
+            prompt=final_prompt,
             resolution=generate_request.resolution or "8k",
             aspect_ratio=generate_request.aspect_ratio or "1:1",
             webhook_url=webhook_url,

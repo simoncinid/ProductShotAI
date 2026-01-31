@@ -12,8 +12,8 @@ from botocore.exceptions import ClientError
 class StorageAdapter:
     """Abstract storage adapter for S3-compatible storage"""
     
-    async def upload_file(self, file_content: bytes, file_extension: str) -> str:
-        """Upload file and return public URL"""
+    async def upload_file(self, file_content: bytes, file_extension: str, subpath: Optional[str] = None) -> str:
+        """Upload file and return public URL. subpath: optional prefix (e.g. users/{user_id}/brand)."""
         raise NotImplementedError
     
     async def download_file(self, url: str) -> bytes:
@@ -33,22 +33,27 @@ class LocalStorageAdapter(StorageAdapter):
         self.base_path.mkdir(parents=True, exist_ok=True)
         self.base_url = "/storage"
     
-    def _get_file_path(self, filename: str) -> Path:
+    def _get_file_path(self, filename: str, subpath: Optional[str] = None) -> Path:
+        if subpath:
+            full = self.base_path / subpath.replace("..", "").strip("/")
+            full.mkdir(parents=True, exist_ok=True)
+            return full / filename
         return self.base_path / filename
     
-    async def upload_file(self, file_content: bytes, file_extension: str) -> str:
+    async def upload_file(self, file_content: bytes, file_extension: str, subpath: Optional[str] = None) -> str:
         filename = f"{uuid.uuid4()}{file_extension}"
-        file_path = self._get_file_path(filename)
+        file_path = self._get_file_path(filename, subpath)
         
         async with aiofiles.open(file_path, "wb") as f:
             await f.write(file_content)
         
         # Per WaveSpeed e altre API esterne servono URL assoluti e pubblici.
         # Con public_base_url (es. https://tuo-backend.onrender.com) si evita "image url is not allowed".
+        url_path = f"{subpath}/{filename}" if subpath else filename
         if settings.public_base_url:
             base = settings.public_base_url.rstrip("/")
-            return f"{base}/storage/{filename}"
-        return f"{self.base_url}/{filename}"
+            return f"{base}/storage/{url_path}"
+        return f"{self.base_url}/{url_path}"
     
     async def download_file(self, url: str) -> bytes:
         # Extract filename from URL
@@ -84,14 +89,15 @@ class S3StorageAdapter(StorageAdapter):
         )
         self.base_url = f"https://{bucket_name}.s3.{region}.amazonaws.com"
     
-    async def upload_file(self, file_content: bytes, file_extension: str) -> str:
+    async def upload_file(self, file_content: bytes, file_extension: str, subpath: Optional[str] = None) -> str:
         filename = f"{uuid.uuid4()}{file_extension}"
+        key = f"{subpath}/{filename}" if subpath else filename
         
         # boto3 is synchronous, but we can run it in executor if needed
         # For now, using sync calls as boto3 doesn't have async support
         self.s3_client.put_object(
             Bucket=self.bucket_name,
-            Key=filename,
+            Key=key,
             Body=file_content,
             ContentType="image/jpeg" if file_extension == ".jpg" else "image/png"
         )
@@ -100,8 +106,8 @@ class S3StorageAdapter(StorageAdapter):
         # Se non impostato, si usa l'URL S3 diretto (già pubblico).
         if settings.cloudfront_domain:
             domain = settings.cloudfront_domain.strip().rstrip("/")
-            return f"https://{domain}/{filename}"
-        return f"{self.base_url}/{filename}"
+            return f"https://{domain}/{key}"
+        return f"{self.base_url}/{key}"
     
     def _url_to_key(self, url: str) -> str:
         """Estrae la key S3 da URL S3 (s3...amazonaws.com/key) o CloudFront (dxxx.cloudfront.net/key)."""

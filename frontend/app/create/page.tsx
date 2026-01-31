@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useMutation } from '@tanstack/react-query'
-import { uploadApi, generationApi, getDeviceId, getAbsoluteImageUrl } from '@/lib/api'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { uploadApi, generationApi, productsApi, brandIdentityApi, getDeviceId, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
@@ -50,8 +50,24 @@ export default function CreatePage() {
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const authenticated = isAuthenticated()
+  const [selectedProductId, setSelectedProductId] = useState<string>('')
+  const [applyBrandIdentity, setApplyBrandIdentity] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const stopPollingRef = useRef<(() => void) | null>(null)
+
+  const { data: products = [] } = useQuery({
+    queryKey: ['products'],
+    queryFn: productsApi.list,
+    enabled: authenticated,
+  })
+  const { data: brandIdentity, isFetched: brandFetched } = useQuery({
+    queryKey: ['brand-identity'],
+    queryFn: () => brandIdentityApi.get(),
+    enabled: authenticated && !selectedProductId && applyBrandIdentity,
+    retry: false,
+  })
+  const selectedProduct = selectedProductId ? products.find((p: { id: string }) => p.id === selectedProductId) : null
+  const noProductWantsBrandButMissing = authenticated && !selectedProductId && applyBrandIdentity && brandFetched && !brandIdentity
 
   const uploadMutation = useMutation({
     mutationFn: uploadApi.uploadImage,
@@ -142,18 +158,37 @@ export default function CreatePage() {
   }
 
   const handleGenerate = () => {
-    if (!imageUrl || !prompt.trim()) {
-      toast.error('Please upload an image and enter a prompt')
+    if (!imageUrl) {
+      toast.error('Please upload an image')
+      return
+    }
+    const noProduct = !selectedProductId
+    if (noProduct && !prompt.trim()) {
+      toast.error('Please enter a prompt')
       return
     }
     setIsGenerating(true)
-    generateMutation.mutate({
-      prompt: prompt.trim(),
+    const basePayload = {
       image_url: imageUrl,
       aspect_ratio: aspectRatio,
       resolution: '8k',
       device_id: getDeviceId(),
-    })
+    }
+    if (authenticated) {
+      generateMutation.mutate({
+        ...basePayload,
+        prompt: noProduct ? prompt.trim() : (prompt.trim() || ' '),
+        product_id: noProduct ? null : selectedProductId,
+        apply_brand_identity: noProduct ? applyBrandIdentity : undefined,
+        user_prompt_input: noProduct ? undefined : (prompt.trim() || undefined),
+      })
+    } else {
+      generateMutation.mutate({
+        ...basePayload,
+        prompt: prompt.trim(),
+        device_id: getDeviceId(),
+      })
+    }
   }
 
   const loadingMessage = isGenerating ? LOADING_MESSAGES[loadingIndex % LOADING_MESSAGES.length] : ''
@@ -279,23 +314,63 @@ export default function CreatePage() {
 
             {/* Prompt + Generate */}
             <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-soft md:p-8">
+              {authenticated && (
+                <>
+                  <label className="block text-[15px] font-semibold text-primary md:text-base">
+                    Product (optional)
+                  </label>
+                  <select
+                    value={selectedProductId}
+                    onChange={(e) => setSelectedProductId(e.target.value)}
+                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                  >
+                    <option value="">NO PRODUCT</option>
+                    {products.map((p: { id: string; name: string }) => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                  {!selectedProductId ? (
+                    <>
+                      <div className="mt-3 flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="applyBi"
+                          checked={applyBrandIdentity}
+                          onChange={(e) => setApplyBrandIdentity(e.target.checked)}
+                        />
+                        <label htmlFor="applyBi" className="text-[14px] text-primary">Apply Brand Identity</label>
+                      </div>
+                      {noProductWantsBrandButMissing && (
+                        <p className="mt-2 text-[13px] text-amber-600">
+                          Define Brand Identity in dashboard first.
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="mt-2 text-[13px] text-secondary">
+                      Brand identity: On/Off based on product setting
+                    </p>
+                  )}
+                  <div className="mt-4" />
+                </>
+              )}
               <label className="block text-[15px] font-semibold text-primary md:text-base">
-                Describe Your Vision
+                {selectedProductId ? 'Additional instructions (optional)' : 'Describe Your Vision'}
               </label>
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Example: Place the product on a clean white background with soft lighting, add a subtle shadow underneath, make the colors more vibrant..."
+                placeholder={selectedProductId ? 'Extra notes for this generation...' : 'Example: Place the product on a clean white background with soft lighting, add a subtle shadow underneath, make the colors more vibrant...'}
                 rows={8}
                 className="mt-3 w-full resize-y rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary placeholder:text-gray-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
               <p className="mt-2 text-[13px] text-secondary">
-                Describe how you want your product to look. Be specific about background, lighting, and style.
+                {selectedProductId ? 'Optional: add instructions to combine with the product prompt.' : 'Describe how you want your product to look. Be specific about background, lighting, and style.'}
               </p>
 
               <button
                 onClick={handleGenerate}
-                disabled={!imageUrl || !prompt.trim() || isGenerating}
+                disabled={!imageUrl || (!selectedProductId && !prompt.trim()) || isGenerating || noProductWantsBrandButMissing}
                 className="mt-6 w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isGenerating ? 'Generating... (30–90 sec)' : 'Generate Image'}

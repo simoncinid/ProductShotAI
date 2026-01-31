@@ -7,6 +7,17 @@ from app.models import FreeGenerationLog
 from app.config import settings
 
 
+def ensure_absolute_image_url(url: str) -> str:
+    """WaveSpeed richiede URL assoluti e pubblici. Converte /storage/... in base+url se serve."""
+    if not url:
+        return url
+    if url.startswith("http://") or url.startswith("https://"):
+        return url
+    if url.startswith("/") and settings.public_base_url:
+        return settings.public_base_url.rstrip("/") + url
+    return url
+
+
 def get_client_ip(request: Request) -> str:
     """Extract client IP from request"""
     # Check X-Forwarded-For header (for proxies)

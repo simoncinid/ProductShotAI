@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Text, Index
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -26,6 +26,8 @@ class User(Base):
     
     credit_transactions = relationship("CreditTransaction", back_populates="user")
     generations = relationship("Generation", back_populates="user")
+    brand_identity = relationship("BrandIdentity", back_populates="user", uselist=False)
+    products = relationship("Product", back_populates="user")
 
 
 class CreditTransaction(Base):
@@ -39,6 +41,71 @@ class CreditTransaction(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     user = relationship("User", back_populates="credit_transactions")
+
+
+class BrandIdentity(Base):
+    __tablename__ = "brand_identities_photoshotai"
+    
+    id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
+    user_id = Column(UUID(as_uuid=False), ForeignKey("users_photoshotai.id"), nullable=False, unique=True)
+    average_customer = Column(Text, nullable=True)
+    sales_channels = Column(Text, nullable=True)
+    price_range = Column(Text, nullable=True)
+    lighting_style = Column(Text, nullable=True)
+    photo_style = Column(JSONB, nullable=True)
+    color_palette = Column(JSONB, nullable=True)
+    brand_notes = Column(Text, nullable=True)
+    analysis_text = Column(Text, nullable=True)
+    analysis_version = Column(Integer, default=1, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    
+    user = relationship("User", back_populates="brand_identity")
+    images = relationship("BrandIdentityImage", back_populates="brand_identity", cascade="all, delete-orphan")
+
+
+class BrandIdentityImage(Base):
+    __tablename__ = "brand_identity_images_photoshotai"
+    
+    id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
+    brand_identity_id = Column(UUID(as_uuid=False), ForeignKey("brand_identities_photoshotai.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=False), ForeignKey("users_photoshotai.id"), nullable=False)
+    image_url = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    brand_identity = relationship("BrandIdentity", back_populates="images")
+
+
+class Product(Base):
+    __tablename__ = "products_photoshotai"
+    
+    id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
+    user_id = Column(UUID(as_uuid=False), ForeignKey("users_photoshotai.id"), nullable=False)
+    name = Column(Text, nullable=False)
+    sku = Column(Text, nullable=True)
+    category = Column(Text, nullable=True)
+    default_apply_brand_identity = Column(Boolean, default=True, nullable=False)
+    product_prompt = Column(Text, nullable=False)
+    analysis_text = Column(Text, nullable=True)
+    analysis_version = Column(Integer, default=1, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    
+    user = relationship("User", back_populates="products")
+    images = relationship("ProductImage", back_populates="product", cascade="all, delete-orphan")
+    generations = relationship("Generation", back_populates="product")
+
+
+class ProductImage(Base):
+    __tablename__ = "product_images_photoshotai"
+    
+    id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
+    product_id = Column(UUID(as_uuid=False), ForeignKey("products_photoshotai.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=False), ForeignKey("users_photoshotai.id"), nullable=False)
+    image_url = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    product = relationship("Product", back_populates="images")
 
 
 class Generation(Base):
@@ -60,8 +127,17 @@ class Generation(Base):
     wavespeed_request_id = Column(String, nullable=True, index=True)  # id WaveSpeed per webhook
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     completed_at = Column(DateTime(timezone=True), nullable=True)
+    # Brand Identity & Product (migration)
+    product_id = Column(UUID(as_uuid=False), ForeignKey("products_photoshotai.id", ondelete="SET NULL"), nullable=True)
+    product_name_snapshot = Column(Text, nullable=True)
+    apply_brand_identity = Column(Boolean, default=False, nullable=False)
+    brand_identity_snapshot = Column(JSONB, nullable=True)
+    product_prompt_snapshot = Column(Text, nullable=True)
+    final_prompt = Column(Text, nullable=True)
+    input_params = Column(JSONB, nullable=True)
     
     user = relationship("User", back_populates="generations")
+    product = relationship("Product", back_populates="generations")
     
     __table_args__ = (
         Index("idx_generations_user_created_photoshotai", "user_id", "created_at"),

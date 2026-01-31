@@ -85,6 +85,114 @@ export const userApi = {
   },
 }
 
+// Brand Identity (auth required)
+export const brandIdentityApi = {
+  get: async () => {
+    const response = await api.get('/api/brand-identity')
+    return response.data
+  },
+  createOrUpdate: async (data: {
+    average_customer?: string
+    sales_channels?: string
+    price_range?: string
+    lighting_style?: string
+    photo_style?: Record<string, unknown>
+    color_palette?: Record<string, unknown>
+    brand_notes?: string
+  }) => {
+    const response = await api.post('/api/brand-identity', data)
+    return response.data
+  },
+  uploadImage: async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await api.post('/api/brand-identity/images', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return response.data
+  },
+  deleteImage: async (imageId: string) => {
+    const response = await api.delete(`/api/brand-identity/images/${imageId}`)
+    return response.data
+  },
+  analyze: async () => {
+    const response = await api.post('/api/brand-identity/analyze')
+    return response.data
+  },
+  delete: async () => {
+    const response = await api.delete('/api/brand-identity')
+    return response.data
+  },
+}
+
+// Products (auth required)
+export const productsApi = {
+  list: async () => {
+    const response = await api.get('/api/products')
+    return response.data
+  },
+  get: async (id: string) => {
+    const response = await api.get(`/api/products/${id}`)
+    return response.data
+  },
+  create: async (data: {
+    name: string
+    sku?: string
+    category?: string
+    default_apply_brand_identity: boolean
+    product_prompt: string
+  }) => {
+    const response = await api.post('/api/products', data)
+    return response.data
+  },
+  update: async (id: string, data: {
+    name?: string
+    sku?: string
+    category?: string
+    default_apply_brand_identity?: boolean
+    product_prompt?: string
+  }) => {
+    const response = await api.put(`/api/products/${id}`, data)
+    return response.data
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/api/products/${id}`)
+    return response.data
+  },
+  uploadImage: async (productId: string, file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await api.post(`/api/products/${productId}/images`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return response.data
+  },
+  deleteImage: async (productId: string, imageId: string) => {
+    const response = await api.delete(`/api/products/${productId}/images/${imageId}`)
+    return response.data
+  },
+  analyze: async (productId: string) => {
+    const response = await api.post(`/api/products/${productId}/analyze`)
+    return response.data
+  },
+  getGenerations: async (productId: string, page: number = 1, pageSize: number = 20) => {
+    const response = await api.get(`/api/products/${productId}/generations`, {
+      params: { page, page_size: pageSize },
+    })
+    return response.data
+  },
+}
+
+// Generations: no-product scope (auth required)
+export const generationsApi = {
+  getNoProduct: async (page: number = 1, pageSize: number = 20) => {
+    const response = await api.get('/api/generations', {
+      params: { scope: 'no_product', page, page_size: pageSize },
+    })
+    return response.data
+  },
+}
+
 // Upload
 export const uploadApi = {
   uploadImage: async (file: File) => {
@@ -127,6 +235,9 @@ export const generationApi = {
     aspect_ratio?: string
     resolution?: string
     device_id: string
+    product_id?: string | null
+    apply_brand_identity?: boolean
+    user_prompt_input?: string
   }) => {
     const response = await api.post('/api/generate-paid', data, { timeout: GENERATE_TIMEOUT_MS })
     return response.data

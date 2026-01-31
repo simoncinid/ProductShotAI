@@ -64,6 +64,10 @@ class GenerateRequest(BaseModel):
     aspect_ratio: str = Field(default="1:1", pattern="^(1:1|4:5|16:9)$")
     resolution: str = Field(default="8k", pattern="^(4k|8k)$")
     device_id: Optional[str] = None
+    # Brand Identity & Product (solo per utenti loggati)
+    product_id: Optional[str] = None
+    apply_brand_identity: Optional[bool] = None  # usato solo quando product_id è null (NO PRODUCT)
+    user_prompt_input: Optional[str] = None     # testo libero aggiuntivo in /create
 
 
 class GenerateResponse(BaseModel):
@@ -104,6 +108,10 @@ class GenerationHistoryItem(BaseModel):
     status: str
     created_at: datetime
     completed_at: Optional[datetime]
+    product_id: Optional[str] = None
+    product_name_snapshot: Optional[str] = None
+    apply_brand_identity: bool = False
+    final_prompt: Optional[str] = None
     
     class Config:
         from_attributes = True
@@ -114,3 +122,94 @@ class GenerationHistoryResponse(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+# --- Brand Identity ---
+class BrandIdentityImageOut(BaseModel):
+    id: str
+    image_url: str
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+
+class BrandIdentityUpdate(BaseModel):
+    average_customer: Optional[str] = None
+    sales_channels: Optional[str] = None
+    price_range: Optional[str] = None
+    lighting_style: Optional[str] = None
+    photo_style: Optional[dict] = None
+    color_palette: Optional[dict] = None
+    brand_notes: Optional[str] = None
+
+
+class BrandIdentityResponse(BaseModel):
+    id: str
+    user_id: str
+    average_customer: Optional[str] = None
+    sales_channels: Optional[str] = None
+    price_range: Optional[str] = None
+    lighting_style: Optional[str] = None
+    photo_style: Optional[dict] = None
+    color_palette: Optional[dict] = None
+    brand_notes: Optional[str] = None
+    analysis_text: Optional[str] = None
+    analysis_version: int = 1
+    images: list[BrandIdentityImageOut] = []
+    created_at: datetime
+    updated_at: datetime
+    class Config:
+        from_attributes = True
+
+
+# --- Products ---
+class ProductImageOut(BaseModel):
+    id: str
+    image_url: str
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+
+class ProductCreate(BaseModel):
+    name: str
+    sku: Optional[str] = None
+    category: Optional[str] = None
+    default_apply_brand_identity: bool = True
+    product_prompt: str
+
+
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    sku: Optional[str] = None
+    category: Optional[str] = None
+    default_apply_brand_identity: Optional[bool] = None
+    product_prompt: Optional[str] = None
+
+
+class ProductListItem(BaseModel):
+    id: str
+    name: str
+    sku: Optional[str] = None
+    category: Optional[str] = None
+    default_apply_brand_identity: bool
+    created_at: datetime
+    class Config:
+        from_attributes = True
+
+
+class ProductDetailResponse(BaseModel):
+    id: str
+    user_id: str
+    name: str
+    sku: Optional[str] = None
+    category: Optional[str] = None
+    default_apply_brand_identity: bool
+    product_prompt: str
+    analysis_text: Optional[str] = None
+    analysis_version: int = 1
+    images: list[ProductImageOut] = []
+    created_at: datetime
+    updated_at: datetime
+    class Config:
+        from_attributes = True
