@@ -93,7 +93,7 @@ export default function BrandIdentityPage() {
       <div className="max-w-3xl mx-auto px-4 py-8">
         <Link href="/dashboard" className="text-vivid-yellow hover:underline mb-4 inline-block">← Dashboard</Link>
         <p className="text-gray-600 mb-4">No Brand Identity yet. Save the form below to create one.</p>
-        <BrandIdentityForm existing={null} onSave={(d) => updateMutation.mutate(d)} isSaving={updateMutation.isPending} />
+        <BrandIdentityForm existing={undefined} onSave={(d) => updateMutation.mutate(d)} isSaving={updateMutation.isPending} />
       </div>
     )
   }
