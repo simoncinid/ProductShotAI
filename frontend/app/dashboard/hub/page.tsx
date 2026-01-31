@@ -49,6 +49,12 @@ export default function HubPage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const stopPollingRef = useRef<(() => void) | null>(null)
 
+  const { data: generation } = useQuery({
+    queryKey: ['generation', generationId],
+    queryFn: () => generationApi.getGeneration(generationId!, undefined),
+    enabled: !!generationId && isAuthenticated(),
+  })
+
   const productIdFromGen = generation && 'product_id' in generation ? (generation as { product_id?: string }).product_id : undefined
   const effectiveProductId = productId || productIdFromGen
 
@@ -56,12 +62,6 @@ export default function HubPage() {
     queryKey: ['product', effectiveProductId],
     queryFn: () => productsApi.get(effectiveProductId!),
     enabled: isAuthenticated() && !!effectiveProductId,
-  })
-
-  const { data: generation } = useQuery({
-    queryKey: ['generation', generationId],
-    queryFn: () => generationApi.getGeneration(generationId!, undefined),
-    enabled: !!generationId && isAuthenticated(),
   })
 
   useEffect(() => {

@@ -51,12 +51,18 @@ limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Mount static files for local storage
-if settings.storage_type == "local":
+# Mount static files solo per storage locale (con S3 non servono)
+_effective_storage = settings.get_effective_storage_type()
+if _effective_storage == "local":
     import os
     storage_dir = os.path.abspath(settings.storage_path)
     os.makedirs(storage_dir, exist_ok=True)
     app.mount("/storage", StaticFiles(directory=storage_dir), name="storage")
+    logger.warning(
+        "Storage: local (effimero su Render). Per persistenza imposta AWS S3 (STORAGE_TYPE=auto + variabili S3)."
+    )
+else:
+    logger.info("Storage: S3 (persistente)")
 
 app.include_router(brand_identity.router)
 app.include_router(products.router)

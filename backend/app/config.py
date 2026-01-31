@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     wavespeed_api_key: str
     
     # Storage
-    storage_type: str = "local"  # "local" or "s3"
+    storage_type: str = "auto"  # "auto" | "local" | "s3". Con "auto": S3 se configurato, altrimenti local (locale è effimero su Render)
     storage_path: str = "./storage"
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
@@ -62,6 +62,20 @@ class Settings(BaseSettings):
 
     def get_cors_origins_list(self) -> List[str]:
         return _parse_list_str(self.cors_origins)
+
+    def is_s3_configured(self) -> bool:
+        """True se le variabili S3 sono tutte impostate (per storage persistente)."""
+        return bool(
+            self.s3_bucket_name and self.aws_access_key_id and self.aws_secret_access_key
+        )
+
+    def get_effective_storage_type(self) -> str:
+        """'s3' se si usa S3 (persistente), 'local' altrimenti (effimero su Render)."""
+        if self.storage_type == "s3" or (
+            self.storage_type == "auto" and self.is_s3_configured()
+        ):
+            return "s3"
+        return "local"
     
     # Free tier
     free_generations_per_month: int = 3

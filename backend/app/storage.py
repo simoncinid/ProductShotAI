@@ -6,6 +6,18 @@ from urllib.parse import urlparse
 import aiofiles
 from app.config import settings
 import boto3
+
+# Mappa estensione -> Content-Type per upload S3
+_EXTENSION_TO_CONTENT_TYPE = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
+}
+
+
+def _content_type_for_extension(ext: str) -> str:
+    return _EXTENSION_TO_CONTENT_TYPE.get(ext.lower(), "application/octet-stream")
 from botocore.exceptions import ClientError
 
 
@@ -93,13 +105,12 @@ class S3StorageAdapter(StorageAdapter):
         filename = f"{uuid.uuid4()}{file_extension}"
         key = f"{subpath}/{filename}" if subpath else filename
         
-        # boto3 is synchronous, but we can run it in executor if needed
-        # For now, using sync calls as boto3 doesn't have async support
+        content_type = _content_type_for_extension(file_extension)
         self.s3_client.put_object(
             Bucket=self.bucket_name,
             Key=key,
             Body=file_content,
-            ContentType="image/jpeg" if file_extension == ".jpg" else "image/png"
+            ContentType=content_type,
         )
         
         # CloudFront: URL pubblico tipo https://d1q70pf5vjeyhc.cloudfront.net/key (richiesto da WaveSpeed).
@@ -127,13 +138,12 @@ class S3StorageAdapter(StorageAdapter):
 
 
 def get_storage_adapter() -> StorageAdapter:
-    """Factory function to get the appropriate storage adapter"""
-    if settings.storage_type == "s3":
+    """Factory: restituisce S3 (persistente) se configurato, altrimenti local (effimero su Render)."""
+    if settings.get_effective_storage_type() == "s3":
         return S3StorageAdapter(
             bucket_name=settings.s3_bucket_name,
             access_key_id=settings.aws_access_key_id,
             secret_access_key=settings.aws_secret_access_key,
             region=settings.aws_region
         )
-    else:
-        return LocalStorageAdapter(base_path=settings.storage_path)
+    return LocalStorageAdapter(base_path=settings.storage_path)
