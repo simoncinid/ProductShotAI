@@ -62,9 +62,9 @@ export default function DashboardPage() {
         href="/dashboard/shooting"
         className="block w-full bg-vivid-yellow text-rich-black p-6 rounded-lg hover:bg-opacity-90 transition mb-8"
       >
-        <h3 className="text-xl font-semibold mb-2">Genera product photoshooting</h3>
+        <h3 className="text-xl font-semibold mb-2">Generate product photoshooting</h3>
         <p className="text-rich-black opacity-90">
-          Crea un intero set di foto prodotto (2–10 scatti) con stile coerente: zoom sui dettagli, lifestyle, studio, mix. Scegli il prodotto, una foto di riferimento e i prompt generati da AI.
+          Create a full product photo set (2–10 shots) with consistent style: zoom on details, lifestyle, studio, mix. Choose the product, a reference photo and AI-generated prompts.
         </p>
       </Link>
     </div>

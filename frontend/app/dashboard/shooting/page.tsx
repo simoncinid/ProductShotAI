@@ -108,7 +108,7 @@ export default function ShootingWizardPage() {
     if (promptIndex < prompts.length - 1) {
       setPromptIndex(promptIndex + 1)
     } else {
-      setStep(4) // final step: Genera
+      setStep(4) // final step: Generate
     }
   }
 

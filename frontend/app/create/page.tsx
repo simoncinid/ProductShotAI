@@ -113,7 +113,7 @@ export default function CreatePage() {
         stopPollingRef.current = stop
       } else if (data?.status === 'completed' && data?.output_image_url) {
         setIsGenerating(false)
-        toast.success('Generazione completata!')
+        toast.success('Generation completed!')
         setResultImageUrl(getAbsoluteImageUrl(data.output_image_url) ?? data.output_image_url ?? null)
       } else {
         setIsGenerating(false)
