@@ -1,6 +1,6 @@
 """
-API Products: CRUD, immagini (max 3 per prodotto), analisi stile.
-Solo utenti autenticati; ownership verificata su ogni route.
+API Products: CRUD, images (max 3 per product), style analysis.
+Authenticated users only; ownership verified on every route.
 """
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -42,7 +42,7 @@ async def list_products(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Elenco prodotti dell'utente."""
+    """List user's products."""
     r = await db.execute(
         select(Product).where(Product.user_id == current_user.id).order_by(Product.created_at.desc())
     )
@@ -63,7 +63,7 @@ async def create_product(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Crea un nuovo prodotto."""
+    """Create a new product."""
     product = Product(
         user_id=current_user.id,
         name=body.name.strip(),
@@ -97,7 +97,7 @@ async def get_product(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Dettaglio prodotto. Solo proprietario."""
+    """Product detail. Owner only."""
     product = await _get_product_owned(db, product_id, current_user.id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
@@ -128,7 +128,7 @@ async def update_product(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Aggiorna prodotto. Solo proprietario."""
+    """Update product. Owner only."""
     product = await _get_product_owned(db, product_id, current_user.id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
@@ -173,7 +173,7 @@ async def delete_product(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Elimina prodotto. Le generazioni esistenti mantengono product_name_snapshot (product_id -> NULL)."""
+    """Delete product. Existing generations keep product_name_snapshot (product_id -> NULL)."""
     product = await _get_product_owned(db, product_id, current_user.id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
@@ -189,7 +189,7 @@ async def upload_product_image(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Carica un'immagine per il prodotto. Max 3 per prodotto."""
+    """Upload an image for the product. Max 3 per product."""
     _check_allowed_file(file)
     content = await file.read()
     max_size = settings.max_upload_size_mb * 1024 * 1024
@@ -226,7 +226,7 @@ async def delete_product_image(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Rimuove un'immagine dal prodotto. Ownership verificata."""
+    """Remove an image from the product. Ownership verified."""
     product = await _get_product_owned(db, product_id, current_user.id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
@@ -252,7 +252,7 @@ async def get_product_generations(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Elenco generazioni per questo prodotto. Solo proprietario."""
+    """List generations for this product. Owner only."""
     product = await _get_product_owned(db, product_id, current_user.id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
@@ -298,7 +298,7 @@ async def analyze_product(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Esegue l'analisi sulle immagini del prodotto e salva analysis_text."""
+    """Run analysis on product images and save analysis_text."""
     product = await _get_product_owned(db, product_id, current_user.id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")

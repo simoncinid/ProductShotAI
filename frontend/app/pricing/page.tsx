@@ -62,7 +62,7 @@ export default function PricingPage() {
 
   const handlePurchase = (packId: string) => {
     if (!authenticated) {
-      toast.error('Accedi o registrati per acquistare crediti')
+      toast.error('Log in or sign up to purchase credits')
       router.push('/signup')
       return
     }

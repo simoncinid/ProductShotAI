@@ -132,9 +132,9 @@ export default function Home() {
         <div className="absolute -bottom-20 left-1/2 h-64 w-[140%] -translate-x-1/2 rounded-[50%] bg-[#FFF9E6]/60 blur-2xl pointer-events-none" aria-hidden />
 
         <div className={`${CONTAINER} relative`}>
-          {/* Mobile: titolo → sottotitolo → esempi (BeforeAfter) → CTA. Desktop: 2 col con testo+CTA a sinistra, BeforeAfter a destra. */}
+          {/* Mobile: title → subtitle → examples (BeforeAfter) → CTA. Desktop: 2 cols with text+CTA left, BeforeAfter right. */}
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-x-16">
-            {/* Desktop: blocco unico sinistra (titolo + paragrafo + CTA subito sotto, senza spazio) */}
+            {/* Desktop: single block left (title + paragraph + CTA right below, no gap) */}
             <div className="hidden lg:flex lg:col-start-1 lg:row-start-1 lg:flex-col lg:items-start">
               <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-secondary sm:text-xs">Product Photo AI & AI Image Product</p>
               <h1 className="font-extrabold leading-tight text-primary [font-size:clamp(26px,5vw,52px)]">
@@ -341,7 +341,7 @@ export default function Home() {
               ))}
             </div>
 
-            {/* FAQ compatto accordion */}
+            {/* Compact FAQ accordion */}
             <div className="rounded-[20px] border border-gray-200 bg-white p-4 shadow-soft sm:p-6">
               <h3 className="mb-3 text-[15px] font-semibold text-primary sm:mb-4 sm:text-base">Quick answers</h3>
               <div className="space-y-2">
@@ -372,7 +372,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ——— FAQ estesa ——— */}
+      {/* ——— Extended FAQ ——— */}
       <section className="border-t border-gray-200 bg-white py-12 md:py-24">
         <div className={CONTAINER}>
           <div className="text-center">

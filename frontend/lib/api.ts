@@ -220,7 +220,7 @@ export const uploadApi = {
   },
 }
 
-// Generation: POST con webhook WaveSpeed ritorna 202 subito; frontend fa polling su getGeneration.
+// Generation: POST with WaveSpeed webhook returns 202 immediately; frontend polls getGeneration.
 const GENERATE_TIMEOUT_MS = 60_000  // POST è veloce (solo create task), polling è separato
 
 export type GenerationStatus = {

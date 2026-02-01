@@ -48,7 +48,7 @@ export default function FAQPage() {
         </svg>
       </div>
 
-      {/* ——— Lista FAQ accordion ——— */}
+      {/* ——— FAQ accordion list ——— */}
       <section className="bg-page-bg pb-16 pt-12 md:pb-24 md:pt-16">
         <div className={CONTAINER}>
           <div className="mx-auto max-w-3xl space-y-4">

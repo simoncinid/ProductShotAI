@@ -104,7 +104,7 @@ export default function HubPage() {
           data.generation_id,
           (url) => {
             setIsGenerating(false)
-            toast.success('Generazione completata!')
+            toast.success('Generation completed!')
             setResultImageUrl(url)
           },
           (msg) => {
@@ -122,13 +122,13 @@ export default function HubPage() {
     onError: (e: unknown) => {
       setIsGenerating(false)
       const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
-      toast.error(msg || 'Generazione fallita')
+      toast.error(msg || 'Generation failed')
     },
   })
 
   const handleGenerate = () => {
     if (!displayImageUrl || !prompt.trim()) {
-      toast.error('Inserisci una descrizione per generare')
+      toast.error('Enter a description to generate')
       return
     }
     setIsGenerating(true)
@@ -156,8 +156,8 @@ export default function HubPage() {
   if (!displayImageUrl && !generationId && !productId) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-gray-600">Specifica un&apos;immagine tramite link (product_id + image_id, generation_id, o image_url).</p>
-        <Link href="/dashboard/products" className="mt-4 inline-block text-vivid-yellow hover:underline">← Prodotti</Link>
+        <p className="text-gray-600">Specify an image via link (product_id + image_id, generation_id, or image_url).</p>
+        <Link href="/dashboard/products" className="mt-4 inline-block text-vivid-yellow hover:underline">← Products</Link>
       </div>
     )
   }
@@ -165,8 +165,8 @@ export default function HubPage() {
   if (productId && !imageUrlParam && !imageId) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-gray-600">Manca image_id o image_url per questo prodotto.</p>
-        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-vivid-yellow hover:underline">← Prodotto</Link>
+        <p className="text-gray-600">Missing image_id or image_url for this product.</p>
+        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-vivid-yellow hover:underline">← Product</Link>
       </div>
     )
   }
@@ -174,8 +174,8 @@ export default function HubPage() {
   if (productId && imageId && product && !product.images?.find((i: { id: string }) => i.id === imageId)) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-gray-600">Immagine non trovata per questo prodotto.</p>
-        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-vivid-yellow hover:underline">← Prodotto</Link>
+        <p className="text-gray-600">Image not found for this product.</p>
+        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-vivid-yellow hover:underline">← Product</Link>
       </div>
     )
   }
@@ -183,7 +183,7 @@ export default function HubPage() {
   if (!displayImageUrl && (generationId || productId)) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-gray-600">Caricamento immagine...</p>
+        <p className="text-gray-600">Loading image...</p>
         <Link href="/dashboard" className="mt-4 inline-block text-vivid-yellow hover:underline">← Dashboard</Link>
       </div>
     )
@@ -194,7 +194,7 @@ export default function HubPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-rich-black">Creative Hub</h1>
         <Link href={productId ? `/dashboard/products/${productId}` : '/dashboard'} className="text-vivid-yellow hover:underline">
-          {productId ? '← Prodotto' : '← Dashboard'}
+          {productId ? '← Product' : '← Dashboard'}
         </Link>
       </div>
 
@@ -208,7 +208,7 @@ export default function HubPage() {
             />
           </div>
           {canUseProductContext && (
-            <p className="text-sm text-gray-500">Contesto prodotto attivo: prompt e brand identity verranno applicati se configurati.</p>
+            <p className="text-sm text-gray-500">Product context active: prompt and brand identity will be applied if configured.</p>
           )}
         </div>
 
@@ -219,41 +219,41 @@ export default function HubPage() {
               onClick={() => setMode('similar')}
               className={`px-4 py-2 rounded-lg font-medium transition ${mode === 'similar' ? 'bg-vivid-yellow text-rich-black' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
             >
-              Genera simile
+              Generate similar
             </button>
             <button
               type="button"
               onClick={() => setMode('modify')}
               className={`px-4 py-2 rounded-lg font-medium transition ${mode === 'modify' ? 'bg-vivid-yellow text-rich-black' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
             >
-              Modifica immagine
+              Edit image
             </button>
           </div>
 
           <div>
             <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
               <label className="block text-sm font-medium text-rich-black">
-                {mode === 'similar' ? 'Descrizione variazione (opzionale)' : 'Cosa modificare'}
+                {mode === 'similar' ? 'Variation description (optional)' : 'What to change'}
               </label>
-              <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Modifica prompt con AI" applyLabel="Applica" />
+              <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
             </div>
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder={mode === 'similar' ? 'Es: stessi colori, sfondo leggermente più chiaro...' : 'Es: cambia sfondo in bianco, aggiungi ombra soft...'}
+              placeholder={mode === 'similar' ? 'E.g.: same colors, slightly lighter background...' : 'E.g.: change background to white, add soft shadow...'}
               rows={5}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-vivid-yellow focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-rich-black mb-2">Proporzioni</label>
+            <label className="block text-sm font-medium text-rich-black mb-2">Aspect ratio</label>
             <select
               value={aspectRatio}
               onChange={(e) => setAspectRatio(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2"
             >
-              <option value="1:1">1:1 (Quadrato)</option>
+              <option value="1:1">1:1 (Square)</option>
               <option value="4:5">4:5 (Portrait)</option>
               <option value="16:9">16:9 (Landscape)</option>
             </select>
@@ -265,7 +265,7 @@ export default function HubPage() {
             disabled={!prompt.trim() || isGenerating}
             className="w-full bg-rich-black text-white py-3 rounded-lg font-semibold hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isGenerating ? 'Generazione in corso…' : 'Genera'}
+            {isGenerating ? 'Generating…' : 'Generate'}
           </button>
 
           {imageUrlParam && (
@@ -273,7 +273,7 @@ export default function HubPage() {
               href={`/dashboard/shooting?reference_url=${encodeURIComponent(imageUrlParam)}${productId ? `&product_id=${productId}` : ''}`}
               className="block text-center text-sm text-vivid-yellow hover:underline"
             >
-              Usa questa immagine in un product photoshooting →
+              Use this image in a product photoshooting →
             </Link>
           )}
         </div>

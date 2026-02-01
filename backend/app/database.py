@@ -8,7 +8,7 @@ from app.config import settings
 
 
 def get_ssl_config():
-    """SSL con CA personalizzato: solo se ca_certificate è impostato e vogliamo verificare."""
+    """SSL with custom CA: only if ca_certificate is set and we want to verify."""
     if not settings.ca_certificate or not settings.database_ssl_reject_unauthorized:
         return {}
     temp_cert_file = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.pem')

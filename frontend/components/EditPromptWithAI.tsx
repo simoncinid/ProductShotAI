@@ -7,19 +7,19 @@ import toast from 'react-hot-toast'
 type EditPromptWithAIProps = {
   value: string
   onChange: (newValue: string) => void
-  /** Placeholder per l'input delle istruzioni di modifica */
+  /** Placeholder for the edit instructions input */
   editInputPlaceholder?: string
-  /** Testo del pulsante principale */
+  /** Main button text */
   buttonLabel?: string
-  /** Testo del pulsante Applica */
+  /** Apply button text */
   applyLabel?: string
-  /** Classe aggiuntiva per il wrapper (es. allineamento) */
+  /** Additional class for the wrapper (e.g. alignment) */
   className?: string
 }
 
-const defaultEditPlaceholder = "Es: aggiungi sfondo bianco, ombra soft, colori più vivaci..."
+const defaultEditPlaceholder = "E.g.: add white background, soft shadow, more vibrant colors..."
 const defaultButtonLabel = "Edit prompt with AI"
-const defaultApplyLabel = "Applica"
+const defaultApplyLabel = "Apply"
 
 export function EditPromptWithAI({
   value,
@@ -36,7 +36,7 @@ export function EditPromptWithAI({
   const handleApply = async () => {
     const instructions = editInstructions.trim()
     if (!instructions) {
-      toast.error('Scrivi come vuoi modificare il prompt')
+      toast.error('Describe how you want to edit the prompt')
       return
     }
     setIsLoading(true)
@@ -45,12 +45,12 @@ export function EditPromptWithAI({
       onChange(edited_prompt)
       setEditInstructions('')
       setIsOpen(false)
-      toast.success('Prompt aggiornato')
+      toast.success('Prompt updated')
     } catch (e: unknown) {
       const msg = e && typeof e === 'object' && 'response' in e
         ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
         : null
-      toast.error(msg || 'Modifica prompt fallita')
+      toast.error(msg || 'Edit prompt failed')
     } finally {
       setIsLoading(false)
     }
@@ -103,7 +103,7 @@ export function EditPromptWithAI({
           disabled={isLoading}
           className="px-3 py-1.5 border border-gray-300 rounded-md text-sm"
         >
-          Annulla
+          Cancel
         </button>
       </div>
     </div>

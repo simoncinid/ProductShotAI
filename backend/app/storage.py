@@ -115,7 +115,7 @@ class S3StorageAdapter(StorageAdapter):
         )
         
         # CloudFront: URL pubblico tipo https://d1q70pf5vjeyhc.cloudfront.net/key (richiesto da WaveSpeed).
-        # Se non impostato, si usa l'URL S3 diretto (già pubblico).
+        # If not set, use direct S3 URL (already public).
         if settings.cloudfront_domain:
             domain = settings.cloudfront_domain.strip().rstrip("/")
             return f"https://{domain}/{key}"

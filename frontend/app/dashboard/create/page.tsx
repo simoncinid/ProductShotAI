@@ -28,7 +28,7 @@ function startPolling(
         onFailed(res.error_message || 'Generation failed')
       }
     } catch {
-      // retry al prossimo giro
+      // retry next poll
     }
   }, POLL_INTERVAL_MS)
   return () => clearInterval(id)
@@ -81,7 +81,7 @@ export default function DashboardCreatePage() {
           data.generation_id,
           (url) => {
             setIsGenerating(false)
-            toast.success('Generazione completata!')
+            toast.success('Generation completed!')
             setResultImageUrl(url)
           },
           (msg) => {
@@ -91,7 +91,7 @@ export default function DashboardCreatePage() {
         )
       } else if (data?.status === 'completed' && data?.output_image_url) {
         setIsGenerating(false)
-        toast.success('Generazione completata!')
+        toast.success('Generation completed!')
         setResultImageUrl(getAbsoluteImageUrl(data.output_image_url) ?? data.output_image_url ?? null)
       } else {
         setIsGenerating(false)

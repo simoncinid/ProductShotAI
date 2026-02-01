@@ -34,7 +34,7 @@ function startPolling(
         onFailed(res.error_message || 'Generation failed')
       }
     } catch {
-      // retry al prossimo giro
+      // retry next poll
     }
   }, POLL_INTERVAL_MS)
   return () => clearInterval(id)
@@ -102,7 +102,7 @@ export default function CreatePage() {
           authenticated ? undefined : getDeviceId(),
           (url) => {
             setIsGenerating(false)
-            toast.success('Generazione completata!')
+            toast.success('Generation completed!')
             setResultImageUrl(url)
           },
           (msg) => {

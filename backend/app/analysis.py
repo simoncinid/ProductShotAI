@@ -1,7 +1,7 @@
 """
-Analisi stile da immagini di riferimento (brand identity o product).
-Accetta fino a 3 URL immagine e restituisce un testo descrittivo (composizione, illuminazione, palette, ecc.).
-Se OPENAI_API_KEY è impostato, usa OpenAI Vision; altrimenti restituisce un placeholder.
+Style analysis from reference images (brand identity or product).
+Accepts up to 3 image URLs and returns a descriptive text (composition, lighting, palette, etc.).
+If OPENAI_API_KEY is set, uses OpenAI Vision; otherwise returns a placeholder.
 """
 import os
 import httpx
@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Placeholder quando non c'è API vision configurata
+# Placeholder when no vision API is configured
 PLACEHOLDER_ANALYSIS = """Style analysis (placeholder — set OPENAI_API_KEY for automatic analysis):
 - Composition: product-focused, centered framing
 - Lighting: soft, diffused
@@ -21,8 +21,8 @@ PLACEHOLDER_ANALYSIS = """Style analysis (placeholder — set OPENAI_API_KEY for
 
 async def analyze_reference_images(image_urls: List[str]) -> str:
     """
-    Analizza fino a 3 immagini e restituisce una descrizione testuale dello stile.
-    image_urls: lista di URL pubblici (max 3).
+    Analyze up to 3 images and return a text description of the style.
+    image_urls: list of public URLs (max 3).
     """
     if not image_urls or len(image_urls) > 3:
         return ""
@@ -31,7 +31,7 @@ async def analyze_reference_images(image_urls: List[str]) -> str:
         logger.info("OPENAI_API_KEY not set; using placeholder analysis")
         return PLACEHOLDER_ANALYSIS
 
-    # OpenAI Vision: image_url può essere URL pubblico o base64
+    # OpenAI Vision: image_url can be public URL or base64
     content = [
         {
             "type": "text",

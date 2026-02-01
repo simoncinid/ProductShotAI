@@ -37,12 +37,12 @@ export default function ProductDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['product', id] })
       queryClient.invalidateQueries({ queryKey: ['products'] })
-      toast.success('Prodotto aggiornato')
+      toast.success('Product updated')
       setEditing(false)
     },
     onError: (e: unknown) => {
       const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
-      toast.error(msg || 'Aggiornamento fallito')
+      toast.error(msg || 'Update failed')
     },
   })
 
@@ -50,11 +50,11 @@ export default function ProductDetailPage() {
     mutationFn: (file: File) => productsApi.uploadImage(id, file),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['product', id] })
-      toast.success('Immagine caricata')
+      toast.success('Image uploaded')
     },
     onError: (e: unknown) => {
       const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
-      toast.error(msg || 'Upload fallito')
+      toast.error(msg || 'Upload failed')
     },
   })
 
@@ -62,7 +62,7 @@ export default function ProductDetailPage() {
     mutationFn: () => productsApi.analyze(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['product', id] })
-      toast.success('Analisi aggiornata')
+      toast.success('Analysis updated')
     },
   })
 
@@ -74,7 +74,7 @@ export default function ProductDetailPage() {
   const deleteMutation = useMutation({
     mutationFn: () => productsApi.delete(id),
     onSuccess: () => {
-      toast.success('Prodotto eliminato')
+      toast.success('Product deleted')
       router.push('/dashboard/products')
     },
   })
@@ -87,12 +87,12 @@ export default function ProductDetailPage() {
   const generations = generationsData?.items ?? []
 
   if (!authenticated || !id) return null
-  if (isLoading) return <div className="p-8 text-gray-600">Caricamento...</div>
+  if (isLoading) return <div className="p-8 text-gray-600">Loading...</div>
   if (error || !product) {
     return (
       <div className="p-8">
-        <Link href="/dashboard/products" className="text-vivid-yellow hover:underline">← Prodotti</Link>
-        <p className="mt-4 text-gray-600">Prodotto non trovato.</p>
+        <Link href="/dashboard/products" className="text-vivid-yellow hover:underline">← Products</Link>
+        <p className="mt-4 text-gray-600">Product not found.</p>
       </div>
     )
   }
@@ -102,7 +102,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* Header: nome + Edit a sinistra, "← Prodotti" a destra */}
+      {/* Header: name + Edit on left, "← Products" on right */}
       <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
         <div className="flex items-center gap-3 min-w-0">
           <h1 className="text-2xl font-bold text-rich-black truncate">{product.name}</h1>
@@ -111,20 +111,20 @@ export default function ProductDetailPage() {
               type="button"
               onClick={() => setEditing(true)}
               className="p-2 border border-gray-300 rounded-md hover:bg-gray-100 text-rich-black shrink-0"
-              title="Modifica prodotto"
+              title="Edit product"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
             </button>
           )}
         </div>
-        <Link href="/dashboard/products" className="text-vivid-yellow hover:underline shrink-0">← Prodotti</Link>
+        <Link href="/dashboard/products" className="text-vivid-yellow hover:underline shrink-0">← Products</Link>
       </div>
 
       {!editing ? (
         <div className="mb-6">
           <p><span className="text-gray-500">SKU:</span> {product.sku || '—'}</p>
-          <p><span className="text-gray-500">Categoria:</span> {product.category || '—'}</p>
-          <p><span className="text-gray-500">Applica Brand Identity:</span> {product.default_apply_brand_identity ? 'Sì' : 'No'}</p>
+          <p><span className="text-gray-500">Category:</span> {product.category || '—'}</p>
+          <p><span className="text-gray-500">Apply Brand Identity:</span> {product.default_apply_brand_identity ? 'Yes' : 'No'}</p>
           <p className="mt-2 text-gray-700 whitespace-pre-wrap">{product.product_prompt}</p>
         </div>
       ) : (
@@ -138,8 +138,8 @@ export default function ProductDetailPage() {
       )}
 
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-rich-black mb-2">Immagini di riferimento (max 3)</h2>
-        <p className="text-sm text-gray-500 mb-2">Clicca su un&apos;immagine per aprire il Creative Hub e generare varianti o modifiche.</p>
+        <h2 className="text-lg font-semibold text-rich-black mb-2">Reference images (max 3)</h2>
+        <p className="text-sm text-gray-500 mb-2">Click on an image to open the Creative Hub and generate variants or edits.</p>
         <div className="flex flex-wrap gap-4">
           {images.map((img: { id: string; image_url: string }) => (
             <div key={img.id} className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200 group">
@@ -149,41 +149,41 @@ export default function ProductDetailPage() {
               >
                 <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="w-full h-full object-cover group-hover:opacity-90 transition" />
               </Link>
-              <button type="button" onClick={(e) => { e.preventDefault(); deleteImageMutation.mutate(img.id); }} className="absolute top-1 right-1 bg-red-500 text-white rounded p-1 text-xs hover:bg-red-600">Rimuovi</button>
+              <button type="button" onClick={(e) => { e.preventDefault(); deleteImageMutation.mutate(img.id); }} className="absolute top-1 right-1 bg-red-500 text-white rounded p-1 text-xs hover:bg-red-600">Remove</button>
             </div>
           ))}
           {images.length < maxImages && (
             <label className="w-32 h-32 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-vivid-yellow">
               <input type="file" accept="image/jpeg,image/png" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadMutation.mutate(f); e.target.value = ''; }} />
-              <span className="text-gray-500 text-sm">+ Carica</span>
+              <span className="text-gray-500 text-sm">+ Upload</span>
             </label>
           )}
         </div>
         {images.length > 0 && (
           <button type="button" onClick={() => analyzeMutation.mutate()} disabled={analyzeMutation.isPending} className="mt-4 px-4 py-2 bg-rich-black text-white rounded-md font-medium disabled:opacity-50">
-            {analyzeMutation.isPending ? 'Analisi in corso…' : 'Analizza immagini'}
+            {analyzeMutation.isPending ? 'Analyzing…' : 'Analyze images'}
           </button>
         )}
       </div>
 
-      {/* Analisi: in view mode solo testo, in edit mode è nel form */}
+      {/* Analysis: in view mode text only, in edit mode it's in the form */}
       {!editing && (
         <div className="mt-6">
-          <h3 className="font-semibold text-rich-black mb-2">Analisi stile</h3>
+          <h3 className="font-semibold text-rich-black mb-2">Style analysis</h3>
           {product.analysis_text ? (
             <div className="p-4 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-700 whitespace-pre-wrap">{product.analysis_text}</p>
             </div>
           ) : (
-            <p className="text-sm text-gray-500">Nessuna analisi. Carica immagini e clicca &quot;Analizza immagini&quot;.</p>
+            <p className="text-sm text-gray-500">No analysis. Upload images and click &quot;Analyze images&quot;.</p>
           )}
         </div>
       )}
 
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-rich-black mb-4">Generazioni per questo prodotto</h2>
+        <h2 className="text-lg font-semibold text-rich-black mb-4">Generations for this product</h2>
         {generations.length === 0 ? (
-          <p className="text-gray-600">Nessuna generazione. Seleziona questo prodotto in <Link href="/create" className="text-vivid-yellow hover:underline">/create</Link> per generare.</p>
+          <p className="text-gray-600">No generations. Select this product in <Link href="/create" className="text-vivid-yellow hover:underline">/create</Link> to generate.</p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {generations.map((gen: { id: string; output_image_url?: string; status: string; created_at: string }) => (
@@ -203,11 +203,11 @@ export default function ProductDetailPage() {
       <div className="mt-8 pt-6 border-t">
         <button
           type="button"
-          onClick={() => window.confirm('Eliminare questo prodotto?') && deleteMutation.mutate()}
+          onClick={() => window.confirm('Delete this product?') && deleteMutation.mutate()}
           disabled={deleteMutation.isPending}
           className="px-4 py-2 bg-red-600 text-white rounded-md font-medium"
         >
-          Elimina prodotto
+          Delete product
         </button>
       </div>
     </div>
@@ -258,7 +258,7 @@ function EditProductForm({
   return (
     <form id={formId} onSubmit={handleSubmit} className="mb-6 space-y-4">
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Nome *</label>
+        <label className="block text-sm font-medium text-rich-black mb-1">Name *</label>
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" required />
       </div>
       <div>
@@ -266,27 +266,27 @@ function EditProductForm({
         <input type="text" value={sku} onChange={(e) => setSku(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Categoria</label>
+        <label className="block text-sm font-medium text-rich-black mb-1">Category</label>
         <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" />
       </div>
       <div className="flex items-center gap-2">
         <input type="checkbox" id="editBi" checked={defaultApplyBrandIdentity} onChange={(e) => setDefaultApplyBrandIdentity(e.target.checked)} />
-        <label htmlFor="editBi" className="text-sm text-rich-black">Applica Brand Identity di default</label>
+        <label htmlFor="editBi" className="text-sm text-rich-black">Apply Brand Identity by default</label>
       </div>
       <div>
         <div className="flex items-center justify-between gap-2 flex-wrap mb-1">
-          <label className="block text-sm font-medium text-rich-black">Prompt prodotto</label>
-          <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Modifica prompt con AI" applyLabel="Applica" />
+          <label className="block text-sm font-medium text-rich-black">Product prompt</label>
+          <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
         </div>
         <textarea value={productPrompt} onChange={(e) => setProductPrompt(e.target.value)} rows={4} className="w-full border border-gray-300 rounded px-3 py-2" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Analisi stile (modificabile)</label>
-        <textarea value={analysisText} onChange={(e) => setAnalysisText(e.target.value)} rows={16} className="w-full border border-gray-300 rounded px-3 py-2 resize-y" placeholder="Analisi generata o modificata..." />
+        <label className="block text-sm font-medium text-rich-black mb-1">Style analysis (editable)</label>
+        <textarea value={analysisText} onChange={(e) => setAnalysisText(e.target.value)} rows={16} className="w-full border border-gray-300 rounded px-3 py-2 resize-y" placeholder="Generated or edited analysis..." />
       </div>
       <div className="flex gap-2">
-        <button type="submit" disabled={isSaving} className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">Salva</button>
-        <button type="button" onClick={onCancel} className="px-4 py-2 border border-gray-300 rounded-md">Annulla</button>
+        <button type="submit" disabled={isSaving} className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">Save</button>
+        <button type="button" onClick={onCancel} className="px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
       </div>
     </form>
   )

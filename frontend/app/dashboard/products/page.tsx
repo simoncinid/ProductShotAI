@@ -29,13 +29,13 @@ export default function ProductsPage() {
     mutationFn: (data: { name: string; sku?: string; category?: string; default_apply_brand_identity: boolean; product_prompt: string }) => productsApi.create(data),
     onSuccess: (created) => {
       queryClient.invalidateQueries({ queryKey: ['products'] })
-      toast.success('Prodotto creato')
+      toast.success('Product created')
       setShowCreate(false)
       router.push(`/dashboard/products/${created.id}`)
     },
     onError: (e: unknown) => {
       const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
-      toast.error(msg || 'Creazione fallita')
+      toast.error(msg || 'Creation failed')
     },
   })
 
@@ -43,27 +43,27 @@ export default function ProductsPage() {
     mutationFn: (id: string) => productsApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] })
-      toast.success('Prodotto eliminato')
+      toast.success('Product deleted')
     },
     onError: (e: unknown) => {
       const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
-      toast.error(msg || 'Eliminazione fallita')
+      toast.error(msg || 'Deletion failed')
     },
   })
 
   if (!authenticated) return null
-  if (isLoading) return <div className="p-8 text-gray-600">Caricamento...</div>
+  if (isLoading) return <div className="p-8 text-gray-600">Loading...</div>
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-rich-black">Prodotti</h1>
+        <h1 className="text-2xl font-bold text-rich-black">Products</h1>
         <button
           type="button"
           onClick={() => setShowCreate(true)}
           className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold"
         >
-          Crea prodotto
+          Create product
         </button>
       </div>
 
@@ -77,7 +77,7 @@ export default function ProductsPage() {
 
       <ul className="space-y-3">
         {products.length === 0 && !showCreate && (
-          <li className="text-gray-600 py-8">Nessun prodotto. Creane uno per usare prompt specifici in /create.</li>
+          <li className="text-gray-600 py-8">No products. Create one to use product-specific prompts in /create.</li>
         )}
         {products.map((p: { id: string; name: string; sku?: string; default_apply_brand_identity: boolean; created_at: string }) => (
           <li key={p.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
@@ -103,16 +103,16 @@ export default function ProductsPage() {
                 <Link
                   href={`/dashboard/products/${p.id}?edit=1`}
                   className="p-1.5 border border-gray-300 rounded-md hover:bg-gray-100 text-rich-black"
-                  title="Modifica"
+                  title="Edit"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                 </Link>
                 <button
                   type="button"
-                  onClick={() => window.confirm('Eliminare questo prodotto?') && deleteMutation.mutate(p.id)}
+                  onClick={() => window.confirm('Delete this product?') && deleteMutation.mutate(p.id)}
                   disabled={deleteMutation.isPending}
                   className="p-1.5 border border-red-300 rounded-md hover:bg-red-50 text-red-600"
-                  title="Elimina"
+                  title="Delete"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                 </button>
@@ -143,7 +143,7 @@ function CreateProductForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) {
-      toast.error('Il nome è obbligatorio')
+      toast.error('Name is required')
       return
     }
     onSubmit({
@@ -157,9 +157,9 @@ function CreateProductForm({
 
   return (
     <form onSubmit={handleSubmit} className="mb-8 p-6 border border-gray-200 rounded-lg bg-gray-50 space-y-4">
-      <h2 className="text-lg font-semibold text-rich-black">Nuovo prodotto</h2>
+      <h2 className="text-lg font-semibold text-rich-black">New product</h2>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Nome *</label>
+        <label className="block text-sm font-medium text-rich-black mb-1">Name *</label>
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" required />
       </div>
       <div>
@@ -167,26 +167,26 @@ function CreateProductForm({
         <input type="text" value={sku} onChange={(e) => setSku(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Categoria</label>
+        <label className="block text-sm font-medium text-rich-black mb-1">Category</label>
         <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" />
       </div>
       <div className="flex items-center gap-2">
         <input type="checkbox" id="defaultBi" checked={defaultApplyBrandIdentity} onChange={(e) => setDefaultApplyBrandIdentity(e.target.checked)} />
-        <label htmlFor="defaultBi" className="text-sm text-rich-black">Applica Brand Identity di default</label>
+        <label htmlFor="defaultBi" className="text-sm text-rich-black">Apply Brand Identity by default</label>
       </div>
       <div>
         <div className="flex items-center justify-between gap-2 flex-wrap mb-1">
-          <label className="block text-sm font-medium text-rich-black">Prompt prodotto</label>
-          <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Modifica prompt con AI" applyLabel="Applica" />
+          <label className="block text-sm font-medium text-rich-black">Product prompt</label>
+          <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
         </div>
-        <textarea value={productPrompt} onChange={(e) => setProductPrompt(e.target.value)} rows={4} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="Descrivi come vuoi fotografare questo prodotto..." />
+        <textarea value={productPrompt} onChange={(e) => setProductPrompt(e.target.value)} rows={4} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="Describe how you want to photograph this product..." />
       </div>
       <div className="flex gap-2">
         <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">
-          {isSubmitting ? 'Creazione…' : 'Crea'}
+          {isSubmitting ? 'Creating…' : 'Create'}
         </button>
         <button type="button" onClick={onCancel} className="px-4 py-2 border border-gray-300 rounded-md">
-          Annulla
+          Cancel
         </button>
       </div>
     </form>

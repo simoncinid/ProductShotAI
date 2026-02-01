@@ -14,8 +14,8 @@ const PHOTO_STYLE_OPTIONS = [
   { value: 'flatlay', label: 'Flat lay' },
   { value: 'onModel', label: 'On model' },
   { value: 'outdoor', label: 'Outdoor' },
-  { value: 'minimalBackground', label: 'Sfondo minimal' },
-  { value: 'other', label: 'Altro' },
+  { value: 'minimalBackground', label: 'Minimal background' },
+  { value: 'other', label: 'Other' },
 ]
 
 export default function BrandIdentityPage() {
@@ -38,11 +38,11 @@ export default function BrandIdentityPage() {
     mutationFn: (data: Parameters<typeof brandIdentityApi.createOrUpdate>[0]) => brandIdentityApi.createOrUpdate(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brand-identity'] })
-      toast.success('Brand Identity salvata')
+      toast.success('Brand Identity saved')
     },
     onError: (e: unknown) => {
       const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
-      toast.error(msg || 'Salvataggio fallito')
+      toast.error(msg || 'Save failed')
     },
   })
 
@@ -50,11 +50,11 @@ export default function BrandIdentityPage() {
     mutationFn: (file: File) => brandIdentityApi.uploadImage(file),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brand-identity'] })
-      toast.success('Immagine caricata')
+      toast.success('Image uploaded')
     },
     onError: (e: unknown) => {
       const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
-      toast.error(msg || 'Upload fallito')
+      toast.error(msg || 'Upload failed')
     },
   })
 
@@ -62,11 +62,11 @@ export default function BrandIdentityPage() {
     mutationFn: () => brandIdentityApi.analyze(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brand-identity'] })
-      toast.success('Analisi aggiornata')
+      toast.success('Analysis updated')
     },
     onError: (e: unknown) => {
       const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
-      toast.error(msg || 'Analisi fallita')
+      toast.error(msg || 'Analysis failed')
     },
   })
 
@@ -79,18 +79,18 @@ export default function BrandIdentityPage() {
     mutationFn: () => brandIdentityApi.delete(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brand-identity'] })
-      toast.success('Brand Identity eliminata')
+      toast.success('Brand Identity deleted')
       router.push('/dashboard')
     },
   })
 
   if (!authenticated) return null
-  if (isLoading) return <div className="p-8 text-gray-600">Caricamento...</div>
+  if (isLoading) return <div className="p-8 text-gray-600">Loading...</div>
   const is404 = error && typeof error === 'object' && 'response' in error && (error as { response?: { status?: number } }).response?.status === 404
   if (is404) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
-        <p className="text-gray-600 mb-4">Nessuna Brand Identity. Compila il modulo sotto e salva per crearne una.</p>
+        <p className="text-gray-600 mb-4">No Brand Identity. Fill in the form below and save to create one.</p>
         <BrandIdentityForm existing={undefined} onSave={(d) => updateMutation.mutate(d)} isSaving={updateMutation.isPending} />
       </div>
     )
@@ -118,7 +118,7 @@ export default function BrandIdentityPage() {
           disabled={updateMutation.isPending}
           className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50"
         >
-          {updateMutation.isPending ? 'Salvataggio…' : 'Salva'}
+          {updateMutation.isPending ? 'Saving…' : 'Save'}
         </button>
       </div>
 
@@ -130,7 +130,7 @@ export default function BrandIdentityPage() {
       />
 
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-rich-black mb-2">Immagini di riferimento (max 3)</h2>
+        <h2 className="text-lg font-semibold text-rich-black mb-2">Reference images (max 3)</h2>
         <div className="flex flex-wrap gap-4">
           {images.map((img: { id: string; image_url: string }) => (
             <div key={img.id} className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200">
@@ -140,14 +140,14 @@ export default function BrandIdentityPage() {
                 onClick={() => deleteImageMutation.mutate(img.id)}
                 className="absolute top-1 right-1 bg-red-500 text-white rounded p-1 text-xs"
               >
-                Rimuovi
+                Remove
               </button>
             </div>
           ))}
           {images.length < maxImages && (
             <label className="w-32 h-32 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-vivid-yellow">
               <input type="file" accept="image/jpeg,image/png" className="hidden" multiple onChange={handleMultipleUpload} />
-              <span className="text-gray-500 text-sm text-center px-1">+ Carica (anche più)</span>
+              <span className="text-gray-500 text-sm text-center px-1">+ Upload (multiple)</span>
             </label>
           )}
         </div>
@@ -158,7 +158,7 @@ export default function BrandIdentityPage() {
             disabled={analyzeMutation.isPending}
             className="mt-4 px-4 py-2 bg-rich-black text-white rounded-md font-medium disabled:opacity-50"
           >
-            {analyzeMutation.isPending ? 'Analisi in corso…' : 'Analizza immagini'}
+            {analyzeMutation.isPending ? 'Analyzing…' : 'Analyze images'}
           </button>
         )}
       </div>
@@ -167,11 +167,11 @@ export default function BrandIdentityPage() {
         <div className="mt-8 pt-6 border-t flex items-center gap-4">
           <button
             type="button"
-            onClick={() => window.confirm('Eliminare la Brand Identity?') && deleteMutation.mutate()}
+            onClick={() => window.confirm('Delete Brand Identity?') && deleteMutation.mutate()}
             disabled={deleteMutation.isPending}
             className="px-4 py-2 bg-red-600 text-white rounded-md font-medium"
           >
-            Elimina Brand Identity
+            Delete Brand Identity
           </button>
           <button
             type="submit"
@@ -179,7 +179,7 @@ export default function BrandIdentityPage() {
             disabled={updateMutation.isPending}
             className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50"
           >
-            {updateMutation.isPending ? 'Salvataggio…' : 'Salva'}
+            {updateMutation.isPending ? 'Saving…' : 'Save'}
           </button>
         </div>
       )}
@@ -234,45 +234,45 @@ function BrandIdentityForm({
   return (
     <form id={formId} onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Cosa vende il tuo ecommerce?</label>
-        <input type="text" value={salesChannels} onChange={(e) => setSalesChannels(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="es. alimentari per cani, cosmetici, abbigliamento" />
+        <label className="block text-sm font-medium text-rich-black mb-1">What does your ecommerce sell?</label>
+        <input type="text" value={salesChannels} onChange={(e) => setSalesChannels(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="e.g. pet food, cosmetics, clothing" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Target / cliente tipo</label>
-        <input type="text" value={averageCustomer} onChange={(e) => setAverageCustomer(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="es. donne 25-40, pet lover, premium" />
+        <label className="block text-sm font-medium text-rich-black mb-1">Target / typical customer</label>
+        <input type="text" value={averageCustomer} onChange={(e) => setAverageCustomer(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="e.g. women 25-40, pet lover, premium" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Fascia di prezzo</label>
-        <input type="text" value={priceRange} onChange={(e) => setPriceRange(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="es. budget, mid, premium, luxury" />
+        <label className="block text-sm font-medium text-rich-black mb-1">Price range</label>
+        <input type="text" value={priceRange} onChange={(e) => setPriceRange(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="e.g. budget, mid, premium, luxury" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Stile foto preferito</label>
+        <label className="block text-sm font-medium text-rich-black mb-1">Preferred photo style</label>
         <select value={photoStyleKey} onChange={(e) => setPhotoStyleKey(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2">
-          <option value="">— Seleziona —</option>
+          <option value="">— Select —</option>
           {PHOTO_STYLE_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Stile illuminazione</label>
-        <input type="text" value={lightingStyle} onChange={(e) => setLightingStyle(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="es. luce naturale, soft, daylight" />
+        <label className="block text-sm font-medium text-rich-black mb-1">Lighting style</label>
+        <input type="text" value={lightingStyle} onChange={(e) => setLightingStyle(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="e.g. natural light, soft, daylight" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Note di brand</label>
-        <textarea value={brandNotes} onChange={(e) => setBrandNotes(e.target.value)} rows={3} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="Regole, do/don't, vincoli extra" />
+        <label className="block text-sm font-medium text-rich-black mb-1">Brand notes</label>
+        <textarea value={brandNotes} onChange={(e) => setBrandNotes(e.target.value)} rows={3} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="Rules, do/don't, extra constraints" />
       </div>
 
       {existing && (
         <div>
-          <h3 className="font-semibold text-rich-black mb-2">Analisi stile (modificabile)</h3>
-          <textarea value={analysis} onChange={(e) => setAnalysis(e.target.value)} rows={16} className="w-full border border-gray-300 rounded px-3 py-2 resize-y" placeholder="Analisi generata dalle immagini o scrivi qui..." />
+          <h3 className="font-semibold text-rich-black mb-2">Style analysis (editable)</h3>
+          <textarea value={analysis} onChange={(e) => setAnalysis(e.target.value)} rows={16} className="w-full border border-gray-300 rounded px-3 py-2 resize-y" placeholder="Analysis generated from images or write here..." />
         </div>
       )}
 
       {!formId && (
         <button type="submit" disabled={isSaving} className="px-6 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">
-          {isSaving ? 'Salvataggio…' : 'Salva Brand Identity'}
+          {isSaving ? 'Saving…' : 'Save Brand Identity'}
         </button>
       )}
     </form>

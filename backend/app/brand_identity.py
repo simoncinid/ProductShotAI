@@ -1,6 +1,6 @@
 """
-API Brand Identity: CRUD e immagini (max 3), analisi stile.
-Solo utenti autenticati; ownership verificata su ogni route.
+API Brand Identity: CRUD and images (max 3), style analysis.
+Authenticated users only; ownership verified on every route.
 """
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,7 +36,7 @@ async def get_brand_identity(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Restituisce la brand identity dell'utente (se esiste) con immagini e analysis."""
+    """Return the user's brand identity (if exists) with images and analysis."""
     r = await db.execute(
         select(BrandIdentity).where(BrandIdentity.user_id == current_user.id)
     )
@@ -72,7 +72,7 @@ async def create_or_update_brand_identity(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Crea o aggiorna la brand identity (campi testuali). Un solo record per utente."""
+    """Create or update brand identity (text fields). One record per user."""
     r = await db.execute(select(BrandIdentity).where(BrandIdentity.user_id == current_user.id))
     bi = r.scalar_one_or_none()
     if bi:
@@ -135,7 +135,7 @@ async def upload_brand_identity_image(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Carica un'immagine per la brand identity. Max 3 immagini totali."""
+    """Upload an image for brand identity. Max 3 images total."""
     _check_allowed_file(file)
     content = await file.read()
     max_size = settings.max_upload_size_mb * 1024 * 1024
@@ -175,7 +175,7 @@ async def delete_brand_identity_image(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Rimuove un'immagine dalla brand identity. Ownership verificata."""
+    """Remove an image from brand identity. Ownership verified."""
     r = await db.execute(
         select(BrandIdentityImage).join(BrandIdentity).where(
             BrandIdentityImage.id == image_id,
@@ -195,7 +195,7 @@ async def analyze_brand_identity(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Esegue l'analisi sulle immagini correnti e salva analysis_text."""
+    """Run analysis on current images and save analysis_text."""
     r = await db.execute(select(BrandIdentity).where(BrandIdentity.user_id == current_user.id))
     bi = r.scalar_one_or_none()
     if not bi:
@@ -243,7 +243,7 @@ async def delete_brand_identity(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Elimina la brand identity e tutte le immagini. Le generazioni esistenti mantengono lo snapshot."""
+    """Delete brand identity and all images. Existing generations keep the snapshot."""
     r = await db.execute(select(BrandIdentity).where(BrandIdentity.user_id == current_user.id))
     bi = r.scalar_one_or_none()
     if not bi:

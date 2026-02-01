@@ -57,7 +57,7 @@ async def generate_shooting_prompts(
     count: int = 4,
 ) -> List[str]:
     """
-    Genera `count` prompt in inglese (2–10) via OpenAI. Se API non disponibile ritorna prompt di default.
+    Generate `count` prompts in English (2–10) via OpenAI. If API unavailable returns default prompts.
     """
     if count < 2 or count > 10:
         count = min(4, max(2, count))

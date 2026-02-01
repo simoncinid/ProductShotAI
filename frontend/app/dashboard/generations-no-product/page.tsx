@@ -32,7 +32,7 @@ export default function GenerationsNoProductPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-rich-black mb-6">Generazioni (senza prodotto)</h1>
+      <h1 className="text-2xl font-bold text-rich-black mb-6">Generations (no product)</h1>
       <p className="text-gray-600 mb-6">Generations created without selecting a product.</p>
 
       {isLoading ? (

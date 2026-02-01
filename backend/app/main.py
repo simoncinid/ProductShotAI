@@ -30,13 +30,13 @@ logger = logging.getLogger(__name__)
 # Initialize FastAPI app
 app = FastAPI(title="ProductShotAI API", version="1.0.0")
 
-# CORS: allow_origins da CORS_ORIGINS env; allow_origin_regex come fallback per *.vercel.app
-# (su Render a volte l'env non è disponibile all'avvio o il cold start risponde prima di FastAPI)
+# CORS: allow_origins from CORS_ORIGINS env; allow_origin_regex as fallback for *.vercel.app
+# (on Render env may not be available at startup or cold start responds before FastAPI)
 _cors_origins = settings.get_cors_origins_list()
 if _cors_origins:
     logger.info("CORS allow_origins: %s", _cors_origins)
 else:
-    logger.warning("CORS_ORIGINS vuota o non impostata; si usa solo allow_origin_regex per *.vercel.app")
+    logger.warning("CORS_ORIGINS empty or not set; using only allow_origin_regex for *.vercel.app")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins if _cors_origins else [],
@@ -472,7 +472,7 @@ async def _process_wavespeed_webhook_task(
                 pass
 
 
-# Free generation: WaveSpeed con webhook. POST ritorna 202, frontend fa polling su GET /api/generations/{id}.
+# Free generation: WaveSpeed with webhook. POST returns 202, frontend polls GET /api/generations/{id}.
 @app.post("/api/generate-free")
 @limiter.limit("10/minute")
 async def generate_free(
@@ -480,7 +480,7 @@ async def generate_free(
     generate_request: schemas.GenerateRequest,
     db: AsyncSession = Depends(get_db)
 ):
-    """Generate image for free (with watermark). Crea task WaveSpeed con webhook, ritorna 202."""
+    """Generate image for free (with watermark). Creates WaveSpeed task with webhook, returns 202."""
     ip_address = utils.get_client_ip(request)
     if not generate_request.device_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="device_id is required")
@@ -495,7 +495,7 @@ async def generate_free(
         ip_address=ip_address,
         input_image_url=generate_request.image_url,
         prompt=generate_request.prompt,
-        resolution="4k",  # Free: sempre 4k per ridurre costi WaveSpeed (paid può usare 8k)
+        resolution="4k",  # Free: always 4k to reduce WaveSpeed costs (paid can use 8k)
         aspect_ratio=generate_request.aspect_ratio,
         is_free=True,
         status="pending",
@@ -706,12 +706,12 @@ async def purchase_credits(
     return {"checkout_url": session.url}
 
 
-# Webhook WaveSpeed: riceve completed/failed, ritorna 2xx subito, elabora in background.
-# Requisiti: HTTPS, 2xx entro 20 min (noi rispondiamo in ms), pubblico.
-# Vedi https://wavespeed.ai/docs/how-to-use-webhooks
+# Webhook WaveSpeed: receives completed/failed, returns 2xx immediately, processes in background.
+# Requirements: HTTPS, 2xx within 20 min (we respond in ms), public.
+# See https://wavespeed.ai/docs/how-to-use-webhooks
 @app.post("/api/webhooks/wavespeed")
 async def wavespeed_webhook(raw: Request):
-    """Riceve POST da WaveSpeed con id, status, outputs?, error?. Risponde 200 subito, elabora in background."""
+    """Receives POST from WaveSpeed with id, status, outputs?, error?. Responds 200 immediately, processes in background."""
     try:
         body = await raw.json()
     except Exception:
@@ -754,20 +754,20 @@ async def stripe_webhook(raw_request: Request, db: AsyncSession = Depends(get_db
     try:
         credits = int(credits_s)
     except ValueError:
-        logger.error(f"Webhook Stripe: credits non numerico in metadata: {credits_s}")
+        logger.error(f"Webhook Stripe: credits not numeric in metadata: {credits_s}")
         return {"received": True}
     if not user_id or not pack_id or credits <= 0:
-        logger.error(f"Webhook Stripe: metadata mancanti o non validi session={session_id} metadata={metadata}")
+        logger.error(f"Webhook Stripe: missing or invalid metadata session={session_id} metadata={metadata}")
         return {"received": True}
-    # Idempotenza: evita di accreditare due volte per lo stesso checkout
+    # Idempotency: avoid crediting twice for the same checkout
     r = await db.execute(select(CreditTransaction).where(CreditTransaction.reference_id == session_id))
     if r.scalar_one_or_none():
-        logger.info(f"Webhook Stripe: checkout già elaborato session={session_id}")
+        logger.info(f"Webhook Stripe: checkout already processed session={session_id}")
         return {"received": True}
     r = await db.execute(select(User).where(User.id == user_id))
     user = r.scalar_one_or_none()
     if not user:
-        logger.error(f"Webhook Stripe: user non trovato user_id={user_id} session={session_id}")
+        logger.error(f"Webhook Stripe: user not found user_id={user_id} session={session_id}")
         return {"received": True}
     user.credits_balance += credits
     t = CreditTransaction(
