@@ -80,23 +80,23 @@ export default function PricingPage() {
   return (
     <div className="bg-page-bg">
       {/* ——— Hero ——— */}
-      <section className="relative overflow-hidden bg-white pt-16 pb-14 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20">
+      <section className="relative overflow-hidden bg-page-bg pt-16 pb-14 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20">
         <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-page-bg/60 to-transparent" aria-hidden />
         <div className={`${CONTAINER} relative`}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
-              <p className="font-script text-2xl text-primary md:text-3xl">Simple, Transparent Pricing</p>
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <p className="font-script text-2xl text-on-dark md:text-3xl">Simple, Transparent Pricing</p>
+              <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
-            <h1 className="mt-3 text-[28px] font-bold leading-tight text-primary md:text-[34px]">
+            <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
               Pay only for the images you need
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-[16px] text-secondary md:text-[18px]">
+            <p className="mx-auto mt-4 max-w-2xl text-[16px] text-gray-300 md:text-[18px]">
               No monthly subscriptions. Pay per ai product photo and image product ai. The more credits, the less per image.
             </p>
             {authenticated && user && (
-              <p className="mt-5 rounded-full bg-anthracite/5 px-5 py-2 text-[15px] font-medium text-primary">
+              <p className="mt-5 rounded-full bg-white/10 px-5 py-2 text-[15px] font-medium text-white">
                 Your balance: <span className="font-bold text-brand">{user.credits_balance} credits</span>
               </p>
             )}
@@ -106,7 +106,7 @@ export default function PricingPage() {
 
       {/* Divisore curvo ——— */}
       <div className="relative -mt-px h-10 w-full overflow-hidden bg-page-bg md:h-14">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-white" preserveAspectRatio="none">
+        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
           <path d="M0 48V0h1200v48c-200 0-400-24-600-24S200 48 0 48z" fill="currentColor" />
         </svg>
       </div>
@@ -125,12 +125,12 @@ export default function PricingPage() {
                   } hover:-translate-y-1 hover:shadow-card-hover`}
                 >
                   {popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-primary">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-white">
                       Most Popular
                     </span>
                   )}
                   <h3 className="text-base font-semibold capitalize text-primary">{pack.name}</h3>
-                  <p className="mt-3 text-[32px] font-bold text-brand">
+                  <p className="mt-3 text-[32px] font-bold text-anthracite">
                     ${pack.total_price.toFixed(2)}
                   </p>
                   <p className="text-[13px] text-secondary">
@@ -141,7 +141,7 @@ export default function PricingPage() {
                     disabled={purchaseMutation.isPending}
                     className={`mt-6 w-full rounded-full py-3 text-center text-[14px] font-semibold transition-smooth disabled:opacity-50 ${
                       popular
-                        ? 'bg-brand text-primary hover:scale-[1.02] hover:shadow-soft-hover'
+                        ? 'bg-brand text-white hover:scale-[1.02] hover:shadow-soft-hover'
                         : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-white'
                     }`}
                   >
@@ -198,7 +198,7 @@ export default function PricingPage() {
           </p>
           <Link
             href="/create"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
           >
             Start Free Trial
           </Link>

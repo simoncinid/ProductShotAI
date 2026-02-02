@@ -89,8 +89,8 @@ export default function ExampleGallery() {
     <section className="bg-page-bg px-4 py-8 md:py-16">
       <div className="mx-auto max-w-[1200px]">
         <div className="mb-4 text-center md:mb-6">
-          <p className="font-script text-lg text-primary md:text-2xl">Example</p>
-          <h2 className="mt-0.5 text-base font-semibold text-primary md:mt-1 md:text-xl">
+          <p className="font-script text-lg text-on-dark md:text-2xl">Example</p>
+          <h2 className="mt-0.5 text-base font-semibold text-white md:mt-1 md:text-xl">
             From your photo to the result
           </h2>
         </div>
@@ -147,7 +147,7 @@ function SlideContent({
   return (
     <div className="flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden rounded-xl border border-gray-100 bg-white p-4 shadow-soft">
       <div className="mb-3 flex shrink-0 items-center gap-2">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-primary">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
           {s.n}
         </div>
         <span className="min-w-0 flex-1 break-words text-sm font-medium text-primary">{s.label}</span>

@@ -115,7 +115,7 @@ export default function VerifyEmailPage() {
             <button
               type="submit"
               disabled={verifyMutation.isPending || otp.length !== 6 || !email.trim()}
-              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
+              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
             >
               {verifyMutation.isPending ? 'Verifying...' : 'Verify'}
             </button>
@@ -126,7 +126,7 @@ export default function VerifyEmailPage() {
                 type="button"
                 onClick={() => resendMutation.mutate()}
                 disabled={resendMutation.isPending || !email.trim()}
-                className="font-semibold text-brand hover:underline disabled:opacity-50"
+                className="font-semibold text-anthracite hover:underline disabled:opacity-50"
               >
                 {resendMutation.isPending ? 'Sending...' : 'Resend code'}
               </button>
@@ -134,7 +134,7 @@ export default function VerifyEmailPage() {
           </form>
 
           <p className="mt-6 text-center text-[14px] text-secondary">
-            <Link href="/login" className="font-semibold text-brand hover:underline">Back to sign in</Link>
+            <Link href="/login" className="font-semibold text-anthracite hover:underline">Back to sign in</Link>
           </p>
         </div>
       </div>

@@ -25,16 +25,16 @@ export default function FAQPage() {
   return (
     <div className="bg-page-bg">
       {/* ——— Hero ——— */}
-      <section className="relative overflow-hidden bg-white pt-16 pb-14 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20">
+      <section className="relative overflow-hidden bg-page-bg pt-16 pb-14 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20">
         <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-page-bg/60 to-transparent" aria-hidden />
         <div className={`${CONTAINER} relative`}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
-              <p className="font-script text-2xl text-primary md:text-3xl">Frequently Asked Questions</p>
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <p className="font-script text-2xl text-on-dark md:text-3xl">Frequently Asked Questions</p>
+              <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
-            <h1 className="mt-3 text-[28px] font-bold leading-tight text-primary md:text-[34px]">
+            <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
               AI Product Photo & Product Photo AI – FAQ
             </h1>
           </div>
@@ -43,7 +43,7 @@ export default function FAQPage() {
 
       {/* Divisore curvo ——— */}
       <div className="relative -mt-px h-10 w-full overflow-hidden bg-page-bg md:h-14">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-white" preserveAspectRatio="none">
+        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
           <path d="M0 48V0h1200v48c-200 0-400-24-600-24S200 48 0 48z" fill="currentColor" />
         </svg>
       </div>
@@ -95,7 +95,7 @@ export default function FAQPage() {
             </p>
             <a
               href="mailto:support@productshotai.com"
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-[15px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-[15px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
             >
               Contact Support
             </a>

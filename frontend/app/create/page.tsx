@@ -202,27 +202,27 @@ export default function CreatePage() {
   return (
     <div className="bg-page-bg">
       {/* ——— Hero ——— */}
-      <section className="relative overflow-hidden bg-white pt-14 pb-12 md:pt-16 md:pb-14 lg:pt-20 lg:pb-16">
+      <section className="relative overflow-hidden bg-page-bg pt-14 pb-12 md:pt-16 md:pb-14 lg:pt-20 lg:pb-16">
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-page-bg/60 to-transparent" aria-hidden />
         <div className={`${CONTAINER} relative`}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
-              <p className="font-script text-2xl text-primary md:text-3xl">Create</p>
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <p className="font-script text-2xl text-on-dark md:text-3xl">Create</p>
+              <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
-            <h1 className="mt-3 text-[28px] font-bold leading-tight text-primary md:text-[34px]">
+            <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
               Create Your AI Product Photo
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-[16px] text-secondary md:text-[18px]">
+            <p className="mx-auto mt-4 max-w-xl text-[16px] text-gray-300 md:text-[18px]">
               Upload your product image—our product photo AI creates ai image product and image product ai in 8K. Amazon product photo ready.
             </p>
             {!authenticated && (
-              <p className="mt-3 text-[13px] text-secondary">
+              <p className="mt-3 text-[13px] text-gray-400">
                 Free users get watermarked images.{' '}
-                <Link href="/signup" className="font-semibold text-brand hover:underline">
-                  Sign up
-                </Link>{' '}
+<Link href="/signup" className="font-semibold text-anthracite hover:underline">
+                Sign up
+              </Link>{' '}
                 for clean images without watermark.
               </p>
             )}
@@ -232,7 +232,7 @@ export default function CreatePage() {
 
       {/* Divisore curvo ——— */}
       <div className="relative -mt-px h-10 w-full overflow-hidden bg-page-bg md:h-14">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-white" preserveAspectRatio="none">
+        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
           <path d="M0 48V0h1200v48c-200 0-400-24-600-24S200 48 0 48z" fill="currentColor" />
         </svg>
       </div>
@@ -271,7 +271,7 @@ export default function CreatePage() {
                         <button
                           type="button"
                           onClick={() => selectedFile && uploadMutation.mutate(selectedFile)}
-                          className="font-semibold text-brand underline hover:no-underline"
+                          className="font-semibold text-anthracite underline hover:no-underline"
                         >
                           Retry
                         </button>
@@ -380,7 +380,7 @@ export default function CreatePage() {
               <button
                 onClick={handleGenerate}
                 disabled={!imageUrl || (!selectedProductId && !prompt.trim()) || isGenerating || noProductWantsBrandButMissing}
-                className="mt-6 w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-6 w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isGenerating ? 'Generating... (30–90 sec)' : 'Generate Image'}
               </button>

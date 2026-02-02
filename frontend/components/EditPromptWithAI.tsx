@@ -66,7 +66,7 @@ export function EditPromptWithAI({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={`text-sm text-vivid-yellow hover:underline font-medium ${className}`}
+        className={`text-sm text-anthracite hover:underline font-medium ${className}`}
       >
         {buttonLabel}
       </button>

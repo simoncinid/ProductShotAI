@@ -152,7 +152,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     datePublished: post.date,
     description: post.excerpt || 'AI product photo, product photo AI, and Amazon product photo tips from ProductShotAI.',
     url: `${SITE_URL}/blog/${params.slug}`,
-    publisher: { '@type': 'Organization', name: 'ProductShotAI', logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.png` } },
+    publisher: { '@type': 'Organization', name: 'ProductShotAI', logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo1.png` } },
   }
 
   return (
@@ -161,12 +161,12 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Link
         href="/blog"
-        className="text-vivid-yellow hover:underline mb-8 inline-block"
+        className="text-brand hover:underline mb-8 inline-block font-medium"
       >
         ← Back to Blog
       </Link>
 
-      <article>
+      <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-soft md:p-8">
         <div className="text-sm text-gray-500 mb-4">
           {new Date(post.date).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -174,11 +174,11 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             day: 'numeric',
           })}
         </div>
-        <h1 className="text-5xl font-bold text-rich-black mb-8">
+        <h1 className="text-5xl font-bold text-primary mb-8">
           {post.title}
         </h1>
         <div
-          className="prose prose-lg max-w-none"
+          className="prose prose-lg max-w-none prose-headings:text-primary prose-p:text-secondary prose-a:text-anthracite"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </article>

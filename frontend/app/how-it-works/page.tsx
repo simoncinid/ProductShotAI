@@ -83,19 +83,19 @@ export default function HowItWorksPage() {
   return (
     <div className="bg-page-bg">
       {/* ——— Hero ——— */}
-      <section className="relative overflow-hidden bg-white pt-16 pb-16 md:pt-20 md:pb-20 lg:pt-24 lg:pb-24">
+      <section className="relative overflow-hidden bg-page-bg pt-16 pb-16 md:pt-20 md:pb-20 lg:pt-24 lg:pb-24">
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-page-bg/60 to-transparent" aria-hidden />
         <div className={`${CONTAINER} relative`}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
-              <p className="font-script text-2xl text-primary md:text-3xl">How It Works</p>
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <p className="font-script text-2xl text-on-dark md:text-3xl">How It Works</p>
+              <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
-            <h1 className="mt-3 text-[28px] font-bold leading-tight text-primary md:text-[34px]">
+            <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
               Three Steps to AI Product Photo & Image Product AI
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-[16px] text-secondary md:text-[18px]">
+            <p className="mx-auto mt-4 max-w-2xl text-[16px] text-gray-300 md:text-[18px]">
               Turn any photo into 8K ai image product and image product ai. Our product photo AI works for e‑commerce and Amazon product photos.
             </p>
           </div>
@@ -104,7 +104,7 @@ export default function HowItWorksPage() {
 
       {/* Divisore curvo ——— */}
       <div className="relative -mt-px h-10 w-full overflow-hidden bg-page-bg md:h-14">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-white" preserveAspectRatio="none">
+        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
           <path d="M0 48V0h1200v48c-200 0-400-24-600-24S200 48 0 48z" fill="currentColor" />
         </svg>
       </div>
@@ -120,7 +120,7 @@ export default function HowItWorksPage() {
               >
                 <div className="mb-5 flex shrink-0 md:mb-0">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand md:h-20 md:w-20">
-                    <span className="text-2xl font-bold text-primary md:text-3xl">{n}</span>
+                    <span className="text-2xl font-bold text-white md:text-3xl">{n}</span>
                   </div>
                 </div>
                 <div className="min-w-0 flex-1">
@@ -169,12 +169,12 @@ export default function HowItWorksPage() {
       </section>
 
       {/* ——— CTA ——— */}
-      <section className="border-t border-gray-100 bg-page-bg py-16 md:py-20">
+      <section className="border-t border-white/10 bg-page-bg py-16 md:py-20">
         <div className={`${CONTAINER} text-center`}>
-          <p className="text-[18px] font-semibold text-primary md:text-[20px]">Ready to transform your product photos?</p>
+          <p className="text-[18px] font-semibold text-white md:text-[20px]">Ready to transform your product photos?</p>
           <Link
             href="/create"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
           >
             Try It Free Now
           </Link>

@@ -7,11 +7,11 @@ import BeforeAfter from '@/components/BeforeAfter'
 const CONTAINER = 'mx-auto max-w-[1200px] px-4 sm:px-6 md:px-10 lg:px-14'
 
 function SectionScript({ children }: { children: React.ReactNode }) {
-  return <p className="font-script text-xl md:text-2xl lg:text-3xl text-primary">{children}</p>
+  return <p className="font-script text-xl md:text-2xl lg:text-3xl text-on-dark">{children}</p>
 }
 
 function SectionH2({ children }: { children: React.ReactNode }) {
-  return <h2 className="mt-1 text-[22px] md:text-[28px] font-bold leading-tight text-primary lg:text-[34px]">{children}</h2>
+  return <h2 className="mt-1 text-[22px] md:text-[28px] font-bold leading-tight text-on-dark lg:text-[34px]">{children}</h2>
 }
 
 const HOW_STEPS = [
@@ -25,7 +25,7 @@ function StepCard({ step }: { step: (typeof HOW_STEPS)[0] }) {
   return (
     <div className="flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-soft md:p-6">
       <div className="mb-3 flex shrink-0 items-center gap-2">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-base font-bold text-primary md:h-12 md:w-12 md:text-lg">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-base font-bold text-white md:h-12 md:w-12 md:text-lg">
           {n}
         </div>
         <h3 className="min-w-0 flex-1 break-words text-[15px] font-semibold text-primary md:text-base">{title}</h3>
@@ -127,56 +127,56 @@ export default function Home() {
   return (
     <div className="bg-page-bg">
       {/* ——— Hero ——— */}
-      <section className="relative overflow-hidden bg-white pt-12 pb-14 md:pt-20 md:pb-28 lg:pt-24 lg:pb-32">
+      <section className="relative overflow-hidden bg-page-bg pt-12 pb-14 md:pt-20 md:pb-28 lg:pt-24 lg:pb-32">
         <div className="absolute bottom-0 left-0 right-0 h-32 md:h-52 bg-gradient-to-t from-page-bg/80 to-transparent pointer-events-none" />
-        <div className="absolute -bottom-20 left-1/2 h-64 w-[140%] -translate-x-1/2 rounded-[50%] bg-[#FFF9E6]/60 blur-2xl pointer-events-none" aria-hidden />
+        <div className="absolute -bottom-20 left-1/2 h-64 w-[140%] -translate-x-1/2 rounded-[50%] bg-brand/10 blur-2xl pointer-events-none" aria-hidden />
 
         <div className={`${CONTAINER} relative`}>
           {/* Mobile: title → subtitle → examples (BeforeAfter) → CTA. Desktop: 2 cols with text+CTA left, BeforeAfter right. */}
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-x-16">
             {/* Desktop: single block left (title + paragraph + CTA right below, no gap) */}
             <div className="hidden lg:flex lg:col-start-1 lg:row-start-1 lg:flex-col lg:items-start">
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-secondary sm:text-xs">Product Photo AI & AI Image Product</p>
-              <h1 className="font-extrabold leading-tight text-primary [font-size:clamp(26px,5vw,52px)]">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-gray-400 sm:text-xs">Product Photo AI & AI Image Product</p>
+              <h1 className="font-extrabold leading-tight text-white [font-size:clamp(26px,5vw,52px)]">
                 Studio Quality
                 <br />
                 Product <span className="font-playfair-italic text-brand">Shots</span>
                 <br />
                 in <span className="font-playfair-italic text-brand">Seconds</span>
               </h1>
-              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-secondary sm:text-[16px] md:text-[18px]">
+              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-gray-300 sm:text-[16px] md:text-[18px]">
                 Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
               </p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <Link
                   href="/create"
-                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Try Free Now
                 </Link>
                 <Link
                   href="/how-it-works"
-                  className="inline-flex items-center justify-center rounded-full bg-anthracite px-6 py-3 text-[14px] font-semibold text-white transition-smooth hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full bg-white/10 px-6 py-3 text-[14px] font-semibold text-white transition-smooth hover:bg-white/20 hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Learn More
                 </Link>
               </div>
-              <p className="mt-4 text-[11px] text-secondary sm:text-[12px] md:text-[13px]">
+              <p className="mt-4 text-[11px] text-gray-400 sm:text-[12px] md:text-[13px]">
                 Get 3 free watermarked images per month. No credit card required.
               </p>
             </div>
 
             {/* A: titolo + sottotitolo — solo mobile */}
             <div className="order-1 flex flex-col items-center text-center lg:hidden">
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-secondary sm:text-xs">Product Photo AI & AI Image Product</p>
-              <h1 className="font-extrabold leading-tight text-primary [font-size:clamp(26px,5vw,52px)]">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-gray-400 sm:text-xs">Product Photo AI & AI Image Product</p>
+              <h1 className="font-extrabold leading-tight text-white [font-size:clamp(26px,5vw,52px)]">
                 Studio-Quality
                 <br />
                 Product <span className="font-playfair-italic text-brand">Shots</span>
                 <br />
                 in <span className="font-playfair-italic text-brand">Seconds</span>
               </h1>
-              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-secondary sm:text-[16px] md:text-[18px] mx-auto">
+              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-gray-300 sm:text-[16px] md:text-[18px] mx-auto">
                 Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
               </p>
             </div>
@@ -197,18 +197,18 @@ export default function Home() {
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center">
                 <Link
                   href="/create"
-                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Try Free Now
                 </Link>
                 <Link
                   href="/how-it-works"
-                  className="inline-flex items-center justify-center rounded-full bg-anthracite px-6 py-3 text-[14px] font-semibold text-white transition-smooth hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full bg-white/10 px-6 py-3 text-[14px] font-semibold text-white transition-smooth hover:bg-white/20 hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Learn More
                 </Link>
               </div>
-              <p className="mt-4 text-[11px] text-secondary sm:text-[12px] md:text-[13px]">
+              <p className="mt-4 text-[11px] text-gray-400 sm:text-[12px] md:text-[13px]">
                 Get 3 free watermarked images per month. No credit card required.
               </p>
             </div>
@@ -218,7 +218,7 @@ export default function Home() {
 
       {/* Divisore curvo Hero → How it works */}
       <div className="relative -mt-px h-8 w-full overflow-hidden bg-page-bg md:h-16">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-white" preserveAspectRatio="none">
+        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
           <path d="M0 48V0h1200v48c-200 0-400-24-600-24S200 48 0 48z" fill="currentColor" />
         </svg>
       </div>
@@ -228,9 +228,9 @@ export default function Home() {
         <div className={CONTAINER}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-3 md:gap-4">
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-gray-500 md:w-12" />
               <SectionScript>How It Works</SectionScript>
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
           </div>
 
@@ -275,18 +275,18 @@ export default function Home() {
                 } ${p.popular ? 'ring-2 ring-brand ring-offset-2' : ''} hover:-translate-y-1 hover:shadow-card-hover`}
               >
                 {p.popular && (
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-primary sm:-top-3 sm:px-3 sm:py-1 sm:text-xs">
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-white sm:-top-3 sm:px-3 sm:py-1 sm:text-xs">
                     Most Popular
                   </span>
                 )}
-                <h3 className="text-[15px] font-semibold sm:text-base">{p.name}</h3>
-                <p className={`mt-2 text-[26px] font-bold sm:mt-3 sm:text-[32px] ${p.dark ? 'text-white' : 'text-brand'}`}>{p.price}</p>
+                <h3 className="text-[15px] font-semibold sm:text-base text-primary">{p.name}</h3>
+                <p className={`mt-2 text-[26px] font-bold sm:mt-3 sm:text-[32px] ${p.dark ? 'text-white' : 'text-anthracite'}`}>{p.price}</p>
                 <p className="text-[12px] text-secondary sm:text-[13px]">{p.credits} credits – {p.each} each</p>
                 <Link
                   href="/pricing"
                   className={`mt-4 block w-full rounded-full py-2.5 text-center text-[13px] font-semibold transition-smooth sm:mt-6 sm:py-3 sm:text-[14px] ${
                     p.popular
-                      ? 'bg-brand text-primary hover:scale-[1.02]'
+                      ? 'bg-brand text-white hover:scale-[1.02]'
                       : p.dark
                       ? 'border border-white/40 text-white hover:bg-white/10'
                       : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-white'
@@ -302,7 +302,7 @@ export default function Home() {
 
       {/* Divisore curvo Pricing → Trusted */}
       <div className="relative -mt-px h-8 w-full overflow-hidden bg-page-bg md:h-16">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-white" preserveAspectRatio="none">
+        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
           <path d="M0 48V0h1200v48c-200 0-400-24-600-24S200 48 0 48z" fill="currentColor" />
         </svg>
       </div>
@@ -312,8 +312,8 @@ export default function Home() {
         <div className={CONTAINER}>
           <div className="text-center">
             <SectionScript>Trusted by Amazon Sellers</SectionScript>
-            <p className="mx-auto mt-2 max-w-xl text-[14px] text-secondary md:mt-3 md:text-[16px]">
-              Our product photo AI help sellers create <strong className="text-primary">Amazon product photos</strong> that convert. 8K quality.
+            <p className="mx-auto mt-2 max-w-xl text-[14px] text-gray-300 md:mt-3 md:text-[16px]">
+              Our product photo AI help sellers create <strong className="text-white">Amazon product photos</strong> that convert. 8K quality.
             </p>
           </div>
 
@@ -364,7 +364,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <Link href="/faq" className="mt-4 inline-block text-[14px] font-semibold text-brand hover:underline">
+              <Link href="/faq" className="mt-4 inline-block text-[14px] font-semibold text-anthracite hover:underline">
                 View All FAQs →
               </Link>
             </div>
@@ -422,7 +422,7 @@ export default function Home() {
           <p className="mx-auto mt-3 max-w-md text-[14px] text-gray-400 md:mt-4 md:text-[16px]">3 free images. No credit card. AI product photos in seconds.</p>
           <Link
             href="/create"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-primary shadow-soft-hover transition-smooth hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-card-hover md:mt-8 md:px-10 md:py-4 md:text-lg"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-white shadow-soft-hover transition-smooth hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-card-hover md:mt-8 md:px-10 md:py-4 md:text-lg"
           >
             Get Started Free
           </Link>

@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     siteName: 'ProductShotAI',
     title: 'ProductShotAI – AI Product Photo & Product Photo AI | Image Product AI',
     description: 'Create stunning AI product photos and product photo AI in seconds. Free ai image product tool. 8K for e‑commerce and Amazon product photos. No subscription.',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'ProductShotAI - AI product photo and product photo AI' }],
+    images: [{ url: '/logo1.png', width: 512, height: 512, alt: 'ProductShotAI - AI product photo and product photo AI' }],
   },
   twitter: {
     card: 'summary',
@@ -58,8 +58,8 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: SITE_URL },
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: '/logo1.png',
+    apple: '/logo1.png',
   },
   category: 'technology',
 }
@@ -82,7 +82,7 @@ const organizationJsonLd = {
   '@type': 'Organization',
   name: 'ProductShotAI',
   url: SITE_URL,
-  logo: `${SITE_URL}/logo.png`,
+  logo: `${SITE_URL}/logo1.png`,
   description: 'AI product photo, product photo AI, ai image product, and image product ai generator. Amazon product photo tool.',
 }
 
@@ -93,7 +93,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${playfair.variable} ${greatVibes.variable}`}>
-      <body className="font-sans antialiased text-primary">
+      <body className="font-sans antialiased text-on-dark">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
         <Providers>

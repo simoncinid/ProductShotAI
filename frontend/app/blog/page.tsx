@@ -25,10 +25,10 @@ export default function BlogPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
-        <h1 className="text-5xl font-bold text-rich-black mb-4">
+        <h1 className="text-5xl font-bold text-white mb-4">
           AI Product Photo & Amazon Product Photo Blog
         </h1>
-        <p className="text-xl text-gray-600">
+        <p className="text-xl text-gray-300">
           Product photo AI tips, ai image product guides, and image product ai best practices for e‑commerce and Amazon sellers
         </p>
       </div>
@@ -46,10 +46,10 @@ export default function BlogPage() {
                 day: 'numeric',
               })}
             </div>
-            <h2 className="text-3xl font-bold text-rich-black mb-4">
+            <h2 className="text-3xl font-bold text-primary mb-4">
               <Link
                 href={`/blog/${post.slug}`}
-                className="hover:text-vivid-yellow transition"
+                className="hover:text-anthracite transition"
               >
                 {post.title}
               </Link>
@@ -59,7 +59,7 @@ export default function BlogPage() {
             </p>
             <Link
               href={`/blog/${post.slug}`}
-              className="text-vivid-yellow hover:underline font-semibold"
+              className="text-anthracite hover:underline font-semibold"
             >
               Read more →
             </Link>

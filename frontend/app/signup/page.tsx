@@ -54,7 +54,7 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         <div className="rounded-[20px] border border-gray-100 bg-white p-8 shadow-soft md:p-10">
           <div className="flex flex-col items-center text-center">
-            <Image src="/logo.png" alt="" width={48} height={48} className="object-contain" />
+            <Image src="/logo1.png" alt="" width={48} height={48} className="object-contain" />
             <div className="mt-4 flex items-center gap-4">
               <span className="h-px w-8 bg-gray-300 md:w-12" />
               <p className="font-script text-2xl text-primary md:text-3xl">Create account</p>
@@ -63,7 +63,7 @@ export default function SignupPage() {
             <h1 className="mt-3 text-[24px] font-bold text-primary md:text-[28px]">Create your account</h1>
             <p className="mt-2 text-[15px] text-secondary">
               Or{' '}
-              <Link href="/login" className="font-semibold text-brand hover:underline">sign in to your existing account</Link>
+              <Link href="/login" className="font-semibold text-anthracite hover:underline">sign in to your existing account</Link>
             </p>
           </div>
 
@@ -129,16 +129,16 @@ export default function SignupPage() {
               />
               <label htmlFor="terms" className="text-[14px] text-secondary">
                 I agree to the{' '}
-                <Link href="/terms" className="font-semibold text-brand hover:underline">Terms</Link>
-                {' '}and{' '}
-                <Link href="/privacy" className="font-semibold text-brand hover:underline">Privacy Policy</Link>
+<Link href="/terms" className="font-semibold text-anthracite hover:underline">Terms</Link>
+              {' '}and{' '}
+                <Link href="/privacy" className="font-semibold text-anthracite hover:underline">Privacy Policy</Link>
               </label>
             </div>
 
             <button
               type="submit"
               disabled={signupMutation.isPending || !acceptedTerms}
-              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-primary shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
+              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
             >
               {signupMutation.isPending ? 'Creating account...' : 'Create account'}
             </button>

@@ -20,7 +20,8 @@ const config: Config = {
         primary: '#111111',
         secondary: '#4B5563',
         anthracite: '#111827',
-        'page-bg': '#F5F5F7',
+        'page-bg': '#1a1a2e',
+        'on-dark': '#f5f5f7',
       },
       boxShadow: {
         soft: '0 4px 24px rgba(15,23,42,0.08)',
