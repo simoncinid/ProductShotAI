@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { userApi, authApi } from '@/lib/api'
 import { isAuthenticated, clearAuth } from '@/lib/auth'
@@ -18,8 +18,11 @@ const navLinks = [
 
 export function Navbar() {
   const router = useRouter()
+  const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const authenticated = isAuthenticated()
+
+  const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href))
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -55,19 +58,19 @@ export function Navbar() {
         <nav className="hidden items-center gap-1 md:flex">
           {authenticated ? (
             <>
-              <Link href="/how-it-works" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
+              <Link href="/how-it-works" className={`px-3 py-2 text-[14px] font-medium transition hover:text-primary ${isActive('/how-it-works') ? 'text-primary font-semibold' : 'text-secondary'}`}>
                 How it works
               </Link>
-              <Link href="/pricing" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
+              <Link href="/pricing" className={`px-3 py-2 text-[14px] font-medium transition hover:text-primary ${isActive('/pricing') ? 'text-primary font-semibold' : 'text-secondary'}`}>
                 Pricing
               </Link>
-              <Link href="/faq" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
+              <Link href="/faq" className={`px-3 py-2 text-[14px] font-medium transition hover:text-primary ${isActive('/faq') ? 'text-primary font-semibold' : 'text-secondary'}`}>
                 FAQ
               </Link>
-              <Link href="/blog" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
+              <Link href="/blog" className={`px-3 py-2 text-[14px] font-medium transition hover:text-primary ${isActive('/blog') ? 'text-primary font-semibold' : 'text-secondary'}`}>
                 Blog
               </Link>
-              <Link href="/create" className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary">
+              <Link href="/create" className={`px-3 py-2 text-[14px] font-medium transition hover:text-primary ${isActive('/create') ? 'text-primary font-semibold' : 'text-secondary'}`}>
                 Try free
               </Link>
               {user && (
@@ -94,14 +97,14 @@ export function Navbar() {
                 <Link
                   key={href}
                   href={href}
-                  className="px-3 py-2 text-[14px] font-medium text-secondary transition hover:text-primary"
+                  className={`px-3 py-2 text-[14px] font-medium transition hover:text-primary ${isActive(href) ? 'text-primary font-semibold' : 'text-secondary'}`}
                 >
                   {label}
                 </Link>
               ))}
               <Link
                 href="/login"
-                className="ml-2 rounded-full bg-sky-200 px-6 py-2.5 text-[14px] font-semibold text-sky-900 transition-smooth hover:scale-[1.02] hover:bg-sky-300 hover:shadow-soft-hover"
+                className="ml-2 rounded-full bg-page-bg px-6 py-2.5 text-[14px] font-semibold text-white transition-smooth hover:scale-[1.02] hover:opacity-90 hover:shadow-soft-hover"
               >
                 Login
               </Link>
@@ -142,11 +145,11 @@ export function Navbar() {
         <nav className="flex flex-col gap-1 px-6 py-6">
           {authenticated ? (
             <>
-              <Link href="/how-it-works" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>How it works</Link>
-              <Link href="/pricing" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
-              <Link href="/faq" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
-              <Link href="/blog" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>Blog</Link>
-              <Link href="/create" className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>Try free</Link>
+              <Link href="/how-it-works" className={`py-3 text-base font-medium ${isActive('/how-it-works') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>How it works</Link>
+              <Link href="/pricing" className={`py-3 text-base font-medium ${isActive('/pricing') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Pricing</Link>
+              <Link href="/faq" className={`py-3 text-base font-medium ${isActive('/faq') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>FAQ</Link>
+              <Link href="/blog" className={`py-3 text-base font-medium ${isActive('/blog') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Blog</Link>
+              <Link href="/create" className={`py-3 text-base font-medium ${isActive('/create') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Try free</Link>
               {user && <span className="py-3 text-base text-secondary">Credits: {user.credits_balance}</span>}
               <Link href="/dashboard" className="mt-2 block rounded-full bg-anthracite px-6 py-3 text-center font-medium text-white" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
               <button onClick={handleLogout} className="py-3 text-left text-base font-medium text-primary">Logout</button>
@@ -154,11 +157,11 @@ export function Navbar() {
           ) : (
             <>
               {navLinks.map(({ href, label }) => (
-                <Link key={href} href={href} className="py-3 text-base font-medium text-primary" onClick={() => setIsMenuOpen(false)}>
+                <Link key={href} href={href} className={`py-3 text-base font-medium ${isActive(href) ? 'font-semibold' : ''} text-primary`} onClick={() => setIsMenuOpen(false)}>
                   {label}
                 </Link>
               ))}
-              <Link href="/login" className="mt-4 block rounded-full bg-sky-200 px-6 py-3 text-center font-semibold text-sky-900" onClick={() => setIsMenuOpen(false)}>Login</Link>
+              <Link href="/login" className="mt-4 block rounded-full bg-page-bg px-6 py-3 text-center font-semibold text-white" onClick={() => setIsMenuOpen(false)}>Login</Link>
               <Link href="/signup" className="mt-2 block rounded-full bg-brand px-6 py-3 text-center font-semibold text-rich-black" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
             </>
           )}
