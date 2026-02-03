@@ -140,12 +140,12 @@ export default function HowItWorksPage() {
                 key={n}
                 className="flex flex-col rounded-[20px] border border-gray-100 bg-white p-6 shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-card-hover md:flex-row md:items-start md:gap-8 md:p-8"
               >
-                <div className="mb-5 flex shrink-0 items-center gap-4 md:mb-0 md:flex-col md:gap-3">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center md:h-16 md:w-16">
-                    <Image src={icon} alt="" width={64} height={64} className="h-12 w-12 object-contain md:h-14 md:w-14" />
-                  </div>
+                <div className="mb-5 flex shrink-0 flex-col items-center gap-3 md:mb-0">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand md:h-12 md:w-12">
                     <span className="text-lg font-bold text-rich-black md:text-xl">{n}</span>
+                  </div>
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center md:h-16 md:w-16">
+                    <Image src={icon} alt="" width={64} height={64} className="h-12 w-12 object-contain md:h-14 md:w-14" />
                   </div>
                 </div>
                 <div className="min-w-0 flex-1">

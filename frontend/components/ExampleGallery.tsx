@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 
-const PROMPT = 'a group of young boys and girls playing with the game in the photo. christmas holidays. living room'
+const PROMPT = `Place the product in a cozy living room setting during Christmas holidays. Show a group of young boys and girls playing together with the game from the photo. Warm indoor lighting, festive atmosphere, with a decorated Christmas tree or seasonal details in the background. The scene should feel natural and inviting, as if from a real family moment.`
 
 const slides = [
   {
@@ -161,10 +161,10 @@ function SlideContent({
           />
         </div>
       ) : (
-        <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
-          <p className="min-w-0 break-words text-[13px] leading-relaxed text-secondary md:text-sm">
-            &ldquo;{s.text}&rdquo;
-          </p>
+        <div className="min-h-0 min-w-0 flex-1 flex flex-col overflow-hidden">
+          <div className="mt-1 flex-1 min-h-0 overflow-auto rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 font-mono text-[12px] leading-relaxed text-primary md:text-[13px]">
+            <pre className="m-0 whitespace-pre-wrap break-words">{s.text}</pre>
+          </div>
         </div>
       )}
     </div>
