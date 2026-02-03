@@ -47,7 +47,7 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
           <Image src="/logo1.png" alt="" width={50} height={50} className="object-contain" />
           <span className="font-extrabold tracking-wide text-primary">
-            Product<span className="text-brand">Shot</span>AI
+            ProductShotAI
           </span>
         </Link>
 
