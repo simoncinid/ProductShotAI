@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import ExampleGallery from '@/components/ExampleGallery'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
@@ -6,55 +7,76 @@ const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 const steps = [
   {
     n: 1,
-    title: 'Upload Your Existing Product Photo',
+    title: 'Create your product',
+    icon: '/icone/upload.png',
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
-          Start with any photo of your product. It doesn&apos;t need to be perfect — our AI will enhance it. We support JPEG and PNG formats up to 10MB.
+          In the dashboard, create a product by entering its name, description and any details that help the AI (category, materials, key features). Then upload a photo of the product — it can be a simple shot from your phone or an existing listing image.
         </p>
         <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
-          You can use photos taken with your phone, from your existing listings, or any product image you have. The AI understands product photography and will optimize it for Amazon&apos;s requirements.
+          We support JPEG and PNG up to 10MB. The AI will use both the text and the image to generate consistent, professional shots. You can create multiple products and reuse them whenever you need new images.
         </p>
       </>
     ),
   },
   {
     n: 2,
-    title: 'Describe Your Vision',
+    title: 'Define your Brand Identity',
+    icon: '/icone/bradIdentity.png',
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
-          Write a prompt in plain English describing how you want your product to look. Be specific about:
+          Set up your brand identity once: style, colors, mood and visual guidelines. The AI will follow these every time it generates images for your products, so your photos stay consistent and on-brand across all listings.
         </p>
-        <ul className="mt-3 list-disc space-y-1 pl-5 text-[14px] text-secondary md:text-[15px]">
-          <li>Background (white, colored, lifestyle scene)</li>
-          <li>Lighting (soft, dramatic, natural)</li>
-          <li>Style (minimalist, professional, vibrant)</li>
-          <li>Any specific elements you want to add or change</li>
-        </ul>
-        <p className="mt-4 text-[14px] italic leading-relaxed text-secondary">
-          Example: &quot;Place the product on a clean white background with soft, even lighting. Add a subtle shadow underneath. Make the colors more vibrant and ensure the product is centered.&quot;
+        <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
+          You can specify lighting preferences, background style, and the overall look you want. This is especially useful if you have many products and want a uniform, professional catalogue without describing the same style every time.
         </p>
       </>
     ),
   },
   {
     n: 3,
-    title: 'Get Your Amazon-Ready Image',
+    title: 'Ready-to-use prompts',
+    icon: '/icone/prompt.png',
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
-          Within 30–60 seconds, receive a high-quality 8K image optimized for Amazon listings.
+          Based on your brand identity and product details, we generate optimized prompts that the AI uses to turn your product photo into a real photo-shoot style image. The prompts respect your brand guidelines and the specifics of each product.
         </p>
         <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
-          Our AI keeps your original product intact while transforming the scene around it. The result is a professional product image that:
+          You can use these prompts as-is or add your own instructions (e.g. a specific background, a lifestyle scene, or seasonal styling). The AI combines everything to produce 8K images suitable for e‑commerce and Amazon.
         </p>
-        <ul className="mt-3 list-disc space-y-1 pl-5 text-[14px] text-secondary md:text-[15px]">
-          <li>Meets Amazon&apos;s image quality standards</li>
-          <li>Has the correct aspect ratio (1:1 for main images)</li>
-          <li>Is optimized for conversion</li>
-          <li>Maintains product accuracy</li>
-        </ul>
+      </>
+    ),
+  },
+  {
+    n: 4,
+    title: 'Combine two photos',
+    icon: '/icone/combine.png',
+    content: (
+      <>
+        <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
+          For more control, you can combine two images in one generation: for example, your product in one photo and the desired background or setting in another. Or use one photo for the product and another for a subject (e.g. a person or prop) to insert into the final shot.
+        </p>
+        <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
+          This way you get a single, coherent image that merges the best of both: accurate product representation plus the exact scene or context you want. Ideal for lifestyle shots and custom compositions.
+        </p>
+      </>
+    ),
+  },
+  {
+    n: 5,
+    title: 'Get your result',
+    icon: '/icone/result.png',
+    content: (
+      <>
+        <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
+          Choose how many images to generate per run. Within 30–60 seconds you receive high-quality 8K images, optimized for e‑commerce and Amazon (correct aspect ratio, no watermarks for paid credits). Download and use them in your listings right away.
+        </p>
+        <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
+          Each image keeps your product accurate while applying the chosen style, background and lighting. Results meet marketplace quality standards and are ready for conversion-focused product pages.
+        </p>
       </>
     ),
   },
@@ -93,10 +115,10 @@ export default function HowItWorksPage() {
               <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
             <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
-              Three Steps to AI Product Photo & Image Product AI
+              Five steps to professional product shots
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-[16px] text-gray-300 md:text-[18px]">
-              Turn any photo into 8K ai image product and image product ai. Our product photo AI works for e‑commerce and Amazon product photos.
+              From product and brand identity to prompts, combined photos and 8K results. Our product photo AI works for e‑commerce and Amazon.
             </p>
           </div>
         </div>
@@ -109,18 +131,21 @@ export default function HowItWorksPage() {
         </svg>
       </div>
 
-      {/* ——— I tre step ——— */}
+      {/* ——— I cinque step ——— */}
       <section className="bg-page-bg pb-16 pt-12 md:pb-24 md:pt-16">
         <div className={CONTAINER}>
           <div className="space-y-8 md:space-y-10">
-            {steps.map(({ n, title, content }) => (
+            {steps.map(({ n, title, icon, content }) => (
               <div
                 key={n}
                 className="flex flex-col rounded-[20px] border border-gray-100 bg-white p-6 shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-card-hover md:flex-row md:items-start md:gap-8 md:p-8"
               >
-                <div className="mb-5 flex shrink-0 md:mb-0">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand md:h-20 md:w-20">
-                    <span className="text-2xl font-bold text-rich-black md:text-3xl">{n}</span>
+                <div className="mb-5 flex shrink-0 items-center gap-4 md:mb-0 md:flex-col md:gap-3">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center md:h-16 md:w-16">
+                    <Image src={icon} alt="" width={64} height={64} className="h-12 w-12 object-contain md:h-14 md:w-14" />
+                  </div>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand md:h-12 md:w-12">
+                    <span className="text-lg font-bold text-rich-black md:text-xl">{n}</span>
                   </div>
                 </div>
                 <div className="min-w-0 flex-1">
