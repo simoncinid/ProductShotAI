@@ -67,7 +67,7 @@ export default function VerifyEmailPage() {
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
               <span className="h-px w-8 bg-gray-300 md:w-12" />
-              <p className="font-script text-2xl text-primary md:text-3xl">Verify email</p>
+              <p className="font-playfair-italic text-2xl text-primary md:text-3xl">Verify email</p>
               <span className="h-px w-8 bg-gray-300 md:w-12" />
             </div>
             <h1 className="mt-3 text-[24px] font-bold text-primary md:text-[28px]">Verify your email</h1>

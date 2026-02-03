@@ -7,12 +7,21 @@ import BeforeAfter from '@/components/BeforeAfter'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-4 sm:px-6 md:px-10 lg:px-14'
 
-function SectionScript({ children }: { children: React.ReactNode }) {
-  return <p className="font-script text-xl md:text-2xl lg:text-3xl text-on-dark">{children}</p>
+/** Section title in Playfair italic (same font as hero "Shots"/"Seconds"). Use light when section has light bg. */
+function SectionScript({ children, light }: { children: React.ReactNode; light?: boolean }) {
+  return (
+    <p className={`font-playfair-italic text-xl md:text-2xl lg:text-3xl ${light ? 'text-primary' : 'text-on-dark'}`}>
+      {children}
+    </p>
+  )
 }
 
-function SectionH2({ children }: { children: React.ReactNode }) {
-  return <h2 className="mt-1 text-[22px] md:text-[28px] font-bold leading-tight text-on-dark lg:text-[34px]">{children}</h2>
+function SectionH2({ children, light }: { children: React.ReactNode; light?: boolean }) {
+  return (
+    <h2 className={`mt-1 text-[22px] md:text-[28px] font-bold leading-tight lg:text-[34px] ${light ? 'text-primary' : 'text-on-dark'}`}>
+      {children}
+    </h2>
+  )
 }
 
 const HOW_STEPS = [
@@ -349,7 +358,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-white to-page-bg/30" aria-hidden />
         <div className={`${CONTAINER} relative`}>
           <div className="text-center">
-            <SectionScript>Simple, Transparent Pricing</SectionScript>
+            <SectionScript light>Simple, Transparent Pricing</SectionScript>
             <p className="mx-auto mt-3 max-w-2xl text-[14px] text-secondary md:mt-4 md:text-[16px]">
               No monthly subscription. Pay only for the images you need. The more credits you buy, the less you pay per image.
             </p>
@@ -465,8 +474,8 @@ export default function Home() {
       <section className="border-t border-gray-200 bg-white py-12 md:py-24">
         <div className={CONTAINER}>
           <div className="text-center">
-            <SectionScript>Frequently Asked Questions</SectionScript>
-            <SectionH2>Everything you need to know</SectionH2>
+            <SectionScript light>Frequently Asked Questions</SectionScript>
+            <SectionH2 light>Everything you need to know</SectionH2>
           </div>
 
           <div className="mx-auto mt-8 max-w-3xl space-y-3 md:mt-14 md:space-y-4">

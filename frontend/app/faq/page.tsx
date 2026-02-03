@@ -31,7 +31,7 @@ export default function FAQPage() {
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
               <span className="h-px w-8 bg-gray-500 md:w-12" />
-              <p className="font-script text-2xl text-on-dark md:text-3xl">Frequently Asked Questions</p>
+              <p className="font-playfair-italic text-2xl text-on-dark md:text-3xl">Frequently Asked Questions</p>
               <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
             <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
@@ -87,7 +87,7 @@ export default function FAQPage() {
           <div className="mx-auto max-w-2xl rounded-[20px] border border-gray-100 bg-white p-8 text-center shadow-soft md:p-10">
             <div className="flex items-center justify-center gap-4">
               <span className="h-px w-8 bg-gray-300 md:w-12" />
-              <p className="font-script text-2xl text-primary md:text-3xl">Still have questions?</p>
+              <p className="font-playfair-italic text-2xl text-primary md:text-3xl">Still have questions?</p>
               <span className="h-px w-8 bg-gray-300 md:w-12" />
             </div>
             <p className="mt-4 text-[16px] text-secondary">

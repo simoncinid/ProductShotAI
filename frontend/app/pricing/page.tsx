@@ -86,7 +86,7 @@ export default function PricingPage() {
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
               <span className="h-px w-8 bg-gray-500 md:w-12" />
-              <p className="font-script text-2xl text-on-dark md:text-3xl">Simple, Transparent Pricing</p>
+              <p className="font-playfair-italic text-2xl text-on-dark md:text-3xl">Simple, Transparent Pricing</p>
               <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
             <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
@@ -167,7 +167,7 @@ export default function PricingPage() {
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
               <span className="h-px w-8 bg-gray-300 md:w-12" />
-              <p className="font-script text-2xl text-primary md:text-3xl">How Credits Work</p>
+              <p className="font-playfair-italic text-2xl text-primary md:text-3xl">How Credits Work</p>
               <span className="h-px w-8 bg-gray-300 md:w-12" />
             </div>
           </div>

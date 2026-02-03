@@ -57,7 +57,7 @@ export default function SignupPage() {
             <Image src="/logo1.png" alt="" width={48} height={48} className="object-contain" />
             <div className="mt-4 flex items-center gap-4">
               <span className="h-px w-8 bg-gray-300 md:w-12" />
-              <p className="font-script text-2xl text-primary md:text-3xl">Create account</p>
+              <p className="font-playfair-italic text-2xl text-primary md:text-3xl">Create account</p>
               <span className="h-px w-8 bg-gray-300 md:w-12" />
             </div>
             <h1 className="mt-3 text-[24px] font-bold text-primary md:text-[28px]">Create your account</h1>
