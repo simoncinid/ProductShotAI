@@ -138,7 +138,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={signupMutation.isPending || !acceptedTerms}
-              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
+              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
             >
               {signupMutation.isPending ? 'Creating account...' : 'Create account'}
             </button>

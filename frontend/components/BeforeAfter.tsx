@@ -144,7 +144,7 @@ export default function BeforeAfter({ compact, containerClassName }: { compact?:
             }}
             className={`rounded-full text-sm font-semibold transition-smooth cursor-pointer ${
               compact ? 'min-w-[36px] min-h-[36px] w-9 h-9' : 'min-w-[44px] min-h-[44px] w-10 h-10'
-            } ${activeIndex === i ? 'bg-brand text-white shadow-soft' : 'bg-gray-200 text-secondary hover:bg-gray-300'}`}
+            } ${activeIndex === i ? 'bg-brand text-rich-black shadow-soft' : 'bg-gray-200 text-secondary hover:bg-gray-300'}`}
           >
             {i + 1}
           </button>

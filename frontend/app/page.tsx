@@ -52,18 +52,17 @@ function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: 
   const { n, title, desc, icon } = step
   return (
     <div
-      className={`flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-white p-5 shadow-soft transition-all duration-300 md:p-6 ${
+      className={`relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-white p-5 shadow-soft transition-all duration-300 md:p-6 ${
         isActive ? 'border-brand/50 shadow-soft-hover scale-[1.02]' : 'border-gray-100 hover:border-brand/30 hover:shadow-soft-hover hover:scale-[1.01]'
       }`}
     >
-      {/* Icon in evidence at top */}
-      <div className="mb-4 flex flex-col items-center">
-        <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-brand/15 p-3 md:h-28 md:w-28 md:p-4">
-          <Image src={icon} alt="" width={80} height={80} className="h-16 w-16 object-contain md:h-20 md:w-20" />
-        </div>
-        <span className="mt-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
-          {n}
-        </span>
+      {/* Step number top-left, dark text on yellow for readability */}
+      <span className="absolute left-4 top-4 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black">
+        {n}
+      </span>
+      {/* Icon without yellow box, larger */}
+      <div className="mb-4 flex justify-center pt-1">
+        <Image src={icon} alt="" width={96} height={96} className="h-20 w-20 object-contain md:h-24 md:w-24" />
       </div>
       <h3 className="mb-2 min-w-0 break-words text-[15px] font-semibold text-primary md:text-base">{title}</h3>
       <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">
@@ -152,10 +151,10 @@ function HowItWorksCarousel({ sectionRef }: { sectionRef: React.RefObject<HTMLEl
           <button
             type="button"
             onClick={() => goTo(index - 1)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white shadow-soft transition hover:border-brand/50 hover:bg-brand hover:text-white md:h-11 md:w-11"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-primary shadow-soft transition hover:border-brand hover:bg-brand hover:text-rich-black md:h-11 md:w-11"
             aria-label="Previous step"
           >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -175,10 +174,10 @@ function HowItWorksCarousel({ sectionRef }: { sectionRef: React.RefObject<HTMLEl
           <button
             type="button"
             onClick={() => goTo(index + 1)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white shadow-soft transition hover:border-brand/50 hover:bg-brand hover:text-white md:h-11 md:w-11"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-primary shadow-soft transition hover:border-brand hover:bg-brand hover:text-rich-black md:h-11 md:w-11"
             aria-label="Next step"
           >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -244,7 +243,7 @@ export default function Home() {
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <Link
                   href="/create"
-                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Try Free Now
                 </Link>
@@ -291,7 +290,7 @@ export default function Home() {
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center">
                 <Link
                   href="/create"
-                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Try Free Now
                 </Link>
@@ -365,7 +364,7 @@ export default function Home() {
                 } ${p.popular ? 'ring-2 ring-brand ring-offset-2' : ''} hover:-translate-y-1 hover:shadow-card-hover`}
               >
                 {p.popular && (
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-white sm:-top-3 sm:px-3 sm:py-1 sm:text-xs">
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-rich-black sm:-top-3 sm:px-3 sm:py-1 sm:text-xs">
                     Most Popular
                   </span>
                 )}
@@ -376,7 +375,7 @@ export default function Home() {
                   href="/pricing"
                   className={`mt-4 block w-full rounded-full py-2.5 text-center text-[13px] font-semibold transition-smooth sm:mt-6 sm:py-3 sm:text-[14px] ${
                     p.popular
-                      ? 'bg-brand text-white hover:scale-[1.02]'
+                      ? 'bg-brand text-rich-black hover:scale-[1.02]'
                       : p.dark
                       ? 'border border-white/40 text-white hover:bg-white/10'
                       : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-white'
@@ -512,7 +511,7 @@ export default function Home() {
           <p className="mx-auto mt-3 max-w-md text-[14px] text-gray-400 md:mt-4 md:text-[16px]">3 free images. No credit card. AI product photos in seconds.</p>
           <Link
             href="/create"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-white shadow-soft-hover transition-smooth hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-card-hover md:mt-8 md:px-10 md:py-4 md:text-lg"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-rich-black shadow-soft-hover transition-smooth hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-card-hover md:mt-8 md:px-10 md:py-4 md:text-lg"
           >
             Get Started Free
           </Link>

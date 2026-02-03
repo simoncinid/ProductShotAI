@@ -120,7 +120,7 @@ export default function HowItWorksPage() {
               >
                 <div className="mb-5 flex shrink-0 md:mb-0">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand md:h-20 md:w-20">
-                    <span className="text-2xl font-bold text-white md:text-3xl">{n}</span>
+                    <span className="text-2xl font-bold text-rich-black md:text-3xl">{n}</span>
                   </div>
                 </div>
                 <div className="min-w-0 flex-1">
@@ -174,7 +174,7 @@ export default function HowItWorksPage() {
           <p className="text-[18px] font-semibold text-white md:text-[20px]">Ready to transform your product photos?</p>
           <Link
             href="/create"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
           >
             Try It Free Now
           </Link>

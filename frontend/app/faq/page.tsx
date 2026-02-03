@@ -95,7 +95,7 @@ export default function FAQPage() {
             </p>
             <a
               href="mailto:support@productshotai.com"
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-[15px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-[15px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
             >
               Contact Support
             </a>

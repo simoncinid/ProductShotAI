@@ -107,7 +107,7 @@ export function Navbar() {
               </Link>
               <Link
                 href="/signup"
-                className="rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-white transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+                className="rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-rich-black transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
               >
                 Sign Up
               </Link>
@@ -159,7 +159,7 @@ export function Navbar() {
                 </Link>
               ))}
               <Link href="/login" className="mt-4 block rounded-full bg-sky-200 px-6 py-3 text-center font-semibold text-sky-900" onClick={() => setIsMenuOpen(false)}>Login</Link>
-              <Link href="/signup" className="mt-2 block rounded-full bg-brand px-6 py-3 text-center font-semibold text-white" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+              <Link href="/signup" className="mt-2 block rounded-full bg-brand px-6 py-3 text-center font-semibold text-rich-black" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
             </>
           )}
         </nav>

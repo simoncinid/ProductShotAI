@@ -125,7 +125,7 @@ export default function PricingPage() {
                   } hover:-translate-y-1 hover:shadow-card-hover`}
                 >
                   {popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-white">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-rich-black">
                       Most Popular
                     </span>
                   )}
@@ -141,7 +141,7 @@ export default function PricingPage() {
                     disabled={purchaseMutation.isPending}
                     className={`mt-6 w-full rounded-full py-3 text-center text-[14px] font-semibold transition-smooth disabled:opacity-50 ${
                       popular
-                        ? 'bg-brand text-white hover:scale-[1.02] hover:shadow-soft-hover'
+                        ? 'bg-brand text-rich-black hover:scale-[1.02] hover:shadow-soft-hover'
                         : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-white'
                     }`}
                   >
@@ -198,7 +198,7 @@ export default function PricingPage() {
           </p>
           <Link
             href="/create"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
           >
             Start Free Trial
           </Link>

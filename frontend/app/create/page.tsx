@@ -380,7 +380,7 @@ export default function CreatePage() {
               <button
                 onClick={handleGenerate}
                 disabled={!imageUrl || (!selectedProductId && !prompt.trim()) || isGenerating || noProductWantsBrandButMissing}
-                className="mt-6 w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-6 w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isGenerating ? 'Generating... (30–90 sec)' : 'Generate Image'}
               </button>

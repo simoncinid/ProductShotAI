@@ -147,7 +147,7 @@ function SlideContent({
   return (
     <div className="flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden rounded-xl border border-gray-100 bg-white p-4 shadow-soft">
       <div className="mb-3 flex shrink-0 items-center gap-2">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black">
           {s.n}
         </div>
         <span className="min-w-0 flex-1 break-words text-sm font-medium text-primary">{s.label}</span>
