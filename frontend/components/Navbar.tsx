@@ -45,7 +45,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 h-[72px] bg-white shadow-[0_1px_0_0_rgba(15,23,42,0.06)]">
       <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-6 md:px-10 lg:px-14">
         <Link href="/" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-          <Image src="/logo1.png" alt="" width={36} height={36} className="object-contain" />
+          <Image src="/logo1.png" alt="" width={50} height={50} className="object-contain" />
           <span className="font-extrabold tracking-wide text-primary">
             Product<span className="text-brand">Shot</span>AI
           </span>

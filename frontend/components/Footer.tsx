@@ -3,23 +3,23 @@ import Image from 'next/image'
 
 export function Footer() {
   return (
-    <footer className="bg-page-bg text-gray-400">
+    <footer className="border-t border-gray-200 bg-white">
       <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 px-6 py-8 md:flex-row md:px-10 lg:px-14">
-        <Link href="/" className="flex items-center gap-2 text-[13px] font-extrabold tracking-wide text-white">
+        <Link href="/" className="flex items-center gap-2 text-[13px] font-extrabold tracking-wide text-primary">
           <Image src="/logo1.png" alt="" width={28} height={28} className="object-contain" />
           Product<span className="text-brand">Shot</span>AI
         </Link>
-        <nav className="flex flex-wrap items-center justify-center gap-6 text-[13px]">
-          <Link href="/how-it-works" className="hover:text-white transition">How it works</Link>
-          <Link href="/pricing" className="hover:text-white transition">Pricing</Link>
-          <Link href="/faq" className="hover:text-white transition">FAQ</Link>
-          <Link href="/blog" className="hover:text-white transition">Blog</Link>
-          <Link href="/create" className="hover:text-white transition">Create</Link>
-          <Link href="/privacy" className="hover:text-white transition">Privacy</Link>
-          <Link href="/terms" className="hover:text-white transition">Terms</Link>
-          <a href="mailto:reservationwebbitz@gmail.com" className="hover:text-white transition">Contact</a>
+        <nav className="flex flex-wrap items-center justify-center gap-6 text-[13px] text-secondary">
+          <Link href="/how-it-works" className="transition hover:text-primary">How it works</Link>
+          <Link href="/pricing" className="transition hover:text-primary">Pricing</Link>
+          <Link href="/faq" className="transition hover:text-primary">FAQ</Link>
+          <Link href="/blog" className="transition hover:text-primary">Blog</Link>
+          <Link href="/create" className="transition hover:text-primary">Create</Link>
+          <Link href="/privacy" className="transition hover:text-primary">Privacy</Link>
+          <Link href="/terms" className="transition hover:text-primary">Terms</Link>
+          <a href="mailto:reservationwebbitz@gmail.com" className="transition hover:text-primary">Contact</a>
         </nav>
-        <p className="text-[13px]">© 2026 ProductShotAI. All rights reserved.</p>
+        <p className="text-[13px] text-secondary">© 2026 ProductShotAI. All rights reserved.</p>
       </div>
     </footer>
   )

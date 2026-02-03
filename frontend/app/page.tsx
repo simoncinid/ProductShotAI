@@ -7,7 +7,7 @@ import BeforeAfter from '@/components/BeforeAfter'
 const CONTAINER = 'mx-auto max-w-[1200px] px-4 sm:px-6 md:px-10 lg:px-14'
 
 function SectionScript({ children }: { children: React.ReactNode }) {
-  return <p className="font-script text-xl md:text-2xl lg:text-3xl text-on-dark">{children}</p>
+  return <p className="font-script text-xl md:text-2xl lg:text-3xl text-white">{children}</p>
 }
 
 function SectionH2({ children }: { children: React.ReactNode }) {
