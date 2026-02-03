@@ -18,32 +18,32 @@ function SectionH2({ children }: { children: React.ReactNode }) {
 const HOW_STEPS = [
   {
     n: 1,
-    title: 'Crea il tuo prodotto',
-    desc: 'Inserisci nome, descrizione e dettagli del prodotto e carica la sua foto. L’AI userà queste informazioni per generare shooting coerenti e professionali.',
+    title: 'Create your product',
+    desc: 'Enter name, description and product details, and upload its photo. The AI will use this information to generate consistent, professional product shots.',
     icon: '/icone/upload.png',
   },
   {
     n: 2,
-    title: 'Definisci la Brand Identity',
-    desc: 'Crea una brand identity che l’AI seguirà ogni volta che genera immagini per i tuoi prodotti: stile, colori, mood e linee guida che rendono unico il tuo brand.',
+    title: 'Define your Brand Identity',
+    desc: 'Create a brand identity that the AI will follow every time it generates images for your products: style, colors, mood and guidelines that make your brand unique.',
     icon: '/icone/bradIdentity.png',
   },
   {
     n: 3,
-    title: 'Prompt pronti all’uso',
-    desc: 'Grazie alla brand identity vengono creati prompt ottimizzati che l’AI usa per trasformare le foto dei prodotti in veri shooting da set fotografico, rispettando i dettagli del tuo brand.',
+    title: 'Ready-to-use prompts',
+    desc: 'From your brand identity we generate optimized prompts that the AI uses to turn product photos into real photo-shoot style images, respecting your brand details.',
     icon: '/icone/prompt.png',
   },
   {
     n: 4,
-    title: 'Combina due foto',
-    desc: 'Unisci due immagini per uno shooting più accurato: ad esempio il prodotto in una foto e lo sfondo desiderato in un’altra, oppure il prodotto con un soggetto da inserire nel risultato finale.',
+    title: 'Combine two photos',
+    desc: 'Merge two images for a more accurate shot: e.g. your product in one photo and the desired background in another, or the product with a subject to add to the final result.',
     icon: '/icone/combine.png',
   },
   {
     n: 5,
-    title: 'Ottieni il risultato',
-    desc: 'Scegli quante immagini generare e in pochi secondi ricevi i tuoi shooting in 8K, ottimizzati per e‑commerce e Amazon. Scarica e usa subito.',
+    title: 'Get your result',
+    desc: 'Choose how many images to generate and in seconds receive your 8K shots, optimized for e‑commerce and Amazon. Download and use right away.',
     icon: '/icone/result.png',
   },
 ]
@@ -56,11 +56,12 @@ function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: 
         isActive ? 'border-brand/50 shadow-soft-hover scale-[1.02]' : 'border-gray-100 hover:border-brand/30 hover:shadow-soft-hover hover:scale-[1.01]'
       }`}
     >
-      <div className="mb-4 flex shrink-0 items-center gap-3">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand/10 p-2 md:h-16 md:w-16">
-          <Image src={icon} alt="" width={48} height={48} className="h-8 w-8 object-contain md:h-10 md:w-10" />
+      {/* Icon in evidence at top */}
+      <div className="mb-4 flex flex-col items-center">
+        <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-brand/15 p-3 md:h-28 md:w-28 md:p-4">
+          <Image src={icon} alt="" width={80} height={80} className="h-16 w-16 object-contain md:h-20 md:w-20" />
         </div>
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
+        <span className="mt-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
           {n}
         </span>
       </div>
@@ -73,30 +74,54 @@ function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: 
 }
 
 const TOTAL_STEPS = HOW_STEPS.length
+const CAROUSEL_START_DELAY_MS = 2500
+const CAROUSEL_INTERVAL_MS = 4500
 
-function HowItWorksCarousel() {
+function HowItWorksCarousel({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
   const [index, setIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const goTo = useCallback((i: number) => {
-    setIndex((i + TOTAL_STEPS) % TOTAL_STEPS)
+    const next = (i + TOTAL_STEPS) % TOTAL_STEPS
+    setIndex(next)
     if (intervalRef.current) clearInterval(intervalRef.current)
     intervalRef.current = setInterval(
       () => setIndex((prev: number) => (prev + 1) % TOTAL_STEPS),
-      4500
+      CAROUSEL_INTERVAL_MS
     )
   }, [])
 
+  // Start carousel only when section is visible, after a short delay
   useEffect(() => {
-    intervalRef.current = setInterval(
-      () => setIndex((prev: number) => (prev + 1) % TOTAL_STEPS),
-      4500
+    const el = sectionRef?.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (!entry?.isIntersecting) {
+          if (delayRef.current) clearTimeout(delayRef.current)
+          if (intervalRef.current) clearInterval(intervalRef.current)
+          return
+        }
+        setIndex(0)
+        delayRef.current = setTimeout(() => {
+          intervalRef.current = setInterval(
+            () => setIndex((prev: number) => (prev + 1) % TOTAL_STEPS),
+            CAROUSEL_INTERVAL_MS
+          )
+        }, CAROUSEL_START_DELAY_MS)
+      },
+      { threshold: 0.2, rootMargin: '0px' }
     )
+    observer.observe(el)
     return () => {
+      observer.disconnect()
+      if (delayRef.current) clearTimeout(delayRef.current)
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [])
+  }, [sectionRef])
 
   useEffect(() => {
     const el = containerRef.current
@@ -107,58 +132,56 @@ function HowItWorksCarousel() {
 
   return (
     <div className="w-full min-w-0">
-      {/* Frecce desktop */}
-      <div className="relative">
-        <button
-          type="button"
-          onClick={() => goTo(index - 1)}
-          className="absolute left-0 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-soft transition hover:bg-brand hover:text-white md:left-[-12px] md:flex lg:left-[-20px]"
-          aria-label="Step precedente"
-        >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          onClick={() => goTo(index + 1)}
-          className="absolute right-0 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-soft transition hover:bg-brand hover:text-white md:right-[-12px] md:flex lg:right-[-20px]"
-          aria-label="Step successivo"
-        >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-
-        <div
-          ref={containerRef}
-          className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-webkit-overflow-scrolling:touch] scrollbar-hide"
-        >
-          {HOW_STEPS.map((step, i) => (
-            <div
-              key={step.n}
-              className="w-full min-w-full max-w-full flex-shrink-0 snap-center px-2 py-2"
-            >
-              <StepCard step={step} isActive={index === i} />
-            </div>
-          ))}
-        </div>
+      <div
+        ref={containerRef}
+        className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-webkit-overflow-scrolling:touch] scrollbar-hide"
+      >
+        {HOW_STEPS.map((step, i) => (
+          <div
+            key={step.n}
+            className="w-full min-w-full max-w-full flex-shrink-0 snap-center px-2 py-2"
+          >
+            <StepCard step={step} isActive={index === i} />
+          </div>
+        ))}
       </div>
 
-      {/* Dots e indicatore */}
+      {/* Nav: prev, dots, next — below the card, no overlap */}
       <div className="mt-6 flex flex-col items-center gap-3">
-        <div className="flex items-center gap-2">
-          {HOW_STEPS.map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => goTo(i)}
-              className={`rounded-full transition-all ${
-                index === i ? 'h-2.5 w-2.5 bg-brand' : 'h-2 w-2 bg-gray-300 hover:bg-gray-400'
-              }`}
-              aria-label={`Vai allo step ${i + 1}`}
-            />
-          ))}
+        <div className="flex items-center justify-center gap-4">
+          <button
+            type="button"
+            onClick={() => goTo(index - 1)}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white shadow-soft transition hover:border-brand/50 hover:bg-brand hover:text-white md:h-11 md:w-11"
+            aria-label="Previous step"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <div className="flex items-center gap-2">
+            {HOW_STEPS.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => goTo(i)}
+                className={`rounded-full transition-all ${
+                  index === i ? 'h-2.5 w-2.5 bg-brand' : 'h-2 w-2 bg-gray-300 hover:bg-gray-400'
+                }`}
+                aria-label={`Go to step ${i + 1}`}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => goTo(index + 1)}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white shadow-soft transition hover:border-brand/50 hover:bg-brand hover:text-white md:h-11 md:w-11"
+            aria-label="Next step"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
         <p className="text-[12px] text-gray-400">
           {index + 1} / {TOTAL_STEPS}
@@ -171,6 +194,7 @@ function HowItWorksCarousel() {
 export default function Home() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null)
   const [faqCompactOpen, setFaqCompactOpen] = useState<number | null>(0)
+  const howItWorksSectionRef = useRef<HTMLElement>(null)
 
   const faqItems = [
     { q: 'How many free images do I get?', a: 'Every device gets 3 free watermarked images per month. No signup required!' },
@@ -294,7 +318,7 @@ export default function Home() {
       </div>
 
       {/* ——— How it works ——— */}
-      <section className="bg-page-bg pb-12 pt-10 md:pb-28 md:pt-20">
+      <section ref={howItWorksSectionRef} className="bg-page-bg pb-12 pt-10 md:pb-28 md:pt-20">
         <div className={CONTAINER}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-3 md:gap-4">
@@ -303,13 +327,13 @@ export default function Home() {
               <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
             <p className="mx-auto mt-3 max-w-2xl text-[14px] text-gray-300 md:mt-4 md:text-[16px]">
-              Dalla creazione del prodotto alla brand identity, fino agli shooting pronti in 8K. Ecco i passaggi.
+              From product creation to brand identity, to 8K-ready shots. Here are the steps.
             </p>
           </div>
 
-          {/* Carosello unico per mobile e desktop */}
+          {/* Carousel for mobile and desktop */}
           <div className="mt-8 md:mt-14 max-w-4xl mx-auto">
-            <HowItWorksCarousel />
+            <HowItWorksCarousel sectionRef={howItWorksSectionRef} />
           </div>
         </div>
       </section>
