@@ -17,4 +17,11 @@ body {
   .transition-smooth {
     @apply transition-all duration-[175ms] ease-out;
   }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }

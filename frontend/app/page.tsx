@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import BeforeAfter from '@/components/BeforeAfter'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-4 sm:px-6 md:px-10 lg:px-14'
 
 function SectionScript({ children }: { children: React.ReactNode }) {
-  return <p className="font-script text-xl md:text-2xl lg:text-3xl text-white">{children}</p>
+  return <p className="font-script text-xl md:text-2xl lg:text-3xl text-on-dark">{children}</p>
 }
 
 function SectionH2({ children }: { children: React.ReactNode }) {
@@ -15,39 +16,63 @@ function SectionH2({ children }: { children: React.ReactNode }) {
 }
 
 const HOW_STEPS = [
-  { n: 1, title: 'Upload Your Photo', desc: 'Upload a photo of your product. JPEG and PNG. Works for any product photo.', exampleImage: '/images/before6.png', examplePrompt: null as string | null },
-  { n: 2, title: 'Describe Your Vision', desc: 'Write a prompt for your ai image product. Our AI understands e‑commerce and Amazon style.', exampleImage: null as string | null, examplePrompt: 'a group of young boys and girls playing with the game in the photo. christmas holidays. living room' },
-  { n: 3, title: 'Get Your Image', desc: 'Receive 8K image in seconds. Optimized for Amazon and any marketplace. Download and use.', exampleImage: '/images/after6.png', examplePrompt: null as string | null },
+  {
+    n: 1,
+    title: 'Crea il tuo prodotto',
+    desc: 'Inserisci nome, descrizione e dettagli del prodotto e carica la sua foto. L’AI userà queste informazioni per generare shooting coerenti e professionali.',
+    icon: '/icone/upload.png',
+  },
+  {
+    n: 2,
+    title: 'Definisci la Brand Identity',
+    desc: 'Crea una brand identity che l’AI seguirà ogni volta che genera immagini per i tuoi prodotti: stile, colori, mood e linee guida che rendono unico il tuo brand.',
+    icon: '/icone/bradIdentity.png',
+  },
+  {
+    n: 3,
+    title: 'Prompt pronti all’uso',
+    desc: 'Grazie alla brand identity vengono creati prompt ottimizzati che l’AI usa per trasformare le foto dei prodotti in veri shooting da set fotografico, rispettando i dettagli del tuo brand.',
+    icon: '/icone/prompt.png',
+  },
+  {
+    n: 4,
+    title: 'Combina due foto',
+    desc: 'Unisci due immagini per uno shooting più accurato: ad esempio il prodotto in una foto e lo sfondo desiderato in un’altra, oppure il prodotto con un soggetto da inserire nel risultato finale.',
+    icon: '/icone/combine.png',
+  },
+  {
+    n: 5,
+    title: 'Ottieni il risultato',
+    desc: 'Scegli quante immagini generare e in pochi secondi ricevi i tuoi shooting in 8K, ottimizzati per e‑commerce e Amazon. Scarica e usa subito.',
+    icon: '/icone/result.png',
+  },
 ]
 
-function StepCard({ step }: { step: (typeof HOW_STEPS)[0] }) {
-  const { n, title, desc, exampleImage, examplePrompt } = step
+function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: boolean }) {
+  const { n, title, desc, icon } = step
   return (
-    <div className="flex h-full w-full min-w-0 max-w-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-soft md:p-6">
-      <div className="mb-3 flex shrink-0 items-center gap-2">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-base font-bold text-white md:h-12 md:w-12 md:text-lg">
-          {n}
+    <div
+      className={`flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-white p-5 shadow-soft transition-all duration-300 md:p-6 ${
+        isActive ? 'border-brand/50 shadow-soft-hover scale-[1.02]' : 'border-gray-100 hover:border-brand/30 hover:shadow-soft-hover hover:scale-[1.01]'
+      }`}
+    >
+      <div className="mb-4 flex shrink-0 items-center gap-3">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand/10 p-2 md:h-16 md:w-16">
+          <Image src={icon} alt="" width={48} height={48} className="h-8 w-8 object-contain md:h-10 md:w-10" />
         </div>
-        <h3 className="min-w-0 flex-1 break-words text-[15px] font-semibold text-primary md:text-base">{title}</h3>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-white">
+          {n}
+        </span>
       </div>
-      <p className="min-w-0 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">
+      <h3 className="mb-2 min-w-0 break-words text-[15px] font-semibold text-primary md:text-base">{title}</h3>
+      <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">
         {desc}
       </p>
-      <div className="mt-4 min-w-0 flex-1">
-        {exampleImage && (
-          <div className="overflow-hidden rounded-lg">
-            <img src={exampleImage} alt="" className="max-h-[200px] w-full max-w-full object-contain md:max-h-[260px]" />
-          </div>
-        )}
-        {examplePrompt && (
-          <p className="min-w-0 break-words text-[13px] leading-relaxed text-secondary md:text-sm">
-            &ldquo;{examplePrompt}&rdquo;
-          </p>
-        )}
-      </div>
     </div>
   )
 }
+
+const TOTAL_STEPS = HOW_STEPS.length
 
 function HowItWorksCarousel() {
   const [index, setIndex] = useState(0)
@@ -55,44 +80,89 @@ function HowItWorksCarousel() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const goTo = useCallback((i: number) => {
-    setIndex(i)
+    setIndex((i + TOTAL_STEPS) % TOTAL_STEPS)
     if (intervalRef.current) clearInterval(intervalRef.current)
-    intervalRef.current = setInterval(() => setIndex((prev) => (prev + 1) % 3), 3000)
+    intervalRef.current = setInterval(
+      () => setIndex((prev: number) => (prev + 1) % TOTAL_STEPS),
+      4500
+    )
   }, [])
 
   useEffect(() => {
-    intervalRef.current = setInterval(() => setIndex((i) => (i + 1) % 3), 3000)
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+    intervalRef.current = setInterval(
+      () => setIndex((prev: number) => (prev + 1) % TOTAL_STEPS),
+      4500
+    )
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
   }, [])
 
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    el.scrollTo({ left: index * el.offsetWidth, behavior: 'smooth' })
+    const slideWidth = el.offsetWidth
+    el.scrollTo({ left: index * slideWidth, behavior: 'smooth' })
   }, [index])
 
   return (
-    <div className="w-full min-w-0 overflow-hidden">
-      <div
-        ref={containerRef}
-        className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-webkit-overflow-scrolling:touch]"
-      >
-        {HOW_STEPS.map((step) => (
-          <div key={step.n} className="w-full min-w-full max-w-full flex-shrink-0 snap-center px-1">
-            <StepCard step={step} />
-          </div>
-        ))}
+    <div className="w-full min-w-0">
+      {/* Frecce desktop */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => goTo(index - 1)}
+          className="absolute left-0 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-soft transition hover:bg-brand hover:text-white md:left-[-12px] md:flex lg:left-[-20px]"
+          aria-label="Step precedente"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onClick={() => goTo(index + 1)}
+          className="absolute right-0 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-soft transition hover:bg-brand hover:text-white md:right-[-12px] md:flex lg:right-[-20px]"
+          aria-label="Step successivo"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <div
+          ref={containerRef}
+          className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-webkit-overflow-scrolling:touch] scrollbar-hide"
+        >
+          {HOW_STEPS.map((step, i) => (
+            <div
+              key={step.n}
+              className="w-full min-w-full max-w-full flex-shrink-0 snap-center px-2 py-2"
+            >
+              <StepCard step={step} isActive={index === i} />
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="mt-4 flex justify-center gap-2">
-        {[0, 1, 2].map((i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => goTo(i)}
-            className={`h-1.5 rounded-full transition-all ${index === i ? 'w-5 bg-brand' : 'w-1.5 bg-gray-300'}`}
-            aria-label={`Step ${i + 1}`}
-          />
-        ))}
+
+      {/* Dots e indicatore */}
+      <div className="mt-6 flex flex-col items-center gap-3">
+        <div className="flex items-center gap-2">
+          {HOW_STEPS.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => goTo(i)}
+              className={`rounded-full transition-all ${
+                index === i ? 'h-2.5 w-2.5 bg-brand' : 'h-2 w-2 bg-gray-300 hover:bg-gray-400'
+              }`}
+              aria-label={`Vai allo step ${i + 1}`}
+            />
+          ))}
+        </div>
+        <p className="text-[12px] text-gray-400">
+          {index + 1} / {TOTAL_STEPS}
+        </p>
       </div>
     </div>
   )
@@ -232,18 +302,14 @@ export default function Home() {
               <SectionScript>How It Works</SectionScript>
               <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
+            <p className="mx-auto mt-3 max-w-2xl text-[14px] text-gray-300 md:mt-4 md:text-[16px]">
+              Dalla creazione del prodotto alla brand identity, fino agli shooting pronti in 8K. Ecco i passaggi.
+            </p>
           </div>
 
-          {/* Mobile: carousel 3 slide (step+esempio) che ruotano ogni 3s. Desktop: griglia 3 colonne. */}
-          <div className="mt-8 md:mt-14">
-            <div className="md:hidden">
-              <HowItWorksCarousel />
-            </div>
-            <div className="hidden md:grid md:grid-cols-3 md:gap-6 md:items-stretch">
-              {HOW_STEPS.map((step) => (
-                <StepCard key={step.n} step={step} />
-              ))}
-            </div>
+          {/* Carosello unico per mobile e desktop */}
+          <div className="mt-8 md:mt-14 max-w-4xl mx-auto">
+            <HowItWorksCarousel />
           </div>
         </div>
       </section>
