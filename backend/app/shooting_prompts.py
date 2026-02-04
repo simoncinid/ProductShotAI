@@ -16,6 +16,13 @@ DEFAULT_PROMPTS = [
 ]
 
 
+def _escape_for_format(s: str) -> str:
+    """Escape curly braces so .format() does not interpret them as placeholders."""
+    if not s:
+        return s
+    return s.replace("{", "{{").replace("}", "}}")
+
+
 def _build_system_prompt(
     product_name: str,
     product_prompt: str,
@@ -35,16 +42,20 @@ def _build_system_prompt(
     if product_analysis:
         parts.append("Product reference style (keep consistent): {product_analysis}")
     if brand_snapshot:
-        bi_lines = [f"{k}: {v}" for k, v in (brand_snapshot or {}).items() if v]
+        bi_lines = [
+            f"{_escape_for_format(str(k))}: {_escape_for_format(str(v))}"
+            for k, v in (brand_snapshot or {}).items()
+            if v is not None and str(v).strip()
+        ]
         if bi_lines:
             parts.append("Brand identity (align visuals): " + "; ".join(bi_lines))
     parts.append("Shooting style requested by user: {shooting_style}")
     return "\n".join(parts).format(
         count=count,
-        product_name=product_name,
-        product_prompt=product_prompt,
-        product_analysis=product_analysis or "",
-        shooting_style=shooting_style,
+        product_name=_escape_for_format(product_name),
+        product_prompt=_escape_for_format(product_prompt),
+        product_analysis=_escape_for_format(product_analysis or ""),
+        shooting_style=_escape_for_format(shooting_style),
     )
 
 
