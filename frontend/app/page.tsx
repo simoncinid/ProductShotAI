@@ -27,33 +27,27 @@ function SectionH2({ children, light }: { children: React.ReactNode; light?: boo
 const HOW_STEPS = [
   {
     n: 1,
-    title: 'Create your product',
-    desc: 'Enter name, description and product details, and upload its photo. The AI will use this information to generate consistent, professional product shots.',
-    icon: '/icone/upload.png',
-  },
-  {
-    n: 2,
-    title: 'Define your Brand Identity',
-    desc: 'Create a brand identity that the AI will follow every time it generates images for your products: style, colors, mood and guidelines that make your brand unique.',
+    title: 'Brand Identity',
+    desc: 'Tell us about your brand: style, colors, mood and where you sell. The AI will follow these guidelines every time it generates images for your products.',
     icon: '/icone/bradIdentity.png',
   },
   {
+    n: 2,
+    title: 'Upload Product',
+    desc: 'Drop a photo of your product. We isolate the product so the AI can place it in any scene—lifestyle, flat lay, macro or studio.',
+    icon: '/images/product1.png',
+  },
+  {
     n: 3,
-    title: 'Ready-to-use prompts',
-    desc: 'From your brand identity we generate optimized prompts that the AI uses to turn product photos into real photo-shoot style images, respecting your brand details.',
+    title: 'Brand-matched Prompts',
+    desc: 'We generate prompts that match your brand. Review and customize them, then trigger the generation to get your photoshoot.',
     icon: '/icone/prompt.png',
   },
   {
     n: 4,
-    title: 'Combine two photos',
-    desc: 'Merge two images for a more accurate shot: e.g. your product in one photo and the desired background in another, or the product with a subject to add to the final result.',
-    icon: '/icone/combine.png',
-  },
-  {
-    n: 5,
-    title: 'Get your result',
-    desc: 'Choose how many images to generate and in seconds receive your 8K shots, optimized for e‑commerce and Amazon. Download and use right away.',
-    icon: '/icone/result.png',
+    title: 'Results',
+    desc: 'Here are your on-brand variations in 8K, ready for e‑commerce and Amazon. Download and use them right away.',
+    icon: '/images/res1.png',
   },
 ]
 
@@ -336,7 +330,7 @@ export default function Home() {
               <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
             <p className="mx-auto mt-3 max-w-2xl text-[14px] text-gray-300 md:mt-4 md:text-[16px]">
-              From product creation to brand identity, to 8K-ready shots. Here are the steps.
+              From brand identity to upload, prompts and 8K results. Here are the four steps.
             </p>
           </div>
 

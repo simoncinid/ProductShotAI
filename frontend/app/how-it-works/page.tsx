@@ -7,72 +7,57 @@ const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 const steps = [
   {
     n: 1,
-    title: 'Create your product',
-    icon: '/icone/upload.png',
+    title: 'Brand Identity',
+    icon: '/icone/bradIdentity.png',
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
-          In the dashboard, create a product by entering its name, description and any details that help the AI (category, materials, key features). Then upload a photo of the product — it can be a simple shot from your phone or an existing listing image.
+          Tell us about your brand: describe your average customer, where you sell (e‑commerce, Instagram, lifestyle blogs) and the photo style you want (studio, lifestyle, macro). The AI will follow these guidelines every time it generates images.
         </p>
         <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
-          We support JPEG and PNG up to 10MB. The AI will use both the text and the image to generate consistent, professional shots. You can create multiple products and reuse them whenever you need new images.
+          Set up your brand identity once. Your photos stay consistent and on-brand across all listings, with the lighting and look you choose.
         </p>
       </>
     ),
   },
   {
     n: 2,
-    title: 'Define your Brand Identity',
-    icon: '/icone/bradIdentity.png',
+    title: 'Upload Product',
+    icon: '/images/product1.png',
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
-          Set up your brand identity once: style, colors, mood and visual guidelines. The AI will follow these every time it generates images for your products, so your photos stay consistent and on-brand across all listings.
+          Drop a photo of your product—from your phone or an existing listing. We isolate the product so the AI can place it in any scene. We support JPEG and PNG up to 10MB.
         </p>
         <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
-          You can specify lighting preferences, background style, and the overall look you want. This is especially useful if you have many products and want a uniform, professional catalogue without describing the same style every time.
+          You can create multiple products and reuse them whenever you need new images. The AI uses the isolated product to generate consistent, professional shots.
         </p>
       </>
     ),
   },
   {
     n: 3,
-    title: 'Ready-to-use prompts',
+    title: 'Brand-matched Prompts',
     icon: '/icone/prompt.png',
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
-          Based on your brand identity and product details, we generate optimized prompts that the AI uses to turn your product photo into a real photo-shoot style image. The prompts respect your brand guidelines and the specifics of each product.
+          Based on your brand identity and product, we generate optimized prompts (lifestyle, flat lay, macro, etc.). Review and customize them, then trigger the generation to get your photoshoot.
         </p>
         <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
-          You can use these prompts as-is or add your own instructions (e.g. a specific background, a lifestyle scene, or seasonal styling). The AI combines everything to produce 8K images suitable for e‑commerce and Amazon.
+          Use the prompts as-is or add your own instructions. The AI produces 8K images suitable for e‑commerce and Amazon, respecting your brand and product details.
         </p>
       </>
     ),
   },
   {
     n: 4,
-    title: 'Combine two photos',
-    icon: '/icone/combine.png',
+    title: 'Results',
+    icon: '/images/res1.png',
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
-          For more control, you can combine two images in one generation: for example, your product in one photo and the desired background or setting in another. Or use one photo for the product and another for a subject (e.g. a person or prop) to insert into the final shot.
-        </p>
-        <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
-          This way you get a single, coherent image that merges the best of both: accurate product representation plus the exact scene or context you want. Ideal for lifestyle shots and custom compositions.
-        </p>
-      </>
-    ),
-  },
-  {
-    n: 5,
-    title: 'Get your result',
-    icon: '/icone/result.png',
-    content: (
-      <>
-        <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
-          Choose how many images to generate per run. Within 30–60 seconds you receive high-quality 8K images, optimized for e‑commerce and Amazon (correct aspect ratio, no watermarks for paid credits). Download and use them in your listings right away.
+          Here are your on-brand variations. Within 30–60 seconds you receive high-quality 8K images, optimized for e‑commerce and Amazon (correct aspect ratio, no watermarks for paid credits). Download and use them in your listings right away.
         </p>
         <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
           Each image keeps your product accurate while applying the chosen style, background and lighting. Results meet marketplace quality standards and are ready for conversion-focused product pages.
@@ -115,10 +100,10 @@ export default function HowItWorksPage() {
               <span className="h-px w-8 bg-gray-500 md:w-12" />
             </div>
             <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
-              Five steps to professional product shots
+              Four steps to professional product shots
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-[16px] text-gray-300 md:text-[18px]">
-              From product and brand identity to prompts, combined photos and 8K results. Our product photo AI works for e‑commerce and Amazon.
+              From brand identity to upload, prompts and 8K results. Our product photo AI works for e‑commerce and Amazon.
             </p>
           </div>
         </div>
@@ -131,7 +116,7 @@ export default function HowItWorksPage() {
         </svg>
       </div>
 
-      {/* ——— I cinque step ——— */}
+      {/* ——— I quattro step ——— */}
       <section className="bg-page-bg pb-16 pt-12 md:pb-24 md:pt-16">
         <div className={CONTAINER}>
           <div className="space-y-8 md:space-y-10">
