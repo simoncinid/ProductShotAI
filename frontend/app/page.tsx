@@ -304,7 +304,7 @@ export default function Home() {
   const howItWorksSectionRef = useRef<HTMLElement>(null)
 
   const faqItems = [
-    { q: 'How many free images do I get?', a: 'Every device gets 3 free watermarked images per month. No signup required!' },
+    { q: 'How many free images do I get?', a: 'Every device gets 1 free watermarked image per month. No signup required!' },
     { q: 'Do I need a subscription?', a: "No! We don't offer subscriptions. You only pay for the credits you need, when you need them." },
     { q: 'What image formats do you support?', a: 'We accept JPEG and PNG uploads. All outputs are delivered as high-quality JPEG images in 8K resolution.' },
     { q: 'What aspect ratios are available?', a: '1:1 (square, perfect for Amazon), 4:5 (portrait), and 16:9 (landscape). Default is 1:1.' },
@@ -313,7 +313,7 @@ export default function Home() {
   ]
 
   const faqCompact = [
-    { q: 'How many free images do I get?', a: '3 free watermarked images per month, no signup required.' },
+    { q: 'How many free images do I get?', a: '1 free watermarked image per month, no signup required.' },
     { q: 'Do I need a subscription?', a: 'No. Pay only for the credits you need. Credits never expire.' },
     { q: 'What image formats?', a: 'JPEG and PNG in, 8K JPEG out, Amazon-optimized.' },
   ]
@@ -363,7 +363,7 @@ export default function Home() {
                 </Link>
               </div>
               <p className="mt-4 text-[11px] text-gray-400 sm:text-[12px] md:text-[13px]">
-                Get 3 free watermarked images per month. No credit card required.
+                Get 1 free watermarked image per month. No credit card required.
               </p>
             </div>
 
@@ -411,7 +411,7 @@ export default function Home() {
                 </Link>
               </div>
               <p className="mt-4 text-[11px] text-gray-400 sm:text-[12px] md:text-[13px]">
-                Get 3 free watermarked images per month. No credit card required.
+                Get 1 free watermarked image per month. No credit card required.
               </p>
             </div>
           </div>
@@ -630,7 +630,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-anthracite via-anthracite to-primary/90" aria-hidden />
         <div className={`${CONTAINER} relative text-center`}>
           <h2 className="text-[22px] font-bold leading-tight text-white sm:text-3xl md:text-4xl">Ready to Create Your AI Product Photo?</h2>
-          <p className="mx-auto mt-3 max-w-md text-[14px] text-gray-400 md:mt-4 md:text-[16px]">3 free images. No credit card. AI product photos in seconds.</p>
+          <p className="mx-auto mt-3 max-w-md text-[14px] text-gray-400 md:mt-4 md:text-[16px]">1 free image. No credit card. AI product photos in seconds.</p>
           <Link
             href="/create"
             className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-rich-black shadow-soft-hover transition-smooth hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-card-hover md:mt-8 md:px-10 md:py-4 md:text-lg"

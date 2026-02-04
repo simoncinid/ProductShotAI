@@ -5,7 +5,7 @@ SaaS web application for AI-powered Amazon product photography. Transform your p
 ## Features
 
 - **AI-Powered Generation**: Uses WaveSpeed's nano-banana-pro edit-ultra model for 8K image generation
-- **Freemium Model**: 3 free watermarked images per month per device/IP
+- **Freemium Model**: 1 free watermarked image per month per device/IP
 - **Credit-Based Pricing**: Pay only for what you use, no monthly subscriptions
 - **User Authentication**: Secure JWT-based authentication
 - **Generation History**: Track all your generated images

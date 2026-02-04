@@ -194,7 +194,7 @@ export default function PricingPage() {
         <div className={`${CONTAINER} text-center`}>
           <h2 className="text-[20px] font-bold text-white md:text-[24px]">Try It Free First</h2>
           <p className="mt-3 text-[16px] text-gray-300">
-            Get 3 free watermarked images per month. No credit card required.
+            Get 1 free watermarked image per month. No credit card required.
           </p>
           <Link
             href="/create"

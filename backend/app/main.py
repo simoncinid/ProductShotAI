@@ -487,11 +487,14 @@ async def generate_free(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Free generation limit reached ({settings.free_generations_per_month} per month). Please sign up and purchase credits for unlimited generations.",
         )
+    # Prompt finale sempre con Image quality + Constraints (paesaggio, texture, luci, prodotto iper-realistico)
+    final_prompt = compose_final_prompt(base_prompt=generate_request.prompt or "")
     generation = Generation(
         device_id=generate_request.device_id,
         ip_address=ip_address,
         input_image_url=generate_request.image_url,
         prompt=generate_request.prompt,
+        final_prompt=final_prompt,
         resolution="4k",  # Free: always 4k to reduce WaveSpeed costs (paid can use 8k)
         aspect_ratio=generate_request.aspect_ratio,
         is_free=True,
@@ -507,7 +510,7 @@ async def generate_free(
         ws = wavespeed.get_wavespeed_client()
         task_result = await ws.create_edit_task(
             image_url=image_url,
-            prompt=generate_request.prompt,
+            prompt=final_prompt,
             resolution="4k",
             aspect_ratio=generate_request.aspect_ratio or "1:1",
             webhook_url=webhook_url,

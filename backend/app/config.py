@@ -83,7 +83,7 @@ class Settings(BaseSettings):
         return "database"
     
     # Free tier
-    free_generations_per_month: int = 3
+    free_generations_per_month: int = 1
     
     # Stripe
     stripe_secret_key: str = ""

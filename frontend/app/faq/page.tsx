@@ -5,7 +5,7 @@ import { useState } from 'react'
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
 const faqs = [
-  { q: "How many free images do I get?", a: "Every device gets 3 free watermarked images per month. This is tracked by device ID and IP address. No signup or credit card required!" },
+  { q: "How many free images do I get?", a: "Every device gets 1 free watermarked image per month. This is tracked by device ID and IP address. No signup or credit card required!" },
   { q: "What is the watermark on free images?", a: "Free images include a diagonal watermark that says 'AI SAMPLE – UPGRADE FOR CLEAN IMAGE'. This watermark is designed to be clearly visible and difficult to remove. To get clean images without watermark, sign up and purchase credits." },
   { q: "Do I need a subscription?", a: "No! We don't offer monthly subscriptions. You only pay for the credits you need, when you need them. Credits never expire, so you can use them at your own pace." },
   { q: "What image formats do you support?", a: "We accept JPEG and PNG uploads (up to 10MB). All outputs are delivered as high-quality JPEG images in 8K resolution, optimized for Amazon listings." },

@@ -74,7 +74,7 @@ PYTHON_VERSION=3.11.9
 
 ### Free Tier
 ```
-FREE_GENERATIONS_PER_MONTH=3
+FREE_GENERATIONS_PER_MONTH=1
 ```
 
 ### Stripe (pagamenti e accredito crediti)
@@ -160,7 +160,7 @@ NEXT_PUBLIC_SITE_URL=https://productshotai.com
 - [ ] Opzionale S3: se imposti variabili AWS e `STORAGE_TYPE=s3` (o `auto` con S3 configurato)
 - [ ] `ENVIRONMENT` - `production`
 - [ ] `CORS_ORIGIN` o `CORS_ORIGINS` - URL del frontend Vercel (es. `https://product-shot-ai.vercel.app` senza slash finale; più domini separati da virgola con CORS_ORIGINS)
-- [ ] `FREE_GENERATIONS_PER_MONTH` - `3`
+- [ ] `FREE_GENERATIONS_PER_MONTH` - `1`
 - [ ] `STRIPE_SECRET_KEY` - chiave segreta Stripe
 - [ ] `STRIPE_WEBHOOK_SECRET` - signing secret del webhook (evento `checkout.session.completed`)
 - [ ] `STRIPE_PRICE_STARTER` - Price ID pack Starter
@@ -223,7 +223,7 @@ STORAGE_PATH=./storage
 PUBLIC_BASE_URL=http://localhost:8000
 ENVIRONMENT=development
 CORS_ORIGIN=http://localhost:3000
-FREE_GENERATIONS_PER_MONTH=3
+FREE_GENERATIONS_PER_MONTH=1
 
 # Stripe (usa sk_test_ e price_ di test in sviluppo)
 STRIPE_SECRET_KEY=sk_test_xxxxxxxx
