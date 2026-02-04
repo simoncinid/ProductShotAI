@@ -56,6 +56,13 @@ def compose_final_prompt(
             parts.append(_block("Brand identity", "\n".join(bi_parts)))
         if brand_analysis_text and brand_analysis_text.strip():
             parts.append(_block("Brand reference style", brand_analysis_text))
+    # Stile qualità immagine: sempre incluso per output fotorealistici
+    parts.append(
+        _block(
+            "Image quality",
+            "8k super realistic image with enhanced quality, emphasizing realistic surfaces and textures, and incorporating natural lighting to create lifelike depth and detail.",
+        )
+    )
     parts.append(
         _block(
             "Constraints",
