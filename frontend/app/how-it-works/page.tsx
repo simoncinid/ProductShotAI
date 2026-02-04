@@ -124,23 +124,31 @@ export default function HowItWorksPage() {
         </svg>
       </div>
 
-      {/* ——— I quattro step: layout standard uguale per tutti ——— */}
+      {/* ——— I quattro step: mobile = colonna, desktop = due colonne ——— */}
       <section className="bg-page-bg pb-16 pt-12 md:pb-24 md:pt-16">
         <div className={CONTAINER}>
           <div className="space-y-6 md:space-y-8">
             {steps.map((step) => (
               <div
                 key={step.n}
-                className="flex flex-row overflow-hidden rounded-[20px] border border-gray-100 bg-white shadow-soft transition-smooth hover:shadow-card-hover md:rounded-[24px]"
+                className="flex flex-col overflow-hidden rounded-[20px] border border-gray-100 bg-white shadow-soft transition-smooth hover:shadow-card-hover md:flex-row md:rounded-[24px]"
               >
-                {/* Colonna 1: numero + media — dimensioni fisse (stesse per tutti gli step) */}
-                <div className="flex shrink-0 flex-col border-r border-gray-100 bg-gray-50/50 p-5 md:p-6">
-                  <div className="mb-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-lg font-bold text-rich-black md:h-12 md:w-12 md:text-xl">
+                {/* Mobile: numero + titolo in una riga */}
+                <div className="flex flex-row items-center gap-3 border-b border-gray-100 px-5 py-4 md:hidden">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-lg font-bold text-rich-black">
                     {step.n}
                   </div>
-                  <div className="flex h-[200px] w-[200px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm md:h-[240px] md:w-[240px]">
+                  <h2 className="min-w-0 break-words text-xl font-semibold text-primary">{step.title}</h2>
+                </div>
+
+                {/* Colonna 1 (solo desktop): numero + media */}
+                <div className="hidden md:flex shrink-0 flex-col border-r border-gray-100 bg-gray-50/50 p-6">
+                  <div className="mb-4 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand text-xl font-bold text-rich-black">
+                    {step.n}
+                  </div>
+                  <div className="flex h-[240px] w-[240px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm">
                     {step.media === 'icon' && (
-                      <Image src={step.icon!} alt="" width={120} height={120} className="h-20 w-20 object-contain md:h-24 md:w-24" />
+                      <Image src={step.icon!} alt="" width={120} height={120} className="h-24 w-24 object-contain" />
                     )}
                     {step.media === 'product' && (
                       <Image src="/images/product1.png" alt="Product" width={240} height={240} className="h-full w-full object-contain p-4" />
@@ -167,9 +175,40 @@ export default function HowItWorksPage() {
                   </div>
                 </div>
 
-                {/* Colonna 2: titolo + testo — stessa posizione in tutti i div */}
-                <div className="flex min-w-0 flex-1 flex-col justify-start p-5 md:p-6">
-                  <h2 className="mb-3 min-w-0 break-words text-xl font-semibold text-primary md:text-2xl">{step.title}</h2>
+                {/* Mobile: media a tutta larghezza, altezza fissa */}
+                <div className="w-full px-4 py-4 md:hidden">
+                  <div className="flex h-[220px] w-full items-center justify-center overflow-hidden rounded-xl bg-gray-50">
+                    {step.media === 'icon' && (
+                      <Image src={step.icon!} alt="" width={100} height={100} className="h-24 w-24 object-contain" />
+                    )}
+                    {step.media === 'product' && (
+                      <Image src="/images/product1.png" alt="Product" width={220} height={220} className="h-full w-full object-contain p-4" />
+                    )}
+                    {step.media === 'prompts' && (
+                      <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+                        {PROMPT_EXAMPLES.map((p, i) => (
+                          <div key={i} className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2.5 text-left">
+                            <span className="mb-1.5 truncate rounded bg-brand/15 px-2 py-0.5 text-[10px] font-semibold text-rich-black">{p.tag}</span>
+                            <p className="line-clamp-4 text-[10px] leading-snug text-gray-800">{p.text}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {step.media === 'results' && (
+                      <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+                        {RESULT_IMAGES.map((src, i) => (
+                          <div key={i} className="overflow-hidden rounded-lg bg-white shadow-sm">
+                            <Image src={src} alt={`Result ${i + 1}`} width={120} height={120} className="h-full w-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Colonna 2: titolo (solo desktop) + testo */}
+                <div className="flex min-w-0 flex-1 flex-col justify-start px-5 py-4 md:p-6 md:py-6">
+                  <h2 className="mb-3 hidden min-w-0 break-words text-xl font-semibold text-primary md:block md:text-2xl">{step.title}</h2>
                   <div className="min-w-0 flex-1">{step.content}</div>
                 </div>
               </div>

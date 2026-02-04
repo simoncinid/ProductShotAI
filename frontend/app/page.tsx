@@ -61,31 +61,40 @@ const HOW_STEPS = [
   },
 ]
 
-// Layout standard: stessa struttura per tutti gli step. Cella media dimensioni fisse, testo sempre dalla stessa posizione.
-const MEDIA_BOX_CLASS = 'h-[200px] w-[200px] shrink-0 sm:h-[220px] sm:w-[220px] md:h-[240px] md:w-[240px]'
+// Layout: mobile = colonna (titolo → media full width → testo), desktop = due colonne come prima
+const MEDIA_BOX_CLASS = 'h-[200px] w-full md:h-[240px] md:w-[240px] shrink-0'
+const MEDIA_BOX_LEFT_COL = 'hidden md:flex shrink-0 flex-col border-r border-gray-100 bg-gray-50/50 p-4 md:p-5'
 
 function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: boolean }) {
   const { n, title, desc, media } = step
   return (
     <div
-      className={`flex h-full min-w-0 flex-row overflow-hidden rounded-2xl border bg-white shadow-soft transition-all duration-300 md:rounded-3xl ${
+      className={`flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-white shadow-soft transition-all duration-300 md:flex-row md:rounded-3xl ${
         isActive ? 'border-brand/50 shadow-soft-hover scale-[1.02]' : 'border-gray-100 hover:border-brand/30 hover:shadow-soft-hover hover:scale-[1.01]'
       }`}
     >
-      {/* Colonna 1: numero + media — dimensioni fisse, allineamento uguale per tutti */}
-      <div className="flex shrink-0 flex-col border-r border-gray-100 bg-gray-50/50 p-4 md:p-5">
+      {/* Mobile: riga 1 — numero + titolo */}
+      <div className="flex flex-row items-center gap-3 border-b border-gray-100 p-4 md:hidden">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black">
+          {n}
+        </div>
+        <h3 className="min-w-0 break-words text-base font-semibold text-primary">{title}</h3>
+      </div>
+
+      {/* Colonna 1 (desktop) / blocco media (mobile): numero solo su desktop, poi media */}
+      <div className={MEDIA_BOX_LEFT_COL}>
         <div className="mb-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black md:h-9 md:w-9">
           {n}
         </div>
-        <div className={`flex items-center justify-center overflow-hidden rounded-xl bg-white ${MEDIA_BOX_CLASS} shadow-sm`}>
+        <div className={`flex items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm ${MEDIA_BOX_CLASS} md:rounded-xl`}>
           {media === 'icon' && (
             <Image src="/icone/bradIdentity.png" alt="" width={120} height={120} className="h-16 w-16 object-contain md:h-20 md:w-20" />
           )}
           {media === 'product' && (
-            <Image src={PRODUCT_IMAGE} alt="Product" width={200} height={200} className="h-full w-full object-contain p-2" />
+            <Image src={PRODUCT_IMAGE} alt="Product" width={200} height={200} className="h-full w-full object-contain p-3 md:p-2" />
           )}
           {media === 'prompts' && (
-            <div className="grid h-full w-full grid-cols-3 gap-1.5 p-2">
+            <div className="grid h-full w-full grid-cols-3 gap-2 p-2 md:gap-1.5 md:p-2">
               {PROMPT_EXAMPLES.map((p, i) => (
                 <div key={i} className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2 text-left">
                   <span className="mb-1 truncate rounded bg-brand/15 px-1.5 py-0.5 text-[9px] font-semibold text-rich-black md:text-[10px]">{p.tag}</span>
@@ -95,7 +104,7 @@ function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: 
             </div>
           )}
           {media === 'results' && (
-            <div className="grid h-full w-full grid-cols-3 gap-1.5 p-2">
+            <div className="grid h-full w-full grid-cols-3 gap-2 p-2 md:gap-1.5 md:p-2">
               {RESULT_IMAGES.map((src, i) => (
                 <div key={i} className="overflow-hidden rounded-lg bg-gray-100">
                   <Image src={src} alt="" width={80} height={80} className="h-full w-full object-cover" />
@@ -106,9 +115,40 @@ function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: 
         </div>
       </div>
 
-      {/* Colonna 2: titolo + testo — stessa posizione in tutti i card */}
-      <div className="flex min-w-0 flex-1 flex-col justify-start p-4 pt-4 md:p-5 md:pt-5">
-        <h3 className="mb-3 min-w-0 break-words text-[15px] font-semibold text-primary md:text-base">{title}</h3>
+      {/* Mobile: blocco media a tutta larghezza (stessa altezza per tutti) */}
+      <div className="flex w-full px-4 py-4 md:hidden">
+        <div className={`flex w-full items-center justify-center overflow-hidden rounded-xl bg-gray-50 ${MEDIA_BOX_CLASS}`}>
+          {media === 'icon' && (
+            <Image src="/icone/bradIdentity.png" alt="" width={100} height={100} className="h-20 w-20 object-contain" />
+          )}
+          {media === 'product' && (
+            <Image src={PRODUCT_IMAGE} alt="Product" width={200} height={200} className="h-full w-full max-h-[200px] object-contain p-4" />
+          )}
+          {media === 'prompts' && (
+            <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+              {PROMPT_EXAMPLES.map((p, i) => (
+                <div key={i} className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2.5 text-left">
+                  <span className="mb-1 truncate rounded bg-brand/15 px-1.5 py-0.5 text-[10px] font-semibold text-rich-black">{p.tag}</span>
+                  <p className="line-clamp-4 text-[10px] leading-tight text-gray-800">{p.text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          {media === 'results' && (
+            <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+              {RESULT_IMAGES.map((src, i) => (
+                <div key={i} className="overflow-hidden rounded-lg bg-white shadow-sm">
+                  <Image src={src} alt="" width={120} height={120} className="h-full w-full object-cover" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Colonna 2: titolo (solo desktop) + testo — stessa posizione in tutti i card */}
+      <div className="flex min-w-0 flex-1 flex-col justify-start p-4 md:p-5 md:pt-5">
+        <h3 className="mb-3 hidden min-w-0 break-words text-[15px] font-semibold text-primary md:block md:text-base">{title}</h3>
         <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">{desc}</p>
       </div>
     </div>
