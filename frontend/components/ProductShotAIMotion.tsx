@@ -490,7 +490,7 @@ function InputLike({ children }: { children: React.ReactNode }) {
 }
 
 // ---------------------------------
-// Scene: Step 2 — Product hero, ben visibile e moderno
+// Scene: Step 2
 // ---------------------------------
 function Step2Upload({ t, productSrc }: { t: number; productSrc: string }) {
   const p = progressBetween(t, TIMELINE.step2.start, TIMELINE.step2.end)
@@ -502,24 +502,24 @@ function Step2Upload({ t, productSrc }: { t: number; productSrc: string }) {
       <Header title="2. Upload Product" subtitle="Drop a photo. We isolate the product." />
       <div className="flex-1 min-h-0 flex items-center justify-center py-3 md:py-4">
         <motion.div
-          className="w-full h-full max-w-[420px] md:max-w-[480px] max-h-[320px] md:max-h-[380px] flex items-center justify-center"
+          className="w-full max-w-[280px] md:max-w-[340px] aspect-square"
           initial={false}
           style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
         >
-          <div className="relative w-full h-full rounded-2xl md:rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.24)]">
-            {/* Glow sottile brand sul bordo */}
-            <div className="absolute inset-0 rounded-2xl md:rounded-3xl ring-1 ring-inset ring-brand/20 pointer-events-none" />
+          <div className="relative w-full h-full rounded-2xl border-2 border-dashed border-white/25 bg-white/5">
             <motion.div
-              className="absolute inset-4 md:inset-6 flex items-center justify-center rounded-xl md:rounded-2xl bg-white overflow-hidden"
+              className="absolute inset-0 flex items-center justify-center p-4 md:p-5"
               initial={false}
-              animate={{ scale: toastOn ? 1.02 : 1 }}
+              animate={{ scale: toastOn ? 1.03 : 1 }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             >
-              <img
-                src={productSrc}
-                alt="Uploaded product"
-                className="w-full h-full object-contain p-4 md:p-6"
-              />
+              <div className="bg-white/95 rounded-xl shadow-soft p-4 md:p-5 w-full h-full flex items-center justify-center">
+                <img
+                  src={productSrc}
+                  alt="Uploaded product"
+                  className="max-w-full max-h-full w-auto h-auto object-contain"
+                />
+              </div>
             </motion.div>
             <ImageReadyBadge visible={toastOn} />
           </div>
@@ -530,53 +530,49 @@ function Step2Upload({ t, productSrc }: { t: number; productSrc: string }) {
 }
 
 // ---------------------------------
-// Scene: Step 3 — 3 prompt generati, ben visibili e moderni
+// Scene: Step 3
 // ---------------------------------
-const PROMPT_EXAMPLES: { tag: string; text: string }[] = [
-  {
-    tag: 'Lifestyle',
-    text: 'Outdoor café, morning light, leather bag on table with coffee and sunglasses, lifestyle shot, on-brand for e-commerce.',
-  },
-  {
-    tag: 'Flat lay',
-    text: 'Flat lay of open bag with laptop and accessories, top-down view, soft light, minimalist background, e-commerce ready.',
-  },
-  {
-    tag: 'Macro',
-    text: 'Macro of brass buckle and leather texture, stitching details, shallow depth of field, premium look for product zoom.',
-  },
-]
-
 function Step3Prompts({ t }: { t: number }) {
   const p = progressBetween(t, TIMELINE.step3.start, TIMELINE.step3.end)
   const enter = easeOutCubic(clamp01((p - 0.08) / 0.18))
+
+  // Confirm timings within scene
   const c1 = p > 0.28
   const c2 = p > 0.34
   const c3 = p > 0.50
   const showCTA = p > 0.58
-  const confirmed = [c1, c2, c3]
-  const textProgress = [clamp01((p - 0.08) / 0.20), 1, 1]
 
   return (
     <div className="absolute inset-0 flex flex-col p-4 md:p-6">
       <Header title="3. Brand-matched Prompts" subtitle="Review and customize your prompts." />
-      <div className="flex-1 min-h-0 flex items-center justify-center py-2 md:py-3 overflow-hidden">
+      <div className="flex-1 min-h-0 flex items-center justify-center py-3 md:py-4 overflow-hidden">
         <motion.div
-          className="w-full h-full max-w-4xl flex flex-col items-center justify-center gap-3 md:gap-4"
+          className="w-full max-w-3xl px-2 flex flex-col items-center"
           initial={false}
           style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 w-full flex-1 min-h-0 content-center">
-            {PROMPT_EXAMPLES.map((ex, i) => (
-              <PromptCard
-                key={i}
-                idx={i + 1}
-                tag={ex.tag}
-                text={ex.text}
-                textProgress={textProgress[i]}
-                confirmed={confirmed[i]}
-              />
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 w-full max-w-[800px]">
+            <PromptCard
+              idx={1}
+              tag="Lifestyle"
+              textProgress={clamp01((p - 0.08) / 0.20)}
+              text="Outdoor café, morning light, leather bag on table with coffee and sunglasses, lifestyle shot, on-brand for e-commerce."
+              confirmed={c1}
+            />
+            <PromptCard
+              idx={2}
+              tag="Flat lay"
+              textProgress={1}
+              text="Flat lay of open bag with laptop and accessories, top-down view, soft light, minimalist background, e-commerce ready."
+              confirmed={c2}
+            />
+            <PromptCard
+              idx={3}
+              tag="Macro"
+              textProgress={1}
+              text="Macro of brass buckle and leather texture, stitching details, shallow depth of field, premium look for product zoom."
+              confirmed={c3}
+            />
           </div>
           <AnimatePresence>
             {showCTA ? (
@@ -585,7 +581,7 @@ function Step3Prompts({ t }: { t: number }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.98 }}
                 transition={{ type: 'spring', stiffness: 520, damping: 34 }}
-                className="shrink-0"
+                className="mt-4 md:mt-5 flex justify-center shrink-0"
               >
                 <motion.button
                   whileHover={{ scale: 1.02 }}
@@ -619,41 +615,33 @@ function PromptCard({
   const typedChars = Math.floor(text.length * easeOutCubic(clamp01(textProgress)))
 
   return (
-    <motion.div
-      layout
-      className={`w-full flex flex-col rounded-2xl md:rounded-3xl border-2 overflow-hidden transition-all duration-300 ${
-        confirmed
-          ? 'bg-white/95 border-brand/40 shadow-[0_8px_24px_rgba(254,231,22,0.15)]'
-          : 'bg-white/90 border-white/30 shadow-soft'
-      }`}
-    >
-      <div className="flex items-center justify-between gap-3 px-4 py-3 md:px-5 md:py-3.5 border-b border-gray-200/80">
-        <span className="text-xs md:text-sm font-bold text-anthracite font-sans">Prompt {idx}</span>
-        <span className="rounded-full bg-brand/20 text-rich-black px-2.5 py-1 text-[10px] md:text-xs font-semibold">
-          {tag}
-        </span>
+    <SoftCard className="w-full flex flex-col p-3 md:p-4 relative min-h-[140px] md:min-h-[160px]">
+      <div className="flex items-start justify-between gap-2 shrink-0">
+        <div className="text-[10px] md:text-xs font-semibold text-secondary font-sans">Prompt {idx}</div>
+        <Pill>{tag}</Pill>
       </div>
-      <div className="flex-1 min-h-[72px] md:min-h-[88px] px-4 py-3 md:px-5 md:py-4">
-        <p className="text-[13px] md:text-[15px] font-medium leading-snug text-gray-800 font-sans">
-          {text.slice(0, typedChars)}
-          {!confirmed && typedChars < text.length ? <Cursor /> : null}
-        </p>
+      <div className="mt-2 md:mt-3 text-xs md:text-sm font-semibold leading-snug text-primary font-sans flex-1 min-h-[56px] overflow-y-auto max-h-[88px]">
+        {text.slice(0, typedChars)}
+        {!confirmed && typedChars < text.length ? <Cursor /> : null}
       </div>
-      <div className="px-4 pb-4 md:px-5 md:pb-5">
+      <div className="mt-3 shrink-0">
         <div
-          className={`rounded-xl py-2.5 md:py-3 text-center text-xs md:text-sm font-semibold font-sans ${
-            confirmed ? 'bg-brand text-rich-black' : 'bg-gray-200/80 text-gray-600'
-          }`}
+          className={
+            'w-full rounded-lg py-2 text-center text-xs font-semibold font-sans ' +
+            (confirmed
+              ? 'bg-brand text-rich-black'
+              : 'bg-white/20 text-on-dark')
+          }
         >
-          {confirmed ? '✓ Confirmed' : 'Confirm'}
+          {confirmed ? 'Confirmed' : 'Confirm'}
         </div>
       </div>
-    </motion.div>
+    </SoftCard>
   )
 }
 
 // ---------------------------------
-// Scene: Step 4 — 3 immagini generate (res1, res2, res3) in evidenza, layout moderno
+// Scene: Step 4
 // ---------------------------------
 function Step4Results({ t, results }: { t: number; results: [string, string, string] }) {
   const p = progressBetween(t, TIMELINE.step4.start, TIMELINE.step4.end)
@@ -664,14 +652,14 @@ function Step4Results({ t, results }: { t: number; results: [string, string, str
       <Header title="4. Results" subtitle="Here are your on-brand variations." />
       <div className="flex-1 min-h-0 flex items-center justify-center py-3 md:py-4 overflow-hidden">
         <motion.div
-          className="w-full h-full max-w-4xl flex items-center justify-center"
+          className="w-full max-w-2xl px-2 flex items-center justify-center"
           initial={false}
           style={{ opacity: enter, y: lerp(18, 0, enter) }}
         >
-          <div className="grid grid-cols-3 gap-2 md:gap-4 w-full h-full max-h-[220px] sm:max-h-[280px] md:max-h-[340px]">
-            <ResultImageCard src={results[0]} delay={0.05} />
-            <ResultImageCard src={results[1]} delay={0.12} />
-            <ResultImageCard src={results[2]} delay={0.19} />
+          <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
+            <ImageCard src={results[0]} className="aspect-[4/3]" delay={0.06} />
+            <ImageCard src={results[1]} className="aspect-[4/3]" delay={0.12} />
+            <ImageCard src={results[2]} className="col-span-2 aspect-[2/1]" delay={0.18} muted />
           </div>
         </motion.div>
       </div>
@@ -679,20 +667,25 @@ function Step4Results({ t, results }: { t: number; results: [string, string, str
   )
 }
 
-function ResultImageCard({ src, delay }: { src: string; delay: number }) {
+function ImageCard({
+  src,
+  className,
+  delay,
+  muted,
+}: {
+  src: string
+  className: string
+  delay: number
+  muted?: boolean
+}) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 32, delay }}
-      className="relative w-full h-full min-h-[140px] md:min-h-[180px] rounded-2xl md:rounded-3xl overflow-hidden bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] border border-white/30"
+      initial={{ opacity: 0, y: 8, scale: 0.99 }}
+      animate={{ opacity: muted ? 0.6 : 1, y: 0, scale: 1 }}
+      transition={{ type: 'spring', stiffness: 420, damping: 34, delay }}
+      className={'rounded-xl overflow-hidden shadow-soft ' + className}
     >
-      <img
-        src={src}
-        alt="Generated result"
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 rounded-2xl md:rounded-3xl ring-1 ring-inset ring-black/5 pointer-events-none" />
+      <img src={src} alt="Result" className="w-full h-full object-cover" />
     </motion.div>
   )
 }

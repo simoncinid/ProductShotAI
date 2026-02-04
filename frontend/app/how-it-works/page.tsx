@@ -4,10 +4,18 @@ import ExampleGallery from '@/components/ExampleGallery'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
+const PROMPT_EXAMPLES = [
+  { tag: 'Lifestyle', text: 'Outdoor café, morning light, leather bag on table with coffee and sunglasses, lifestyle shot, on-brand for e-commerce.' },
+  { tag: 'Flat lay', text: 'Flat lay of open bag with laptop and accessories, top-down view, soft light, minimalist background, e-commerce ready.' },
+  { tag: 'Macro', text: 'Macro of brass buckle and leather texture, stitching details, shallow depth of field, premium look for product zoom.' },
+] as const
+const RESULT_IMAGES = ['/images/res1.png', '/images/res2.png', '/images/res3.png'] as const
+
 const steps = [
   {
     n: 1,
     title: 'Brand Identity',
+    media: 'icon' as const,
     icon: '/icone/bradIdentity.png',
     content: (
       <>
@@ -23,7 +31,7 @@ const steps = [
   {
     n: 2,
     title: 'Upload Product',
-    icon: '/images/product1.png',
+    media: 'product' as const,
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
@@ -38,7 +46,7 @@ const steps = [
   {
     n: 3,
     title: 'Brand-matched Prompts',
-    icon: '/icone/prompt.png',
+    media: 'prompts' as const,
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
@@ -53,7 +61,7 @@ const steps = [
   {
     n: 4,
     title: 'Results',
-    icon: '/images/res1.png',
+    media: 'results' as const,
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
@@ -119,23 +127,63 @@ export default function HowItWorksPage() {
       {/* ——— I quattro step ——— */}
       <section className="bg-page-bg pb-16 pt-12 md:pb-24 md:pt-16">
         <div className={CONTAINER}>
-          <div className="space-y-8 md:space-y-10">
-            {steps.map(({ n, title, icon, content }) => (
+          <div className="space-y-12 md:space-y-16">
+            {steps.map((step) => (
               <div
-                key={n}
-                className="flex flex-col rounded-[20px] border border-gray-100 bg-white p-6 shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-card-hover md:flex-row md:items-start md:gap-8 md:p-8"
+                key={step.n}
+                className="flex flex-col overflow-hidden rounded-[20px] border border-gray-100 bg-white shadow-soft transition-smooth hover:shadow-card-hover md:rounded-[24px] md:flex-row md:items-stretch"
               >
-                <div className="mb-5 flex shrink-0 flex-col items-center gap-3 md:mb-0">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand md:h-12 md:w-12">
-                    <span className="text-lg font-bold text-rich-black md:text-xl">{n}</span>
+                {/* Numero step */}
+                <div className="flex shrink-0 items-start gap-4 border-b border-gray-100 p-6 md:flex-col md:border-b-0 md:border-r md:border-gray-100 md:py-8 md:pl-8 md:pr-6">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand md:h-14 md:w-14">
+                    <span className="text-xl font-bold text-rich-black md:text-2xl">{step.n}</span>
                   </div>
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center md:h-16 md:w-16">
-                    <Image src={icon} alt="" width={64} height={64} className="h-12 w-12 object-contain md:h-14 md:w-14" />
-                  </div>
+                  <h2 className="text-xl font-semibold text-primary md:mt-2 md:text-2xl">{step.title}</h2>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h2 className="text-xl font-semibold text-primary md:text-2xl">{title}</h2>
-                  <div className="mt-4">{content}</div>
+
+                {/* Media: icon / product / 3 prompt / 3 results — ben visibili e moderni */}
+                <div className="flex shrink-0 items-center justify-center bg-gray-50/60 px-6 py-8 md:min-w-[320px] md:max-w-[420px] md:px-8 md:py-10">
+                  {step.media === 'icon' && (
+                    <div className="flex h-32 w-32 items-center justify-center rounded-2xl bg-white p-6 shadow-sm md:h-40 md:w-40 md:rounded-3xl md:p-8">
+                      <Image src={step.icon!} alt="" width={160} height={160} className="h-full w-full object-contain" />
+                    </div>
+                  )}
+                  {step.media === 'product' && (
+                    <div className="w-full max-w-[280px] overflow-hidden rounded-2xl bg-white shadow-[0_8px 32px rgba(0,0,0,0.08)] md:max-w-[340px] md:rounded-3xl">
+                      <div className="aspect-square w-full p-6 md:p-8 flex items-center justify-center">
+                        <Image src="/images/product1.png" alt="Product" width={300} height={300} className="h-full w-full object-contain" />
+                      </div>
+                    </div>
+                  )}
+                  {step.media === 'prompts' && (
+                    <div className="grid w-full max-w-sm grid-cols-1 gap-3 sm:grid-cols-3 md:max-w-none">
+                      {PROMPT_EXAMPLES.map((p, i) => (
+                        <div
+                          key={i}
+                          className="rounded-xl border border-gray-200 bg-white px-4 py-4 shadow-sm md:rounded-2xl md:px-5 md:py-4"
+                        >
+                          <span className="mb-2 inline-block rounded-full bg-brand/20 px-2.5 py-1 text-xs font-semibold text-rich-black">
+                            {p.tag}
+                          </span>
+                          <p className="text-[13px] font-medium leading-snug text-gray-800 md:text-[14px]">{p.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {step.media === 'results' && (
+                    <div className="grid w-full max-w-sm grid-cols-3 gap-3 md:max-w-md md:gap-4">
+                      {RESULT_IMAGES.map((src, i) => (
+                        <div key={i} className="overflow-hidden rounded-xl shadow-[0_8px 24px rgba(0,0,0,0.1)] md:rounded-2xl">
+                          <Image src={src} alt={`Result ${i + 1}`} width={200} height={200} className="aspect-square w-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Testo */}
+                <div className="min-w-0 flex-1 p-6 md:py-8 md:pr-8 md:pl-6">
+                  <div className="md:mt-0">{step.content}</div>
                 </div>
               </div>
             ))}

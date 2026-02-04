@@ -24,53 +24,104 @@ function SectionH2({ children, light }: { children: React.ReactNode; light?: boo
   )
 }
 
+// Esempi di prompt (stessi del motion) e immagini risultati per How It Works
+const PROMPT_EXAMPLES = [
+  { tag: 'Lifestyle', text: 'Outdoor café, morning light, leather bag on table with coffee and sunglasses, lifestyle shot, on-brand for e-commerce.' },
+  { tag: 'Flat lay', text: 'Flat lay of open bag with laptop and accessories, top-down view, soft light, minimalist background, e-commerce ready.' },
+  { tag: 'Macro', text: 'Macro of brass buckle and leather texture, stitching details, shallow depth of field, premium look for product zoom.' },
+] as const
+const RESULT_IMAGES = ['/images/res1.png', '/images/res2.png', '/images/res3.png'] as const
+const PRODUCT_IMAGE = '/images/product1.png'
+
 const HOW_STEPS = [
   {
     n: 1,
     title: 'Brand Identity',
     desc: 'Tell us about your brand: style, colors, mood and where you sell. The AI will follow these guidelines every time it generates images for your products.',
     icon: '/icone/bradIdentity.png',
+    media: 'icon' as const,
   },
   {
     n: 2,
     title: 'Upload Product',
     desc: 'Drop a photo of your product. We isolate the product so the AI can place it in any scene—lifestyle, flat lay, macro or studio.',
-    icon: '/images/product1.png',
+    media: 'product' as const,
   },
   {
     n: 3,
     title: 'Brand-matched Prompts',
     desc: 'We generate prompts that match your brand. Review and customize them, then trigger the generation to get your photoshoot.',
-    icon: '/icone/prompt.png',
+    media: 'prompts' as const,
   },
   {
     n: 4,
     title: 'Results',
     desc: 'Here are your on-brand variations in 8K, ready for e‑commerce and Amazon. Download and use them right away.',
-    icon: '/images/res1.png',
+    media: 'results' as const,
   },
 ]
 
 function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: boolean }) {
-  const { n, title, desc, icon } = step
+  const { n, title, desc, media } = step
   return (
     <div
-      className={`relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-white p-5 shadow-soft transition-all duration-300 md:p-6 ${
+      className={`relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-white shadow-soft transition-all duration-300 md:rounded-3xl ${
         isActive ? 'border-brand/50 shadow-soft-hover scale-[1.02]' : 'border-gray-100 hover:border-brand/30 hover:shadow-soft-hover hover:scale-[1.01]'
       }`}
     >
-      {/* Step number top-left, dark text on yellow for readability */}
-      <span className="absolute left-4 top-4 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black">
+      <span className="absolute left-4 top-4 z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black">
         {n}
       </span>
-      {/* Icon without yellow box, larger */}
-      <div className="mb-4 flex justify-center pt-1">
-        <Image src={icon} alt="" width={96} height={96} className="h-20 w-20 object-contain md:h-24 md:w-24" />
+
+      {/* Media area: ben visibile e moderno per ogni step */}
+      <div className="flex shrink-0 flex-col items-center justify-center px-4 pt-12 pb-4 md:px-6 md:pt-14 md:pb-5">
+        {media === 'icon' && (
+          <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-gray-50 p-3 md:h-28 md:w-28 md:rounded-3xl md:p-4">
+            <Image src="/icone/bradIdentity.png" alt="" width={112} height={112} className="h-full w-full object-contain" />
+          </div>
+        )}
+        {media === 'product' && (
+          <div className="w-full max-w-[260px] md:max-w-[320px] overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 shadow-[0_8px_24px_rgba(0,0,0,0.08)] md:rounded-3xl">
+            <div className="aspect-square w-full p-4 md:p-5 flex items-center justify-center bg-white">
+              <Image src={PRODUCT_IMAGE} alt="Product" width={280} height={280} className="h-full w-full object-contain" />
+            </div>
+          </div>
+        )}
+        {media === 'prompts' && (
+          <div className="grid w-full max-w-xl grid-cols-1 gap-2 sm:grid-cols-3">
+            {PROMPT_EXAMPLES.map((p, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-gray-200/80 bg-gray-50/90 px-3 py-3 text-left md:rounded-2xl md:px-4 md:py-3.5"
+              >
+                <span className="mb-1.5 inline-block rounded-full bg-brand/20 px-2 py-0.5 text-[10px] font-semibold text-rich-black md:text-xs">
+                  {p.tag}
+                </span>
+                <p className="text-[11px] font-medium leading-snug text-gray-800 line-clamp-3 md:text-xs">{p.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
+        {media === 'results' && (
+          <div className="grid w-full max-w-xl grid-cols-3 gap-2 md:gap-3">
+            {RESULT_IMAGES.map((src, i) => (
+              <div
+                key={i}
+                className="overflow-hidden rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.08)] md:rounded-2xl"
+              >
+                <Image src={src} alt={`Result ${i + 1}`} width={160} height={160} className="aspect-square w-full object-cover" />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      <h3 className="mb-2 min-w-0 break-words text-[15px] font-semibold text-primary md:text-base">{title}</h3>
-      <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">
-        {desc}
-      </p>
+
+      <div className="flex flex-1 flex-col px-4 pb-5 md:px-6 md:pb-6">
+        <h3 className="mb-2 min-w-0 break-words text-[15px] font-semibold text-primary md:text-base">{title}</h3>
+        <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">
+          {desc}
+        </p>
+      </div>
     </div>
   )
 }
