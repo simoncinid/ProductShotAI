@@ -85,12 +85,12 @@ export default function BrandIdentityPage() {
   })
 
   if (!authenticated) return null
-  if (isLoading) return <div className="p-8 text-gray-600">Loading...</div>
+  if (isLoading) return <div className="p-8 text-gray-400">Loading...</div>
   const is404 = error && typeof error === 'object' && 'response' in error && (error as { response?: { status?: number } }).response?.status === 404
   if (is404) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
-        <p className="text-gray-600 mb-4">No Brand Identity. Fill in the form below and save to create one.</p>
+        <p className="text-gray-300 mb-4">No Brand Identity. Fill in the form below and save to create one.</p>
         <BrandIdentityForm existing={undefined} onSave={(d) => updateMutation.mutate(d)} isSaving={updateMutation.isPending} />
       </div>
     )
@@ -111,7 +111,7 @@ export default function BrandIdentityPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-rich-black">Brand Identity</h1>
+        <h1 className="text-2xl font-bold text-white">Brand Identity</h1>
         <button
           type="submit"
           form="brand-identity-form"
@@ -130,10 +130,10 @@ export default function BrandIdentityPage() {
       />
 
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-rich-black mb-2">Reference images (max 3)</h2>
+        <h2 className="text-lg font-semibold text-white mb-2">Reference images (max 3)</h2>
         <div className="flex flex-wrap gap-4">
           {images.map((img: { id: string; image_url: string }) => (
-            <div key={img.id} className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200">
+            <div key={img.id} className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-600">
               <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="w-full h-full object-cover" />
               <button
                 type="button"
@@ -145,9 +145,9 @@ export default function BrandIdentityPage() {
             </div>
           ))}
           {images.length < maxImages && (
-            <label className="w-32 h-32 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-vivid-yellow">
+            <label className="w-32 h-32 rounded-lg border-2 border-dashed border-gray-500 flex items-center justify-center cursor-pointer hover:border-vivid-yellow bg-white/5">
               <input type="file" accept="image/jpeg,image/png" className="hidden" multiple onChange={handleMultipleUpload} />
-              <span className="text-gray-500 text-sm text-center px-1">+ Upload (multiple)</span>
+              <span className="text-gray-400 text-sm text-center px-1">+ Upload (multiple)</span>
             </label>
           )}
         </div>
@@ -164,7 +164,7 @@ export default function BrandIdentityPage() {
       </div>
 
       {brand && (
-        <div className="mt-8 pt-6 border-t flex items-center gap-4">
+        <div className="mt-8 pt-6 border-t border-gray-600 flex items-center gap-4">
           <button
             type="button"
             onClick={() => window.confirm('Delete Brand Identity?') && deleteMutation.mutate()}
@@ -234,20 +234,20 @@ function BrandIdentityForm({
   return (
     <form id={formId} onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">What does your ecommerce sell?</label>
-        <input type="text" value={salesChannels} onChange={(e) => setSalesChannels(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="e.g. pet food, cosmetics, clothing" />
+        <label className="block text-sm font-medium text-gray-200 mb-1">What does your ecommerce sell?</label>
+        <input type="text" value={salesChannels} onChange={(e) => setSalesChannels(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="e.g. pet food, cosmetics, clothing" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Target / typical customer</label>
-        <input type="text" value={averageCustomer} onChange={(e) => setAverageCustomer(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="e.g. women 25-40, pet lover, premium" />
+        <label className="block text-sm font-medium text-gray-200 mb-1">Target / typical customer</label>
+        <input type="text" value={averageCustomer} onChange={(e) => setAverageCustomer(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="e.g. women 25-40, pet lover, premium" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Price range</label>
-        <input type="text" value={priceRange} onChange={(e) => setPriceRange(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="e.g. budget, mid, premium, luxury" />
+        <label className="block text-sm font-medium text-gray-200 mb-1">Price range</label>
+        <input type="text" value={priceRange} onChange={(e) => setPriceRange(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="e.g. budget, mid, premium, luxury" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Preferred photo style</label>
-        <select value={photoStyleKey} onChange={(e) => setPhotoStyleKey(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2">
+        <label className="block text-sm font-medium text-gray-200 mb-1">Preferred photo style</label>
+        <select value={photoStyleKey} onChange={(e) => setPhotoStyleKey(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900">
           <option value="">— Select —</option>
           {PHOTO_STYLE_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -255,18 +255,18 @@ function BrandIdentityForm({
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Lighting style</label>
-        <input type="text" value={lightingStyle} onChange={(e) => setLightingStyle(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="e.g. natural light, soft, daylight" />
+        <label className="block text-sm font-medium text-gray-200 mb-1">Lighting style</label>
+        <input type="text" value={lightingStyle} onChange={(e) => setLightingStyle(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="e.g. natural light, soft, daylight" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Brand notes</label>
-        <textarea value={brandNotes} onChange={(e) => setBrandNotes(e.target.value)} rows={3} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="Rules, do/don't, extra constraints" />
+        <label className="block text-sm font-medium text-gray-200 mb-1">Brand notes</label>
+        <textarea value={brandNotes} onChange={(e) => setBrandNotes(e.target.value)} rows={3} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="Rules, do/don't, extra constraints" />
       </div>
 
       {existing && (
         <div>
-          <h3 className="font-semibold text-rich-black mb-2">Style analysis (editable)</h3>
-          <textarea value={analysis} onChange={(e) => setAnalysis(e.target.value)} rows={16} className="w-full border border-gray-300 rounded px-3 py-2 resize-y" placeholder="Analysis generated from images or write here..." />
+          <h3 className="font-semibold text-gray-200 mb-2">Style analysis (editable)</h3>
+          <textarea value={analysis} onChange={(e) => setAnalysis(e.target.value)} rows={16} className="w-full border border-gray-400 rounded px-3 py-2 resize-y bg-white text-gray-900 placeholder:text-gray-500" placeholder="Analysis generated from images or write here..." />
         </div>
       )}
 

@@ -11,7 +11,7 @@ export default function DashboardPage() {
     retry: false,
   })
 
-  if (isLoading) return <div className="text-gray-600 py-4">Loading...</div>
+  if (isLoading) return <div className="text-gray-400 py-4">Loading...</div>
 
   return (
     <div>
@@ -22,7 +22,7 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold text-rich-black mb-1">
               {user?.credits_balance || 0} Credits
             </h2>
-            <p className="text-rich-black opacity-80">
+            <p className="text-rich-black/90">
               Each credit = 1 high-quality 8K image
             </p>
           </div>
@@ -39,7 +39,7 @@ export default function DashboardPage() {
       <div className="grid md:grid-cols-2 gap-6 mb-6">
         <Link
           href="/dashboard/create"
-          className="bg-rich-black text-white p-6 rounded-lg hover:bg-opacity-90 transition"
+          className="bg-gray-800 border border-gray-600 text-white p-6 rounded-lg hover:bg-gray-700 transition"
         >
           <h3 className="text-xl font-semibold mb-2">Generate New Image</h3>
           <p className="text-gray-300">
@@ -48,7 +48,7 @@ export default function DashboardPage() {
         </Link>
         <Link
           href="/pricing"
-          className="bg-white border-2 border-rich-black p-6 rounded-lg hover:bg-gray-50 transition"
+          className="bg-white border-2 border-gray-400 p-6 rounded-lg hover:bg-gray-50 transition"
         >
           <h3 className="text-xl font-semibold mb-2 text-rich-black">Buy Credits</h3>
           <p className="text-gray-600">
@@ -60,10 +60,10 @@ export default function DashboardPage() {
       {/* Product Photoshooting - full width */}
       <Link
         href="/dashboard/shooting"
-        className="block w-full bg-vivid-yellow text-rich-black p-6 rounded-lg hover:bg-opacity-90 transition mb-8"
+        className="block w-full bg-vivid-yellow text-rich-black p-6 rounded-lg hover:opacity-90 transition mb-8"
       >
         <h3 className="text-xl font-semibold mb-2">Generate product photoshooting</h3>
-        <p className="text-rich-black opacity-90">
+        <p className="text-rich-black/90">
           Create a full product photo set (2–10 shots) with consistent style: zoom on details, lifestyle, studio, mix. Choose the product, a reference photo and AI-generated prompts.
         </p>
       </Link>

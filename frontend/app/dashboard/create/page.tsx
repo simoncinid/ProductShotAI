@@ -142,13 +142,13 @@ export default function DashboardCreatePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-rich-black mb-4">
+        <h1 className="text-4xl font-bold text-white mb-4">
           Create Your Product Photo
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-300">
           Upload your product image and describe how you want it transformed
         </p>
-        <p className="text-sm text-green-600 mt-2">
+        <p className="text-sm text-green-400 mt-2">
           ✓ Clean images without watermark
         </p>
       </div>
@@ -157,10 +157,10 @@ export default function DashboardCreatePage() {
         {/* Upload Section */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-rich-black mb-2">
+            <label className="block text-sm font-medium text-gray-200 mb-2">
               Upload Product Image
             </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+            <div className="border-2 border-dashed border-gray-500 rounded-lg p-6 text-center bg-white/5">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -177,11 +177,11 @@ export default function DashboardCreatePage() {
                     className="max-w-full h-auto mx-auto rounded-lg"
                   />
                   {uploadMutation.isPending && (
-                    <p className="text-sm text-gray-600">Uploading…</p>
+                    <p className="text-sm text-gray-400">Uploading…</p>
                   )}
                   {uploadMutation.isError && (
                     <p className="text-sm">
-                      <span className="text-red-600">Upload failed.</span>{' '}
+                      <span className="text-red-400">Upload failed.</span>{' '}
                       <button
                         type="button"
                         onClick={() => selectedFile && uploadMutation.mutate(selectedFile)}
@@ -192,12 +192,12 @@ export default function DashboardCreatePage() {
                     </p>
                   )}
                   {imageUrl && (
-                    <p className="text-sm text-green-600">✓ Image uploaded</p>
+                    <p className="text-sm text-green-400">✓ Image uploaded</p>
                   )}
                   <button
                     type="button"
                     onClick={handleChangeImage}
-                    className="text-xs text-gray-500 underline hover:text-gray-700"
+                    className="text-xs text-gray-400 underline hover:text-gray-300"
                   >
                     Change image
                   </button>
@@ -205,7 +205,7 @@ export default function DashboardCreatePage() {
               ) : (
                 <label htmlFor="file-upload" className="cursor-pointer block">
                   <svg
-                    className="mx-auto h-12 w-12 text-gray-400"
+                    className="mx-auto h-12 w-12 text-gray-500"
                     stroke="currentColor"
                     fill="none"
                     viewBox="0 0 48 48"
@@ -217,7 +217,7 @@ export default function DashboardCreatePage() {
                       strokeLinejoin="round"
                     />
                   </svg>
-                  <span className="mt-2 block text-sm font-medium text-gray-900">
+                  <span className="mt-2 block text-sm font-medium text-gray-300">
                     Click to upload
                   </span>
                   <span className="mt-1 block text-xs text-gray-500">
@@ -229,13 +229,13 @@ export default function DashboardCreatePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-rich-black mb-2">
+            <label className="block text-sm font-medium text-gray-200 mb-2">
               Aspect Ratio
             </label>
             <select
               value={aspectRatio}
               onChange={(e) => setAspectRatio(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-vivid-yellow focus:border-vivid-yellow"
+              className="w-full border border-gray-500 rounded-md px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:border-transparent"
             >
               <option value="1:1">1:1 (Square - Amazon Main)</option>
               <option value="4:5">4:5 (Portrait)</option>
@@ -248,7 +248,7 @@ export default function DashboardCreatePage() {
         <div className="space-y-4">
           <div>
             <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
-              <label className="block text-sm font-medium text-rich-black">
+              <label className="block text-sm font-medium text-gray-200">
                 Describe Your Vision
               </label>
               <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
@@ -258,9 +258,9 @@ export default function DashboardCreatePage() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Example: Place the product on a clean white background with soft lighting, add a subtle shadow underneath, make the colors more vibrant..."
               rows={8}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-vivid-yellow focus:border-vivid-yellow"
+              className="w-full border border-gray-500 rounded-md px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:border-transparent"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-400 mt-1">
               Describe how you want your product to look. Be specific about background, lighting, and style.
             </p>
           </div>
@@ -276,7 +276,7 @@ export default function DashboardCreatePage() {
           </button>
 
           {isGenerating && (
-            <div className="text-center text-sm text-gray-600">
+            <div className="text-center text-sm text-gray-400">
               <p>Processing your image...</p>
               <p className="text-xs mt-1">This usually takes 30–90 seconds</p>
             </div>

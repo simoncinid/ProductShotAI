@@ -31,11 +31,11 @@ export default function ShootingResultPage() {
   })
 
   if (!id || !isAuthenticated()) return null
-  if (isLoading) return <div className="max-w-4xl mx-auto px-4 py-12 text-gray-600">Loading...</div>
+  if (isLoading) return <div className="max-w-4xl mx-auto px-4 py-12 text-gray-400">Loading...</div>
   if (error || !shooting) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <p className="text-gray-600">Shooting not found.</p>
+        <p className="text-gray-300">Shooting not found.</p>
         <Link href="/dashboard/shooting" className="mt-4 inline-block text-vivid-yellow hover:underline">← New shooting</Link>
       </div>
     )
@@ -48,9 +48,9 @@ export default function ShootingResultPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-rich-black">Shooting results</h1>
+        <h1 className="text-2xl font-bold text-white">Shooting results</h1>
         <div className="flex gap-2">
-          <Link href="/dashboard/shooting" className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 text-rich-black">
+          <Link href="/dashboard/shooting" className="px-4 py-2 border border-gray-500 rounded-md hover:bg-white/10 text-gray-200">
             New shooting
           </Link>
           <Link href="/dashboard" className="text-vivid-yellow hover:underline">← Dashboard</Link>
@@ -59,8 +59,8 @@ export default function ShootingResultPage() {
 
       {/* Original reference */}
       <section className="mb-10">
-        <h2 className="text-lg font-semibold text-rich-black mb-4">Product / Reference photo</h2>
-        <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50 max-w-md">
+        <h2 className="text-lg font-semibold text-white mb-4">Product / Reference photo</h2>
+        <div className="rounded-xl overflow-hidden border border-gray-600 bg-white/10 max-w-md">
           <img
             src={getAbsoluteImageUrl(shooting.reference_image_url) ?? shooting.reference_image_url}
             alt="Reference"
@@ -71,12 +71,12 @@ export default function ShootingResultPage() {
 
       {/* Generated images - creative hub style */}
       <section>
-        <h2 className="text-lg font-semibold text-rich-black mb-4">
+        <h2 className="text-lg font-semibold text-white mb-4">
           Generated images {pending.length > 0 && `(${completed.length}/${generations.length} ready)`}
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {generations.map((gen: { id: string; status: string; output_image_url: string | null; error_message: string | null }) => (
-            <div key={gen.id} className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition">
+            <div key={gen.id} className="border border-gray-600 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition">
               {gen.status === 'completed' && gen.output_image_url ? (
                 <>
                   <Link href={`/dashboard/hub?generation_id=${gen.id}`} className="block focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:ring-inset">
@@ -119,7 +119,7 @@ export default function ShootingResultPage() {
       </section>
 
       {pending.length > 0 && (
-        <p className="mt-4 text-sm text-gray-500">
+        <p className="mt-4 text-sm text-gray-400">
           Auto-refresh. {pending.length} image{pending.length === 1 ? '' : 's'} processing.
         </p>
       )}

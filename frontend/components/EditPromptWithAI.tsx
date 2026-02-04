@@ -66,7 +66,7 @@ export function EditPromptWithAI({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={`text-sm text-anthracite hover:underline font-medium ${className}`}
+        className={`text-sm text-vivid-yellow hover:underline font-medium ${className}`}
       >
         {buttonLabel}
       </button>
@@ -80,7 +80,7 @@ export function EditPromptWithAI({
         value={editInstructions}
         onChange={(e) => setEditInstructions(e.target.value)}
         placeholder={editInputPlaceholder}
-        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-vivid-yellow focus:border-transparent"
+        className="w-full border border-gray-500 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-vivid-yellow focus:border-transparent"
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleApply()
           if (e.key === 'Escape') handleCancel()
@@ -101,7 +101,7 @@ export function EditPromptWithAI({
           type="button"
           onClick={handleCancel}
           disabled={isLoading}
-          className="px-3 py-1.5 border border-gray-300 rounded-md text-sm"
+          className="px-3 py-1.5 border border-gray-500 rounded-md text-sm text-gray-200 hover:bg-white/10"
         >
           Cancel
         </button>

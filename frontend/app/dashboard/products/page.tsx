@@ -52,12 +52,12 @@ export default function ProductsPage() {
   })
 
   if (!authenticated) return null
-  if (isLoading) return <div className="p-8 text-gray-600">Loading...</div>
+  if (isLoading) return <div className="p-8 text-gray-400">Loading...</div>
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-rich-black">Products</h1>
+        <h1 className="text-2xl font-bold text-white">Products</h1>
         <button
           type="button"
           onClick={() => setShowCreate(true)}
@@ -77,10 +77,10 @@ export default function ProductsPage() {
 
       <ul className="space-y-3">
         {products.length === 0 && !showCreate && (
-          <li className="text-gray-600 py-8">No products. Create one to use product-specific prompts in /create.</li>
+          <li className="text-gray-400 py-8">No products. Create one to use product-specific prompts in /create.</li>
         )}
         {products.map((p: { id: string; name: string; sku?: string; default_apply_brand_identity: boolean; created_at: string }) => (
-          <li key={p.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <li key={p.id} className="bg-white border border-gray-300 rounded-lg overflow-hidden">
             <div
               role="button"
               tabIndex={0}
@@ -156,36 +156,36 @@ function CreateProductForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mb-8 p-6 border border-gray-200 rounded-lg bg-gray-50 space-y-4">
-      <h2 className="text-lg font-semibold text-rich-black">New product</h2>
+    <form onSubmit={handleSubmit} className="mb-8 p-6 border border-gray-600 rounded-lg bg-white/10 space-y-4">
+      <h2 className="text-lg font-semibold text-white">New product</h2>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Name *</label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" required />
+        <label className="block text-sm font-medium text-gray-200 mb-1">Name *</label>
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900" required />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">SKU</label>
-        <input type="text" value={sku} onChange={(e) => setSku(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" />
+        <label className="block text-sm font-medium text-gray-200 mb-1">SKU</label>
+        <input type="text" value={sku} onChange={(e) => setSku(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-rich-black mb-1">Category</label>
-        <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-gray-300 rounded px-3 py-2" />
+        <label className="block text-sm font-medium text-gray-200 mb-1">Category</label>
+        <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900" />
       </div>
       <div className="flex items-center gap-2">
-        <input type="checkbox" id="defaultBi" checked={defaultApplyBrandIdentity} onChange={(e) => setDefaultApplyBrandIdentity(e.target.checked)} />
-        <label htmlFor="defaultBi" className="text-sm text-rich-black">Apply Brand Identity by default</label>
+        <input type="checkbox" id="defaultBi" checked={defaultApplyBrandIdentity} onChange={(e) => setDefaultApplyBrandIdentity(e.target.checked)} className="rounded border-gray-400" />
+        <label htmlFor="defaultBi" className="text-sm text-gray-200">Apply Brand Identity by default</label>
       </div>
       <div>
         <div className="flex items-center justify-between gap-2 flex-wrap mb-1">
-          <label className="block text-sm font-medium text-rich-black">Product prompt</label>
+          <label className="block text-sm font-medium text-gray-200">Product prompt</label>
           <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
         </div>
-        <textarea value={productPrompt} onChange={(e) => setProductPrompt(e.target.value)} rows={4} className="w-full border border-gray-300 rounded px-3 py-2" placeholder="Describe how you want to photograph this product..." />
+        <textarea value={productPrompt} onChange={(e) => setProductPrompt(e.target.value)} rows={4} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="Describe how you want to photograph this product..." />
       </div>
       <div className="flex gap-2">
         <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">
           {isSubmitting ? 'Creating…' : 'Create'}
         </button>
-        <button type="button" onClick={onCancel} className="px-4 py-2 border border-gray-300 rounded-md">
+        <button type="button" onClick={onCancel} className="px-4 py-2 border border-gray-500 text-gray-200 rounded-md hover:bg-white/10">
           Cancel
         </button>
       </div>

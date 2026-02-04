@@ -38,9 +38,9 @@ export default function DashboardLayout({
 
   if (!authenticated || userLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#1a1a2e]">
         <div className="text-center">
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-400">Loading...</p>
         </div>
       </div>
     )
@@ -52,13 +52,13 @@ export default function DashboardLayout({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-rich-black mb-1">
+        <h1 className="text-3xl font-bold text-white mb-1">
           Dashboard{user?.email ? ` — ${user.email.split('@')[0]}` : ''}
         </h1>
-        <p className="text-gray-600 text-sm">Manage brand identity, products, and generations</p>
+        <p className="text-gray-400 text-sm">Manage brand identity, products, and generations</p>
       </div>
 
-      <nav className="flex flex-wrap gap-2 mb-8 border-b border-gray-200">
+      <nav className="flex flex-wrap gap-2 mb-8 border-b border-gray-600">
         {navItems.map(({ href, label }) => {
           const active = href === '/dashboard' ? pathname === '/dashboard' : (href === '/dashboard/products' ? isProductsSection : pathname === href)
           return (
@@ -66,7 +66,7 @@ export default function DashboardLayout({
               key={href}
               href={href}
               className={`px-4 py-2 rounded-t-md font-medium transition ${
-                active ? 'bg-rich-black text-white' : 'bg-gray-100 text-rich-black hover:bg-gray-200'
+                active ? 'bg-vivid-yellow text-rich-black border border-b-0 border-gray-600' : 'bg-white/10 text-gray-200 hover:bg-white/20 border border-gray-600 border-b-0'
               }`}
             >
               {label}
