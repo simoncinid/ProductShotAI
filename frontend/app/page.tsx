@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import ProductShotAIMotion from '@/components/ProductShotAIMotion'
+import { ResultGalleryModal } from '@/components/ResultGalleryModal'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-4 sm:px-6 md:px-10 lg:px-14'
 
@@ -65,7 +66,37 @@ const HOW_STEPS = [
 const MEDIA_BOX_CLASS = 'h-[200px] w-full md:h-[240px] md:w-[240px] shrink-0'
 const MEDIA_BOX_LEFT_COL = 'hidden md:flex shrink-0 flex-col border-r border-gray-100 bg-gray-50/50 p-4 md:p-5'
 
-function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: boolean }) {
+/** Prompt box: tag in alto, testo che riempie tutto il div */
+function PromptBox({ tag, text, className = '' }: { tag: string; text: string; className?: string }) {
+  return (
+    <div className={`flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2 text-left md:p-2 ${className}`}>
+      <span className="shrink-0 truncate rounded bg-brand/15 px-1.5 py-0.5 text-[9px] font-semibold text-rich-black md:text-[10px]">{tag}</span>
+      <p className="min-h-0 flex-1 overflow-y-auto text-[9px] leading-tight text-gray-800 md:text-[10px]">{text}</p>
+    </div>
+  )
+}
+
+/** Cella immagine risultato: cliccabile + icona espansione in basso (sempre visibile) */
+function ResultImageCell({ src, index, onExpand }: { src: string; index: number; onExpand: (i: number) => void }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onExpand(index)}
+      className="group flex flex-col overflow-hidden rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+    >
+      <span className="relative block min-h-0 flex-1">
+        <Image src={src} alt="" width={80} height={80} className="h-full w-full object-cover transition group-hover:opacity-95" />
+      </span>
+      <span className="flex shrink-0 items-center justify-center bg-black/60 py-1.5 text-white" aria-hidden>
+        <svg className="h-3.5 w-3.5 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+        </svg>
+      </span>
+    </button>
+  )
+}
+
+function StepCard({ step, isActive, onResultImageClick }: { step: (typeof HOW_STEPS)[0]; isActive?: boolean; onResultImageClick?: (index: number) => void }) {
   const { n, title, desc, media } = step
   return (
     <div
@@ -81,7 +112,7 @@ function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: 
         <h3 className="min-w-0 break-words text-base font-semibold text-primary">{title}</h3>
       </div>
 
-      {/* Colonna 1 (desktop) / blocco media (mobile): numero solo su desktop, poi media */}
+      {/* Colonna 1 (desktop) */}
       <div className={MEDIA_BOX_LEFT_COL}>
         <div className="mb-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black md:h-9 md:w-9">
           {n}
@@ -94,59 +125,51 @@ function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: 
             <Image src={PRODUCT_IMAGE} alt="Product" width={200} height={200} className="h-full w-full object-contain p-3 md:p-2" />
           )}
           {media === 'prompts' && (
-            <div className="grid h-full w-full grid-cols-3 gap-2 p-2 md:gap-1.5 md:p-2">
+            <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-2 p-2 md:gap-1.5 md:p-2">
               {PROMPT_EXAMPLES.map((p, i) => (
-                <div key={i} className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2 text-left">
-                  <span className="mb-1 truncate rounded bg-brand/15 px-1.5 py-0.5 text-[9px] font-semibold text-rich-black md:text-[10px]">{p.tag}</span>
-                  <p className="line-clamp-4 text-[9px] leading-tight text-gray-800 md:text-[10px]">{p.text}</p>
-                </div>
+                <PromptBox key={i} tag={p.tag} text={p.text} className="h-full" />
               ))}
             </div>
           )}
           {media === 'results' && (
             <div className="grid h-full w-full grid-cols-3 gap-2 p-2 md:gap-1.5 md:p-2">
               {RESULT_IMAGES.map((src, i) => (
-                <div key={i} className="overflow-hidden rounded-lg bg-gray-100">
-                  <Image src={src} alt="" width={80} height={80} className="h-full w-full object-cover" />
-                </div>
+                <ResultImageCell key={i} src={src} index={i} onExpand={onResultImageClick ?? (() => {})} />
               ))}
             </div>
           )}
         </div>
       </div>
 
-      {/* Mobile: blocco media a tutta larghezza (stessa altezza per tutti) */}
+      {/* Mobile: blocco media a tutta larghezza */}
       <div className="flex w-full px-4 py-4 md:hidden">
-        <div className={`flex w-full items-center justify-center overflow-hidden rounded-xl bg-gray-50 ${MEDIA_BOX_CLASS}`}>
+        <div className={`flex w-full items-stretch justify-center overflow-hidden rounded-xl bg-gray-50 ${MEDIA_BOX_CLASS}`}>
           {media === 'icon' && (
-            <Image src="/icone/bradIdentity.png" alt="" width={100} height={100} className="h-20 w-20 object-contain" />
+            <div className="flex items-center justify-center">
+              <Image src="/icone/bradIdentity.png" alt="" width={100} height={100} className="h-20 w-20 object-contain" />
+            </div>
           )}
           {media === 'product' && (
             <Image src={PRODUCT_IMAGE} alt="Product" width={200} height={200} className="h-full w-full max-h-[200px] object-contain p-4" />
           )}
           {media === 'prompts' && (
-            <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+            <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-2 p-3">
               {PROMPT_EXAMPLES.map((p, i) => (
-                <div key={i} className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2.5 text-left">
-                  <span className="mb-1 truncate rounded bg-brand/15 px-1.5 py-0.5 text-[10px] font-semibold text-rich-black">{p.tag}</span>
-                  <p className="line-clamp-4 text-[10px] leading-tight text-gray-800">{p.text}</p>
-                </div>
+                <PromptBox key={i} tag={p.tag} text={p.text} className="h-full" />
               ))}
             </div>
           )}
           {media === 'results' && (
-            <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+            <div className="grid w-full grid-cols-3 gap-2 p-3">
               {RESULT_IMAGES.map((src, i) => (
-                <div key={i} className="overflow-hidden rounded-lg bg-white shadow-sm">
-                  <Image src={src} alt="" width={120} height={120} className="h-full w-full object-cover" />
-                </div>
+                <ResultImageCell key={i} src={src} index={i} onExpand={onResultImageClick ?? (() => {})} />
               ))}
             </div>
           )}
         </div>
       </div>
 
-      {/* Colonna 2: titolo (solo desktop) + testo — stessa posizione in tutti i card */}
+      {/* Colonna 2: titolo (solo desktop) + testo */}
       <div className="flex min-w-0 flex-1 flex-col justify-start p-4 md:p-5 md:pt-5">
         <h3 className="mb-3 hidden min-w-0 break-words text-[15px] font-semibold text-primary md:block md:text-base">{title}</h3>
         <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">{desc}</p>
@@ -159,7 +182,7 @@ const TOTAL_STEPS = HOW_STEPS.length
 const CAROUSEL_START_DELAY_MS = 2500
 const CAROUSEL_INTERVAL_MS = 4500
 
-function HowItWorksCarousel({ sectionRef }: { sectionRef: React.RefObject<HTMLElement | null> }) {
+function HowItWorksCarousel({ sectionRef, onResultImageClick }: { sectionRef: React.RefObject<HTMLElement | null>; onResultImageClick?: (index: number) => void }) {
   const [index, setIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -223,7 +246,7 @@ function HowItWorksCarousel({ sectionRef }: { sectionRef: React.RefObject<HTMLEl
             key={step.n}
             className="w-full min-w-full max-w-full flex-shrink-0 snap-center px-2 py-2"
           >
-            <StepCard step={step} isActive={index === i} />
+            <StepCard step={step} isActive={index === i} onResultImageClick={onResultImageClick} />
           </div>
         ))}
       </div>
@@ -276,6 +299,8 @@ function HowItWorksCarousel({ sectionRef }: { sectionRef: React.RefObject<HTMLEl
 export default function Home() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null)
   const [faqCompactOpen, setFaqCompactOpen] = useState<number | null>(0)
+  const [galleryOpen, setGalleryOpen] = useState(false)
+  const [galleryIndex, setGalleryIndex] = useState(0)
   const howItWorksSectionRef = useRef<HTMLElement>(null)
 
   const faqItems = [
@@ -416,8 +441,21 @@ export default function Home() {
 
           {/* Carousel for mobile and desktop */}
           <div className="mt-8 md:mt-14 max-w-4xl mx-auto">
-            <HowItWorksCarousel sectionRef={howItWorksSectionRef} />
+            <HowItWorksCarousel
+              sectionRef={howItWorksSectionRef}
+              onResultImageClick={(i) => {
+                setGalleryIndex(i)
+                setGalleryOpen(true)
+              }}
+            />
           </div>
+          <ResultGalleryModal
+            images={RESULT_IMAGES}
+            currentIndex={galleryIndex}
+            open={galleryOpen}
+            onClose={() => setGalleryOpen(false)}
+            onIndexChange={setGalleryIndex}
+          />
         </div>
       </section>
 

@@ -1,6 +1,10 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
+import { useState } from 'react'
 import ExampleGallery from '@/components/ExampleGallery'
+import { ResultGalleryModal } from '@/components/ResultGalleryModal'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
@@ -10,6 +14,36 @@ const PROMPT_EXAMPLES = [
   { tag: 'Macro', text: 'Macro of brass buckle and leather texture, stitching details, shallow depth of field, premium look for product zoom.' },
 ] as const
 const RESULT_IMAGES = ['/images/res1.png', '/images/res2.png', '/images/res3.png'] as const
+
+/** Prompt box: tag in alto, testo che riempie tutto il div */
+function PromptBox({ tag, text }: { tag: string; text: string }) {
+  return (
+    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2.5 text-left md:p-2.5">
+      <span className="shrink-0 truncate rounded bg-brand/15 px-2 py-0.5 text-[10px] font-semibold text-rich-black md:text-xs">{tag}</span>
+      <p className="min-h-0 flex-1 overflow-y-auto text-[10px] leading-snug text-gray-800 md:text-[12px]">{text}</p>
+    </div>
+  )
+}
+
+/** Cella immagine risultato: cliccabile + icona espansione in basso */
+function ResultImageCell({ src, index, onExpand }: { src: string; index: number; onExpand: (i: number) => void }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onExpand(index)}
+      className="group flex flex-col overflow-hidden rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+    >
+      <span className="relative block min-h-0 flex-1">
+        <Image src={src} alt="" width={120} height={120} className="h-full w-full object-cover transition group-hover:opacity-95" />
+      </span>
+      <span className="flex shrink-0 items-center justify-center bg-black/60 py-1.5 text-white" aria-hidden>
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+        </svg>
+      </span>
+    </button>
+  )
+}
 
 const steps = [
   {
@@ -95,6 +129,9 @@ const whyItems = [
 ]
 
 export default function HowItWorksPage() {
+  const [galleryOpen, setGalleryOpen] = useState(false)
+  const [galleryIndex, setGalleryIndex] = useState(0)
+
   return (
     <div className="bg-page-bg">
       {/* ——— Hero ——— */}
@@ -154,21 +191,16 @@ export default function HowItWorksPage() {
                       <Image src="/images/product1.png" alt="Product" width={240} height={240} className="h-full w-full object-contain p-4" />
                     )}
                     {step.media === 'prompts' && (
-                      <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+                      <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-2 p-3">
                         {PROMPT_EXAMPLES.map((p, i) => (
-                          <div key={i} className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2.5 text-left">
-                            <span className="mb-1.5 truncate rounded bg-brand/15 px-2 py-0.5 text-[10px] font-semibold text-rich-black md:text-xs">{p.tag}</span>
-                            <p className="line-clamp-5 text-[11px] leading-snug text-gray-800 md:text-[12px]">{p.text}</p>
-                          </div>
+                          <PromptBox key={i} tag={p.tag} text={p.text} />
                         ))}
                       </div>
                     )}
                     {step.media === 'results' && (
-                      <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+                      <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-2 p-3">
                         {RESULT_IMAGES.map((src, i) => (
-                          <div key={i} className="overflow-hidden rounded-lg bg-gray-100">
-                            <Image src={src} alt={`Result ${i + 1}`} width={80} height={80} className="h-full w-full object-cover" />
-                          </div>
+                          <ResultImageCell key={i} src={src} index={i} onExpand={(idx) => { setGalleryIndex(idx); setGalleryOpen(true) }} />
                         ))}
                       </div>
                     )}
@@ -185,21 +217,16 @@ export default function HowItWorksPage() {
                       <Image src="/images/product1.png" alt="Product" width={220} height={220} className="h-full w-full object-contain p-4" />
                     )}
                     {step.media === 'prompts' && (
-                      <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+                      <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-2 p-3">
                         {PROMPT_EXAMPLES.map((p, i) => (
-                          <div key={i} className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2.5 text-left">
-                            <span className="mb-1.5 truncate rounded bg-brand/15 px-2 py-0.5 text-[10px] font-semibold text-rich-black">{p.tag}</span>
-                            <p className="line-clamp-4 text-[10px] leading-snug text-gray-800">{p.text}</p>
-                          </div>
+                          <PromptBox key={i} tag={p.tag} text={p.text} />
                         ))}
                       </div>
                     )}
                     {step.media === 'results' && (
-                      <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+                      <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-2 p-3">
                         {RESULT_IMAGES.map((src, i) => (
-                          <div key={i} className="overflow-hidden rounded-lg bg-white shadow-sm">
-                            <Image src={src} alt={`Result ${i + 1}`} width={120} height={120} className="h-full w-full object-cover" />
-                          </div>
+                          <ResultImageCell key={i} src={src} index={i} onExpand={(idx) => { setGalleryIndex(idx); setGalleryOpen(true) }} />
                         ))}
                       </div>
                     )}
@@ -216,6 +243,14 @@ export default function HowItWorksPage() {
           </div>
         </div>
       </section>
+
+      <ResultGalleryModal
+        images={RESULT_IMAGES}
+        currentIndex={galleryIndex}
+        open={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        onIndexChange={setGalleryIndex}
+      />
 
       {/* ——— Example (before → prompt → after) ——— */}
       <ExampleGallery />
