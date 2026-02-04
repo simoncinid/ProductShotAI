@@ -186,16 +186,41 @@ export default function ProductDetailPage() {
           <p className="text-gray-400">No generations. Select this product in <Link href="/create" className="text-vivid-yellow hover:underline">/create</Link> to generate.</p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {generations.map((gen: { id: string; output_image_url?: string; status: string; created_at: string }) => (
-              <div key={gen.id} className="border border-gray-600 rounded-lg overflow-hidden bg-white">
-                {gen.output_image_url ? (
-                  <img src={getAbsoluteImageUrl(gen.output_image_url) ?? gen.output_image_url} alt="" className="w-full h-40 object-cover" />
-                ) : (
-                  <div className="w-full h-40 bg-gray-100 flex items-center justify-center"><span className="text-gray-400 text-sm">{gen.status}</span></div>
-                )}
-                <div className="p-2 text-xs text-gray-600 bg-white">{new Date(gen.created_at).toLocaleDateString()}</div>
-              </div>
-            ))}
+            {generations.map((gen: { id: string; output_image_url?: string; status: string; created_at: string }) => {
+              const imageUrl = gen.output_image_url ? (getAbsoluteImageUrl(gen.output_image_url) ?? gen.output_image_url) : null
+              return (
+                <div key={gen.id} className="border border-gray-600 rounded-lg overflow-hidden bg-white group">
+                  {gen.output_image_url ? (
+                    <>
+                      <Link
+                        href={`/dashboard/hub?generation_id=${gen.id}&product_id=${id}`}
+                        className="block w-full focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:ring-inset"
+                      >
+                        <img src={imageUrl!} alt="" className="w-full h-40 object-cover group-hover:opacity-95 transition cursor-pointer" />
+                      </Link>
+                      <div className="p-2 flex items-center justify-between gap-2 text-xs text-gray-600 bg-white border-t border-gray-200">
+                        <span>{new Date(gen.created_at).toLocaleDateString()}</span>
+                        <a
+                          href={imageUrl!}
+                          download
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700"
+                          title="Download"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                          Download
+                        </a>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-full h-40 bg-gray-100 flex items-center justify-center"><span className="text-gray-400 text-sm">{gen.status}</span></div>
+                      <div className="p-2 text-xs text-gray-600 bg-white">{new Date(gen.created_at).toLocaleDateString()}</div>
+                    </>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
