@@ -238,8 +238,8 @@ export default function ProductShotAIMotion({
         @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
       `}</style>
 
-      {/* Stage: palette e stile del sito (page-bg, on-dark, brand) */}
-      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl md:rounded-3xl bg-page-bg border border-white/10">
+      {/* Stage: più alto e largo, palette sito */}
+      <div className="relative w-full min-h-[320px] aspect-[4/3] sm:min-h-[380px] md:aspect-[5/3] md:min-h-[400px] lg:min-h-[480px] max-w-4xl mx-auto overflow-hidden rounded-2xl md:rounded-3xl bg-page-bg border border-white/10 p-4 md:p-6">
         {/* Sfondo base */}
         <div className="absolute inset-0 bg-gradient-to-b from-page-bg to-anthracite" />
 
@@ -250,7 +250,7 @@ export default function ProductShotAIMotion({
         />
 
         {/* Top-left brand */}
-        <div className="absolute top-3 left-4 md:top-4 md:left-5 flex items-center gap-2 z-20">
+        <div className="absolute top-4 left-4 md:top-5 md:left-6 flex items-center gap-2 z-20">
           <img src={logoSrc} alt="ProductShotAI" className="h-6 w-6 md:h-7 md:w-7" />
           <div className="text-sm md:text-base font-semibold text-on-dark">ProductShotAI</div>
         </div>
@@ -354,8 +354,8 @@ function IntroScene({ t }: { t: number }) {
   const subEnd = 3.8
 
   return (
-    <div className="absolute inset-0 flex items-center">
-      <div className="absolute left-4 right-4 md:left-8 md:right-8 top-1/2 -translate-y-1/2 max-w-2xl">
+    <div className="absolute inset-0 flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl text-center md:text-left">
         <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight font-bold tracking-tight text-on-dark font-sans">
           <div>
             <TypeLine
@@ -369,7 +369,7 @@ function IntroScene({ t }: { t: number }) {
             <TypeLine text="Full photoshoot." t={t} start={l2Start} end={l2End} />
           </div>
         </div>
-        <div className="mt-3 md:mt-4 text-sm md:text-base text-gray-400 max-w-lg">
+        <div className="mt-3 md:mt-4 text-sm md:text-base text-gray-400 max-w-lg mx-auto md:mx-0">
           <span className="relative">
             <TypeLine
               text="A creative hub that keeps every shot on-brand."
@@ -402,52 +402,53 @@ function Step1BrandIdentity({ t }: { t: number }) {
   const line3 = { start: s + 3.2, end: s + 4.2 }
 
   return (
-    <div className="absolute inset-0">
+    <div className="absolute inset-0 flex flex-col">
       <Header title="1. Brand Identity" subtitle="Tell us about your brand." />
-
-      <motion.div
-        className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-2xl"
-        initial={false}
-        style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
-      >
-        <SoftCard className="p-4 md:p-6 relative">
-          <Label text="Describe average customer" />
-          <InputLike>
-            <TypeLine
-              text="Young professionals, health-conscious, minimal aesthetic"
-              t={t}
-              start={line1.start}
-              end={line1.end}
-            />
-          </InputLike>
-          <div className="mt-4 md:mt-5">
-            <Label text="Where do you sell?" muted />
-            <InputLike active>
+      <div className="flex-1 min-h-0 flex items-center justify-center pt-2 pb-2">
+        <motion.div
+          className="w-full max-w-xl max-h-full overflow-auto flex items-center justify-center"
+          initial={false}
+          style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
+        >
+          <SoftCard className="p-4 md:p-6 relative w-full">
+            <Label text="Describe average customer" />
+            <InputLike>
               <TypeLine
-                text="E-commerce, Instagram, lifestyle blogs"
+                text="Young professionals, health-conscious, minimal aesthetic"
                 t={t}
-                start={line2.start}
-                end={line2.end}
+                start={line1.start}
+                end={line1.end}
               />
             </InputLike>
-          </div>
-          <div className="mt-4 md:mt-5">
-            <Label text="Photo style" />
-            <InputLike active>
-              <TypeLine text="Studio, lifestyle, macro" t={t} start={line3.start} end={line3.end} />
-            </InputLike>
-          </div>
-        </SoftCard>
-      </motion.div>
+            <div className="mt-4 md:mt-5">
+              <Label text="Where do you sell?" muted />
+              <InputLike active>
+                <TypeLine
+                  text="E-commerce, Instagram, lifestyle blogs"
+                  t={t}
+                  start={line2.start}
+                  end={line2.end}
+                />
+              </InputLike>
+            </div>
+            <div className="mt-4 md:mt-5">
+              <Label text="Photo style" />
+              <InputLike active>
+                <TypeLine text="Studio, lifestyle, macro" t={t} start={line3.start} end={line3.end} />
+              </InputLike>
+            </div>
+          </SoftCard>
+        </motion.div>
+      </div>
     </div>
   )
 }
 
 function Header({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div className="absolute left-4 top-12 md:left-6 md:top-14">
+    <div className="shrink-0 px-1 pt-1">
       <div className="text-lg md:text-xl lg:text-2xl font-bold tracking-tight text-on-dark font-sans">{title}</div>
-      <div className="mt-1 text-xs md:text-sm text-gray-400 font-sans">{subtitle}</div>
+      <div className="mt-0.5 text-xs md:text-sm text-gray-400 font-sans">{subtitle}</div>
     </div>
   )
 }
@@ -488,35 +489,36 @@ function Step2Upload({ t, productSrc }: { t: number; productSrc: string }) {
   const toastOn = p > 0.55
 
   return (
-    <div className="absolute inset-0">
+    <div className="absolute inset-0 flex flex-col">
       <Header title="2. Upload Product" subtitle="Drop a photo. We isolate the product." />
-
-      <motion.div
-        className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 w-[85%] max-w-[280px] aspect-square"
-        initial={false}
-        style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
-      >
-        <div className="relative w-full h-full rounded-2xl border-2 border-dashed border-white/25 bg-white/5">
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center p-3"
-            initial={false}
-            animate={{ scale: toastOn ? 1.03 : 1 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          >
-            <div className="bg-white/95 rounded-xl shadow-soft p-4 w-full h-full flex items-center justify-center min-h-0">
-              <img
-                src={productSrc}
-                alt="Uploaded product"
-                className="max-w-full max-h-full w-auto h-auto object-contain"
-              />
-            </div>
-          </motion.div>
-          <Toast
-            visible={toastOn}
-            text="Product analyzed. Ready to generate prompts."
-          />
-        </div>
-      </motion.div>
+      <div className="flex-1 min-h-0 flex items-center justify-center pt-2 pb-2">
+        <motion.div
+          className="w-full max-w-[260px] md:max-w-[300px] aspect-square max-h-full flex items-center justify-center"
+          initial={false}
+          style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
+        >
+          <div className="relative w-full h-full min-h-0 rounded-2xl border-2 border-dashed border-white/25 bg-white/5">
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center p-3"
+              initial={false}
+              animate={{ scale: toastOn ? 1.03 : 1 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            >
+              <div className="bg-white/95 rounded-xl shadow-soft p-4 w-full h-full flex items-center justify-center min-h-0">
+                <img
+                  src={productSrc}
+                  alt="Uploaded product"
+                  className="max-w-full max-h-full w-auto h-auto object-contain"
+                />
+              </div>
+            </motion.div>
+            <Toast
+              visible={toastOn}
+              text="Product analyzed. Ready to generate prompts."
+            />
+          </div>
+        </motion.div>
+      </div>
     </div>
   )
 }
@@ -535,57 +537,58 @@ function Step3Prompts({ t }: { t: number }) {
   const showCTA = p > 0.58
 
   return (
-    <div className="absolute inset-0">
+    <div className="absolute inset-0 flex flex-col">
       <Header title="3. Brand-matched Prompts" subtitle="Review and customize your prompts." />
-
-      <motion.div
-        className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-3xl"
-        initial={false}
-        style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
-      >
-        <div className="flex flex-wrap items-stretch justify-center gap-3 md:gap-4">
-          <PromptCard
-            idx={1}
-            tag="Studio"
-            textProgress={clamp01((p - 0.08) / 0.20)}
-            text="Studio clean, soft shadow, high res"
-            confirmed={c1}
-          />
-          <PromptCard
-            idx={2}
-            tag="Lifestyle"
-            textProgress={1}
-            text="Lifestyle kitchen, morning"
-            confirmed={c2}
-          />
-          <PromptCard
-            idx={3}
-            tag="Macro"
-            textProgress={1}
-            text="Macro detail, texture focus"
-            confirmed={c3}
-          />
-        </div>
-        <AnimatePresence>
-          {showCTA ? (
-            <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.98 }}
-              transition={{ type: 'spring', stiffness: 520, damping: 34 }}
-              className="mt-4 md:mt-5 flex justify-center"
-            >
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="rounded-full bg-brand text-rich-black px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base font-semibold shadow-soft font-sans"
+      <div className="flex-1 min-h-0 flex items-center justify-center pt-2 pb-2 overflow-auto">
+        <motion.div
+          className="w-full max-w-3xl max-h-full flex flex-col items-center"
+          initial={false}
+          style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
+        >
+          <div className="flex flex-wrap items-stretch justify-center gap-3 md:gap-4">
+            <PromptCard
+              idx={1}
+              tag="Studio"
+              textProgress={clamp01((p - 0.08) / 0.20)}
+              text="Studio clean, soft shadow, high res"
+              confirmed={c1}
+            />
+            <PromptCard
+              idx={2}
+              tag="Lifestyle"
+              textProgress={1}
+              text="Lifestyle kitchen, morning"
+              confirmed={c2}
+            />
+            <PromptCard
+              idx={3}
+              tag="Macro"
+              textProgress={1}
+              text="Macro detail, texture focus"
+              confirmed={c3}
+            />
+          </div>
+          <AnimatePresence>
+            {showCTA ? (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 520, damping: 34 }}
+                className="mt-4 md:mt-5 flex justify-center shrink-0"
               >
-                Generate Photoshoot <span className="ml-1">✨</span>
-              </motion.button>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </motion.div>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="rounded-full bg-brand text-rich-black px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base font-semibold shadow-soft font-sans"
+                >
+                  Generate Photoshoot <span className="ml-1">✨</span>
+                </motion.button>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </motion.div>
+      </div>
     </div>
   )
 }
@@ -639,20 +642,21 @@ function Step4Results({ t, results }: { t: number; results: [string, string, str
   const enter = easeOutCubic(clamp01((p - 0.08) / 0.22))
 
   return (
-    <div className="absolute inset-0">
+    <div className="absolute inset-0 flex flex-col">
       <Header title="4. Results" subtitle="Here are your on-brand variations." />
-
-      <motion.div
-        className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 w-[94%] max-w-2xl"
-        initial={false}
-        style={{ opacity: enter, y: lerp(18, 0, enter) }}
-      >
-        <div className="grid grid-cols-2 gap-2 md:gap-3">
-          <ImageCard src={results[0]} className="aspect-[4/3] min-h-0" delay={0.06} />
-          <ImageCard src={results[1]} className="aspect-[4/3] min-h-0" delay={0.12} />
-          <ImageCard src={results[2]} className="col-span-2 aspect-[2/1] min-h-0" delay={0.18} muted />
-        </div>
-      </motion.div>
+      <div className="flex-1 min-h-0 flex items-center justify-center pt-2 pb-2 overflow-auto">
+        <motion.div
+          className="w-full max-w-2xl max-h-full flex items-center justify-center"
+          initial={false}
+          style={{ opacity: enter, y: lerp(18, 0, enter) }}
+        >
+          <div className="grid grid-cols-2 gap-2 md:gap-3 w-full">
+            <ImageCard src={results[0]} className="aspect-[4/3] min-h-0" delay={0.06} />
+            <ImageCard src={results[1]} className="aspect-[4/3] min-h-0" delay={0.12} />
+            <ImageCard src={results[2]} className="col-span-2 aspect-[2/1] min-h-0" delay={0.18} muted />
+          </div>
+        </motion.div>
+      </div>
     </div>
   )
 }
