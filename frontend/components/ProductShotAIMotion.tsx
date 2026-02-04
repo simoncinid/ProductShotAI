@@ -358,10 +358,9 @@ const INTRO_LINE1_SEGMENTS: TextSegment[] = [
   { start: 10, end: 16, className: 'text-on-dark font-bold' },
   { start: 16, end: 24, className: 'text-on-dark font-bold italic' },
   { start: 24, end: 32, className: 'text-on-dark font-bold' },
-  { start: 32, end: 37, className: 'text-on-dark font-bold' },
-  { start: 37, end: 38, className: 'text-brand font-bold' },
-  { start: 38, end: 47, className: 'text-on-dark font-bold' },
-  { start: 47, end: 48, className: 'text-on-dark font-bold' },
+  { start: 32, end: 36, className: 'text-on-dark font-bold' },
+  { start: 36, end: 46, className: 'text-brand font-bold' },
+  { start: 46, end: 47, className: 'text-on-dark font-bold' },
 ]
 
 const INTRO_LINE2 = 'A creative hub that keeps every shot on-brand.'
