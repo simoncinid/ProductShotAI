@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "framer-motion": "^11.0.0",
     "@tanstack/react-query": "^5.12.2",
     "@vercel/analytics": "^1.6.1",
     "axios": "^1.6.2",

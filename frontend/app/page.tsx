@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useRef, useEffect, useCallback } from 'react'
-import BeforeAfter from '@/components/BeforeAfter'
+import ProductShotAIMotion from '@/components/ProductShotAIMotion'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-4 sm:px-6 md:px-10 lg:px-14'
 
@@ -234,7 +234,7 @@ export default function Home() {
         <div className="absolute -bottom-20 left-1/2 h-64 w-[140%] -translate-x-1/2 rounded-[50%] bg-brand/10 blur-2xl pointer-events-none" aria-hidden />
 
         <div className={`${CONTAINER} relative`}>
-          {/* Mobile: title → subtitle → examples (BeforeAfter) → CTA. Desktop: 2 cols with text+CTA left, BeforeAfter right. */}
+          {/* Mobile: title → subtitle → animation → CTA. Desktop: 2 cols with text+CTA left, ProductShotAIMotion right. */}
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-x-16">
             {/* Desktop: single block left (title + paragraph + CTA right below, no gap) */}
             <div className="hidden lg:flex lg:col-start-1 lg:row-start-1 lg:flex-col lg:items-start">
@@ -283,14 +283,15 @@ export default function Home() {
               </p>
             </div>
 
-            {/* B: BeforeAfter — mobile compatto; desktop: allineato in alto, centrato sulla barra Example */}
+            {/* B: ProductShotAIMotion — stessa animazione su mobile e desktop */}
             <div className="order-2 lg:col-start-2 lg:row-start-1 lg:flex lg:items-start lg:min-w-0 lg:self-start">
-              <div className="lg:hidden">
-                <BeforeAfter compact />
-              </div>
-              <div className="hidden lg:block relative w-full min-w-0">
-                <div className="absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl pointer-events-none" aria-hidden />
-                <BeforeAfter containerClassName="max-h-[340px] max-w-[340px] mx-auto" />
+              <div className="relative w-full min-w-0 max-w-full">
+                <div className="hidden lg:block absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl pointer-events-none" aria-hidden />
+                <ProductShotAIMotion
+                  logoSrc="/logo.png"
+                  productSrc="/images/product1.png"
+                  results={['/images/res1.png', '/images/res2.png', '/images/res3.png']}
+                />
               </div>
             </div>
 
