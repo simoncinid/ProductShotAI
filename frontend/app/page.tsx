@@ -61,66 +61,55 @@ const HOW_STEPS = [
   },
 ]
 
+// Layout standard: stessa struttura per tutti gli step. Cella media dimensioni fisse, testo sempre dalla stessa posizione.
+const MEDIA_BOX_CLASS = 'h-[200px] w-[200px] shrink-0 sm:h-[220px] sm:w-[220px] md:h-[240px] md:w-[240px]'
+
 function StepCard({ step, isActive }: { step: (typeof HOW_STEPS)[0]; isActive?: boolean }) {
   const { n, title, desc, media } = step
   return (
     <div
-      className={`relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-white shadow-soft transition-all duration-300 md:rounded-3xl ${
+      className={`flex h-full min-w-0 flex-row overflow-hidden rounded-2xl border bg-white shadow-soft transition-all duration-300 md:rounded-3xl ${
         isActive ? 'border-brand/50 shadow-soft-hover scale-[1.02]' : 'border-gray-100 hover:border-brand/30 hover:shadow-soft-hover hover:scale-[1.01]'
       }`}
     >
-      <span className="absolute left-4 top-4 z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black">
-        {n}
-      </span>
-
-      {/* Media area: ben visibile e moderno per ogni step */}
-      <div className="flex shrink-0 flex-col items-center justify-center px-4 pt-12 pb-4 md:px-6 md:pt-14 md:pb-5">
-        {media === 'icon' && (
-          <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-gray-50 p-3 md:h-28 md:w-28 md:rounded-3xl md:p-4">
-            <Image src="/icone/bradIdentity.png" alt="" width={112} height={112} className="h-full w-full object-contain" />
-          </div>
-        )}
-        {media === 'product' && (
-          <div className="w-full max-w-[260px] md:max-w-[320px] overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/80 shadow-[0_8px_24px_rgba(0,0,0,0.08)] md:rounded-3xl">
-            <div className="aspect-square w-full p-4 md:p-5 flex items-center justify-center bg-white">
-              <Image src={PRODUCT_IMAGE} alt="Product" width={280} height={280} className="h-full w-full object-contain" />
+      {/* Colonna 1: numero + media — dimensioni fisse, allineamento uguale per tutti */}
+      <div className="flex shrink-0 flex-col border-r border-gray-100 bg-gray-50/50 p-4 md:p-5">
+        <div className="mb-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black md:h-9 md:w-9">
+          {n}
+        </div>
+        <div className={`flex items-center justify-center overflow-hidden rounded-xl bg-white ${MEDIA_BOX_CLASS} shadow-sm`}>
+          {media === 'icon' && (
+            <Image src="/icone/bradIdentity.png" alt="" width={120} height={120} className="h-16 w-16 object-contain md:h-20 md:w-20" />
+          )}
+          {media === 'product' && (
+            <Image src={PRODUCT_IMAGE} alt="Product" width={200} height={200} className="h-full w-full object-contain p-2" />
+          )}
+          {media === 'prompts' && (
+            <div className="grid h-full w-full grid-cols-3 gap-1.5 p-2">
+              {PROMPT_EXAMPLES.map((p, i) => (
+                <div key={i} className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2 text-left">
+                  <span className="mb-1 truncate rounded bg-brand/15 px-1.5 py-0.5 text-[9px] font-semibold text-rich-black md:text-[10px]">{p.tag}</span>
+                  <p className="line-clamp-4 text-[9px] leading-tight text-gray-800 md:text-[10px]">{p.text}</p>
+                </div>
+              ))}
             </div>
-          </div>
-        )}
-        {media === 'prompts' && (
-          <div className="grid w-full max-w-xl grid-cols-1 gap-2 sm:grid-cols-3">
-            {PROMPT_EXAMPLES.map((p, i) => (
-              <div
-                key={i}
-                className="rounded-xl border border-gray-200/80 bg-gray-50/90 px-3 py-3 text-left md:rounded-2xl md:px-4 md:py-3.5"
-              >
-                <span className="mb-1.5 inline-block rounded-full bg-brand/20 px-2 py-0.5 text-[10px] font-semibold text-rich-black md:text-xs">
-                  {p.tag}
-                </span>
-                <p className="text-[11px] font-medium leading-snug text-gray-800 line-clamp-3 md:text-xs">{p.text}</p>
-              </div>
-            ))}
-          </div>
-        )}
-        {media === 'results' && (
-          <div className="grid w-full max-w-xl grid-cols-3 gap-2 md:gap-3">
-            {RESULT_IMAGES.map((src, i) => (
-              <div
-                key={i}
-                className="overflow-hidden rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.08)] md:rounded-2xl"
-              >
-                <Image src={src} alt={`Result ${i + 1}`} width={160} height={160} className="aspect-square w-full object-cover" />
-              </div>
-            ))}
-          </div>
-        )}
+          )}
+          {media === 'results' && (
+            <div className="grid h-full w-full grid-cols-3 gap-1.5 p-2">
+              {RESULT_IMAGES.map((src, i) => (
+                <div key={i} className="overflow-hidden rounded-lg bg-gray-100">
+                  <Image src={src} alt="" width={80} height={80} className="h-full w-full object-cover" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="flex flex-1 flex-col px-4 pb-5 md:px-6 md:pb-6">
-        <h3 className="mb-2 min-w-0 break-words text-[15px] font-semibold text-primary md:text-base">{title}</h3>
-        <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">
-          {desc}
-        </p>
+      {/* Colonna 2: titolo + testo — stessa posizione in tutti i card */}
+      <div className="flex min-w-0 flex-1 flex-col justify-start p-4 pt-4 md:p-5 md:pt-5">
+        <h3 className="mb-3 min-w-0 break-words text-[15px] font-semibold text-primary md:text-base">{title}</h3>
+        <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">{desc}</p>
       </div>
     </div>
   )

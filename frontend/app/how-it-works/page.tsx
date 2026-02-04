@@ -124,66 +124,53 @@ export default function HowItWorksPage() {
         </svg>
       </div>
 
-      {/* ——— I quattro step ——— */}
+      {/* ——— I quattro step: layout standard uguale per tutti ——— */}
       <section className="bg-page-bg pb-16 pt-12 md:pb-24 md:pt-16">
         <div className={CONTAINER}>
-          <div className="space-y-12 md:space-y-16">
+          <div className="space-y-6 md:space-y-8">
             {steps.map((step) => (
               <div
                 key={step.n}
-                className="flex flex-col overflow-hidden rounded-[20px] border border-gray-100 bg-white shadow-soft transition-smooth hover:shadow-card-hover md:rounded-[24px] md:flex-row md:items-stretch"
+                className="flex flex-row overflow-hidden rounded-[20px] border border-gray-100 bg-white shadow-soft transition-smooth hover:shadow-card-hover md:rounded-[24px]"
               >
-                {/* Numero step */}
-                <div className="flex shrink-0 items-start gap-4 border-b border-gray-100 p-6 md:flex-col md:border-b-0 md:border-r md:border-gray-100 md:py-8 md:pl-8 md:pr-6">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand md:h-14 md:w-14">
-                    <span className="text-xl font-bold text-rich-black md:text-2xl">{step.n}</span>
+                {/* Colonna 1: numero + media — dimensioni fisse (stesse per tutti gli step) */}
+                <div className="flex shrink-0 flex-col border-r border-gray-100 bg-gray-50/50 p-5 md:p-6">
+                  <div className="mb-4 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-lg font-bold text-rich-black md:h-12 md:w-12 md:text-xl">
+                    {step.n}
                   </div>
-                  <h2 className="text-xl font-semibold text-primary md:mt-2 md:text-2xl">{step.title}</h2>
-                </div>
-
-                {/* Media: icon / product / 3 prompt / 3 results — ben visibili e moderni */}
-                <div className="flex shrink-0 items-center justify-center bg-gray-50/60 px-6 py-8 md:min-w-[320px] md:max-w-[420px] md:px-8 md:py-10">
-                  {step.media === 'icon' && (
-                    <div className="flex h-32 w-32 items-center justify-center rounded-2xl bg-white p-6 shadow-sm md:h-40 md:w-40 md:rounded-3xl md:p-8">
-                      <Image src={step.icon!} alt="" width={160} height={160} className="h-full w-full object-contain" />
-                    </div>
-                  )}
-                  {step.media === 'product' && (
-                    <div className="w-full max-w-[280px] overflow-hidden rounded-2xl bg-white shadow-[0_8px 32px rgba(0,0,0,0.08)] md:max-w-[340px] md:rounded-3xl">
-                      <div className="aspect-square w-full p-6 md:p-8 flex items-center justify-center">
-                        <Image src="/images/product1.png" alt="Product" width={300} height={300} className="h-full w-full object-contain" />
+                  <div className="flex h-[200px] w-[200px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm md:h-[240px] md:w-[240px]">
+                    {step.media === 'icon' && (
+                      <Image src={step.icon!} alt="" width={120} height={120} className="h-20 w-20 object-contain md:h-24 md:w-24" />
+                    )}
+                    {step.media === 'product' && (
+                      <Image src="/images/product1.png" alt="Product" width={240} height={240} className="h-full w-full object-contain p-4" />
+                    )}
+                    {step.media === 'prompts' && (
+                      <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+                        {PROMPT_EXAMPLES.map((p, i) => (
+                          <div key={i} className="flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2.5 text-left">
+                            <span className="mb-1.5 truncate rounded bg-brand/15 px-2 py-0.5 text-[10px] font-semibold text-rich-black md:text-xs">{p.tag}</span>
+                            <p className="line-clamp-5 text-[11px] leading-snug text-gray-800 md:text-[12px]">{p.text}</p>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                  )}
-                  {step.media === 'prompts' && (
-                    <div className="grid w-full max-w-sm grid-cols-1 gap-3 sm:grid-cols-3 md:max-w-none">
-                      {PROMPT_EXAMPLES.map((p, i) => (
-                        <div
-                          key={i}
-                          className="rounded-xl border border-gray-200 bg-white px-4 py-4 shadow-sm md:rounded-2xl md:px-5 md:py-4"
-                        >
-                          <span className="mb-2 inline-block rounded-full bg-brand/20 px-2.5 py-1 text-xs font-semibold text-rich-black">
-                            {p.tag}
-                          </span>
-                          <p className="text-[13px] font-medium leading-snug text-gray-800 md:text-[14px]">{p.text}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {step.media === 'results' && (
-                    <div className="grid w-full max-w-sm grid-cols-3 gap-3 md:max-w-md md:gap-4">
-                      {RESULT_IMAGES.map((src, i) => (
-                        <div key={i} className="overflow-hidden rounded-xl shadow-[0_8px 24px rgba(0,0,0,0.1)] md:rounded-2xl">
-                          <Image src={src} alt={`Result ${i + 1}`} width={200} height={200} className="aspect-square w-full object-cover" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                    )}
+                    {step.media === 'results' && (
+                      <div className="grid h-full w-full grid-cols-3 gap-2 p-3">
+                        {RESULT_IMAGES.map((src, i) => (
+                          <div key={i} className="overflow-hidden rounded-lg bg-gray-100">
+                            <Image src={src} alt={`Result ${i + 1}`} width={80} height={80} className="h-full w-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                {/* Testo */}
-                <div className="min-w-0 flex-1 p-6 md:py-8 md:pr-8 md:pl-6">
-                  <div className="md:mt-0">{step.content}</div>
+                {/* Colonna 2: titolo + testo — stessa posizione in tutti i div */}
+                <div className="flex min-w-0 flex-1 flex-col justify-start p-5 md:p-6">
+                  <h2 className="mb-3 min-w-0 break-words text-xl font-semibold text-primary md:text-2xl">{step.title}</h2>
+                  <div className="min-w-0 flex-1">{step.content}</div>
                 </div>
               </div>
             ))}
