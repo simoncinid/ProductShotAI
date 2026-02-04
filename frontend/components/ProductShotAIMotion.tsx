@@ -27,13 +27,13 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 // Timeline (seconds)
 // ---------------------------------
 const TIMELINE = {
-  total: 30,
-  intro: { start: 0, end: 5 },
-  step1: { start: 5, end: 11 },
-  step2: { start: 11, end: 16 },
-  step3: { start: 16, end: 23 },
-  step4: { start: 23, end: 26 },
-  outro: { start: 26, end: 30 },
+  total: 32,
+  intro: { start: 0, end: 7 },
+  step1: { start: 7, end: 13 },
+  step2: { start: 13, end: 18 },
+  step3: { start: 18, end: 25 },
+  step4: { start: 25, end: 28 },
+  outro: { start: 28, end: 32 },
 } as const
 
 // ---------------------------------
@@ -184,10 +184,13 @@ function ImageReadyBadge({ visible }: { visible: boolean }) {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 4, scale: 0.98 }}
           transition={{ type: 'spring', stiffness: 520, damping: 36 }}
-          className="absolute left-1/2 -translate-x-1/2 bottom-4 md:bottom-5 rounded-xl bg-anthracite/95 text-white px-4 py-2.5 shadow-soft border border-white/10 flex items-center justify-center gap-2"
+          className="absolute left-0 right-0 bottom-4 md:bottom-5 flex justify-center pointer-events-none"
         >
+          <span className="rounded-xl bg-anthracite/95 text-white px-4 py-2.5 shadow-soft border border-white/10 flex items-center justify-center gap-2"
+          >
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white text-xs font-bold" aria-hidden>✓</span>
           <span className="text-sm font-semibold">Ready</span>
+          </span>
         </motion.div>
       ) : null}
     </AnimatePresence>
@@ -230,8 +233,8 @@ export default function ProductShotAIMotion({
         @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
       `}</style>
 
-      {/* Stage: più alto e largo, palette sito */}
-      <div className="relative w-full min-h-[420px] aspect-[4/3] sm:min-h-[480px] md:aspect-[5/3] md:min-h-[520px] lg:min-h-[600px] max-w-4xl mx-auto overflow-hidden rounded-2xl md:rounded-3xl bg-page-bg border border-white/10">
+      {/* Stage: +25% larghezza (max-w-4xl → 70rem), palette sito */}
+      <div className="relative w-full min-h-[420px] aspect-[4/3] sm:min-h-[480px] md:aspect-[5/3] md:min-h-[520px] lg:min-h-[600px] max-w-[70rem] mx-auto overflow-hidden rounded-2xl md:rounded-3xl bg-page-bg border border-white/10">
         {/* Sfondo base */}
         <div className="absolute inset-0 bg-gradient-to-b from-page-bg to-anthracite" />
 
@@ -240,12 +243,6 @@ export default function ProductShotAIMotion({
           className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"
           style={{ opacity: bgOpacity }}
         />
-
-        {/* Top-left brand */}
-        <div className="absolute top-4 left-4 md:top-5 md:left-6 flex items-center gap-2 z-30">
-          <img src={logoSrc} alt="ProductShotAI" className="h-6 w-6 md:h-7 md:w-7" />
-          <div className="text-sm md:text-base font-semibold text-on-dark">ProductShotAI</div>
-        </div>
 
         {/* Scene switch */}
         <div className="relative z-10 w-full h-full">
@@ -335,45 +332,45 @@ export default function ProductShotAIMotion({
 }
 
 // ---------------------------------
-// Scene: Intro
+// Scene: Intro (step 0) – riempie il div, parole in corsivo e giallo
 // ---------------------------------
 function IntroScene({ t }: { t: number }) {
-  const l1Start = 0.8
-  const l1End = 2.2
-  const l2Start = 1.6
-  const l2End = 3.2
-  const subStart = 2.6
-  const subEnd = 3.8
-
   return (
-    <div className="absolute inset-0 flex items-center justify-center p-4 md:p-6 pt-14 md:pt-16">
-      <div className="w-full max-w-2xl text-center md:text-left">
-        <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight font-bold tracking-tight text-on-dark font-sans">
-          <div>
-            <TypeLine
-              text="Your brand. One product photo."
-              t={t}
-              start={l1Start}
-              end={l1End}
-            />
+    <div className="absolute inset-0 flex items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-4xl text-center">
+        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight font-bold tracking-tight text-on-dark font-sans">
+          <div className="flex flex-wrap justify-center gap-x-1">
+            <span>Your </span>
+            <em className="not-italic text-brand">
+              <TypeLine text="brand" t={t} start={0.8} end={1.5} />
+            </em>
+            <span>. One </span>
+            <em className="text-on-dark">
+              <TypeLine text="product" t={t} start={1.3} end={2} />
+            </em>
+            <span> photo.</span>
           </div>
-          <div className="mt-1 md:mt-2">
-            <TypeLine text="Full photoshoot." t={t} start={l2Start} end={l2End} />
+          <div className="mt-2 md:mt-4 flex flex-wrap justify-center gap-x-1">
+            <span>Full </span>
+            <span className="text-brand">
+              <TypeLine text="photoshoot" t={t} start={1.8} end={2.8} />
+            </span>
+            <span>.</span>
           </div>
         </div>
-        <div className="mt-3 md:mt-4 text-sm md:text-base text-gray-400 max-w-lg mx-auto md:mx-0">
-          <span className="relative inline-block">
-            <TypeLine
-              text="A creative hub that keeps every shot on-brand."
-              t={t}
-              start={subStart}
-              end={subEnd}
-              showCursor={false}
-            />
-            <div className="absolute left-0 bottom-0 w-full max-w-sm">
-              <UnderlineSweep t={t} start={subStart + 0.2} end={subEnd + 0.6} />
-            </div>
+        <div className="mt-4 md:mt-6 text-base md:text-lg lg:text-xl text-gray-300 max-w-2xl mx-auto">
+          <span>A </span>
+          <em className="text-on-dark">
+            <TypeLine text="creative hub" t={t} start={2.8} end={3.8} showCursor={false} />
+          </em>
+          <span> that keeps every shot </span>
+          <span className="text-brand">
+            <TypeLine text="on-brand" t={t} start={3.5} end={4.4} showCursor={false} />
           </span>
+          <span>.</span>
+        </div>
+        <div className="mt-3 max-w-md mx-auto">
+          <UnderlineSweep t={t} start={3.8} end={5.2} />
         </div>
       </div>
     </div>
@@ -394,7 +391,7 @@ function Step1BrandIdentity({ t }: { t: number }) {
   const line3 = { start: s + 3.2, end: s + 4.2 }
 
   return (
-    <div className="absolute inset-0 flex flex-col p-4 md:p-6 pt-14 md:pt-16">
+    <div className="absolute inset-0 flex flex-col p-4 md:p-6">
       <Header title="1. Brand Identity" subtitle="Tell us about your brand." />
       <div className="flex-1 min-h-0 flex items-center justify-center py-3 md:py-4">
         <motion.div
@@ -470,7 +467,7 @@ function Step2Upload({ t, productSrc }: { t: number; productSrc: string }) {
   const toastOn = p > 0.55
 
   return (
-    <div className="absolute inset-0 flex flex-col p-4 md:p-6 pt-14 md:pt-16">
+    <div className="absolute inset-0 flex flex-col p-4 md:p-6">
       <Header title="2. Upload Product" subtitle="Drop a photo. We isolate the product." />
       <div className="flex-1 min-h-0 flex items-center justify-center py-3 md:py-4">
         <motion.div
@@ -515,7 +512,7 @@ function Step3Prompts({ t }: { t: number }) {
   const showCTA = p > 0.58
 
   return (
-    <div className="absolute inset-0 flex flex-col p-4 md:p-6 pt-14 md:pt-16">
+    <div className="absolute inset-0 flex flex-col p-4 md:p-6">
       <Header title="3. Brand-matched Prompts" subtitle="Review and customize your prompts." />
       <div className="flex-1 min-h-0 flex items-center justify-center py-3 md:py-4 overflow-hidden">
         <motion.div
@@ -528,21 +525,21 @@ function Step3Prompts({ t }: { t: number }) {
               idx={1}
               tag="Lifestyle"
               textProgress={clamp01((p - 0.08) / 0.20)}
-              text="Professional product photography in a relaxed outdoor café setting, morning light, soft shadows, leather bag on wooden table with coffee and sunglasses, lifestyle context, high resolution, clean composition, on-brand aesthetic for e-commerce and social media."
+              text="Outdoor café, morning light, leather bag on table with coffee and sunglasses, lifestyle shot, on-brand for e-commerce."
               confirmed={c1}
             />
             <PromptCard
               idx={2}
               tag="Flat lay"
               textProgress={1}
-              text="Flat lay lifestyle shot of open leather bag with laptop, glasses, and accessories neatly arranged inside, top-down view, soft natural lighting, minimalist background, perfect for e-commerce and Instagram, high resolution."
+              text="Flat lay of open bag with laptop and accessories, top-down view, soft light, minimalist background, e-commerce ready."
               confirmed={c2}
             />
             <PromptCard
               idx={3}
               tag="Macro"
               textProgress={1}
-              text="Extreme close-up macro photography of brass buckle and leather texture, fine details of stitching and hardware, shallow depth of field, premium craftsmanship emphasis, high resolution product detail for e-commerce and editorial use."
+              text="Macro of brass buckle and leather texture, stitching details, shallow depth of field, premium look for product zoom."
               confirmed={c3}
             />
           </div>
@@ -587,12 +584,12 @@ function PromptCard({
   const typedChars = Math.floor(text.length * easeOutCubic(clamp01(textProgress)))
 
   return (
-    <SoftCard className="w-full flex flex-col p-3 md:p-4 relative min-h-[180px] md:min-h-[200px]">
+    <SoftCard className="w-full flex flex-col p-3 md:p-4 relative min-h-[140px] md:min-h-[160px]">
       <div className="flex items-start justify-between gap-2 shrink-0">
         <div className="text-[10px] md:text-xs font-semibold text-secondary font-sans">Prompt {idx}</div>
         <Pill>{tag}</Pill>
       </div>
-      <div className="mt-2 md:mt-3 text-[11px] md:text-xs font-semibold leading-snug text-primary font-sans flex-1 min-h-[80px] overflow-y-auto max-h-[120px]">
+      <div className="mt-2 md:mt-3 text-xs md:text-sm font-semibold leading-snug text-primary font-sans flex-1 min-h-[56px] overflow-y-auto max-h-[88px]">
         {text.slice(0, typedChars)}
         {!confirmed && typedChars < text.length ? <Cursor /> : null}
       </div>
@@ -620,7 +617,7 @@ function Step4Results({ t, results }: { t: number; results: [string, string, str
   const enter = easeOutCubic(clamp01((p - 0.08) / 0.22))
 
   return (
-    <div className="absolute inset-0 flex flex-col p-4 md:p-6 pt-14 md:pt-16">
+    <div className="absolute inset-0 flex flex-col p-4 md:p-6">
       <Header title="4. Results" subtitle="Here are your on-brand variations." />
       <div className="flex-1 min-h-0 flex items-center justify-center py-3 md:py-4 overflow-hidden">
         <motion.div
@@ -663,32 +660,31 @@ function ImageCard({
 }
 
 // ---------------------------------
-// Scene: Outro CTA (3 card + CTA sotto, proporzionato)
+// Scene: Outro CTA – gallery: una grande al centro, due laterali intere scrollabili
 // ---------------------------------
 function OutroCTA({ t, results }: { t: number; results: [string, string, string] }) {
   const p = progressBetween(t, TIMELINE.outro.start, TIMELINE.outro.end)
   const enter = easeOutCubic(clamp01(p / 0.22))
 
   return (
-    <div className="absolute inset-0 flex flex-col p-4 md:p-6 pt-14 md:pt-16 pb-3 md:pb-4">
-      <div className="shrink-0 mb-3 md:mb-4">
-        <div className="text-base md:text-lg lg:text-xl font-bold text-on-dark font-sans text-center">ProductShotAI</div>
-      </div>
+    <div className="absolute inset-0 flex flex-col p-4 md:p-6 pb-3 md:pb-4">
       <motion.div
-        className="flex-1 min-h-0 flex items-stretch gap-2 md:gap-3 justify-center"
+        className="flex-1 min-h-0 flex items-center justify-center gap-2 md:gap-4 w-full overflow-hidden"
         initial={false}
         style={{ opacity: enter }}
       >
-        <TallCard src={results[0]} />
-        <TallCard src={results[1]} />
-        <TallCard src={results[2]} />
+        <div className="flex items-center justify-center gap-2 md:gap-4 w-full h-full max-w-[70rem]">
+          <OutroGallerySide src={results[0]} />
+          <OutroGalleryCenter src={results[1]} />
+          <OutroGallerySide src={results[2]} />
+        </div>
       </motion.div>
       <motion.div
-        className="shrink-0 pt-3 md:pt-4 flex flex-col items-center justify-center text-center"
+        className="shrink-0 pt-3 md:pt-4 flex flex-col items-center justify-center text-center w-full"
         initial={false}
         style={{ opacity: enter }}
       >
-        <p className="text-sm md:text-base lg:text-lg font-bold text-on-dark font-sans">Ready for your brand?</p>
+        <p className="text-sm md:text-base lg:text-lg font-bold text-on-dark font-sans text-center w-full">Ready for your brand?</p>
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -701,10 +697,18 @@ function OutroCTA({ t, results }: { t: number; results: [string, string, string]
   )
 }
 
-function TallCard({ src }: { src: string }) {
+function OutroGallerySide({ src }: { src: string }) {
   return (
-    <div className="flex-1 min-w-0 rounded-xl overflow-hidden border border-white/15 shadow-soft">
-      <img src={src} alt="Result" className="w-full h-full object-cover" />
+    <div className="w-[22%] min-w-0 flex-shrink-0 rounded-xl overflow-hidden border border-white/15 shadow-soft h-full max-h-[280px] md:max-h-[340px] flex items-center justify-center bg-white/5">
+      <img src={src} alt="Result" className="w-full h-full object-contain" />
+    </div>
+  )
+}
+
+function OutroGalleryCenter({ src }: { src: string }) {
+  return (
+    <div className="flex-1 min-w-0 max-w-[56%] rounded-xl overflow-hidden border border-white/15 shadow-soft h-full max-h-[320px] md:max-h-[400px] flex items-center justify-center bg-white/5">
+      <img src={src} alt="Result" className="w-full h-full object-contain" />
     </div>
   )
 }
