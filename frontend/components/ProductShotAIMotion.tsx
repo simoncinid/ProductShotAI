@@ -27,13 +27,12 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 // Timeline (seconds)
 // ---------------------------------
 const TIMELINE = {
-  total: 32,
+  total: 28,
   intro: { start: 0, end: 7 },
   step1: { start: 7, end: 13 },
   step2: { start: 13, end: 18 },
   step3: { start: 18, end: 25 },
   step4: { start: 25, end: 28 },
-  outro: { start: 28, end: 32 },
 } as const
 
 // ---------------------------------
@@ -218,13 +217,8 @@ export default function ProductShotAIMotion({
     if (t < TIMELINE.step1.end) return 'step1' as const
     if (t < TIMELINE.step2.end) return 'step2' as const
     if (t < TIMELINE.step3.end) return 'step3' as const
-    if (t < TIMELINE.step4.end) return 'step4' as const
-    return 'outro' as const
+    return 'step4' as const
   }, [t])
-
-  // Background subtly shifts darker for the final montage.
-  const bgP = progressBetween(t, TIMELINE.outro.start, TIMELINE.outro.end)
-  const bgOpacity = lerp(0, 1, easeOutCubic(bgP))
 
   return (
     <div className="w-full">
@@ -237,12 +231,6 @@ export default function ProductShotAIMotion({
       <div className="relative w-full min-h-[420px] aspect-[4/3] sm:min-h-[480px] md:aspect-[5/3] md:min-h-[520px] lg:min-h-[600px] max-w-[70rem] mx-auto overflow-hidden rounded-2xl md:rounded-3xl bg-page-bg border border-white/10">
         {/* Sfondo base */}
         <div className="absolute inset-0 bg-gradient-to-b from-page-bg to-anthracite" />
-
-        {/* Wash per outro (scura leggermente) */}
-        <div
-          className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"
-          style={{ opacity: bgOpacity }}
-        />
 
         {/* Scene switch */}
         <div className="relative z-10 w-full h-full">
@@ -311,19 +299,6 @@ export default function ProductShotAIMotion({
                 <Step4Results t={t} results={results} />
               </motion.div>
             ) : null}
-
-            {scene === 'outro' ? (
-              <motion.div
-                key="outro"
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <OutroCTA t={t} results={results} />
-              </motion.div>
-            ) : null}
           </AnimatePresence>
         </div>
       </div>
@@ -350,7 +325,7 @@ function IntroScene({ t }: { t: number }) {
             </em>
             <span> photo.</span>
           </div>
-          <div className="mt-2 md:mt-4 flex flex-wrap justify-center gap-x-1">
+          <div className="mt-5 md:mt-8 flex flex-wrap justify-center gap-x-1">
             <span>Full </span>
             <span className="text-brand">
               <TypeLine text="photoshoot" t={t} start={1.8} end={2.8} />
@@ -656,59 +631,5 @@ function ImageCard({
     >
       <img src={src} alt="Result" className="w-full h-full object-cover" />
     </motion.div>
-  )
-}
-
-// ---------------------------------
-// Scene: Outro CTA – gallery: una grande al centro, due laterali intere scrollabili
-// ---------------------------------
-function OutroCTA({ t, results }: { t: number; results: [string, string, string] }) {
-  const p = progressBetween(t, TIMELINE.outro.start, TIMELINE.outro.end)
-  const enter = easeOutCubic(clamp01(p / 0.22))
-
-  return (
-    <div className="absolute inset-0 flex flex-col p-4 md:p-6 pb-3 md:pb-4">
-      <motion.div
-        className="flex-1 min-h-0 flex items-center justify-center gap-2 md:gap-4 w-full overflow-hidden"
-        initial={false}
-        style={{ opacity: enter }}
-      >
-        <div className="flex items-center justify-center gap-2 md:gap-4 w-full h-full max-w-[70rem]">
-          <OutroGallerySide src={results[0]} />
-          <OutroGalleryCenter src={results[1]} />
-          <OutroGallerySide src={results[2]} />
-        </div>
-      </motion.div>
-      <motion.div
-        className="shrink-0 pt-3 md:pt-4 flex flex-col items-center justify-center text-center w-full"
-        initial={false}
-        style={{ opacity: enter }}
-      >
-        <p className="text-sm md:text-base lg:text-lg font-bold text-on-dark font-sans text-center w-full">Ready for your brand?</p>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="mt-2 rounded-full bg-brand text-rich-black px-5 py-2 md:px-6 md:py-2.5 text-sm md:text-base font-semibold shadow-soft font-sans"
-        >
-          Try ProductShotAI
-        </motion.button>
-      </motion.div>
-    </div>
-  )
-}
-
-function OutroGallerySide({ src }: { src: string }) {
-  return (
-    <div className="w-[22%] min-w-0 flex-shrink-0 rounded-xl overflow-hidden border border-white/15 shadow-soft h-full max-h-[280px] md:max-h-[340px] flex items-center justify-center bg-white/5">
-      <img src={src} alt="Result" className="w-full h-full object-contain" />
-    </div>
-  )
-}
-
-function OutroGalleryCenter({ src }: { src: string }) {
-  return (
-    <div className="flex-1 min-w-0 max-w-[56%] rounded-xl overflow-hidden border border-white/15 shadow-soft h-full max-h-[320px] md:max-h-[400px] flex items-center justify-center bg-white/5">
-      <img src={src} alt="Result" className="w-full h-full object-contain" />
-    </div>
   )
 }
