@@ -162,7 +162,7 @@ export default function HubPage() {
     )
   }
 
-  if (productId && !imageUrlParam && !imageId) {
+  if (productId && !imageUrlParam && !imageId && !generationId) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
         <p className="text-gray-300">Missing image_id or image_url for this product.</p>
