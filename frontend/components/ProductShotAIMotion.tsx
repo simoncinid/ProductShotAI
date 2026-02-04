@@ -175,27 +175,19 @@ function UnderlineSweep({ t, start, end }: { t: number; start: number; end: numb
   )
 }
 
-function Toast({
-  text,
-  visible,
-}: {
-  text: string
-  visible: boolean
-}) {
+function ImageReadyBadge({ visible }: { visible: boolean }) {
   return (
     <AnimatePresence>
       {visible ? (
         <motion.div
-          initial={{ opacity: 0, y: 8, scale: 0.98 }}
+          initial={{ opacity: 0, y: 6, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 6, scale: 0.98 }}
+          exit={{ opacity: 0, y: 4, scale: 0.98 }}
           transition={{ type: 'spring', stiffness: 520, damping: 36 }}
-          className="absolute left-1/2 -translate-x-1/2 bottom-4 md:bottom-5 rounded-xl bg-anthracite text-on-dark px-3 py-2 md:px-4 md:py-2.5 shadow-soft border border-white/10 max-w-[calc(100%-2rem)]"
+          className="absolute left-1/2 -translate-x-1/2 bottom-4 md:bottom-5 rounded-xl bg-anthracite/95 text-white px-4 py-2.5 shadow-soft border border-white/10 flex items-center justify-center gap-2"
         >
-          <div className="flex items-center gap-2 text-xs md:text-sm">
-            <span className="w-2 h-2 rounded-full bg-brand shrink-0" />
-            <span className="leading-snug">{text}</span>
-          </div>
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white text-xs font-bold" aria-hidden>✓</span>
+          <span className="text-sm font-semibold">Ready</span>
         </motion.div>
       ) : null}
     </AnimatePresence>
@@ -422,7 +414,7 @@ function Step1BrandIdentity({ t }: { t: number }) {
             </InputLike>
             <div className="mt-3 md:mt-4">
               <Label text="Where do you sell?" muted />
-              <InputLike active>
+              <InputLike>
                 <TypeLine
                   text="E-commerce, Instagram, lifestyle blogs"
                   t={t}
@@ -433,7 +425,7 @@ function Step1BrandIdentity({ t }: { t: number }) {
             </div>
             <div className="mt-3 md:mt-4">
               <Label text="Photo style" />
-              <InputLike active>
+              <InputLike>
                 <TypeLine text="Studio, lifestyle, macro" t={t} start={line3.start} end={line3.end} />
               </InputLike>
             </div>
@@ -455,26 +447,15 @@ function Header({ title, subtitle }: { title: string; subtitle: string }) {
 
 function Label({ text, muted }: { text: string; muted?: boolean }) {
   return (
-    <div className={'text-[10px] md:text-xs font-semibold font-sans ' + (muted ? 'text-gray-400' : 'text-secondary')}>
+    <div className={'text-[10px] md:text-xs font-semibold font-sans ' + (muted ? 'text-gray-600' : 'text-gray-800')}>
       {text}
     </div>
   )
 }
 
-function InputLike({
-  children,
-  active,
-}: {
-  children: React.ReactNode
-  active?: boolean
-}) {
+function InputLike({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className={
-        'mt-2 rounded-lg px-3 py-2.5 md:px-4 md:py-3 text-sm md:text-base font-semibold font-sans bg-white/10 text-on-dark border ' +
-        (active ? 'border-brand shadow-[0_0_0_2px_rgba(254,231,22,0.2)]' : 'border-white/10')
-      }
-    >
+    <div className="mt-2 rounded-lg px-3 py-2.5 md:px-4 md:py-3 text-sm md:text-base font-semibold font-sans bg-white border-2 border-brand shadow-[0_0_0_2px_rgba(254,231,22,0.25)] text-gray-900">
       {children}
     </div>
   )
@@ -512,10 +493,7 @@ function Step2Upload({ t, productSrc }: { t: number; productSrc: string }) {
                 />
               </div>
             </motion.div>
-            <Toast
-              visible={toastOn}
-              text="Product analyzed. Ready to generate prompts."
-            />
+            <ImageReadyBadge visible={toastOn} />
           </div>
         </motion.div>
       </div>
@@ -548,23 +526,23 @@ function Step3Prompts({ t }: { t: number }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 w-full max-w-[800px]">
             <PromptCard
               idx={1}
-              tag="Studio"
+              tag="Lifestyle"
               textProgress={clamp01((p - 0.08) / 0.20)}
-              text="Studio clean, soft shadow, high res"
+              text="Professional product photography in a relaxed outdoor café setting, morning light, soft shadows, leather bag on wooden table with coffee and sunglasses, lifestyle context, high resolution, clean composition, on-brand aesthetic for e-commerce and social media."
               confirmed={c1}
             />
             <PromptCard
               idx={2}
-              tag="Lifestyle"
+              tag="Flat lay"
               textProgress={1}
-              text="Lifestyle kitchen, morning"
+              text="Flat lay lifestyle shot of open leather bag with laptop, glasses, and accessories neatly arranged inside, top-down view, soft natural lighting, minimalist background, perfect for e-commerce and Instagram, high resolution."
               confirmed={c2}
             />
             <PromptCard
               idx={3}
               tag="Macro"
               textProgress={1}
-              text="Macro detail, texture focus"
+              text="Extreme close-up macro photography of brass buckle and leather texture, fine details of stitching and hardware, shallow depth of field, premium craftsmanship emphasis, high resolution product detail for e-commerce and editorial use."
               confirmed={c3}
             />
           </div>
@@ -609,19 +587,19 @@ function PromptCard({
   const typedChars = Math.floor(text.length * easeOutCubic(clamp01(textProgress)))
 
   return (
-    <SoftCard className="w-full flex flex-col p-3 md:p-4 relative min-h-[160px] md:min-h-[180px]">
-      <div className="flex items-start justify-between gap-2">
+    <SoftCard className="w-full flex flex-col p-3 md:p-4 relative min-h-[180px] md:min-h-[200px]">
+      <div className="flex items-start justify-between gap-2 shrink-0">
         <div className="text-[10px] md:text-xs font-semibold text-secondary font-sans">Prompt {idx}</div>
         <Pill>{tag}</Pill>
       </div>
-      <div className="mt-2 md:mt-3 text-sm md:text-base font-bold leading-snug text-primary font-sans flex-1 min-h-[48px] md:min-h-[56px]">
+      <div className="mt-2 md:mt-3 text-[11px] md:text-xs font-semibold leading-snug text-primary font-sans flex-1 min-h-[80px] overflow-y-auto max-h-[120px]">
         {text.slice(0, typedChars)}
         {!confirmed && typedChars < text.length ? <Cursor /> : null}
       </div>
       <div className="mt-3 shrink-0">
         <div
           className={
-            'w-full rounded-lg py-2 text-center text-xs md:text-sm font-semibold font-sans ' +
+            'w-full rounded-lg py-2 text-center text-xs font-semibold font-sans ' +
             (confirmed
               ? 'bg-brand text-rich-black'
               : 'bg-white/20 text-on-dark')
