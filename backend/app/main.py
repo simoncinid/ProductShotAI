@@ -30,17 +30,14 @@ logger = logging.getLogger(__name__)
 # Initialize FastAPI app
 app = FastAPI(title="ProductShotAI API", version="1.0.0")
 
-# CORS: allow_origins from CORS_ORIGINS env; allow_origin_regex as fallback for *.vercel.app
-# (on Render env may not be available at startup or cold start responds before FastAPI)
+# CORS: allow_origins da CORS_ORIGINS env; regex per vercel.app e productshotai.com
 _cors_origins = settings.get_cors_origins_list()
 if _cors_origins:
     logger.info("CORS allow_origins: %s", _cors_origins)
-else:
-    logger.warning("CORS_ORIGINS empty or not set; using only allow_origin_regex for *.vercel.app")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins if _cors_origins else [],
-    allow_origin_regex=r"^https://([a-zA-Z0-9-]+\.)*vercel\.app$",
+    allow_origin_regex=r"^https://(([a-zA-Z0-9-]+\.)*vercel\.app|(www\.)?productshotai\.com)$",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
