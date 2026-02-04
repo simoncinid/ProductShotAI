@@ -84,12 +84,7 @@ function useTimelineClock(durationSeconds: number, autoplay = true) {
     }
   }, [autoplay, durationSeconds, prefersReducedMotion])
 
-  const reset = () => {
-    startRef.current = null
-    setT(0)
-  }
-
-  return { t, setT, reset }
+  return { t }
 }
 
 // ---------------------------------
@@ -105,7 +100,7 @@ function SoftCard({
   return (
     <div
       className={
-        'rounded-2xl bg-white shadow-[0_18px_45px_rgba(20,20,20,0.10)] border border-black/5 ' +
+        'rounded-xl md:rounded-2xl bg-white/95 shadow-soft border border-white/20 ' +
         className
       }
     >
@@ -124,7 +119,7 @@ function Pill({
   return (
     <span
       className={
-        'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold bg-black/5 text-black/70 ' +
+        'inline-flex items-center gap-2 rounded-full px-2 py-0.5 text-[10px] md:text-xs font-semibold bg-white/10 text-on-dark ' +
         className
       }
     >
@@ -134,11 +129,10 @@ function Pill({
 }
 
 function Cursor({ className = '' }: { className?: string }) {
-  // Blink via CSS so it stays consistent with timeline.
   return (
     <span
       className={
-        'inline-block w-[6px] h-[1.2em] align-[-0.15em] bg-sky-400 ml-1 rounded-sm animate-[blink_1s_step-end_infinite] ' +
+        'inline-block w-[4px] md:w-[5px] h-[1em] align-[-0.1em] bg-brand ml-0.5 rounded-sm animate-[blink_1s_step-end_infinite] ' +
         className
       }
     />
@@ -172,9 +166,9 @@ function TypeLine({
 function UnderlineSweep({ t, start, end }: { t: number; start: number; end: number }) {
   const p = easeOutCubic(progressBetween(t, start, end))
   return (
-    <div className="h-[3px] w-full bg-transparent mt-2">
+    <div className="h-[2px] w-full bg-transparent mt-1.5">
       <div
-        className="h-[3px] bg-sky-400 rounded-full"
+        className="h-[2px] bg-brand rounded-full"
         style={{ width: `${p * 42}%` }}
       />
     </div>
@@ -192,14 +186,14 @@ function Toast({
     <AnimatePresence>
       {visible ? (
         <motion.div
-          initial={{ opacity: 0, y: 12, scale: 0.98 }}
+          initial={{ opacity: 0, y: 8, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 10, scale: 0.98 }}
+          exit={{ opacity: 0, y: 6, scale: 0.98 }}
           transition={{ type: 'spring', stiffness: 520, damping: 36 }}
-          className="absolute left-1/2 -translate-x-1/2 bottom-6 rounded-2xl bg-[#2a160f] text-white px-5 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.20)]"
+          className="absolute left-1/2 -translate-x-1/2 bottom-3 md:bottom-4 rounded-xl bg-anthracite text-on-dark px-3 py-2 md:px-4 md:py-2.5 shadow-soft border border-white/10"
         >
-          <div className="flex items-center gap-3 text-sm">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+          <div className="flex items-center gap-2 text-xs md:text-sm">
+            <span className="w-2 h-2 rounded-full bg-brand shrink-0" />
             <span className="leading-snug">{text}</span>
           </div>
         </motion.div>
@@ -222,7 +216,7 @@ export default function ProductShotAIMotion({
   results: [string, string, string]
   autoplay?: boolean
 }) {
-  const { t, setT, reset } = useTimelineClock(TIMELINE.total, autoplay)
+  const { t } = useTimelineClock(TIMELINE.total, autoplay)
 
   const scene = useMemo(() => {
     if (t < TIMELINE.intro.end) return 'intro' as const
@@ -244,44 +238,21 @@ export default function ProductShotAIMotion({
         @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
       `}</style>
 
-      {/* Stage */}
-      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-3xl bg-[#fbf7f3] border border-black/5">
-        {/* Warm paper tint */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.9),rgba(251,247,243,1))]" />
+      {/* Stage: palette e stile del sito (page-bg, on-dark, brand) */}
+      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl md:rounded-3xl bg-page-bg border border-white/10">
+        {/* Sfondo base */}
+        <div className="absolute inset-0 bg-gradient-to-b from-page-bg to-anthracite" />
 
-        {/* Dark wash for outro */}
+        {/* Wash per outro (scura leggermente) */}
         <div
-          className="absolute inset-0"
-          style={{
-            background: 'radial-gradient(circle at 50% 10%, rgba(30,16,10,0.00), rgba(30,16,10,0.85))',
-            opacity: bgOpacity,
-          }}
+          className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40"
+          style={{ opacity: bgOpacity }}
         />
 
         {/* Top-left brand */}
-        <div className="absolute top-8 left-10 flex items-center gap-3">
-          <img src={logoSrc} alt="ProductShotAI" className="h-8 w-8" />
-          <div className="text-lg font-semibold text-black/85">ProductShotAI</div>
-        </div>
-
-        {/* Developer controls (optional). Click timeline in dev. */}
-        <div className="absolute top-6 right-6 hidden lg:flex items-center gap-3 text-xs text-black/50">
-          <button
-            className="rounded-full px-3 py-1 bg-white/70 border border-black/5"
-            onClick={() => reset()}
-          >
-            Restart
-          </button>
-          <input
-            className="w-40"
-            type="range"
-            min={0}
-            max={TIMELINE.total}
-            step={0.01}
-            value={t}
-            onChange={(e) => setT(parseFloat(e.target.value))}
-          />
-          <span className="tabular-nums">{t.toFixed(2)}s</span>
+        <div className="absolute top-3 left-4 md:top-4 md:left-5 flex items-center gap-2 z-20">
+          <img src={logoSrc} alt="ProductShotAI" className="h-6 w-6 md:h-7 md:w-7" />
+          <div className="text-sm md:text-base font-semibold text-on-dark">ProductShotAI</div>
         </div>
 
         {/* Scene switch */}
@@ -375,7 +346,6 @@ export default function ProductShotAIMotion({
 // Scene: Intro
 // ---------------------------------
 function IntroScene({ t }: { t: number }) {
-  // Typing blocks: line 1 then line 2.
   const l1Start = 0.8
   const l1End = 2.2
   const l2Start = 1.6
@@ -384,9 +354,9 @@ function IntroScene({ t }: { t: number }) {
   const subEnd = 3.8
 
   return (
-    <div className="absolute inset-0">
-      <div className="absolute left-16 top-[46%] -translate-y-1/2 max-w-4xl">
-        <div className="text-[64px] leading-[1.02] font-extrabold tracking-tight text-[#2a160f]">
+    <div className="absolute inset-0 flex items-center">
+      <div className="absolute left-4 right-4 md:left-8 md:right-8 top-1/2 -translate-y-1/2 max-w-2xl">
+        <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight font-bold tracking-tight text-on-dark font-sans">
           <div>
             <TypeLine
               text="Your brand. One product photo."
@@ -395,26 +365,23 @@ function IntroScene({ t }: { t: number }) {
               end={l1End}
             />
           </div>
-          <div className="mt-2">
+          <div className="mt-1 md:mt-2">
             <TypeLine text="Full photoshoot." t={t} start={l2Start} end={l2End} />
           </div>
         </div>
-
-        <div className="mt-6 text-2xl text-[#6b5a52]">
-          <div className="max-w-2xl">
-            <span className="relative">
-              <TypeLine
-                text="A creative hub that keeps every shot on-brand."
-                t={t}
-                start={subStart}
-                end={subEnd}
-                showCursor={false}
-              />
-              <div className="absolute -left-1 -bottom-3 w-[520px]">
-                <UnderlineSweep t={t} start={subStart + 0.2} end={subEnd + 0.6} />
-              </div>
-            </span>
-          </div>
+        <div className="mt-3 md:mt-4 text-sm md:text-base text-gray-400 max-w-lg">
+          <span className="relative">
+            <TypeLine
+              text="A creative hub that keeps every shot on-brand."
+              t={t}
+              start={subStart}
+              end={subEnd}
+              showCursor={false}
+            />
+            <div className="absolute left-0 bottom-0 w-full max-w-sm">
+              <UnderlineSweep t={t} start={subStart + 0.2} end={subEnd + 0.6} />
+            </div>
+          </span>
         </div>
       </div>
     </div>
@@ -439,11 +406,11 @@ function Step1BrandIdentity({ t }: { t: number }) {
       <Header title="1. Brand Identity" subtitle="Tell us about your brand." />
 
       <motion.div
-        className="absolute left-1/2 top-[56%] -translate-x-1/2 -translate-y-1/2"
+        className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 w-[92%] max-w-2xl"
         initial={false}
         style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
       >
-        <SoftCard className="w-[980px] h-[420px] p-10 relative">
+        <SoftCard className="p-4 md:p-6 relative">
           <Label text="Describe average customer" />
           <InputLike>
             <TypeLine
@@ -453,8 +420,7 @@ function Step1BrandIdentity({ t }: { t: number }) {
               end={line1.end}
             />
           </InputLike>
-
-          <div className="mt-8">
+          <div className="mt-4 md:mt-5">
             <Label text="Where do you sell?" muted />
             <InputLike active>
               <TypeLine
@@ -465,8 +431,7 @@ function Step1BrandIdentity({ t }: { t: number }) {
               />
             </InputLike>
           </div>
-
-          <div className="mt-8">
+          <div className="mt-4 md:mt-5">
             <Label text="Photo style" />
             <InputLike active>
               <TypeLine text="Studio, lifestyle, macro" t={t} start={line3.start} end={line3.end} />
@@ -480,16 +445,16 @@ function Step1BrandIdentity({ t }: { t: number }) {
 
 function Header({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div className="absolute left-16 top-14">
-      <div className="text-5xl font-extrabold tracking-tight text-[#2a160f]">{title}</div>
-      <div className="mt-3 text-xl text-[#6b5a52]">{subtitle}</div>
+    <div className="absolute left-4 top-12 md:left-6 md:top-14">
+      <div className="text-lg md:text-xl lg:text-2xl font-bold tracking-tight text-on-dark font-sans">{title}</div>
+      <div className="mt-1 text-xs md:text-sm text-gray-400 font-sans">{subtitle}</div>
     </div>
   )
 }
 
 function Label({ text, muted }: { text: string; muted?: boolean }) {
   return (
-    <div className={'text-sm font-semibold ' + (muted ? 'text-black/25' : 'text-black/45')}>
+    <div className={'text-[10px] md:text-xs font-semibold font-sans ' + (muted ? 'text-gray-400' : 'text-secondary')}>
       {text}
     </div>
   )
@@ -505,8 +470,8 @@ function InputLike({
   return (
     <div
       className={
-        'mt-3 rounded-xl px-6 py-5 text-2xl font-semibold bg-black/5 text-black/80 border ' +
-        (active ? 'border-sky-400 shadow-[0_0_0_4px_rgba(56,189,248,0.15)]' : 'border-transparent')
+        'mt-2 rounded-lg px-3 py-2.5 md:px-4 md:py-3 text-sm md:text-base font-semibold font-sans bg-white/10 text-on-dark border ' +
+        (active ? 'border-brand shadow-[0_0_0_2px_rgba(254,231,22,0.2)]' : 'border-white/10')
       }
     >
       {children}
@@ -527,29 +492,28 @@ function Step2Upload({ t, productSrc }: { t: number; productSrc: string }) {
       <Header title="2. Upload Product" subtitle="Drop a photo. We isolate the product." />
 
       <motion.div
-        className="absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2"
+        className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 w-[85%] max-w-[280px] aspect-square"
         initial={false}
         style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
       >
-        <div className="relative w-[560px] h-[560px] rounded-[34px] border-[3px] border-dashed border-black/35 bg-white/20">
+        <div className="relative w-full h-full rounded-2xl border-2 border-dashed border-white/25 bg-white/5">
           <motion.div
-            className="absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0 flex items-center justify-center p-3"
             initial={false}
             animate={{ scale: toastOn ? 1.03 : 1 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
           >
-            <div className="bg-white rounded-2xl shadow-[0_18px_45px_rgba(20,20,20,0.12)] p-8">
+            <div className="bg-white/95 rounded-xl shadow-soft p-4 w-full h-full flex items-center justify-center min-h-0">
               <img
                 src={productSrc}
                 alt="Uploaded product"
-                className="w-[260px] h-[200px] object-contain"
+                className="max-w-full max-h-full w-auto h-auto object-contain"
               />
             </div>
           </motion.div>
-
           <Toast
             visible={toastOn}
-            text="Product analyzed correctly. Ready to generate prompts for your photoshoot"
+            text="Product analyzed. Ready to generate prompts."
           />
         </div>
       </motion.div>
@@ -575,11 +539,11 @@ function Step3Prompts({ t }: { t: number }) {
       <Header title="3. Brand-matched Prompts" subtitle="Review and customize your prompts." />
 
       <motion.div
-        className="absolute left-1/2 top-[56%] -translate-x-1/2 -translate-y-1/2"
+        className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 w-[95%] max-w-3xl"
         initial={false}
         style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
       >
-        <div className="flex items-center gap-10">
+        <div className="flex flex-wrap items-stretch justify-center gap-3 md:gap-4">
           <PromptCard
             idx={1}
             tag="Studio"
@@ -602,22 +566,21 @@ function Step3Prompts({ t }: { t: number }) {
             confirmed={c3}
           />
         </div>
-
         <AnimatePresence>
           {showCTA ? (
             <motion.div
-              initial={{ opacity: 0, y: 14, scale: 0.98 }}
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.98 }}
+              exit={{ opacity: 0, y: 8, scale: 0.98 }}
               transition={{ type: 'spring', stiffness: 520, damping: 34 }}
-              className="mt-10 flex justify-center"
+              className="mt-4 md:mt-5 flex justify-center"
             >
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="rounded-full bg-[#2a160f] text-white px-10 py-5 text-xl font-semibold shadow-[0_20px_50px_rgba(0,0,0,0.22)]"
+                className="rounded-full bg-brand text-rich-black px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base font-semibold shadow-soft font-sans"
               >
-                Generate Photoshoot <span className="ml-2">✨</span>
+                Generate Photoshoot <span className="ml-1">✨</span>
               </motion.button>
             </motion.div>
           ) : null}
@@ -643,24 +606,22 @@ function PromptCard({
   const typedChars = Math.floor(text.length * easeOutCubic(clamp01(textProgress)))
 
   return (
-    <SoftCard className="w-[360px] h-[300px] p-8 relative">
-      <div className="flex items-start justify-between">
-        <div className="text-sm font-semibold text-black/35">Prompt {idx}</div>
-        <Pill className="bg-black/0 text-black/45 border border-black/10">{tag}</Pill>
+    <SoftCard className="w-full min-w-0 max-w-[200px] md:max-w-[240px] flex flex-col p-3 md:p-4 relative">
+      <div className="flex items-start justify-between gap-2">
+        <div className="text-[10px] font-semibold text-secondary font-sans">Prompt {idx}</div>
+        <Pill>{tag}</Pill>
       </div>
-
-      <div className="mt-4 text-3xl font-extrabold leading-snug text-black/80">
+      <div className="mt-2 text-sm md:text-base font-bold leading-snug text-primary font-sans flex-1">
         {text.slice(0, typedChars)}
         {!confirmed && typedChars < text.length ? <Cursor /> : null}
       </div>
-
-      <div className="absolute left-8 right-8 bottom-8">
+      <div className="mt-3">
         <div
           className={
-            'w-full rounded-xl py-4 text-center font-semibold ' +
+            'w-full rounded-lg py-2 text-center text-xs font-semibold font-sans ' +
             (confirmed
-              ? 'bg-[#6fb30f] text-white'
-              : 'bg-black/5 text-black/70')
+              ? 'bg-brand text-rich-black'
+              : 'bg-white/20 text-on-dark')
           }
         >
           {confirmed ? 'Confirmed' : 'Confirm'}
@@ -682,16 +643,14 @@ function Step4Results({ t, results }: { t: number; results: [string, string, str
       <Header title="4. Results" subtitle="Here are your on-brand variations." />
 
       <motion.div
-        className="absolute left-1/2 top-[56%] -translate-x-1/2 -translate-y-1/2"
+        className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 w-[94%] max-w-2xl"
         initial={false}
         style={{ opacity: enter, y: lerp(18, 0, enter) }}
       >
-        <div className="grid grid-cols-2 gap-10">
-          <ImageCard src={results[0]} className="w-[560px] h-[290px]" delay={0.06} />
-          <ImageCard src={results[1]} className="w-[560px] h-[290px]" delay={0.12} />
-          <div className="col-span-2 flex justify-start">
-            <ImageCard src={results[2]} className="w-[560px] h-[290px]" delay={0.18} muted />
-          </div>
+        <div className="grid grid-cols-2 gap-2 md:gap-3">
+          <ImageCard src={results[0]} className="aspect-[4/3] min-h-0" delay={0.06} />
+          <ImageCard src={results[1]} className="aspect-[4/3] min-h-0" delay={0.12} />
+          <ImageCard src={results[2]} className="col-span-2 aspect-[2/1] min-h-0" delay={0.18} muted />
         </div>
       </motion.div>
     </div>
@@ -711,10 +670,10 @@ function ImageCard({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12, scale: 0.99 }}
-      animate={{ opacity: muted ? 0.55 : 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, y: 8, scale: 0.99 }}
+      animate={{ opacity: muted ? 0.6 : 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', stiffness: 420, damping: 34, delay }}
-      className={'rounded-3xl overflow-hidden shadow-[0_18px_45px_rgba(20,20,20,0.12)] ' + className}
+      className={'rounded-xl overflow-hidden shadow-soft ' + className}
     >
       <img src={src} alt="Result" className="w-full h-full object-cover" />
     </motion.div>
@@ -722,35 +681,36 @@ function ImageCard({
 }
 
 // ---------------------------------
-// Scene: Outro CTA (3 tall cards)
+// Scene: Outro CTA (3 card + CTA sotto, proporzionato)
 // ---------------------------------
 function OutroCTA({ t, results }: { t: number; results: [string, string, string] }) {
   const p = progressBetween(t, TIMELINE.outro.start, TIMELINE.outro.end)
   const enter = easeOutCubic(clamp01(p / 0.22))
 
   return (
-    <div className="absolute inset-0">
+    <div className="absolute inset-0 flex flex-col p-3 md:p-4">
       <motion.div
-        className="absolute inset-0 px-10 py-10"
+        className="flex-1 min-h-0 flex items-stretch gap-2 md:gap-3"
         initial={false}
         style={{ opacity: enter }}
       >
-        <div className="w-full h-full flex items-stretch gap-6">
-          <TallCard src={results[0]} />
-          <TallCard src={results[1]} />
-          <TallCard src={results[2]} />
-        </div>
-
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-16 text-center">
-          <div className="text-5xl font-extrabold text-white drop-shadow">Ready for your brand?</div>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-sky-400 text-white px-10 py-4 text-xl font-semibold shadow-[0_20px_50px_rgba(0,0,0,0.35)]"
-          >
-            Try ProductShotAI
-          </motion.button>
-        </div>
+        <TallCard src={results[0]} />
+        <TallCard src={results[1]} />
+        <TallCard src={results[2]} />
+      </motion.div>
+      <motion.div
+        className="shrink-0 pt-3 pb-1 md:pt-4 flex flex-col items-center justify-center text-center"
+        initial={false}
+        style={{ opacity: enter }}
+      >
+        <p className="text-base md:text-lg font-bold text-on-dark font-sans">Ready for your brand?</p>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="mt-2 rounded-full bg-brand text-rich-black px-5 py-2 md:px-6 md:py-2.5 text-sm md:text-base font-semibold shadow-soft font-sans"
+        >
+          Try ProductShotAI
+        </motion.button>
       </motion.div>
     </div>
   )
@@ -758,8 +718,8 @@ function OutroCTA({ t, results }: { t: number; results: [string, string, string]
 
 function TallCard({ src }: { src: string }) {
   return (
-    <div className="flex-1 rounded-3xl overflow-hidden border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-      <img src={src} alt="CTA card" className="w-full h-full object-cover" />
+    <div className="flex-1 min-w-0 rounded-xl overflow-hidden border border-white/15 shadow-soft">
+      <img src={src} alt="Result" className="w-full h-full object-cover" />
     </div>
   )
 }
