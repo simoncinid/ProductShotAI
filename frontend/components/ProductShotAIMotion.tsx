@@ -162,6 +162,48 @@ function TypeLine({
   )
 }
 
+/** Segmento di testo con stile (indici inclusi start, esclusi end) */
+type TextSegment = { start: number; end: number; className: string }
+
+/** Scrive una stringa lettera per lettera dall'inizio, con segmenti stilizzati (giallo, corsivo, ecc.) */
+function TypedTextWithStyles({
+  fullText,
+  segments,
+  charCount,
+  showCursor,
+}: {
+  fullText: string
+  segments: TextSegment[]
+  charCount: number
+  showCursor: boolean
+}) {
+  if (charCount <= 0) {
+    return showCursor ? <Cursor /> : null
+  }
+  const visible = fullText.slice(0, charCount)
+  const parts: { text: string; className: string }[] = []
+  let pos = 0
+  while (pos < visible.length) {
+    const seg = segments.find((s) => s.start <= pos && s.end > pos)
+    const end = seg ? Math.min(seg.end, visible.length) : visible.length
+    const text = fullText.slice(pos, end)
+    if (text.length > 0) {
+      parts.push({ text, className: seg?.className ?? 'text-on-dark' })
+    }
+    pos = end
+  }
+  return (
+    <>
+      {parts.map((p, i) => (
+        <span key={i} className={p.className}>
+          {p.text}
+        </span>
+      ))}
+      {showCursor ? <Cursor /> : null}
+    </>
+  )
+}
+
 function UnderlineSweep({ t, start, end }: { t: number; start: number; end: number }) {
   const p = easeOutCubic(progressBetween(t, start, end))
   return (
@@ -307,51 +349,58 @@ export default function ProductShotAIMotion({
 }
 
 // ---------------------------------
-// Scene: Intro (step 0) – riempie il div, parole in corsivo e giallo
+// Scene: Intro (step 0) – dall’angolo in alto a sinistra, una lettera alla volta
 // ---------------------------------
+const INTRO_LINE1 = 'Your brand. One product photo. Full photoshoot.'
+const INTRO_LINE1_SEGMENTS: TextSegment[] = [
+  { start: 0, end: 5, className: 'text-on-dark font-bold' },
+  { start: 5, end: 10, className: 'text-brand font-bold' },
+  { start: 10, end: 16, className: 'text-on-dark font-bold' },
+  { start: 16, end: 24, className: 'text-on-dark font-bold italic' },
+  { start: 24, end: 32, className: 'text-on-dark font-bold' },
+  { start: 32, end: 37, className: 'text-on-dark font-bold' },
+  { start: 37, end: 47, className: 'text-brand font-bold' },
+  { start: 47, end: 48, className: 'text-on-dark font-bold' },
+]
+
+const INTRO_LINE2 = 'A creative hub that keeps every shot on-brand.'
+const INTRO_LINE2_SEGMENTS: TextSegment[] = [
+  { start: 0, end: 3, className: 'text-gray-300 font-medium' },
+  { start: 3, end: 15, className: 'text-on-dark font-medium italic' },
+  { start: 15, end: 36, className: 'text-gray-300 font-medium' },
+  { start: 36, end: 45, className: 'text-brand font-medium' },
+  { start: 45, end: 46, className: 'text-gray-300 font-medium' },
+]
+
 function IntroScene({ t }: { t: number }) {
+  const p1 = progressBetween(t, 0.4, 3.2)
+  const p2 = progressBetween(t, 2.8, 5.2)
+  const chars1 = Math.floor(INTRO_LINE1.length * easeOutCubic(p1))
+  const chars2 = Math.floor(INTRO_LINE2.length * easeOutCubic(p2))
+  const cursorOnLine1 = p1 < 1
+  const cursorOnLine2 = !cursorOnLine1 && p2 < 1
+
   return (
-    <div className="absolute inset-0 flex items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-4xl text-center">
-        <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight font-bold tracking-tight text-on-dark font-sans">
-          <div className="flex flex-wrap justify-center gap-x-2 md:gap-x-3 items-baseline">
-            <span>Your</span>
-            <span className="w-1.5 md:w-2 shrink-0" aria-hidden />
-            <em className="not-italic text-brand">
-              <TypeLine text="brand" t={t} start={0.8} end={1.5} />
-            </em>
-            <span className="ml-0.5">.</span>
-            <span className="w-2 md:w-3 shrink-0" aria-hidden />
-            <span>One</span>
-            <span className="w-1.5 md:w-2 shrink-0" aria-hidden />
-            <em className="text-on-dark">
-              <TypeLine text="product" t={t} start={1.3} end={2} />
-            </em>
-            <span className="w-1.5 md:w-2 shrink-0" aria-hidden />
-            <span>photo.</span>
-          </div>
-          <div className="mt-5 md:mt-8 flex flex-wrap justify-center gap-x-2 md:gap-x-3 items-baseline">
-            <span>Full</span>
-            <span className="w-1.5 md:w-2 shrink-0" aria-hidden />
-            <span className="text-brand">
-              <TypeLine text="photoshoot" t={t} start={1.8} end={2.8} />
-            </span>
-            <span>.</span>
-          </div>
-        </div>
-        <div className="mt-4 md:mt-6 text-base md:text-lg lg:text-xl text-gray-300 max-w-2xl mx-auto">
-          <span>A </span>
-          <em className="text-on-dark">
-            <TypeLine text="creative hub" t={t} start={2.8} end={3.8} showCursor={false} />
-          </em>
-          <span> that keeps every shot </span>
-          <span className="text-brand">
-            <TypeLine text="on-brand" t={t} start={3.5} end={4.4} showCursor={false} />
-          </span>
-          <span>.</span>
-        </div>
-        <div className="mt-3 max-w-md mx-auto">
-          <UnderlineSweep t={t} start={3.8} end={5.2} />
+    <div className="absolute inset-0 p-6 md:p-8 text-left">
+      <div className="max-w-3xl">
+        <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-snug tracking-tight font-sans">
+          <TypedTextWithStyles
+            fullText={INTRO_LINE1}
+            segments={INTRO_LINE1_SEGMENTS}
+            charCount={chars1}
+            showCursor={cursorOnLine1}
+          />
+        </p>
+        <p className="mt-3 md:mt-4 text-sm md:text-base lg:text-lg text-gray-300 font-sans leading-snug">
+          <TypedTextWithStyles
+            fullText={INTRO_LINE2}
+            segments={INTRO_LINE2_SEGMENTS}
+            charCount={chars2}
+            showCursor={cursorOnLine2}
+          />
+        </p>
+        <div className="mt-3 max-w-md">
+          <UnderlineSweep t={t} start={4.2} end={6} />
         </div>
       </div>
     </div>
