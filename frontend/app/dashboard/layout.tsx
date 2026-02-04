@@ -11,7 +11,7 @@ const navItems = [
   { href: '/dashboard', label: 'Overview' },
   { href: '/dashboard/brand-identity', label: 'Brand Identity' },
   { href: '/dashboard/products', label: 'Products' },
-  { href: '/dashboard/generations-no-product', label: 'Generations (No product)' },
+  { href: '/dashboard/generations', label: 'Generations' },
 ]
 
 export default function DashboardLayout({
