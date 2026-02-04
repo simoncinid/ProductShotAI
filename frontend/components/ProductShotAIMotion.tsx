@@ -314,19 +314,25 @@ function IntroScene({ t }: { t: number }) {
     <div className="absolute inset-0 flex items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-4xl text-center">
         <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight font-bold tracking-tight text-on-dark font-sans">
-          <div className="flex flex-wrap justify-center gap-x-1">
-            <span>Your </span>
+          <div className="flex flex-wrap justify-center gap-x-2 md:gap-x-3 items-baseline">
+            <span>Your</span>
+            <span className="w-1.5 md:w-2 shrink-0" aria-hidden />
             <em className="not-italic text-brand">
               <TypeLine text="brand" t={t} start={0.8} end={1.5} />
             </em>
-            <span>. One </span>
+            <span className="ml-0.5">.</span>
+            <span className="w-2 md:w-3 shrink-0" aria-hidden />
+            <span>One</span>
+            <span className="w-1.5 md:w-2 shrink-0" aria-hidden />
             <em className="text-on-dark">
               <TypeLine text="product" t={t} start={1.3} end={2} />
             </em>
-            <span> photo.</span>
+            <span className="w-1.5 md:w-2 shrink-0" aria-hidden />
+            <span>photo.</span>
           </div>
-          <div className="mt-5 md:mt-8 flex flex-wrap justify-center gap-x-1">
-            <span>Full </span>
+          <div className="mt-5 md:mt-8 flex flex-wrap justify-center gap-x-2 md:gap-x-3 items-baseline">
+            <span>Full</span>
+            <span className="w-1.5 md:w-2 shrink-0" aria-hidden />
             <span className="text-brand">
               <TypeLine text="photoshoot" t={t} start={1.8} end={2.8} />
             </span>
