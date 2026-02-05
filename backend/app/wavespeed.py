@@ -16,7 +16,7 @@ class WaveSpeedClient:
         self,
         image_url: str,
         prompt: str,
-        resolution: str = "8k",
+        resolution: str = "4k",  # 4k=1 credito, 8k=2 crediti (scelta lato API)
         aspect_ratio: str = "1:1",
         enable_base64_output: bool = False,
         enable_sync_mode: bool = False,

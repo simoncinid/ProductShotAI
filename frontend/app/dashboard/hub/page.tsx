@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { productsApi, generationApi, getAbsoluteImageUrl, getDeviceId } from '@/lib/api'
+import { productsApi, generationApi, userApi, getAbsoluteImageUrl, getDeviceId } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
@@ -65,6 +65,16 @@ export default function HubPage() {
     queryFn: () => productsApi.get(effectiveProductId!),
     enabled: isAuthenticated() && !!effectiveProductId,
   })
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: userApi.getMe,
+    enabled: isAuthenticated(),
+  })
+  const credits = user?.credits_balance ?? 0
+  const canChoose8k = credits >= 2
+  useEffect(() => {
+    if (!canChoose8k && resolution === '8k') setResolution('4k')
+  }, [canChoose8k, resolution])
 
   useEffect(() => {
     if (!isAuthenticated()) router.push('/login')
@@ -278,8 +288,11 @@ export default function HubPage() {
               className="w-full border border-gray-500 rounded-lg px-3 py-2 bg-white text-gray-900"
             >
               <option value="4k">4K — 1 credito</option>
-              <option value="8k">8K — 2 crediti</option>
+              <option value="8k" disabled={!canChoose8k}>8K — 2 crediti{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}</option>
             </select>
+            {!canChoose8k && (
+              <p className="mt-1 text-xs text-amber-400">8K solo con almeno 2 crediti. Attuali: {credits}</p>
+            )}
           </div>
 
           <button

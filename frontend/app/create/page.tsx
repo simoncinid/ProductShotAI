@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { uploadApi, generationApi, productsApi, brandIdentityApi, getDeviceId, getAbsoluteImageUrl } from '@/lib/api'
+import { uploadApi, generationApi, productsApi, brandIdentityApi, userApi, getDeviceId, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
@@ -73,6 +73,16 @@ export default function CreatePage() {
     enabled: authenticated && !selectedProductId && applyBrandIdentity,
     retry: false,
   })
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: userApi.getMe,
+    enabled: authenticated,
+  })
+  const credits = user?.credits_balance ?? 0
+  const canChoose8k = credits >= 2
+  useEffect(() => {
+    if (authenticated && !canChoose8k && resolution === '8k') setResolution('4k')
+  }, [authenticated, canChoose8k, resolution])
   const selectedProduct = selectedProductId ? products.find((p: { id: string }) => p.id === selectedProductId) : null
   const noProductWantsBrandButMissing = authenticated && !selectedProductId && applyBrandIdentity && brandFetched && !brandIdentity
 
@@ -326,8 +336,11 @@ export default function CreatePage() {
                     className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                   >
                     <option value="4k">4K — 1 credito</option>
-                    <option value="8k">8K — 2 crediti</option>
+                    <option value="8k" disabled={!canChoose8k}>8K — 2 crediti{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}</option>
                   </select>
+                  {!canChoose8k && (
+                    <p className="mt-1 text-[13px] text-amber-600">8K disponibile solo con almeno 2 crediti. Attuali: {credits}</p>
+                  )}
                 </div>
               )}
             </div>

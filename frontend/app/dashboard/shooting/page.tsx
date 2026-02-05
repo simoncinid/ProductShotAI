@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { productsApi, uploadApi, shootingApi, getAbsoluteImageUrl } from '@/lib/api'
+import { productsApi, uploadApi, shootingApi, userApi, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { EditPromptWithAI } from '@/components/EditPromptWithAI'
@@ -42,6 +42,16 @@ export default function ShootingWizardPage() {
     queryFn: productsApi.list,
     enabled: isAuthenticated(),
   })
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: userApi.getMe,
+    enabled: isAuthenticated(),
+  })
+  const credits = user?.credits_balance ?? 0
+  const canChoose8k = credits >= 2
+  useEffect(() => {
+    if (!canChoose8k && resolution === '8k') setResolution('4k')
+  }, [canChoose8k, resolution])
 
   const { data: productDetail } = useQuery({
     queryKey: ['product', productId],
@@ -326,8 +336,11 @@ export default function ShootingWizardPage() {
               className="w-full border border-gray-500 rounded-lg px-3 py-2 bg-white text-gray-900 mb-3"
             >
               <option value="4k">4K — 1 credito per immagine</option>
-              <option value="8k">8K — 2 crediti per immagine</option>
+              <option value="8k" disabled={!canChoose8k}>8K — 2 crediti per immagine{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}</option>
             </select>
+            {!canChoose8k && (
+              <p className="text-xs text-amber-400 mb-2">8K disponibile solo con almeno 2 crediti. Attuali: {credits}</p>
+            )}
           </div>
           <p className="text-gray-400">
             {prompts.length} immagini × {resolution === '8k' ? 2 : 1} credito/i = {prompts.length * (resolution === '8k' ? 2 : 1)} crediti totali.

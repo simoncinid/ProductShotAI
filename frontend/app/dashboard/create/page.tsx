@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { useMutation } from '@tanstack/react-query'
-import { uploadApi, generationApi, getDeviceId, getAbsoluteImageUrl } from '@/lib/api'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { uploadApi, generationApi, userApi, getDeviceId, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
@@ -46,6 +46,17 @@ export default function DashboardCreatePage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const stopPollingRef = useRef<(() => void) | null>(null)
+
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: userApi.getMe,
+    enabled: isAuthenticated(),
+  })
+  const credits = user?.credits_balance ?? 0
+  const canChoose8k = credits >= 2
+  useEffect(() => {
+    if (!canChoose8k && resolution === '8k') setResolution('4k')
+  }, [canChoose8k, resolution])
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -253,8 +264,11 @@ export default function DashboardCreatePage() {
               className="w-full border border-gray-500 rounded-md px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:border-transparent"
             >
               <option value="4k">4K — 1 credito</option>
-              <option value="8k">8K — 2 crediti</option>
+              <option value="8k" disabled={!canChoose8k}>8K — 2 crediti{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}</option>
             </select>
+            {!canChoose8k && (
+              <p className="mt-1 text-xs text-amber-400">8K disponibile solo con almeno 2 crediti. Attuali: {credits}</p>
+            )}
           </div>
         </div>
 
