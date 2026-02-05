@@ -47,6 +47,7 @@ export default function CreatePage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [prompt, setPrompt] = useState('')
   const [aspectRatio, setAspectRatio] = useState('1:1')
+  const [resolution, setResolution] = useState<'4k' | '8k'>('4k') // 8k = 2 crediti, 4k = 1 credito (solo se loggato)
   const [loadingIndex, setLoadingIndex] = useState(0)
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -177,7 +178,7 @@ export default function CreatePage() {
     const basePayload = {
       image_url: imageUrl,
       aspect_ratio: aspectRatio,
-      resolution: '8k',
+      resolution: authenticated ? resolution : '4k',
       device_id: getDeviceId(),
     }
     if (authenticated) {
@@ -316,6 +317,19 @@ export default function CreatePage() {
                   <option value="16:9">16:9 (Landscape)</option>
                 </select>
               </div>
+              {authenticated && (
+                <div className="mt-6">
+                  <label className="block text-[15px] font-semibold text-primary md:text-base">Risoluzione</label>
+                  <select
+                    value={resolution}
+                    onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
+                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                  >
+                    <option value="4k">4K — 1 credito</option>
+                    <option value="8k">8K — 2 crediti</option>
+                  </select>
+                </div>
+              )}
             </div>
 
             {/* Prompt + Generate */}

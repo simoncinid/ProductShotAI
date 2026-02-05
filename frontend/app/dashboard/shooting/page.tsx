@@ -28,6 +28,7 @@ export default function ShootingWizardPage() {
   const [referenceFile, setReferenceFile] = useState<File | null>(null)
   const [count, setCount] = useState(4)
   const [shootingStyle, setShootingStyle] = useState(SHOOTING_STYLE_OPTIONS[0].value)
+  const [resolution, setResolution] = useState<'4k' | '8k'>('4k')
   const [prompts, setPrompts] = useState<string[]>([])
   const [promptIndex, setPromptIndex] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -75,7 +76,7 @@ export default function ShootingWizardPage() {
   })
 
   const generateMutation = useMutation({
-    mutationFn: (data: { product_id: string; reference_image_url: string; prompts: string[]; aspect_ratio: string }) => shootingApi.generate(data),
+    mutationFn: (data: { product_id: string; reference_image_url: string; prompts: string[]; aspect_ratio: string; resolution: string }) => shootingApi.generate(data),
     onSuccess: (data) => {
       toast.success('Shooting started')
       router.push(`/dashboard/shooting/${data.shooting_id}`)
@@ -119,6 +120,7 @@ export default function ShootingWizardPage() {
       reference_image_url: referenceImageUrl,
       prompts,
       aspect_ratio: '1:1',
+      resolution,
     })
   }
 
@@ -316,7 +318,20 @@ export default function ShootingWizardPage() {
       {step === 4 && (
         <div className="space-y-6">
           <h2 className="text-lg font-semibold text-white">Generate shooting</h2>
-          <p className="text-gray-400">{prompts.length} images will be generated (1 credit each).</p>
+          <div>
+            <label className="block text-sm font-medium text-gray-200 mb-2">Risoluzione</label>
+            <select
+              value={resolution}
+              onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
+              className="w-full border border-gray-500 rounded-lg px-3 py-2 bg-white text-gray-900 mb-3"
+            >
+              <option value="4k">4K — 1 credito per immagine</option>
+              <option value="8k">8K — 2 crediti per immagine</option>
+            </select>
+          </div>
+          <p className="text-gray-400">
+            {prompts.length} immagini × {resolution === '8k' ? 2 : 1} credito/i = {prompts.length * (resolution === '8k' ? 2 : 1)} crediti totali.
+          </p>
           <button
             type="button"
             onClick={handleStartGeneration}

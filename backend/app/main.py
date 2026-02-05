@@ -442,13 +442,14 @@ async def _process_wavespeed_webhook_task(
                     logger.warning(f"increment_free_generation_count failed (gen {gen.id}): {inc}")
 
             if not gen.is_free and gen.user_id:
+                credits_to_deduct = 2 if gen.resolution == "8k" else 1
                 r2 = await db.execute(select(User).where(User.id == gen.user_id))
                 user = r2.scalar_one_or_none()
                 if user:
-                    user.credits_balance -= 1
+                    user.credits_balance -= credits_to_deduct
                     db.add(CreditTransaction(
                         user_id=user.id,
-                        change_amount=-1,
+                        change_amount=-credits_to_deduct,
                         type="generation",
                         reference_id=gen.id,
                     ))
@@ -543,11 +544,13 @@ async def generate_paid(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    """Generate image for paid users (no watermark). Product/Brand Identity: composizione prompt e snapshot."""
-    if current_user.credits_balance < 1:
+    """Generate image for paid users (no watermark). 4k=1 credito, 8k=2 crediti."""
+    resolution = generate_request.resolution or "4k"
+    credits_required = 2 if resolution == "8k" else 1
+    if current_user.credits_balance < credits_required:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Insufficient credits. Please purchase credits to continue."
+            detail=f"Insufficient credits. {'8K' if resolution == '8k' else '4K'} requires {credits_required} credit(s). Please purchase credits to continue."
         )
     ip_address = utils.get_client_ip(request)
 
@@ -600,7 +603,7 @@ async def generate_paid(
     )
 
     input_params = {
-        "resolution": generate_request.resolution or "8k",
+        "resolution": resolution,
         "aspect_ratio": generate_request.aspect_ratio or "1:1",
         "model_name": "nano-banana-pro/edit-ultra",
     }
@@ -611,7 +614,7 @@ async def generate_paid(
         ip_address=ip_address,
         input_image_url=generate_request.image_url,
         prompt=final_prompt,
-        resolution=generate_request.resolution or "8k",
+        resolution=resolution,
         aspect_ratio=generate_request.aspect_ratio,
         is_free=False,
         status="pending",
@@ -634,7 +637,7 @@ async def generate_paid(
         task_result = await ws.create_edit_task(
             image_url=image_url,
             prompt=final_prompt,
-            resolution=generate_request.resolution or "8k",
+            resolution=resolution,
             aspect_ratio=generate_request.aspect_ratio or "1:1",
             webhook_url=webhook_url,
         )

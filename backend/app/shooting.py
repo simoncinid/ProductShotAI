@@ -52,6 +52,7 @@ class ShootingGenerateRequest(BaseModel):
     reference_image_url: str
     prompts: List[str] = Field(..., min_length=2, max_length=10)
     aspect_ratio: str = Field(default="1:1", pattern="^(1:1|4:5|16:9)$")
+    resolution: str = Field(default="4k", pattern="^(4k|8k)$")  # 4k=1 credito per immagine, 8k=2 crediti
 
 
 class ShootingGenerateResponse(BaseModel):
@@ -100,12 +101,14 @@ async def generate_shooting(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Crea un ProductShooting e N Generation, avvia N task WaveSpeed. Richiede N crediti."""
+    """Crea un ProductShooting e N Generation, avvia N task WaveSpeed. 4k=1 credito/immagine, 8k=2 crediti/immagine."""
     n = len(body.prompts)
-    if current_user.credits_balance < n:
+    credits_per_image = 2 if body.resolution == "8k" else 1
+    credits_required = n * credits_per_image
+    if current_user.credits_balance < credits_required:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"Insufficient credits. Need {n} credits, you have {current_user.credits_balance}.",
+            detail=f"Insufficient credits. Need {credits_required} credits ({n} images × {credits_per_image}), you have {current_user.credits_balance}.",
         )
 
     r = await db.execute(
@@ -158,7 +161,7 @@ async def generate_shooting(
             ip_address=ip_address,
             input_image_url=body.reference_image_url,
             prompt=final_prompt,
-            resolution="8k",
+            resolution=body.resolution,
             aspect_ratio=body.aspect_ratio,
             is_free=False,
             status="pending",
@@ -179,7 +182,7 @@ async def generate_shooting(
             task_result = await ws.create_edit_task(
                 image_url=ref_url_abs,
                 prompt=final_prompt,
-                resolution="8k",
+                resolution=body.resolution,
                 aspect_ratio=body.aspect_ratio,
                 webhook_url=webhook_url,
             )

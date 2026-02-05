@@ -287,10 +287,11 @@ export const shootingApi = {
     const response = await api.post('/api/shooting/prompts', data)
     return response.data as { prompts: string[] }
   },
-  generate: async (data: { product_id: string; reference_image_url: string; prompts: string[]; aspect_ratio?: string }) => {
+  generate: async (data: { product_id: string; reference_image_url: string; prompts: string[]; aspect_ratio?: string; resolution?: string }) => {
     const response = await api.post('/api/shooting/generate', {
       ...data,
       aspect_ratio: data.aspect_ratio || '1:1',
+      resolution: data.resolution || '4k',
     })
     return response.data as { shooting_id: string; generation_ids: string[] }
   },

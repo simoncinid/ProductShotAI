@@ -12,7 +12,7 @@ import toast from 'react-hot-toast'
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
 const creditFeatures = [
-  'One credit = one high-quality 8K image generation',
+  '1 credit = 4K image, 2 credits = 8K image',
   'Credits never expire — use them whenever you need',
   'No monthly fees or subscriptions',
   'Buy more credits anytime to add to your balance',

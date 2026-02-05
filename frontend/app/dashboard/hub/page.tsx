@@ -46,6 +46,7 @@ export default function HubPage() {
   const [mode, setMode] = useState<'similar' | 'modify'>('similar')
   const [prompt, setPrompt] = useState('')
   const [aspectRatio, setAspectRatio] = useState('1:1')
+  const [resolution, setResolution] = useState<'4k' | '8k'>('4k')
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const stopPollingRef = useRef<(() => void) | null>(null)
@@ -137,7 +138,7 @@ export default function HubPage() {
           prompt: product!.product_prompt,
           image_url: displayImageUrl,
           aspect_ratio: aspectRatio,
-          resolution: '8k',
+          resolution,
           device_id: getDeviceId(),
           product_id: hubProductId,
           apply_brand_identity: product?.default_apply_brand_identity ?? false,
@@ -147,7 +148,7 @@ export default function HubPage() {
           prompt: prompt.trim(),
           image_url: displayImageUrl,
           aspect_ratio: aspectRatio,
-          resolution: '8k',
+          resolution,
           device_id: getDeviceId(),
         }
     generateMutation.mutate(payload)
@@ -267,6 +268,17 @@ export default function HubPage() {
               <option value="1:1">1:1 (Square)</option>
               <option value="4:5">4:5 (Portrait)</option>
               <option value="16:9">16:9 (Landscape)</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-200 mb-2">Risoluzione</label>
+            <select
+              value={resolution}
+              onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
+              className="w-full border border-gray-500 rounded-lg px-3 py-2 bg-white text-gray-900"
+            >
+              <option value="4k">4K — 1 credito</option>
+              <option value="8k">8K — 2 crediti</option>
             </select>
           </div>
 

@@ -23,7 +23,7 @@ export default function DashboardPage() {
               {user?.credits_balance || 0} Credits
             </h2>
             <p className="text-rich-black/90">
-              Each credit = 1 high-quality 8K image
+              1 credit = 4K image, 2 credits = 8K image
             </p>
           </div>
           <Link

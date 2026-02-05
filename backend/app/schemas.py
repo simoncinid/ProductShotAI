@@ -62,7 +62,7 @@ class GenerateRequest(BaseModel):
     prompt: str = Field(..., min_length=1, max_length=1000)
     image_url: str
     aspect_ratio: str = Field(default="1:1", pattern="^(1:1|4:5|16:9)$")
-    resolution: str = Field(default="8k", pattern="^(4k|8k)$")
+    resolution: str = Field(default="4k", pattern="^(4k|8k)$")  # 4k=1 credito, 8k=2 crediti
     device_id: Optional[str] = None
     # Brand Identity & Product (solo per utenti loggati)
     product_id: Optional[str] = None
