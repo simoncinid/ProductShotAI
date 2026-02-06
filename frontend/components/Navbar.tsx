@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 
 const navLinks = [
   { href: '/how-it-works', label: 'How it works' },
+  { href: '/use-cases', label: 'Use cases' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/faq', label: 'FAQ' },
   { href: '/blog', label: 'Blog' },
@@ -60,6 +61,9 @@ export function Navbar() {
             <>
               <Link href="/how-it-works" className={`px-3 py-2 text-[14px] font-medium transition hover:text-primary ${isActive('/how-it-works') ? 'text-primary font-semibold' : 'text-secondary'}`}>
                 How it works
+              </Link>
+              <Link href="/use-cases" className={`px-3 py-2 text-[14px] font-medium transition hover:text-primary ${isActive('/use-cases') ? 'text-primary font-semibold' : 'text-secondary'}`}>
+                Use cases
               </Link>
               <Link href="/pricing" className={`px-3 py-2 text-[14px] font-medium transition hover:text-primary ${isActive('/pricing') ? 'text-primary font-semibold' : 'text-secondary'}`}>
                 Pricing
@@ -146,6 +150,7 @@ export function Navbar() {
           {authenticated ? (
             <>
               <Link href="/how-it-works" className={`py-3 text-base font-medium ${isActive('/how-it-works') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>How it works</Link>
+              <Link href="/use-cases" className={`py-3 text-base font-medium ${isActive('/use-cases') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Use cases</Link>
               <Link href="/pricing" className={`py-3 text-base font-medium ${isActive('/pricing') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Pricing</Link>
               <Link href="/faq" className={`py-3 text-base font-medium ${isActive('/faq') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>FAQ</Link>
               <Link href="/blog" className={`py-3 text-base font-medium ${isActive('/blog') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Blog</Link>
