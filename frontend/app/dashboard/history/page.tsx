@@ -28,9 +28,9 @@ export default function DashboardHistoryPage() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#1a1a2e]">
+      <div className="min-h-screen flex items-center justify-center bg-page-bg">
         <div className="text-center">
-          <p className="text-gray-400">Loading...</p>
+          <p className="text-muted">Loading...</p>
         </div>
       </div>
     )
@@ -44,30 +44,30 @@ export default function DashboardHistoryPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-on-dark mb-2">
             Generation History
           </h1>
-          <p className="text-gray-400">
+          <p className="text-muted">
             All your AI-generated product photos
           </p>
         </div>
         <Link
           href="/dashboard"
-          className="text-vivid-yellow hover:underline font-medium self-start sm:self-auto"
+          className="text-brand hover:underline font-medium self-start sm:self-auto"
         >
           ← Back to Dashboard
         </Link>
       </div>
 
       {isLoading ? (
-        <p className="text-gray-400">Loading generations...</p>
+        <p className="text-muted">Loading generations...</p>
       ) : data && data.items.length > 0 ? (
         <>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.items.map((gen: any) => (
               <div
                 key={gen.id}
-                className="bg-white border border-gray-300 rounded-lg overflow-hidden hover:shadow-lg transition"
+                className="bg-cream border border-muted/50 rounded-lg overflow-hidden hover:shadow-lg transition"
               >
                 {gen.output_image_url ? (
                   <img
@@ -76,19 +76,19 @@ export default function DashboardHistoryPage() {
                     className="w-full h-48 object-cover"
                   />
                 ) : (
-                  <div className="w-full h-48 bg-gray-100 flex items-center justify-center">
-                    <span className="text-gray-500">{gen.status}</span>
+                  <div className="w-full h-48 bg-muted/20 flex items-center justify-center">
+                    <span className="text-muted-dark">{gen.status}</span>
                   </div>
                 )}
                 <div className="p-4">
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">{gen.prompt}</p>
-                  <div className="flex flex-wrap justify-between items-center gap-2 text-xs text-gray-500">
+                  <p className="text-sm text-muted-dark mb-2 line-clamp-2">{gen.prompt}</p>
+                  <div className="flex flex-wrap justify-between items-center gap-2 text-xs text-muted-dark">
                     <span>{new Date(gen.created_at).toLocaleDateString()}</span>
                     {gen.output_image_url && (
                       <a
                         href={getAbsoluteImageUrl(gen.output_image_url) ?? gen.output_image_url}
                         download
-                        className="text-rich-black hover:underline font-medium"
+                        className="text-brand hover:underline font-medium"
                       >
                         Download
                       </a>
@@ -104,17 +104,17 @@ export default function DashboardHistoryPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!hasPrev}
-                className="px-4 py-2 rounded-md border border-gray-500 bg-white/10 text-gray-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/20"
+                className="px-4 py-2 rounded-md border border-muted bg-on-dark/10 text-on-dark font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-on-dark/20"
               >
                 Previous
               </button>
-              <span className="px-4 py-2 text-gray-400">
+              <span className="px-4 py-2 text-muted">
                 Page {page} of {totalPages}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={!hasNext}
-                className="px-4 py-2 rounded-md border border-gray-500 bg-white/10 text-gray-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/20"
+                className="px-4 py-2 rounded-md border border-muted bg-on-dark/10 text-on-dark font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-on-dark/20"
               >
                 Next
               </button>
@@ -122,11 +122,11 @@ export default function DashboardHistoryPage() {
           )}
         </>
       ) : (
-        <div className="bg-white/10 border border-gray-600 rounded-lg p-12 text-center">
-          <p className="text-gray-300 mb-4">No generations yet</p>
+        <div className="bg-on-dark/10 border border-muted-dark/60 rounded-lg p-12 text-center">
+          <p className="text-muted mb-4">No generations yet</p>
           <Link
             href="/dashboard/create"
-            className="inline-block bg-vivid-yellow text-rich-black px-6 py-3 rounded-md font-semibold hover:opacity-90"
+            className="inline-block bg-brand text-on-brand px-6 py-3 rounded-md font-semibold hover:opacity-90"
           >
             Create Your First Image
           </Link>

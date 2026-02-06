@@ -167,8 +167,8 @@ export default function HubPage() {
   if (!displayImageUrl && !generationId && !productId) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-gray-300">Specify an image via link (product_id + image_id, generation_id, or image_url).</p>
-        <Link href="/dashboard/products" className="mt-4 inline-block text-vivid-yellow hover:underline">← Products</Link>
+        <p className="text-muted">Specify an image via link (product_id + image_id, generation_id, or image_url).</p>
+        <Link href="/dashboard/products" className="mt-4 inline-block text-brand hover:underline">← Products</Link>
       </div>
     )
   }
@@ -176,8 +176,8 @@ export default function HubPage() {
   if (productId && !imageUrlParam && !imageId && !generationId) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-gray-300">Missing image_id or image_url for this product.</p>
-        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-vivid-yellow hover:underline">← Product</Link>
+        <p className="text-muted">Missing image_id or image_url for this product.</p>
+        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-brand hover:underline">← Product</Link>
       </div>
     )
   }
@@ -185,8 +185,8 @@ export default function HubPage() {
   if (productId && imageId && product && !product.images?.find((i: { id: string }) => i.id === imageId)) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-gray-300">Image not found for this product.</p>
-        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-vivid-yellow hover:underline">← Product</Link>
+        <p className="text-muted">Image not found for this product.</p>
+        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-brand hover:underline">← Product</Link>
       </div>
     )
   }
@@ -194,8 +194,8 @@ export default function HubPage() {
   if (!displayImageUrl && (generationId || productId)) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-gray-400">Loading image...</p>
-        <Link href="/dashboard" className="mt-4 inline-block text-vivid-yellow hover:underline">← Dashboard</Link>
+        <p className="text-muted">Loading image...</p>
+        <Link href="/dashboard" className="mt-4 inline-block text-brand hover:underline">← Dashboard</Link>
       </div>
     )
   }
@@ -203,18 +203,18 @@ export default function HubPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
-        <h1 className="text-2xl font-bold text-white">Creative Hub</h1>
+        <h1 className="text-2xl font-bold text-on-dark">Creative Hub</h1>
         <div className="flex items-center gap-3">
           <a
             href={displayImageUrl!}
             download
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 border border-gray-500 text-gray-200 hover:bg-white/20 font-medium"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-on-dark/10 border border-muted text-on-dark hover:bg-on-dark/20 font-medium"
             title="Download image"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
             Download
           </a>
-          <Link href={effectiveProductId ? `/dashboard/products/${effectiveProductId}` : '/dashboard'} className="text-vivid-yellow hover:underline">
+          <Link href={effectiveProductId ? `/dashboard/products/${effectiveProductId}` : '/dashboard'} className="text-brand hover:underline">
             {effectiveProductId ? '← Product' : '← Dashboard'}
           </Link>
         </div>
@@ -222,7 +222,7 @@ export default function HubPage() {
 
       <div className="grid md:grid-cols-2 gap-8">
         <div className="space-y-4">
-          <div className="rounded-xl overflow-hidden border border-gray-600 bg-white/10">
+          <div className="rounded-xl overflow-hidden border border-muted-dark/60 bg-on-dark/10">
             <img
               src={displayImageUrl!}
               alt="Reference"
@@ -230,7 +230,7 @@ export default function HubPage() {
             />
           </div>
           {canUseProductContext && (
-            <p className="text-sm text-gray-400">Product context active: prompt and brand identity will be applied if configured.</p>
+            <p className="text-sm text-muted">Product context active: prompt and brand identity will be applied if configured.</p>
           )}
         </div>
 
@@ -239,14 +239,14 @@ export default function HubPage() {
             <button
               type="button"
               onClick={() => setMode('similar')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${mode === 'similar' ? 'bg-vivid-yellow text-rich-black' : 'bg-white/10 text-gray-300 hover:bg-white/20 border border-gray-500'}`}
+              className={`px-4 py-2 rounded-lg font-medium transition ${mode === 'similar' ? 'bg-brand text-on-brand' : 'bg-on-dark/10 text-muted hover:bg-on-dark/20 border border-muted'}`}
             >
               Generate similar
             </button>
             <button
               type="button"
               onClick={() => setMode('modify')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${mode === 'modify' ? 'bg-vivid-yellow text-rich-black' : 'bg-white/10 text-gray-300 hover:bg-white/20 border border-gray-500'}`}
+              className={`px-4 py-2 rounded-lg font-medium transition ${mode === 'modify' ? 'bg-brand text-on-brand' : 'bg-on-dark/10 text-muted hover:bg-on-dark/20 border border-muted'}`}
             >
               Edit image
             </button>
@@ -254,7 +254,7 @@ export default function HubPage() {
 
           <div>
             <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
-              <label className="block text-sm font-medium text-gray-200">
+              <label className="block text-sm font-medium text-on-dark">
                 {mode === 'similar' ? 'Variation description (optional)' : 'What to change'}
               </label>
               <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
@@ -264,16 +264,16 @@ export default function HubPage() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder={mode === 'similar' ? 'E.g.: same colors, slightly lighter background...' : 'E.g.: change background to white, add soft shadow...'}
               rows={5}
-              className="w-full border border-gray-500 rounded-lg px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-vivid-yellow focus:border-transparent"
+              className="w-full border border-muted rounded-lg px-3 py-2 bg-cream text-primary placeholder:text-muted focus:ring-2 focus:ring-brand focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">Aspect ratio</label>
+            <label className="block text-sm font-medium text-on-dark mb-2">Aspect ratio</label>
             <select
               value={aspectRatio}
               onChange={(e) => setAspectRatio(e.target.value)}
-              className="w-full border border-gray-500 rounded-lg px-3 py-2 bg-white text-gray-900"
+              className="w-full border border-muted rounded-lg px-3 py-2 bg-cream text-primary"
             >
               <option value="1:1">1:1 (Square)</option>
               <option value="4:5">4:5 (Portrait)</option>
@@ -281,11 +281,11 @@ export default function HubPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">Risoluzione</label>
+            <label className="block text-sm font-medium text-on-dark mb-2">Risoluzione</label>
             <select
               value={resolution}
               onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-              className="w-full border border-gray-500 rounded-lg px-3 py-2 bg-white text-gray-900"
+              className="w-full border border-muted rounded-lg px-3 py-2 bg-cream text-primary"
             >
               <option value="4k">4K — 1 credito</option>
               <option value="8k" disabled={!canChoose8k}>8K — 2 crediti{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}</option>
@@ -299,7 +299,7 @@ export default function HubPage() {
             type="button"
             onClick={handleGenerate}
             disabled={!prompt.trim() || isGenerating}
-            className="w-full bg-gray-800 border border-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-surface border border-muted-dark/60 text-on-dark py-3 rounded-lg font-semibold hover:bg-surface/80 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isGenerating ? 'Generating…' : 'Generate'}
           </button>
@@ -307,7 +307,7 @@ export default function HubPage() {
           {imageUrlParam && (
             <Link
               href={`/dashboard/shooting?reference_url=${encodeURIComponent(imageUrlParam)}${productId ? `&product_id=${productId}` : ''}`}
-              className="block text-center text-sm text-vivid-yellow hover:underline mt-2"
+              className="block text-center text-sm text-brand hover:underline mt-2"
             >
               Use this image in a product photoshooting →
             </Link>

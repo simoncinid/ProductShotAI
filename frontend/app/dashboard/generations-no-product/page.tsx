@@ -9,7 +9,7 @@ export default function GenerationsNoProductRedirect() {
     router.replace('/dashboard/generations')
   }, [router])
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 text-gray-400">
+    <div className="max-w-5xl mx-auto px-4 py-8 text-muted">
       Redirecting to Generations...
     </div>
   )

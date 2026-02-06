@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 export function Footer() {
   return (
-    <footer className="border-t border-gray-200 bg-white">
+    <footer className="border-t border-muted/40 bg-cream">
       <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-4 px-6 py-8 md:flex-row md:px-10 lg:px-14">
         <Link href="/" className="flex items-center gap-2 text-[13px] font-extrabold tracking-wide text-primary">
           <Image src="/logo1.png" alt="" width={50} height={50} className="object-contain" />

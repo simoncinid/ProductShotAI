@@ -30,11 +30,11 @@ export default function FAQPage() {
         <div className={`${CONTAINER} relative`}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
-              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
               <p className="font-playfair-italic text-2xl text-on-dark md:text-3xl">Frequently Asked Questions</p>
-              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
             </div>
-            <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
+            <h1 className="mt-3 text-[28px] font-bold leading-tight text-on-dark md:text-[34px]">
               AI Product Photo & Product Photo AI – FAQ
             </h1>
           </div>
@@ -55,7 +55,7 @@ export default function FAQPage() {
             {faqs.map((faq, i) => (
               <div
                 key={i}
-                className={`overflow-hidden rounded-2xl border border-gray-200 bg-white transition-smooth hover:shadow-soft ${openIndex === i ? 'shadow-soft' : ''}`}
+                className={`overflow-hidden rounded-2xl border border-muted/60 bg-cream transition-smooth hover:shadow-soft ${openIndex === i ? 'shadow-soft' : ''}`}
               >
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
@@ -63,7 +63,7 @@ export default function FAQPage() {
                 >
                   {faq.q}
                   <span className={`ml-4 shrink-0 transition-transform duration-200 ${openIndex === i ? 'rotate-45' : ''}`}>
-                    <svg className="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-muted-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                   </span>
@@ -72,7 +72,7 @@ export default function FAQPage() {
                   className={`grid transition-all duration-200 ease-out ${openIndex === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
                 >
                   <div className="overflow-hidden">
-                    <p className="border-t border-gray-100 px-6 pb-4 pt-0 text-[14px] leading-relaxed text-secondary">{faq.a}</p>
+                    <p className="border-t border-muted/40 px-6 pb-4 pt-0 text-[14px] leading-relaxed text-muted-dark">{faq.a}</p>
                   </div>
                 </div>
               </div>
@@ -84,18 +84,18 @@ export default function FAQPage() {
       {/* ——— CTA Still have questions ——— */}
       <section className="bg-page-bg py-16 md:py-20">
         <div className={CONTAINER}>
-          <div className="mx-auto max-w-2xl rounded-[20px] border border-gray-100 bg-white p-8 text-center shadow-soft md:p-10">
+          <div className="mx-auto max-w-2xl rounded-[20px] border border-muted/40 bg-cream p-8 text-center shadow-soft md:p-10">
             <div className="flex items-center justify-center gap-4">
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
               <p className="font-playfair-italic text-2xl text-primary md:text-3xl">Still have questions?</p>
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
             </div>
-            <p className="mt-4 text-[16px] text-secondary">
+            <p className="mt-4 text-[16px] text-muted-dark">
               Can&apos;t find the answer you&apos;re looking for? Please reach out to our support team.
             </p>
             <a
               href="mailto:support@productshotai.com"
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-[15px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-[15px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
             >
               Contact Support
             </a>

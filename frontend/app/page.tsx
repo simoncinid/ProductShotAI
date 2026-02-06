@@ -64,14 +64,14 @@ const HOW_STEPS = [
 
 // Layout: mobile = colonna (titolo → media full width → testo), desktop = due colonne come prima
 const MEDIA_BOX_CLASS = 'h-[200px] w-full md:h-[240px] md:w-[240px] shrink-0'
-const MEDIA_BOX_LEFT_COL = 'hidden md:flex shrink-0 flex-col border-r border-gray-100 bg-gray-50/50 p-4 md:p-5'
+const MEDIA_BOX_LEFT_COL = 'hidden md:flex shrink-0 flex-col border-r border-muted/40 bg-muted/10 p-4 md:p-5'
 
 /** Prompt box: tag in alto, testo che riempie tutto il div */
 function PromptBox({ tag, text, className = '' }: { tag: string; text: string; className?: string }) {
   return (
-    <div className={`flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2 text-left md:p-2 ${className}`}>
-      <span className="shrink-0 truncate rounded bg-brand/15 px-1.5 py-0.5 text-[9px] font-semibold text-rich-black md:text-[10px]">{tag}</span>
-      <p className="min-h-0 flex-1 overflow-y-auto text-[9px] leading-tight text-gray-800 md:text-[10px]">{text}</p>
+    <div className={`flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-muted/60 bg-cream p-2 text-left md:p-2 ${className}`}>
+      <span className="shrink-0 truncate rounded bg-brand/15 px-1.5 py-0.5 text-[9px] font-semibold text-primary md:text-[10px]">{tag}</span>
+      <p className="min-h-0 flex-1 overflow-y-auto text-[9px] leading-tight text-primary md:text-[10px]">{text}</p>
     </div>
   )
 }
@@ -82,12 +82,12 @@ function ResultImageCell({ src, index, onExpand }: { src: string; index: number;
     <button
       type="button"
       onClick={() => onExpand(index)}
-      className="group flex flex-col overflow-hidden rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+      className="group flex flex-col overflow-hidden rounded-lg bg-muted/20 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
     >
       <span className="relative block min-h-0 flex-1">
         <Image src={src} alt="" width={80} height={80} className="h-full w-full object-cover transition group-hover:opacity-95" />
       </span>
-      <span className="flex shrink-0 items-center justify-center bg-black/60 py-1.5 text-white" aria-hidden>
+      <span className="flex shrink-0 items-center justify-center bg-primary/80 py-1.5 text-on-dark" aria-hidden>
         <svg className="h-3.5 w-3.5 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
         </svg>
@@ -100,13 +100,13 @@ function StepCard({ step, isActive, onResultImageClick }: { step: (typeof HOW_ST
   const { n, title, desc, media } = step
   return (
     <div
-      className={`flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-white shadow-soft transition-all duration-300 md:flex-row md:rounded-3xl ${
-        isActive ? 'border-brand/50 shadow-soft-hover scale-[1.02]' : 'border-gray-100 hover:border-brand/30 hover:shadow-soft-hover hover:scale-[1.01]'
+      className={`flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-cream shadow-soft transition-all duration-300 md:flex-row md:rounded-3xl ${
+        isActive ? 'border-brand/50 shadow-soft-hover scale-[1.02]' : 'border-muted/40 hover:border-brand/30 hover:shadow-soft-hover hover:scale-[1.01]'
       }`}
     >
       {/* Mobile: riga 1 — numero + titolo */}
-      <div className="flex flex-row items-center gap-3 border-b border-gray-100 p-4 md:hidden">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black">
+      <div className="flex flex-row items-center gap-3 border-b border-muted/40 p-4 md:hidden">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-on-brand">
           {n}
         </div>
         <h3 className="min-w-0 break-words text-base font-semibold text-primary">{title}</h3>
@@ -114,10 +114,10 @@ function StepCard({ step, isActive, onResultImageClick }: { step: (typeof HOW_ST
 
       {/* Colonna 1 (desktop) */}
       <div className={MEDIA_BOX_LEFT_COL}>
-        <div className="mb-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-rich-black md:h-9 md:w-9">
+        <div className="mb-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-on-brand md:h-9 md:w-9">
           {n}
         </div>
-        <div className={`flex items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm ${MEDIA_BOX_CLASS} md:rounded-xl`}>
+        <div className={`flex items-center justify-center overflow-hidden rounded-xl bg-cream shadow-sm ${MEDIA_BOX_CLASS} md:rounded-xl`}>
           {media === 'icon' && (
             <Image src="/icone/bradIdentity.png" alt="" width={120} height={120} className="h-16 w-16 object-contain md:h-20 md:w-20" />
           )}
@@ -143,7 +143,7 @@ function StepCard({ step, isActive, onResultImageClick }: { step: (typeof HOW_ST
 
       {/* Mobile: blocco media a tutta larghezza */}
       <div className="flex w-full px-4 py-4 md:hidden">
-        <div className={`flex w-full items-stretch justify-center overflow-hidden rounded-xl bg-gray-50 ${MEDIA_BOX_CLASS}`}>
+        <div className={`flex w-full items-stretch justify-center overflow-hidden rounded-xl bg-muted/10 ${MEDIA_BOX_CLASS}`}>
           {media === 'icon' && (
             <div className="flex items-center justify-center">
               <Image src="/icone/bradIdentity.png" alt="" width={100} height={100} className="h-20 w-20 object-contain" />
@@ -172,7 +172,7 @@ function StepCard({ step, isActive, onResultImageClick }: { step: (typeof HOW_ST
       {/* Colonna 2: titolo (solo desktop) + testo */}
       <div className="flex min-w-0 flex-1 flex-col justify-start p-4 md:p-5 md:pt-5">
         <h3 className="mb-3 hidden min-w-0 break-words text-[15px] font-semibold text-primary md:block md:text-base">{title}</h3>
-        <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-secondary md:text-[14px]">{desc}</p>
+        <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-muted-dark md:text-[14px]">{desc}</p>
       </div>
     </div>
   )
@@ -257,7 +257,7 @@ function HowItWorksCarousel({ sectionRef, onResultImageClick }: { sectionRef: Re
           <button
             type="button"
             onClick={() => goTo(index - 1)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-primary shadow-soft transition hover:border-brand hover:bg-brand hover:text-rich-black md:h-11 md:w-11"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-muted bg-cream text-primary shadow-soft transition hover:border-brand hover:bg-brand hover:text-on-brand md:h-11 md:w-11"
             aria-label="Previous step"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -271,7 +271,7 @@ function HowItWorksCarousel({ sectionRef, onResultImageClick }: { sectionRef: Re
                 type="button"
                 onClick={() => goTo(i)}
                 className={`rounded-full transition-all ${
-                  index === i ? 'h-2.5 w-2.5 bg-brand' : 'h-2 w-2 bg-gray-300 hover:bg-gray-400'
+                  index === i ? 'h-2.5 w-2.5 bg-brand' : 'h-2 w-2 bg-muted hover:bg-muted-dark'
                 }`}
                 aria-label={`Go to step ${i + 1}`}
               />
@@ -280,7 +280,7 @@ function HowItWorksCarousel({ sectionRef, onResultImageClick }: { sectionRef: Re
           <button
             type="button"
             onClick={() => goTo(index + 1)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-primary shadow-soft transition hover:border-brand hover:bg-brand hover:text-rich-black md:h-11 md:w-11"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-muted bg-cream text-primary shadow-soft transition hover:border-brand hover:bg-brand hover:text-on-brand md:h-11 md:w-11"
             aria-label="Next step"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -288,7 +288,7 @@ function HowItWorksCarousel({ sectionRef, onResultImageClick }: { sectionRef: Re
             </svg>
           </button>
         </div>
-        <p className="text-[12px] text-gray-400">
+        <p className="text-[12px] text-muted">
           {index + 1} / {TOTAL_STEPS}
         </p>
       </div>
@@ -337,47 +337,47 @@ export default function Home() {
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-x-16">
             {/* Desktop: single block left (title + paragraph + CTA right below, no gap) */}
             <div className="hidden lg:flex lg:col-start-1 lg:row-start-1 lg:flex-col lg:items-start">
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-gray-400 sm:text-xs">Product Photo AI & AI Image Product</p>
-              <h1 className="font-extrabold leading-tight text-white [font-size:clamp(26px,5vw,52px)]">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-muted sm:text-xs">Product Photo AI & AI Image Product</p>
+              <h1 className="font-extrabold leading-tight text-on-dark [font-size:clamp(26px,5vw,52px)]">
                 Studio Quality
                 <br />
                 Product <span className="font-playfair-italic text-brand">Shots</span>
                 <br />
                 in <span className="font-playfair-italic text-brand">Seconds</span>
               </h1>
-              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-gray-300 sm:text-[16px] md:text-[18px]">
+              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-muted sm:text-[16px] md:text-[18px]">
                 Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
               </p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <Link
                   href="/create"
-                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Try Free Now
                 </Link>
                 <Link
                   href="/how-it-works"
-                  className="inline-flex items-center justify-center rounded-full bg-white/10 px-6 py-3 text-[14px] font-semibold text-white transition-smooth hover:bg-white/20 hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full bg-on-dark/10 px-6 py-3 text-[14px] font-semibold text-on-dark transition-smooth hover:bg-on-dark/20 hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Learn More
                 </Link>
               </div>
-              <p className="mt-4 text-[11px] text-gray-400 sm:text-[12px] md:text-[13px]">
+              <p className="mt-4 text-[11px] text-muted sm:text-[12px] md:text-[13px]">
                 Get 1 free watermarked image per month. No credit card required.
               </p>
             </div>
 
             {/* A: titolo + sottotitolo — solo mobile */}
             <div className="order-1 flex flex-col items-center text-center lg:hidden">
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-gray-400 sm:text-xs">Product Photo AI & AI Image Product</p>
-              <h1 className="font-extrabold leading-tight text-white [font-size:clamp(26px,5vw,52px)]">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-muted sm:text-xs">Product Photo AI & AI Image Product</p>
+              <h1 className="font-extrabold leading-tight text-on-dark [font-size:clamp(26px,5vw,52px)]">
                 Studio-Quality
                 <br />
                 Product <span className="font-playfair-italic text-brand">Shots</span>
                 <br />
                 in <span className="font-playfair-italic text-brand">Seconds</span>
               </h1>
-              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-gray-300 sm:text-[16px] md:text-[18px] mx-auto">
+              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-muted sm:text-[16px] md:text-[18px] mx-auto">
                 Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
               </p>
             </div>
@@ -399,18 +399,18 @@ export default function Home() {
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center">
                 <Link
                   href="/create"
-                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Try Free Now
                 </Link>
                 <Link
                   href="/how-it-works"
-                  className="inline-flex items-center justify-center rounded-full bg-white/10 px-6 py-3 text-[14px] font-semibold text-white transition-smooth hover:bg-white/20 hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded-full bg-on-dark/10 px-6 py-3 text-[14px] font-semibold text-on-dark transition-smooth hover:bg-on-dark/20 hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Learn More
                 </Link>
               </div>
-              <p className="mt-4 text-[11px] text-gray-400 sm:text-[12px] md:text-[13px]">
+              <p className="mt-4 text-[11px] text-muted sm:text-[12px] md:text-[13px]">
                 Get 1 free watermarked image per month. No credit card required.
               </p>
             </div>
@@ -430,9 +430,9 @@ export default function Home() {
         <div className={CONTAINER}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-3 md:gap-4">
-              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
               <SectionScript>How It Works</SectionScript>
-              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
             </div>
             <p className="mx-auto mt-3 max-w-2xl text-[14px] text-gray-300 md:mt-4 md:text-[16px]">
               From brand identity to upload, prompts and 8K results. Here are the four steps.
@@ -460,19 +460,19 @@ export default function Home() {
       </section>
 
       {/* Divisore curvo How it works → Pricing */}
-      <div className="relative h-8 w-full overflow-hidden bg-white md:h-16">
+      <div className="relative h-8 w-full overflow-hidden bg-cream md:h-16">
         <svg viewBox="0 0 1200 48" fill="none" className="absolute top-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
           <path d="M0 0v48h1200V0c-200 0-400 24-600 24S200 0 0 0z" fill="currentColor" />
         </svg>
       </div>
 
       {/* ——— Pricing ——— */}
-      <section className="relative overflow-hidden bg-white pb-12 pt-12 md:pb-28 md:pt-24">
+      <section className="relative overflow-hidden bg-cream pb-12 pt-12 md:pb-28 md:pt-24">
         <div className="absolute inset-0 bg-gradient-to-b from-white to-page-bg/30" aria-hidden />
         <div className={`${CONTAINER} relative`}>
           <div className="text-center">
             <SectionScript light>Simple, Transparent Pricing</SectionScript>
-            <p className="mx-auto mt-3 max-w-2xl text-[14px] text-secondary md:mt-4 md:text-[16px]">
+            <p className="mx-auto mt-3 max-w-2xl text-[14px] text-muted-dark md:mt-4 md:text-[16px]">
               No monthly subscription. Pay only for the images you need. The more credits you buy, the less you pay per image.
             </p>
           </div>
@@ -482,25 +482,25 @@ export default function Home() {
               <div
                 key={p.name}
                 className={`group relative flex flex-col rounded-[20px] p-4 transition-smooth sm:p-6 ${
-                  p.dark ? 'bg-anthracite text-white' : 'bg-white shadow-soft'
+                  p.dark ? 'bg-anthracite text-on-dark' : 'bg-cream shadow-soft'
                 } ${p.popular ? 'ring-2 ring-brand ring-offset-2' : ''} hover:-translate-y-1 hover:shadow-card-hover`}
               >
                 {p.popular && (
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-rich-black sm:-top-3 sm:px-3 sm:py-1 sm:text-xs">
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-on-brand sm:-top-3 sm:px-3 sm:py-1 sm:text-xs">
                     Most Popular
                   </span>
                 )}
                 <h3 className="text-[15px] font-semibold sm:text-base text-primary">{p.name}</h3>
-                <p className={`mt-2 text-[26px] font-bold sm:mt-3 sm:text-[32px] ${p.dark ? 'text-white' : 'text-anthracite'}`}>{p.price}</p>
-                <p className="text-[12px] text-secondary sm:text-[13px]">{p.credits} credits – {p.each} each</p>
+                <p className={`mt-2 text-[26px] font-bold sm:mt-3 sm:text-[32px] ${p.dark ? 'text-on-dark' : 'text-anthracite'}`}>{p.price}</p>
+                <p className="text-[12px] text-muted-dark sm:text-[13px]">{p.credits} credits – {p.each} each</p>
                 <Link
                   href="/pricing"
                   className={`mt-4 block w-full rounded-full py-2.5 text-center text-[13px] font-semibold transition-smooth sm:mt-6 sm:py-3 sm:text-[14px] ${
                     p.popular
-                      ? 'bg-brand text-rich-black hover:scale-[1.02]'
+                      ? 'bg-brand text-on-brand hover:scale-[1.02]'
                       : p.dark
-                      ? 'border border-white/40 text-white hover:bg-white/10'
-                      : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-white'
+                      ? 'border border-on-dark/40 text-on-dark hover:bg-on-dark/10'
+                      : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-on-dark'
                   }`}
                 >
                   View Details
@@ -524,7 +524,7 @@ export default function Home() {
           <div className="text-center">
             <SectionScript>Trusted by Amazon Sellers</SectionScript>
             <p className="mx-auto mt-2 max-w-xl text-[14px] text-gray-300 md:mt-3 md:text-[16px]">
-              Our product photo AI help sellers create <strong className="text-white">Amazon product photos</strong> that convert. 8K quality.
+              Our product photo AI help sellers create <strong className="text-on-dark">Amazon product photos</strong> that convert. 8K quality.
             </p>
           </div>
 
@@ -546,31 +546,31 @@ export default function Home() {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-[14px] leading-relaxed text-white sm:text-[15px]">{t.text}</p>
-                  <p className="mt-3 text-[13px] text-gray-400 sm:mt-4 sm:text-[14px]">{t.name} · {t.role}</p>
+                  <p className="text-[14px] leading-relaxed text-on-dark sm:text-[15px]">{t.text}</p>
+                  <p className="mt-3 text-[13px] text-muted sm:mt-4 sm:text-[14px]">{t.name} · {t.role}</p>
                 </div>
               ))}
             </div>
 
             {/* Compact FAQ accordion */}
-            <div className="rounded-[20px] border border-gray-200 bg-white p-4 shadow-soft sm:p-6">
+            <div className="rounded-[20px] border border-muted/60 bg-cream p-4 shadow-soft sm:p-6">
               <h3 className="mb-3 text-[15px] font-semibold text-primary sm:mb-4 sm:text-base">Quick answers</h3>
               <div className="space-y-2">
                 {faqCompact.map((f, i) => (
-                  <div key={i} className="rounded-lg border border-gray-100">
+                  <div key={i} className="rounded-lg border border-muted/40">
                     <button
                       onClick={() => setFaqCompactOpen(faqCompactOpen === i ? null : i)}
                       className="flex w-full items-center justify-between px-4 py-3 text-left text-[14px] font-semibold text-primary"
                     >
                       {f.q}
                       <span className={`ml-2 shrink-0 transition-transform ${faqCompactOpen === i ? 'rotate-90' : ''}`}>
-                        <svg className="h-4 w-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="h-4 w-4 text-muted-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </span>
                     </button>
                     {faqCompactOpen === i && (
-                      <p className="border-t border-gray-100 px-4 py-3 text-[13px] text-secondary">{f.a}</p>
+                      <p className="border-t border-gray-100 px-4 py-3 text-[13px] text-muted-dark">{f.a}</p>
                     )}
                   </div>
                 ))}
@@ -584,7 +584,7 @@ export default function Home() {
       </section>
 
       {/* ——— Extended FAQ ——— */}
-      <section className="border-t border-gray-200 bg-white py-12 md:py-24">
+      <section className="border-t border-muted/60 bg-cream py-12 md:py-24">
         <div className={CONTAINER}>
           <div className="text-center">
             <SectionScript light>Frequently Asked Questions</SectionScript>
@@ -595,7 +595,7 @@ export default function Home() {
             {faqItems.map((f, i) => (
               <div
                 key={i}
-                className={`overflow-hidden rounded-2xl border border-gray-200 bg-white transition-smooth hover:shadow-soft ${
+                className={`overflow-hidden rounded-2xl border border-muted/60 bg-cream transition-smooth hover:shadow-soft ${
                   faqOpen === i ? 'shadow-soft' : ''
                 }`}
               >
@@ -605,7 +605,7 @@ export default function Home() {
                 >
                   {f.q}
                   <span className={`ml-4 shrink-0 transition-transform ${faqOpen === i ? 'rotate-45' : ''}`}>
-                    <svg className={`h-5 w-5 text-secondary transition-transform ${faqOpen === i ? 'rotate-45' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className={`h-5 w-5 text-muted-dark transition-transform ${faqOpen === i ? 'rotate-45' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                   </span>
@@ -616,7 +616,7 @@ export default function Home() {
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className="border-t border-gray-100 px-6 pb-4 pt-0 text-[14px] leading-relaxed text-secondary">{f.a}</p>
+                    <p className="border-t border-gray-100 px-6 pb-4 pt-0 text-[14px] leading-relaxed text-muted-dark">{f.a}</p>
                   </div>
                 </div>
               </div>
@@ -629,11 +629,11 @@ export default function Home() {
       <section className="relative overflow-hidden bg-anthracite py-14 md:py-24">
         <div className="absolute inset-0 bg-gradient-to-br from-anthracite via-anthracite to-primary/90" aria-hidden />
         <div className={`${CONTAINER} relative text-center`}>
-          <h2 className="text-[22px] font-bold leading-tight text-white sm:text-3xl md:text-4xl">Ready to Create Your AI Product Photo?</h2>
-          <p className="mx-auto mt-3 max-w-md text-[14px] text-gray-400 md:mt-4 md:text-[16px]">1 free image. No credit card. AI product photos in seconds.</p>
+          <h2 className="text-[22px] font-bold leading-tight text-on-dark sm:text-3xl md:text-4xl">Ready to Create Your AI Product Photo?</h2>
+          <p className="mx-auto mt-3 max-w-md text-[14px] text-muted md:mt-4 md:text-[16px]">1 free image. No credit card. AI product photos in seconds.</p>
           <Link
             href="/create"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-rich-black shadow-soft-hover transition-smooth hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-card-hover md:mt-8 md:px-10 md:py-4 md:text-lg"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-on-brand shadow-soft-hover transition-smooth hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-card-hover md:mt-8 md:px-10 md:py-4 md:text-lg"
           >
             Get Started Free
           </Link>

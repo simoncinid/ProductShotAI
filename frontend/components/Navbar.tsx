@@ -45,7 +45,7 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 h-[72px] bg-white shadow-[0_1px_0_0_rgba(15,23,42,0.06)]">
+    <header className="sticky top-0 z-50 h-[72px] bg-cream shadow-[0_1px_0_0_rgba(38,31,50,0.08)]">
       <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-6 md:px-10 lg:px-14">
         <Link href="/" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
           <Image src="/logo1.png" alt="" width={50} height={50} className="object-contain" />
@@ -80,7 +80,7 @@ export function Navbar() {
               )}
               <Link
                 href="/dashboard"
-                className="ml-2 rounded-full bg-anthracite px-5 py-2.5 text-[14px] font-medium text-white transition-smooth hover:shadow-soft-hover"
+                className="ml-2 rounded-full bg-anthracite px-5 py-2.5 text-[14px] font-medium text-on-dark transition-smooth hover:shadow-soft-hover"
               >
                 Dashboard
               </Link>
@@ -104,13 +104,13 @@ export function Navbar() {
               ))}
               <Link
                 href="/login"
-                className="ml-2 rounded-full bg-page-bg px-6 py-2.5 text-[14px] font-semibold text-white transition-smooth hover:scale-[1.02] hover:opacity-90 hover:shadow-soft-hover"
+                className="ml-2 rounded-full bg-page-bg px-6 py-2.5 text-[14px] font-semibold text-on-dark transition-smooth hover:scale-[1.02] hover:opacity-90 hover:shadow-soft-hover"
               >
                 Login
               </Link>
               <Link
                 href="/signup"
-                className="rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-rich-black transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+                className="rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-on-brand transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
               >
                 Sign Up
               </Link>
@@ -121,7 +121,7 @@ export function Navbar() {
         {/* Hamburger */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden flex h-10 w-10 items-center justify-center rounded-lg text-primary hover:bg-gray-100"
+          className="md:hidden flex h-10 w-10 items-center justify-center rounded-lg text-primary hover:bg-muted/20"
           aria-label="Menu"
         >
           {isMenuOpen ? (
@@ -138,7 +138,7 @@ export function Navbar() {
 
       {/* Mobile drawer */}
       <div
-        className={`fixed inset-0 top-[72px] z-40 bg-white md:hidden ${
+        className={`fixed inset-0 top-[72px] z-40 bg-cream md:hidden ${
           isMenuOpen ? 'visible opacity-100' : 'invisible opacity-0'
         } transition-all duration-200`}
       >
@@ -151,7 +151,7 @@ export function Navbar() {
               <Link href="/blog" className={`py-3 text-base font-medium ${isActive('/blog') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Blog</Link>
               <Link href="/create" className={`py-3 text-base font-medium ${isActive('/create') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Try free</Link>
               {user && <span className="py-3 text-base text-secondary">Credits: {user.credits_balance}</span>}
-              <Link href="/dashboard" className="mt-2 block rounded-full bg-anthracite px-6 py-3 text-center font-medium text-white" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+              <Link href="/dashboard" className="mt-2 block rounded-full bg-anthracite px-6 py-3 text-center font-medium text-on-dark" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
               <button onClick={handleLogout} className="py-3 text-left text-base font-medium text-primary">Logout</button>
             </>
           ) : (
@@ -161,8 +161,8 @@ export function Navbar() {
                   {label}
                 </Link>
               ))}
-              <Link href="/login" className="mt-4 block rounded-full bg-page-bg px-6 py-3 text-center font-semibold text-white" onClick={() => setIsMenuOpen(false)}>Login</Link>
-              <Link href="/signup" className="mt-2 block rounded-full bg-brand px-6 py-3 text-center font-semibold text-rich-black" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+              <Link href="/login" className="mt-4 block rounded-full bg-page-bg px-6 py-3 text-center font-semibold text-on-dark" onClick={() => setIsMenuOpen(false)}>Login</Link>
+              <Link href="/signup" className="mt-2 block rounded-full bg-brand px-6 py-3 text-center font-semibold text-on-brand" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
             </>
           )}
         </nav>

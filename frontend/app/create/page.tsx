@@ -218,20 +218,20 @@ export default function CreatePage() {
         <div className={`${CONTAINER} relative`}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
-              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
               <p className="font-playfair-italic text-2xl text-on-dark md:text-3xl">Create</p>
-              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
             </div>
-            <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
+            <h1 className="mt-3 text-[28px] font-bold leading-tight text-on-dark md:text-[34px]">
               Create Your AI Product Photo
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-[16px] text-gray-300 md:text-[18px]">
+            <p className="mx-auto mt-4 max-w-xl text-[16px] text-muted md:text-[18px]">
               Upload your product image—our product photo AI creates ai image product and image product ai in 8K. Amazon product photo ready.
             </p>
             {!authenticated && (
-              <p className="mt-3 text-[13px] text-gray-400">
+              <p className="mt-3 text-[13px] text-muted">
                 Free users get watermarked images.{' '}
-<Link href="/signup" className="font-semibold text-anthracite hover:underline">
+<Link href="/signup" className="font-semibold text-brand hover:underline">
                 Sign up
               </Link>{' '}
                 for clean images without watermark.
@@ -253,11 +253,11 @@ export default function CreatePage() {
         <div className={CONTAINER}>
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
             {/* Upload + Aspect Ratio */}
-            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-soft md:p-8">
+            <div className="rounded-[20px] border border-muted/40 bg-cream p-6 shadow-soft md:p-8">
               <label className="block text-[15px] font-semibold text-primary md:text-base">
                 Upload Product Image
               </label>
-              <div className="mt-3 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50/50 p-6 transition-colors hover:border-gray-300 md:p-8">
+              <div className="mt-3 rounded-2xl border-2 border-dashed border-muted/60 bg-muted/10 p-6 transition-colors hover:border-muted md:p-8">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -274,22 +274,22 @@ export default function CreatePage() {
                       className="mx-auto max-h-64 w-auto rounded-xl object-contain"
                     />
                     {uploadMutation.isPending && (
-                      <p className="flex items-center justify-center gap-1.5 text-[14px] text-secondary">Uploading…</p>
+                      <p className="flex items-center justify-center gap-1.5 text-[14px] text-muted-dark">Uploading…</p>
                     )}
                     {uploadMutation.isError && (
                       <p className="flex flex-wrap items-center justify-center gap-2 text-[14px]">
-                        <span className="text-red-600">Upload failed.</span>
+                        <span className="text-red-500">Upload failed.</span>
                         <button
                           type="button"
                           onClick={() => selectedFile && uploadMutation.mutate(selectedFile)}
-                          className="font-semibold text-anthracite underline hover:no-underline"
+                          className="font-semibold text-brand underline hover:no-underline"
                         >
                           Retry
                         </button>
                       </p>
                     )}
                     {imageUrl && (
-                      <p className="flex items-center justify-center gap-1.5 text-[14px] text-green-600">
+                      <p className="flex items-center justify-center gap-1.5 text-[14px] text-emerald-500">
                         <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
@@ -299,18 +299,18 @@ export default function CreatePage() {
                     <button
                       type="button"
                       onClick={handleChangeImage}
-                      className="block w-full text-center text-[13px] text-secondary underline hover:text-primary"
+                      className="block w-full text-center text-[13px] text-muted-dark underline hover:text-primary"
                     >
                       Change image
                     </button>
                   </div>
                 ) : (
                   <label htmlFor="file-upload" className="flex cursor-pointer flex-col items-center">
-                    <svg className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 48 48" stroke="currentColor" strokeWidth={1.5}>
+                    <svg className="h-12 w-12 text-muted" fill="none" viewBox="0 0 48 48" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
                     </svg>
                     <span className="mt-3 block text-[14px] font-medium text-primary">Click to upload</span>
-                    <span className="mt-1 block text-[12px] text-secondary">JPEG or PNG (max 10MB)</span>
+                    <span className="mt-1 block text-[12px] text-muted-dark">JPEG or PNG (max 10MB)</span>
                   </label>
                 )}
               </div>
@@ -320,7 +320,7 @@ export default function CreatePage() {
                 <select
                   value={aspectRatio}
                   onChange={(e) => setAspectRatio(e.target.value)}
-                  className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                  className="mt-2 w-full rounded-xl border border-muted/60 bg-cream px-4 py-3 text-[15px] text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                 >
                   <option value="1:1">1:1 (Square — Amazon Main)</option>
                   <option value="4:5">4:5 (Portrait)</option>
@@ -333,20 +333,20 @@ export default function CreatePage() {
                   <select
                     value={resolution}
                     onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                    className="mt-2 w-full rounded-xl border border-muted/60 bg-cream px-4 py-3 text-[15px] text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                   >
                     <option value="4k">4K — 1 credito</option>
                     <option value="8k" disabled={!canChoose8k}>8K — 2 crediti{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}</option>
                   </select>
                   {!canChoose8k && (
-                    <p className="mt-1 text-[13px] text-amber-600">8K disponibile solo con almeno 2 crediti. Attuali: {credits}</p>
+                    <p className="mt-1 text-[13px] text-amber-500">8K disponibile solo con almeno 2 crediti. Attuali: {credits}</p>
                   )}
                 </div>
               )}
             </div>
 
             {/* Prompt + Generate */}
-            <div className="rounded-[20px] border border-gray-100 bg-white p-6 shadow-soft md:p-8">
+            <div className="rounded-[20px] border border-muted/40 bg-cream p-6 shadow-soft md:p-8">
               {authenticated && (
                 <>
                   <label className="block text-[15px] font-semibold text-primary md:text-base">
@@ -355,7 +355,7 @@ export default function CreatePage() {
                   <select
                     value={selectedProductId}
                     onChange={(e) => setSelectedProductId(e.target.value)}
-                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                    className="mt-2 w-full rounded-xl border border-muted/60 bg-cream px-4 py-3 text-[15px] text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                   >
                     <option value="">NO PRODUCT</option>
                     {products.map((p: { id: string; name: string }) => (
@@ -374,13 +374,13 @@ export default function CreatePage() {
                         <label htmlFor="applyBi" className="text-[14px] text-primary">Apply Brand Identity</label>
                       </div>
                       {noProductWantsBrandButMissing && (
-                        <p className="mt-2 text-[13px] text-amber-600">
+                        <p className="mt-2 text-[13px] text-amber-500">
                           Define Brand Identity in dashboard first.
                         </p>
                       )}
                     </>
                   ) : (
-                    <p className="mt-2 text-[13px] text-secondary">
+                    <p className="mt-2 text-[13px] text-muted-dark">
                       Brand identity: On/Off based on product setting
                     </p>
                   )}
@@ -398,22 +398,22 @@ export default function CreatePage() {
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder={selectedProductId ? 'Extra notes for this generation...' : 'Example: Place the product on a clean white background with soft lighting, add a subtle shadow underneath, make the colors more vibrant...'}
                 rows={8}
-                className="mt-3 w-full resize-y rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary placeholder:text-gray-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                className="mt-3 w-full resize-y rounded-xl border border-muted/60 bg-cream px-4 py-3 text-[15px] text-primary placeholder:text-muted outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
-              <p className="mt-2 text-[13px] text-secondary">
+              <p className="mt-2 text-[13px] text-muted-dark">
                 {selectedProductId ? 'Optional: add instructions to combine with the product prompt.' : 'Describe how you want your product to look. Be specific about background, lighting, and style.'}
               </p>
 
               <button
                 onClick={handleGenerate}
                 disabled={!imageUrl || (!selectedProductId && !prompt.trim()) || isGenerating || noProductWantsBrandButMissing}
-                className="mt-6 w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-6 w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isGenerating ? 'Generating... (30–90 sec)' : 'Generate Image'}
               </button>
 
               {isGenerating && (
-                <p className="mt-4 text-center text-[14px] text-secondary">{loadingMessage}</p>
+                <p className="mt-4 text-center text-[14px] text-muted-dark">{loadingMessage}</p>
               )}
             </div>
           </div>

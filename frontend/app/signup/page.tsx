@@ -52,18 +52,18 @@ export default function SignupPage() {
   return (
     <div className="flex min-h-[calc(100vh-72px)] items-center justify-center bg-page-bg px-6 py-12 md:py-16">
       <div className="w-full max-w-md">
-        <div className="rounded-[20px] border border-gray-100 bg-white p-8 shadow-soft md:p-10">
+        <div className="rounded-[20px] border border-muted/40 bg-cream p-8 shadow-soft md:p-10">
           <div className="flex flex-col items-center text-center">
             <Image src="/logo1.png" alt="" width={48} height={48} className="object-contain" />
             <div className="mt-4 flex items-center gap-4">
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
               <p className="font-playfair-italic text-2xl text-primary md:text-3xl">Create account</p>
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
             </div>
             <h1 className="mt-3 text-[24px] font-bold text-primary md:text-[28px]">Create your account</h1>
             <p className="mt-2 text-[15px] text-secondary">
               Or{' '}
-              <Link href="/login" className="font-semibold text-anthracite hover:underline">sign in to your existing account</Link>
+              <Link href="/login" className="font-semibold text-brand hover:underline">sign in to your existing account</Link>
             </p>
           </div>
 
@@ -81,7 +81,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary placeholder:text-gray-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                className="w-full rounded-xl border border-muted/60 bg-cream px-4 py-3 text-[15px] text-primary placeholder:text-muted outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
             </div>
             <div>
@@ -98,7 +98,7 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Min 8 characters"
-                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary placeholder:text-gray-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                className="w-full rounded-xl border border-muted/60 bg-cream px-4 py-3 text-[15px] text-primary placeholder:text-muted outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
             </div>
             <div>
@@ -114,7 +114,7 @@ export default function SignupPage() {
                 value={verifyPassword}
                 onChange={(e) => setVerifyPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-[15px] text-primary placeholder:text-gray-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                className="w-full rounded-xl border border-muted/60 bg-cream px-4 py-3 text-[15px] text-primary placeholder:text-muted outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
             </div>
 
@@ -125,20 +125,20 @@ export default function SignupPage() {
                 type="checkbox"
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-brand focus:ring-2 focus:ring-brand/20"
+                className="mt-1 h-4 w-4 rounded border-muted text-brand focus:ring-2 focus:ring-brand/20"
               />
               <label htmlFor="terms" className="text-[14px] text-secondary">
                 I agree to the{' '}
-<Link href="/terms" className="font-semibold text-anthracite hover:underline">Terms</Link>
+<Link href="/terms" className="font-semibold text-brand hover:underline">Terms</Link>
               {' '}and{' '}
-                <Link href="/privacy" className="font-semibold text-anthracite hover:underline">Privacy Policy</Link>
+                <Link href="/privacy" className="font-semibold text-brand hover:underline">Privacy Policy</Link>
               </label>
             </div>
 
             <button
               type="submit"
               disabled={signupMutation.isPending || !acceptedTerms}
-              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
+              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
             >
               {signupMutation.isPending ? 'Creating account...' : 'Create account'}
             </button>

@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 245, 245, 247;
-  --background-rgb: 26, 26, 46;
+  --foreground-rgb: 251, 250, 251;
+  --background-rgb: 38, 31, 50;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #1a1a2e;
+  background: #261f32;
 }
 
 /* Transizioni fluide per pulsanti e card */

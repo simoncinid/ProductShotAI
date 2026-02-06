@@ -87,12 +87,12 @@ export default function ProductDetailPage() {
   const generations = generationsData?.items ?? []
 
   if (!authenticated || !id) return null
-  if (isLoading) return <div className="p-8 text-gray-400">Loading...</div>
+  if (isLoading) return <div className="p-8 text-muted">Loading...</div>
   if (error || !product) {
     return (
       <div className="p-8">
-        <Link href="/dashboard/products" className="text-vivid-yellow hover:underline">← Products</Link>
-        <p className="mt-4 text-gray-300">Product not found.</p>
+        <Link href="/dashboard/products" className="text-brand hover:underline">← Products</Link>
+        <p className="mt-4 text-muted">Product not found.</p>
       </div>
     )
   }
@@ -105,27 +105,27 @@ export default function ProductDetailPage() {
       {/* Header: name + Edit on left, "← Products" on right */}
       <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
         <div className="flex items-center gap-3 min-w-0">
-          <h1 className="text-2xl font-bold text-white truncate">{product.name}</h1>
+          <h1 className="text-2xl font-bold text-on-dark truncate">{product.name}</h1>
           {!editing && (
             <button
               type="button"
               onClick={() => setEditing(true)}
-              className="p-2 border border-gray-500 rounded-md hover:bg-white/10 text-gray-200 shrink-0"
+              className="p-2 border border-muted rounded-md hover:bg-on-dark/10 text-on-dark shrink-0"
               title="Edit product"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
             </button>
           )}
         </div>
-        <Link href="/dashboard/products" className="text-vivid-yellow hover:underline shrink-0">← Products</Link>
+        <Link href="/dashboard/products" className="text-brand hover:underline shrink-0">← Products</Link>
       </div>
 
       {!editing ? (
-        <div className="mb-6 text-gray-300">
-          <p><span className="text-gray-400">SKU:</span> {product.sku || '—'}</p>
-          <p><span className="text-gray-400">Category:</span> {product.category || '—'}</p>
-          <p><span className="text-gray-400">Apply Brand Identity:</span> {product.default_apply_brand_identity ? 'Yes' : 'No'}</p>
-          <p className="mt-2 text-gray-200 whitespace-pre-wrap">{product.product_prompt}</p>
+        <div className="mb-6 text-muted">
+          <p><span className="text-muted">SKU:</span> {product.sku || '—'}</p>
+          <p><span className="text-muted">Category:</span> {product.category || '—'}</p>
+          <p><span className="text-muted">Apply Brand Identity:</span> {product.default_apply_brand_identity ? 'Yes' : 'No'}</p>
+          <p className="mt-2 text-on-dark whitespace-pre-wrap">{product.product_prompt}</p>
         </div>
       ) : (
         <EditProductForm
@@ -138,14 +138,14 @@ export default function ProductDetailPage() {
       )}
 
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-white mb-2">Reference images (max 3)</h2>
-        <p className="text-sm text-gray-400 mb-2">Click on an image to open the Creative Hub and generate variants or edits.</p>
+        <h2 className="text-lg font-semibold text-on-dark mb-2">Reference images (max 3)</h2>
+        <p className="text-sm text-muted mb-2">Click on an image to open the Creative Hub and generate variants or edits.</p>
         <div className="flex flex-wrap gap-4">
           {images.map((img: { id: string; image_url: string }) => (
-            <div key={img.id} className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-600 group">
+            <div key={img.id} className="relative w-32 h-32 rounded-lg overflow-hidden border border-muted-dark/60 group">
               <Link
                 href={`/dashboard/hub?product_id=${id}&image_id=${img.id}`}
-                className="block w-full h-full focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:ring-offset-2 rounded-lg"
+                className="block w-full h-full focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 rounded-lg"
               >
                 <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="w-full h-full object-cover group-hover:opacity-90 transition" />
               </Link>
@@ -153,14 +153,14 @@ export default function ProductDetailPage() {
             </div>
           ))}
           {images.length < maxImages && (
-            <label className="w-32 h-32 rounded-lg border-2 border-dashed border-gray-500 flex items-center justify-center cursor-pointer hover:border-vivid-yellow bg-white/5">
+            <label className="w-32 h-32 rounded-lg border-2 border-dashed border-muted flex items-center justify-center cursor-pointer hover:border-brand bg-on-dark/5">
               <input type="file" accept="image/jpeg,image/png" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadMutation.mutate(f); e.target.value = ''; }} />
-              <span className="text-gray-400 text-sm">+ Upload</span>
+              <span className="text-muted text-sm">+ Upload</span>
             </label>
           )}
         </div>
         {images.length > 0 && (
-          <button type="button" onClick={() => analyzeMutation.mutate()} disabled={analyzeMutation.isPending} className="mt-4 px-4 py-2 bg-rich-black text-white rounded-md font-medium disabled:opacity-50">
+          <button type="button" onClick={() => analyzeMutation.mutate()} disabled={analyzeMutation.isPending} className="mt-4 px-4 py-2 bg-primary text-on-dark rounded-md font-medium disabled:opacity-50">
             {analyzeMutation.isPending ? 'Analyzing…' : 'Analyze images'}
           </button>
         )}
@@ -169,27 +169,27 @@ export default function ProductDetailPage() {
       {/* Analysis: in view mode text only, in edit mode it's in the form */}
       {!editing && (
         <div className="mt-6">
-          <h3 className="font-semibold text-white mb-2">Style analysis</h3>
+          <h3 className="font-semibold text-on-dark mb-2">Style analysis</h3>
           {product.analysis_text ? (
-            <div className="p-4 bg-white/10 border border-gray-600 rounded-lg">
-              <p className="text-sm text-gray-200 whitespace-pre-wrap">{product.analysis_text}</p>
+            <div className="p-4 bg-on-dark/10 border border-muted-dark/60 rounded-lg">
+              <p className="text-sm text-on-dark whitespace-pre-wrap">{product.analysis_text}</p>
             </div>
           ) : (
-            <p className="text-sm text-gray-400">No analysis. Upload images and click &quot;Analyze images&quot;.</p>
+            <p className="text-sm text-muted">No analysis. Upload images and click &quot;Analyze images&quot;.</p>
           )}
         </div>
       )}
 
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-white mb-4">Generations for this product</h2>
+        <h2 className="text-lg font-semibold text-on-dark mb-4">Generations for this product</h2>
         {generations.length === 0 ? (
-          <p className="text-gray-400">No generations. Select this product in <Link href="/create" className="text-vivid-yellow hover:underline">/create</Link> to generate.</p>
+          <p className="text-muted">No generations. Select this product in <Link href="/create" className="text-brand hover:underline">/create</Link> to generate.</p>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {generations.map((gen: { id: string; output_image_url?: string; status: string; created_at: string }) => {
               const imageUrl = gen.output_image_url ? (getAbsoluteImageUrl(gen.output_image_url) ?? gen.output_image_url) : null
               return (
-                <div key={gen.id} className="border border-gray-600 rounded-lg overflow-hidden bg-white group">
+                <div key={gen.id} className="border border-muted-dark/60 rounded-lg overflow-hidden bg-cream group">
                   {gen.output_image_url ? (
                     <>
                       <Link
@@ -198,12 +198,12 @@ export default function ProductDetailPage() {
                       >
                         <img src={imageUrl!} alt="" className="w-full h-40 object-cover group-hover:opacity-95 transition cursor-pointer" />
                       </Link>
-                      <div className="p-2 flex items-center justify-between gap-2 text-xs text-gray-600 bg-white border-t border-gray-200">
+                      <div className="p-2 flex items-center justify-between gap-2 text-xs text-muted-dark bg-cream border-t border-muted/40">
                         <span>{new Date(gen.created_at).toLocaleDateString()}</span>
                         <a
                           href={imageUrl!}
                           download
-                          className="inline-flex items-center gap-1 px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700"
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded bg-muted/20 hover:bg-muted/30 text-primary"
                           title="Download"
                           onClick={(e) => e.stopPropagation()}
                         >
@@ -214,8 +214,8 @@ export default function ProductDetailPage() {
                     </>
                   ) : (
                     <>
-                      <div className="w-full h-40 bg-gray-100 flex items-center justify-center"><span className="text-gray-400 text-sm">{gen.status}</span></div>
-                      <div className="p-2 text-xs text-gray-600 bg-white">{new Date(gen.created_at).toLocaleDateString()}</div>
+                      <div className="w-full h-40 bg-muted/20 flex items-center justify-center"><span className="text-muted text-sm">{gen.status}</span></div>
+                      <div className="p-2 text-xs text-muted-dark bg-cream">{new Date(gen.created_at).toLocaleDateString()}</div>
                     </>
                   )}
                 </div>
@@ -225,7 +225,7 @@ export default function ProductDetailPage() {
         )}
       </div>
 
-      <div className="mt-8 pt-6 border-t border-gray-600">
+      <div className="mt-8 pt-6 border-t border-muted-dark/60">
         <button
           type="button"
           onClick={() => window.confirm('Delete this product?') && deleteMutation.mutate()}
@@ -283,35 +283,35 @@ function EditProductForm({
   return (
     <form id={formId} onSubmit={handleSubmit} className="mb-6 space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">Name *</label>
+        <label className="block text-sm font-medium text-on-dark mb-1">Name *</label>
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900" required />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">SKU</label>
+        <label className="block text-sm font-medium text-on-dark mb-1">SKU</label>
         <input type="text" value={sku} onChange={(e) => setSku(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">Category</label>
+        <label className="block text-sm font-medium text-on-dark mb-1">Category</label>
         <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900" />
       </div>
       <div className="flex items-center gap-2">
         <input type="checkbox" id="editBi" checked={defaultApplyBrandIdentity} onChange={(e) => setDefaultApplyBrandIdentity(e.target.checked)} className="rounded border-gray-400" />
-        <label htmlFor="editBi" className="text-sm text-gray-200">Apply Brand Identity by default</label>
+        <label htmlFor="editBi" className="text-sm text-on-dark">Apply Brand Identity by default</label>
       </div>
       <div>
         <div className="flex items-center justify-between gap-2 flex-wrap mb-1">
-          <label className="block text-sm font-medium text-gray-200">Product prompt</label>
+          <label className="block text-sm font-medium text-on-dark">Product prompt</label>
           <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
         </div>
         <textarea value={productPrompt} onChange={(e) => setProductPrompt(e.target.value)} rows={4} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">Style analysis (editable)</label>
+        <label className="block text-sm font-medium text-on-dark mb-1">Style analysis (editable)</label>
         <textarea value={analysisText} onChange={(e) => setAnalysisText(e.target.value)} rows={16} className="w-full border border-gray-400 rounded px-3 py-2 resize-y bg-white text-gray-900 placeholder:text-gray-500" placeholder="Generated or edited analysis..." />
       </div>
       <div className="flex gap-2">
         <button type="submit" disabled={isSaving} className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">Save</button>
-        <button type="button" onClick={onCancel} className="px-4 py-2 border border-gray-500 text-gray-200 rounded-md hover:bg-white/10">Cancel</button>
+        <button type="button" onClick={onCancel} className="px-4 py-2 border border-gray-500 text-on-dark rounded-md hover:bg-white/10">Cancel</button>
       </div>
     </form>
   )

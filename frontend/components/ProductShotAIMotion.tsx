@@ -99,7 +99,7 @@ function SoftCard({
   return (
     <div
       className={
-        'rounded-xl md:rounded-2xl bg-white/95 shadow-soft border border-white/20 ' +
+        'rounded-xl md:rounded-2xl bg-cream/95 shadow-soft border border-cream/30 ' +
         className
       }
     >
@@ -118,7 +118,7 @@ function Pill({
   return (
     <span
       className={
-        'inline-flex items-center gap-2 rounded-full px-2 py-0.5 text-[10px] md:text-xs font-semibold bg-white/10 text-on-dark ' +
+        'inline-flex items-center gap-2 rounded-full px-2 py-0.5 text-[10px] md:text-xs font-semibold bg-on-dark/10 text-on-dark ' +
         className
       }
     >
@@ -227,7 +227,7 @@ function ImageReadyBadge({ visible }: { visible: boolean }) {
           transition={{ type: 'spring', stiffness: 520, damping: 36 }}
           className="absolute left-0 right-0 bottom-4 md:bottom-5 flex justify-center pointer-events-none"
         >
-          <span className="rounded-xl bg-anthracite/95 text-white px-4 py-2.5 shadow-soft border border-white/10 flex items-center justify-center gap-2"
+          <span className="rounded-xl bg-anthracite/95 text-on-dark px-4 py-2.5 shadow-soft border border-on-dark/10 flex items-center justify-center gap-2"
           >
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white text-xs font-bold" aria-hidden>✓</span>
           <span className="text-sm font-semibold">Ready</span>
@@ -270,7 +270,7 @@ export default function ProductShotAIMotion({
       `}</style>
 
       {/* Stage: +25% larghezza (max-w-4xl → 70rem), palette sito */}
-      <div className="relative w-full min-h-[420px] aspect-[4/3] sm:min-h-[480px] md:aspect-[5/3] md:min-h-[520px] lg:min-h-[600px] max-w-[70rem] mx-auto overflow-hidden rounded-2xl md:rounded-3xl bg-page-bg border border-white/10">
+      <div className="relative w-full min-h-[420px] aspect-[4/3] sm:min-h-[480px] md:aspect-[5/3] md:min-h-[520px] lg:min-h-[600px] max-w-[70rem] mx-auto overflow-hidden rounded-2xl md:rounded-3xl bg-page-bg border border-on-dark/10">
         {/* Sfondo base */}
         <div className="absolute inset-0 bg-gradient-to-b from-page-bg to-anthracite" />
 
@@ -365,11 +365,11 @@ const INTRO_LINE1_SEGMENTS: TextSegment[] = [
 
 const INTRO_LINE2 = 'A creative hub that keeps every shot on-brand.'
 const INTRO_LINE2_SEGMENTS: TextSegment[] = [
-  { start: 0, end: 3, className: 'text-gray-300 font-medium' },
+  { start: 0, end: 3, className: 'text-muted font-medium' },
   { start: 3, end: 15, className: 'text-on-dark font-medium italic' },
-  { start: 15, end: 36, className: 'text-gray-300 font-medium' },
+  { start: 15, end: 36, className: 'text-muted font-medium' },
   { start: 36, end: 45, className: 'text-brand font-medium' },
-  { start: 45, end: 46, className: 'text-gray-300 font-medium' },
+  { start: 45, end: 46, className: 'text-muted font-medium' },
 ]
 
 function IntroScene({ t }: { t: number }) {
@@ -391,7 +391,7 @@ function IntroScene({ t }: { t: number }) {
             showCursor={cursorOnLine1}
           />
         </p>
-        <p className="mt-3 md:mt-4 text-sm md:text-base lg:text-lg text-gray-300 font-sans leading-snug">
+        <p className="mt-3 md:mt-4 text-sm md:text-base lg:text-lg text-muted font-sans leading-snug">
           <TypedTextWithStyles
             fullText={INTRO_LINE2}
             segments={INTRO_LINE2_SEGMENTS}
@@ -467,14 +467,14 @@ function Header({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div className="shrink-0 pb-2 md:pb-3">
       <div className="text-base md:text-lg lg:text-xl font-bold tracking-tight text-on-dark font-sans">{title}</div>
-      <div className="mt-1 text-xs md:text-sm text-gray-400 font-sans">{subtitle}</div>
+      <div className="mt-1 text-xs md:text-sm text-muted font-sans">{subtitle}</div>
     </div>
   )
 }
 
 function Label({ text, muted }: { text: string; muted?: boolean }) {
   return (
-    <div className={'text-[10px] md:text-xs font-semibold font-sans ' + (muted ? 'text-gray-600' : 'text-gray-800')}>
+    <div className={'text-[10px] md:text-xs font-semibold font-sans ' + (muted ? 'text-muted-dark' : 'text-primary')}>
       {text}
     </div>
   )
@@ -482,7 +482,7 @@ function Label({ text, muted }: { text: string; muted?: boolean }) {
 
 function InputLike({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-2 rounded-lg px-3 py-2.5 md:px-4 md:py-3 text-sm md:text-base font-semibold font-sans bg-white border-2 border-brand shadow-[0_0_0_2px_rgba(254,231,22,0.25)] text-gray-900">
+    <div className="mt-2 rounded-lg px-3 py-2.5 md:px-4 md:py-3 text-sm md:text-base font-semibold font-sans bg-cream border-2 border-brand shadow-[0_0_0_2px_rgba(89,75,160,0.25)] text-primary">
       {children}
     </div>
   )
@@ -505,14 +505,14 @@ function Step2Upload({ t, productSrc }: { t: number; productSrc: string }) {
           initial={false}
           style={{ opacity: enter, y: lerp(18, 0, enter), scale: lerp(0.98, 1, enter) }}
         >
-          <div className="relative w-full h-full rounded-2xl border-2 border-dashed border-white/25 bg-white/5">
+          <div className="relative w-full h-full rounded-2xl border-2 border-dashed border-on-dark/25 bg-on-dark/5">
             <motion.div
               className="absolute inset-0 flex items-center justify-center p-4 md:p-5"
               initial={false}
               animate={{ scale: toastOn ? 1.03 : 1 }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             >
-              <div className="bg-white/95 rounded-xl shadow-soft p-4 md:p-5 w-full h-full flex items-center justify-center">
+              <div className="bg-cream/95 rounded-xl shadow-soft p-4 md:p-5 w-full h-full flex items-center justify-center">
                 <img
                   src={productSrc}
                   alt="Uploaded product"
@@ -585,7 +585,7 @@ function Step3Prompts({ t }: { t: number }) {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="rounded-full bg-brand text-rich-black px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base font-semibold shadow-soft font-sans"
+                  className="rounded-full bg-brand text-on-brand px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base font-semibold shadow-soft font-sans"
                 >
                   Generate Photoshoot <span className="ml-1">✨</span>
                 </motion.button>
@@ -628,8 +628,8 @@ function PromptCard({
           className={
             'w-full rounded-lg py-2 text-center text-xs font-semibold font-sans ' +
             (confirmed
-              ? 'bg-brand text-rich-black'
-              : 'bg-white/20 text-on-dark')
+              ? 'bg-brand text-on-brand'
+              : 'bg-on-dark/20 text-on-dark')
           }
         >
           {confirmed ? 'Confirmed' : 'Confirm'}

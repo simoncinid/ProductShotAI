@@ -154,10 +154,10 @@ export default function DashboardCreatePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-white mb-4">
+        <h1 className="text-4xl font-bold text-on-dark mb-4">
           Create Your Product Photo
         </h1>
-        <p className="text-gray-300">
+        <p className="text-muted">
           Upload your product image and describe how you want it transformed
         </p>
         <p className="text-sm text-green-400 mt-2">
@@ -169,10 +169,10 @@ export default function DashboardCreatePage() {
         {/* Upload Section */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-on-dark mb-2">
               Upload Product Image
             </label>
-            <div className="border-2 border-dashed border-gray-500 rounded-lg p-6 text-center bg-white/5">
+            <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center bg-on-dark/5">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -189,7 +189,7 @@ export default function DashboardCreatePage() {
                     className="max-w-full h-auto mx-auto rounded-lg"
                   />
                   {uploadMutation.isPending && (
-                    <p className="text-sm text-gray-400">Uploading…</p>
+                    <p className="text-sm text-muted">Uploading…</p>
                   )}
                   {uploadMutation.isError && (
                     <p className="text-sm">
@@ -197,7 +197,7 @@ export default function DashboardCreatePage() {
                       <button
                         type="button"
                         onClick={() => selectedFile && uploadMutation.mutate(selectedFile)}
-                        className="font-semibold text-vivid-yellow underline hover:no-underline"
+                        className="font-semibold text-brand underline hover:no-underline"
                       >
                         Retry
                       </button>
@@ -209,7 +209,7 @@ export default function DashboardCreatePage() {
                   <button
                     type="button"
                     onClick={handleChangeImage}
-                    className="text-xs text-gray-400 underline hover:text-gray-300"
+                    className="text-xs text-muted underline hover:text-muted"
                   >
                     Change image
                   </button>
@@ -217,7 +217,7 @@ export default function DashboardCreatePage() {
               ) : (
                 <label htmlFor="file-upload" className="cursor-pointer block">
                   <svg
-                    className="mx-auto h-12 w-12 text-gray-500"
+                    className="mx-auto h-12 w-12 text-muted-dark"
                     stroke="currentColor"
                     fill="none"
                     viewBox="0 0 48 48"
@@ -229,10 +229,10 @@ export default function DashboardCreatePage() {
                       strokeLinejoin="round"
                     />
                   </svg>
-                  <span className="mt-2 block text-sm font-medium text-gray-300">
+                  <span className="mt-2 block text-sm font-medium text-muted">
                     Click to upload
                   </span>
-                  <span className="mt-1 block text-xs text-gray-500">
+                  <span className="mt-1 block text-xs text-muted-dark">
                     JPEG or PNG (max 10MB)
                   </span>
                 </label>
@@ -241,13 +241,13 @@ export default function DashboardCreatePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-on-dark mb-2">
               Aspect Ratio
             </label>
             <select
               value={aspectRatio}
               onChange={(e) => setAspectRatio(e.target.value)}
-              className="w-full border border-gray-500 rounded-md px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:border-transparent"
+              className="w-full border border-muted rounded-md px-3 py-2 bg-cream text-primary focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
             >
               <option value="1:1">1:1 (Square - Amazon Main)</option>
               <option value="4:5">4:5 (Portrait)</option>
@@ -255,13 +255,13 @@ export default function DashboardCreatePage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-200 mb-2">
+            <label className="block text-sm font-medium text-on-dark mb-2">
               Risoluzione
             </label>
             <select
               value={resolution}
               onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-              className="w-full border border-gray-500 rounded-md px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:border-transparent"
+              className="w-full border border-muted rounded-md px-3 py-2 bg-cream text-primary focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
             >
               <option value="4k">4K — 1 credito</option>
               <option value="8k" disabled={!canChoose8k}>8K — 2 crediti{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}</option>
@@ -276,7 +276,7 @@ export default function DashboardCreatePage() {
         <div className="space-y-4">
           <div>
             <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
-              <label className="block text-sm font-medium text-gray-200">
+              <label className="block text-sm font-medium text-on-dark">
                 Describe Your Vision
               </label>
               <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
@@ -286,9 +286,9 @@ export default function DashboardCreatePage() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Example: Place the product on a clean white background with soft lighting, add a subtle shadow underneath, make the colors more vibrant..."
               rows={8}
-              className="w-full border border-gray-500 rounded-md px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:border-transparent"
+              className="w-full border border-muted rounded-md px-3 py-2 bg-cream text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
             />
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-muted mt-1">
               Describe how you want your product to look. Be specific about background, lighting, and style.
             </p>
           </div>
@@ -296,7 +296,7 @@ export default function DashboardCreatePage() {
           <button
             onClick={handleGenerate}
             disabled={!imageUrl || !prompt.trim() || isGenerating}
-            className="w-full bg-vivid-yellow text-rich-black px-6 py-3 rounded-md font-semibold hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-brand text-on-brand px-6 py-3 rounded-md font-semibold hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isGenerating
               ? 'Generating... (30–90 sec)'
@@ -304,7 +304,7 @@ export default function DashboardCreatePage() {
           </button>
 
           {isGenerating && (
-            <div className="text-center text-sm text-gray-400">
+            <div className="text-center text-sm text-muted">
               <p>Processing your image...</p>
               <p className="text-xs mt-1">This usually takes 30–90 seconds</p>
             </div>

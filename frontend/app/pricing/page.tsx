@@ -85,18 +85,18 @@ export default function PricingPage() {
         <div className={`${CONTAINER} relative`}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
-              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
               <p className="font-playfair-italic text-2xl text-on-dark md:text-3xl">Simple, Transparent Pricing</p>
-              <span className="h-px w-8 bg-gray-500 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
             </div>
-            <h1 className="mt-3 text-[28px] font-bold leading-tight text-white md:text-[34px]">
+            <h1 className="mt-3 text-[28px] font-bold leading-tight text-on-dark md:text-[34px]">
               Pay only for the images you need
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-[16px] text-gray-300 md:text-[18px]">
+            <p className="mx-auto mt-4 max-w-2xl text-[16px] text-muted md:text-[18px]">
               No monthly subscriptions. Pay per ai product photo and image product ai. The more credits, the less per image.
             </p>
             {authenticated && user && (
-              <p className="mt-5 rounded-full bg-white/10 px-5 py-2 text-[15px] font-medium text-white">
+              <p className="mt-5 rounded-full bg-on-dark/10 px-5 py-2 text-[15px] font-medium text-on-dark">
                 Your balance: <span className="font-bold text-brand">{user.credits_balance} credits</span>
               </p>
             )}
@@ -120,12 +120,12 @@ export default function PricingPage() {
               return (
                 <div
                   key={pack.id}
-                  className={`group relative flex flex-col rounded-[20px] bg-white p-6 shadow-soft transition-smooth ${
+                  className={`group relative flex flex-col rounded-[20px] bg-cream p-6 shadow-soft transition-smooth ${
                     popular ? 'ring-2 ring-brand ring-offset-2' : ''
                   } hover:-translate-y-1 hover:shadow-card-hover`}
                 >
                   {popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-rich-black">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-on-brand">
                       Most Popular
                     </span>
                   )}
@@ -133,7 +133,7 @@ export default function PricingPage() {
                   <p className="mt-3 text-[32px] font-bold text-anthracite">
                     ${pack.total_price.toFixed(2)}
                   </p>
-                  <p className="text-[13px] text-secondary">
+                  <p className="text-[13px] text-muted-dark">
                     {pack.credits} credits – ${pack.price_per_credit.toFixed(2)} each
                   </p>
                   <button
@@ -141,8 +141,8 @@ export default function PricingPage() {
                     disabled={purchaseMutation.isPending}
                     className={`mt-6 w-full rounded-full py-3 text-center text-[14px] font-semibold transition-smooth disabled:opacity-50 ${
                       popular
-                        ? 'bg-brand text-rich-black hover:scale-[1.02] hover:shadow-soft-hover'
-                        : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-white'
+                        ? 'bg-brand text-on-brand hover:scale-[1.02] hover:shadow-soft-hover'
+                        : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-on-dark'
                     }`}
                   >
                     {purchaseMutation.isPending ? 'Processing...' : 'Purchase'}
@@ -155,24 +155,24 @@ export default function PricingPage() {
       </section>
 
       {/* Divisore curvo ——— */}
-      <div className="relative h-10 w-full overflow-hidden bg-white md:h-14">
+      <div className="relative h-10 w-full overflow-hidden bg-cream md:h-14">
         <svg viewBox="0 0 1200 48" fill="none" className="absolute top-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
           <path d="M0 0v48h1200V0c-200 0-400 24-600 24S200 0 0 0z" fill="currentColor" />
         </svg>
       </div>
 
       {/* ——— How Credits Work ——— */}
-      <section className="bg-white py-16 md:py-24">
+      <section className="bg-cream py-16 md:py-24">
         <div className={CONTAINER}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
               <p className="font-playfair-italic text-2xl text-primary md:text-3xl">How Credits Work</p>
-              <span className="h-px w-8 bg-gray-300 md:w-12" />
+              <span className="h-px w-8 bg-muted md:w-12" />
             </div>
           </div>
 
-          <div className="mx-auto mt-12 max-w-2xl rounded-[20px] border border-gray-100 bg-white p-6 shadow-soft md:p-8">
+          <div className="mx-auto mt-12 max-w-2xl rounded-[20px] border border-muted/40 bg-cream p-6 shadow-soft md:p-8">
             <ul className="space-y-4">
               {creditFeatures.map((text, i) => (
                 <li key={i} className="flex items-start gap-3">
@@ -181,7 +181,7 @@ export default function PricingPage() {
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </span>
-                  <span className="text-[15px] leading-relaxed text-secondary md:text-[16px]">{text}</span>
+                  <span className="text-[15px] leading-relaxed text-muted-dark md:text-[16px]">{text}</span>
                 </li>
               ))}
             </ul>
@@ -192,13 +192,13 @@ export default function PricingPage() {
       {/* ——— CTA Try Free ——— */}
       <section className="border-t border-white/10 bg-page-bg py-16 md:py-20">
         <div className={`${CONTAINER} text-center`}>
-          <h2 className="text-[20px] font-bold text-white md:text-[24px]">Try It Free First</h2>
-          <p className="mt-3 text-[16px] text-gray-300">
+          <h2 className="text-[20px] font-bold text-on-dark md:text-[24px]">Try It Free First</h2>
+          <p className="mt-3 text-[16px] text-muted">
             Get 1 free watermarked image per month. No credit card required.
           </p>
           <Link
             href="/create"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
           >
             Start Free Trial
           </Link>

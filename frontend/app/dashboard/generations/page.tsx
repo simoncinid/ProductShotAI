@@ -50,16 +50,16 @@ export default function GenerationsPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="flex flex-wrap items-center gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-white">Generations</h1>
+        <h1 className="text-2xl font-bold text-on-dark">Generations</h1>
         <label className="flex items-center gap-2">
-          <span className="text-gray-400 text-sm">Show:</span>
+          <span className="text-muted text-sm">Show:</span>
           <select
             value={selected}
             onChange={(e) => {
               setSelected(e.target.value)
               setPage(1)
             }}
-            className="border border-gray-500 rounded-lg px-3 py-2 bg-white/10 text-white focus:ring-2 focus:ring-vivid-yellow focus:border-transparent min-w-[200px]"
+            className="border border-muted rounded-lg px-3 py-2 bg-on-dark/10 text-on-dark focus:ring-2 focus:ring-brand focus:border-transparent min-w-[200px]"
           >
             <option value={NO_PRODUCT_VALUE}>NO PRODUCT</option>
             {products.map((p: { id: string; name: string }) => (
@@ -72,15 +72,15 @@ export default function GenerationsPage() {
       </div>
 
       {isLoading ? (
-        <p className="text-gray-400">Loading...</p>
+        <p className="text-muted">Loading...</p>
       ) : items.length === 0 ? (
-        <div className="bg-white/10 border border-gray-600 rounded-lg p-12 text-center">
-          <p className="text-gray-300 mb-4">
+        <div className="bg-on-dark/10 border border-muted-dark/60 rounded-lg p-12 text-center">
+          <p className="text-muted mb-4">
             No generations yet for {isNoProduct ? '"No product"' : selectedProduct?.name ?? 'this product'}.
           </p>
           <Link
             href="/dashboard/create"
-            className="inline-block bg-vivid-yellow text-rich-black px-6 py-3 rounded-md font-semibold"
+            className="inline-block bg-brand text-on-brand px-6 py-3 rounded-md font-semibold"
           >
             Create image
           </Link>
@@ -104,13 +104,13 @@ export default function GenerationsPage() {
                 return (
                   <div
                     key={gen.id}
-                    className="border border-gray-600 rounded-lg overflow-hidden bg-white group relative"
+                    className="border border-muted-dark/60 rounded-lg overflow-hidden bg-cream group relative"
                   >
                     {imageUrl ? (
                       <>
                         <Link
                           href={hubUrl(gen.id)}
-                          className="block w-full focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:ring-inset"
+                          className="block w-full focus:outline-none focus:ring-2 focus:ring-brand focus:ring-inset"
                         >
                           <img
                             src={imageUrl}
@@ -118,12 +118,12 @@ export default function GenerationsPage() {
                             className="w-full h-48 object-cover group-hover:opacity-95 transition cursor-pointer"
                           />
                         </Link>
-                        <div className="p-2 flex items-center justify-between gap-2 text-xs text-gray-600 bg-white border-t border-gray-200">
+                        <div className="p-2 flex items-center justify-between gap-2 text-xs text-muted-dark bg-cream border-t border-muted/40">
                           <span>{new Date(gen.created_at).toLocaleDateString()}</span>
                           <a
                             href={imageUrl}
                             download
-                            className="inline-flex items-center gap-1 px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-700"
+                            className="inline-flex items-center gap-1 px-2 py-1 rounded bg-muted/20 hover:bg-muted/30 text-primary"
                             title="Download"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -146,10 +146,10 @@ export default function GenerationsPage() {
                       </>
                     ) : (
                       <>
-                        <div className="w-full h-48 bg-gray-100 flex items-center justify-center">
-                          <span className="text-gray-500 text-sm">{gen.status}</span>
+                        <div className="w-full h-48 bg-muted/20 flex items-center justify-center">
+                          <span className="text-muted-dark text-sm">{gen.status}</span>
                         </div>
-                        <div className="p-2 text-xs text-gray-600 bg-white">
+                        <div className="p-2 text-xs text-muted-dark bg-cream">
                           {new Date(gen.created_at).toLocaleDateString()}
                         </div>
                       </>
@@ -165,18 +165,18 @@ export default function GenerationsPage() {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="px-4 py-2 border border-gray-500 rounded bg-white/10 text-gray-200 disabled:opacity-50 hover:bg-white/20"
+                className="px-4 py-2 border border-muted rounded bg-on-dark/10 text-on-dark disabled:opacity-50 hover:bg-on-dark/20"
               >
                 Previous
               </button>
-              <span className="px-4 py-2 text-gray-400">
+              <span className="px-4 py-2 text-muted">
                 Page {page} of {totalPages}
               </span>
               <button
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages}
-                className="px-4 py-2 border border-gray-500 rounded bg-white/10 text-gray-200 disabled:opacity-50 hover:bg-white/20"
+                className="px-4 py-2 border border-muted rounded bg-on-dark/10 text-on-dark disabled:opacity-50 hover:bg-on-dark/20"
               >
                 Next
               </button>
