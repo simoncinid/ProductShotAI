@@ -115,7 +115,7 @@ ENVIRONMENT=development
 CORS_ORIGINS=http://localhost:3000
 
 # Free tier
-FREE_GENERATIONS_PER_MONTH=3
+FREE_GENERATIONS_PER_MONTH=1
 ```
 
 5. Create the database:

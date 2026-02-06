@@ -435,11 +435,7 @@ async def _process_wavespeed_webhook_task(
             gen.completed_at = datetime.now(timezone.utc)
             await db.commit()
 
-            if gen.is_free and gen.device_id and gen.ip_address:
-                try:
-                    await utils.increment_free_generation_count(db, gen.device_id, gen.ip_address)
-                except Exception as inc:
-                    logger.warning(f"increment_free_generation_count failed (gen {gen.id}): {inc}")
+            # Il conteggio free è già stato incrementato alla richiesta (per evitare doppie generazioni ravvicinate)
 
             if not gen.is_free and gen.user_id:
                 credits_to_deduct = 2 if gen.resolution == "8k" else 1
@@ -504,6 +500,12 @@ async def generate_free(
     db.add(generation)
     await db.commit()
     await db.refresh(generation)
+    # Riserva subito lo slot free (incrementa ora, non al completamento) per evitare
+    # che due richieste ravvicinate passino entrambe il check prima che la prima completi
+    try:
+        await utils.increment_free_generation_count(db, generate_request.device_id, ip_address)
+    except Exception as inc:
+        logger.warning(f"increment_free_generation_count at request time failed (gen {generation.id}): {inc}")
     try:
         image_url = _ensure_absolute_image_url(generate_request.image_url)
         generation.status = "processing"
