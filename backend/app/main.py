@@ -478,8 +478,10 @@ async def generate_free(
     ip_address = utils.get_client_ip(request)
     if not generate_request.device_id:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="device_id is required")
-    can_generate, _ = await utils.check_free_generation_limit(db, generate_request.device_id, ip_address)
-    if not can_generate:
+    # Riserva atomica dello slot (check + increment) nella stessa transazione della creazione
+    # per evitare race: più richieste non possono più passare tutte il limite
+    reserved = await utils.reserve_free_generation_slot(db, generate_request.device_id, ip_address)
+    if not reserved:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Free generation limit reached ({settings.free_generations_per_month} per month). Please sign up and purchase credits for unlimited generations.",
@@ -500,12 +502,6 @@ async def generate_free(
     db.add(generation)
     await db.commit()
     await db.refresh(generation)
-    # Riserva subito lo slot free (incrementa ora, non al completamento) per evitare
-    # che due richieste ravvicinate passino entrambe il check prima che la prima completi
-    try:
-        await utils.increment_free_generation_count(db, generate_request.device_id, ip_address)
-    except Exception as inc:
-        logger.warning(f"increment_free_generation_count at request time failed (gen {generation.id}): {inc}")
     try:
         image_url = _ensure_absolute_image_url(generate_request.image_url)
         generation.status = "processing"
