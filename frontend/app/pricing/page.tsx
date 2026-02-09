@@ -38,7 +38,7 @@ export default function PricingPage() {
 
   useEffect(() => {
     if (searchParams.get('success') === '1') {
-      toast.success('Pagamento completato! I crediti sono stati accreditati.')
+      toast.success('Payment completed! Credits have been added to your account.')
       queryClient.invalidateQueries({ queryKey: ['user'] })
       window.history.replaceState({}, '', '/pricing')
     }

@@ -47,7 +47,7 @@ export default function CreatePage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [prompt, setPrompt] = useState('')
   const [aspectRatio, setAspectRatio] = useState('1:1')
-  const [resolution, setResolution] = useState<'4k' | '8k'>('4k') // 8k = 2 crediti, 4k = 1 credito (solo se loggato)
+  const [resolution, setResolution] = useState<'4k' | '8k'>('4k') // 8k = 2 credits, 4k = 1 credit (when logged in)
   const [loadingIndex, setLoadingIndex] = useState(0)
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -329,17 +329,17 @@ export default function CreatePage() {
               </div>
               {authenticated && (
                 <div className="mt-6">
-                  <label className="block text-[15px] font-semibold text-primary md:text-base">Risoluzione</label>
+                  <label className="block text-[15px] font-semibold text-primary md:text-base">Resolution</label>
                   <select
                     value={resolution}
                     onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
                     className="mt-2 w-full rounded-xl border border-muted/60 bg-cream px-4 py-3 text-[15px] text-primary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                   >
-                    <option value="4k">4K — 1 credito</option>
-                    <option value="8k" disabled={!canChoose8k}>8K — 2 crediti{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}</option>
+                    <option value="4k">4K — 1 credit</option>
+                    <option value="8k" disabled={!canChoose8k}>8K — 2 credits{!canChoose8k ? ' (requires at least 2 credits)' : ''}</option>
                   </select>
                   {!canChoose8k && (
-                    <p className="mt-1 text-[13px] text-amber-500">8K disponibile solo con almeno 2 crediti. Attuali: {credits}</p>
+                    <p className="mt-1 text-[13px] text-amber-500">8K available only with at least 2 credits. Current: {credits}</p>
                   )}
                 </div>
               )}

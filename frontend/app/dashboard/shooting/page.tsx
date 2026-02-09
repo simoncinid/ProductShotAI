@@ -14,7 +14,7 @@ const SHOOTING_STYLE_OPTIONS = [
   { value: 'Lifestyle', label: 'Lifestyle (usage context, environment)' },
   { value: 'Studio shooting', label: 'Studio shooting (neutral background, controlled light)' },
   { value: 'Mix: 3 zoomed 1 detail 2 lifestyle (one with text)', label: 'Mix: 3 zoom, 1 detail, 2 lifestyle (one with text)' },
-  { value: 'Un po\' e un po\'', label: 'Mix (balanced)' },
+  { value: 'Mix (balanced)', label: 'Mix (balanced)' },
   { value: 'Clean e-commerce set', label: 'Clean e-commerce set (white, minimal)' },
 ]
 
@@ -289,7 +289,7 @@ export default function ShootingWizardPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <h2 className="text-lg font-semibold text-on-dark">
-              Prompt {promptIndex + 1} di {prompts.length}
+              Prompt {promptIndex + 1} of {prompts.length}
             </h2>
             <EditPromptWithAI
               value={prompts[promptIndex] ?? ''}
@@ -329,21 +329,21 @@ export default function ShootingWizardPage() {
         <div className="space-y-6">
           <h2 className="text-lg font-semibold text-on-dark">Generate shooting</h2>
           <div>
-            <label className="block text-sm font-medium text-on-dark mb-2">Risoluzione</label>
+            <label className="block text-sm font-medium text-on-dark mb-2">Resolution</label>
             <select
               value={resolution}
               onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
               className="w-full border border-muted rounded-lg px-3 py-2 bg-cream text-primary mb-3"
             >
-              <option value="4k">4K — 1 credito per immagine</option>
-              <option value="8k" disabled={!canChoose8k}>8K — 2 crediti per immagine{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}</option>
+              <option value="4k">4K — 1 credit per image</option>
+              <option value="8k" disabled={!canChoose8k}>8K — 2 credits per image{!canChoose8k ? ' (requires at least 2 credits)' : ''}</option>
             </select>
             {!canChoose8k && (
-              <p className="text-xs text-amber-400 mb-2">8K disponibile solo con almeno 2 crediti. Attuali: {credits}</p>
+              <p className="text-xs text-amber-400 mb-2">8K available only with at least 2 credits. Current: {credits}</p>
             )}
           </div>
           <p className="text-muted">
-            {prompts.length} immagini × {resolution === '8k' ? 2 : 1} credito/i = {prompts.length * (resolution === '8k' ? 2 : 1)} crediti totali.
+            {prompts.length} images × {resolution === '8k' ? 2 : 1} credit(s) = {prompts.length * (resolution === '8k' ? 2 : 1)} total credits.
           </p>
           <button
             type="button"
