@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from app.models import FreeGenerationLog
 from app.config import settings
@@ -76,7 +76,10 @@ async def increment_free_generation_count(
     device_id: str,
     ip_address: str
 ) -> None:
-    """Increment free generation count for device+IP (standalone; prefer reserve_free_generation_slot for atomicity)."""
+    """
+    DEPRECATO: non usare. Incrementa il contatore senza atomicità (rischio race).
+    L'unico punto che deve aggiornare il contatore è reserve_free_generation_slot (UPDATE atomico).
+    """
     month_year = get_current_month_year()
     
     # Try to get existing record
@@ -110,37 +113,36 @@ async def reserve_free_generation_slot(
     ip_address: str
 ) -> bool:
     """
-    Riserva atomically uno slot free per (device_id, ip_address) nel mese corrente.
-    Esegue tutto nella transazione corrente (NON fa commit).
+    Riserva atomicamente uno slot free per (device_id, ip_address) nel mese corrente.
+    Usa un unico UPDATE condizionale (count < limit) così che solo una richiesta alla volta
+    possa incrementare oltre il limite: niente race anche con richieste concorrenti.
+    NON fa commit; usare nella stessa transazione in cui si crea la Generation.
     Returns True se lo slot è stato riservato, False se limite già raggiunto.
-    Usare nella stessa transazione in cui si crea la Generation per evitare race condition.
     """
     month_year = get_current_month_year()
+    limit = settings.free_generations_per_month
 
-    # Garantire che esista una riga da bloccare (INSERT count=0; poi incrementiamo sotto lock)
-    stmt = pg_insert(FreeGenerationLog).values(
+    # Garantire che esista una riga (count=0) per il mese
+    stmt_insert = pg_insert(FreeGenerationLog).values(
         device_id=device_id,
         ip_address=ip_address,
         month_year=month_year,
         count=0,
     ).on_conflict_do_nothing(index_elements=["device_id", "ip_address", "month_year"])
-    await db.execute(stmt)
+    await db.execute(stmt_insert)
 
-    # Blocca la riga e leggi/incrementa (SELECT FOR UPDATE)
-    result = await db.execute(
-        select(FreeGenerationLog)
+    # Un solo UPDATE atomico: incrementa solo se count < limit. Solo una richiesta "vince".
+    stmt_update = (
+        update(FreeGenerationLog)
         .where(
             FreeGenerationLog.device_id == device_id,
             FreeGenerationLog.ip_address == ip_address,
             FreeGenerationLog.month_year == month_year,
+            FreeGenerationLog.count < limit,
         )
-        .with_for_update()
+        .values(count=FreeGenerationLog.count + 1)
+        .returning(FreeGenerationLog.id)
     )
-    log_entry = result.scalar_one_or_none()
-    if not log_entry:
-        # Rara: riga inserita da un altro subito dopo l'insert; retry non richiesto, consideriamo limite raggiunto
-        return False
-    if log_entry.count >= settings.free_generations_per_month:
-        return False
-    log_entry.count += 1
-    return True
+    result = await db.execute(stmt_update)
+    row = result.fetchone()
+    return row is not None

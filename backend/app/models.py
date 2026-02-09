@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Text, Index, LargeBinary
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Text, Index, LargeBinary, CheckConstraint
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -166,6 +166,11 @@ class Generation(Base):
 
 
 class FreeGenerationLog(Base):
+    """
+    Contatore generazioni free per (device_id, ip_address, month_year).
+    L'unico incremento ammesso è via reserve_free_generation_slot (UPDATE atomico).
+    Vincolo DB: count <= 1 (allineato a free_generations_per_month) come rete di sicurezza.
+    """
     __tablename__ = "free_generation_log_photoshotai"
     
     id = Column(UUID(as_uuid=False), primary_key=True, default=generate_uuid)
@@ -178,6 +183,7 @@ class FreeGenerationLog(Base):
     
     __table_args__ = (
         Index("idx_free_gen_device_ip_month_photoshotai", "device_id", "ip_address", "month_year", unique=True),
+        CheckConstraint("count <= 1", name="chk_free_gen_count_max_photoshotai"),
     )
 
 
