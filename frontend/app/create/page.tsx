@@ -102,15 +102,12 @@ export default function CreatePage() {
   })
 
   const generateMutation = useMutation({
-    mutationFn: (data: Parameters<typeof generationApi.generatePaid>[0]) => {
-      if (authenticated) return generationApi.generatePaid(data)
-      return generationApi.generateFree(data)
-    },
+    mutationFn: (data: Parameters<typeof generationApi.generatePaid>[0]) => generationApi.generatePaid(data),
     onSuccess: (data) => {
       if (data?.status === 'processing' && data?.generation_id) {
         const stop = startPolling(
           data.generation_id,
-          authenticated ? undefined : getDeviceId(),
+          undefined,
           (url) => {
             setIsGenerating(false)
             toast.success('Generation completed!')
@@ -136,9 +133,6 @@ export default function CreatePage() {
         ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
         : 'Generation failed'
       toast.error(errorMsg ?? 'Generation failed')
-      if (typeof errorMsg === 'string' && errorMsg.includes('limit reached')) {
-        setTimeout(() => router.push('/signup'), 2000)
-      }
     },
   })
 
@@ -175,6 +169,11 @@ export default function CreatePage() {
   }
 
   const handleGenerate = () => {
+    if (!authenticated) {
+      toast.error('Please sign up or log in to generate images')
+      router.push('/signup')
+      return
+    }
     if (!imageUrl) {
       toast.error('Please upload an image')
       return
@@ -188,24 +187,16 @@ export default function CreatePage() {
     const basePayload = {
       image_url: imageUrl,
       aspect_ratio: aspectRatio,
-      resolution: authenticated ? resolution : '4k',
+      resolution,
       device_id: getDeviceId(),
     }
-    if (authenticated) {
-      generateMutation.mutate({
-        ...basePayload,
-        prompt: noProduct ? prompt.trim() : (prompt.trim() || ' '),
-        product_id: noProduct ? null : selectedProductId,
-        apply_brand_identity: noProduct ? applyBrandIdentity : undefined,
-        user_prompt_input: noProduct ? undefined : (prompt.trim() || undefined),
-      })
-    } else {
-      generateMutation.mutate({
-        ...basePayload,
-        prompt: prompt.trim(),
-        device_id: getDeviceId(),
-      })
-    }
+    generateMutation.mutate({
+      ...basePayload,
+      prompt: noProduct ? prompt.trim() : (prompt.trim() || ' '),
+      product_id: noProduct ? null : selectedProductId,
+      apply_brand_identity: noProduct ? applyBrandIdentity : undefined,
+      user_prompt_input: noProduct ? undefined : (prompt.trim() || undefined),
+    })
   }
 
   const loadingMessage = isGenerating ? LOADING_MESSAGES[loadingIndex % LOADING_MESSAGES.length] : ''
@@ -230,11 +221,14 @@ export default function CreatePage() {
             </p>
             {!authenticated && (
               <p className="mt-3 text-[13px] text-muted">
-                Free users get watermarked images.{' '}
-<Link href="/signup" className="font-semibold text-brand hover:underline">
-                Sign up
-              </Link>{' '}
-                for clean images without watermark.
+                <Link href="/signup" className="font-semibold text-brand hover:underline">
+                  Sign up
+                </Link>{' '}
+                or{' '}
+                <Link href="/login" className="font-semibold text-brand hover:underline">
+                  log in
+                </Link>{' '}
+                to start generating product photos. Then purchase credits to create images.
               </p>
             )}
           </div>
@@ -406,10 +400,10 @@ export default function CreatePage() {
 
               <button
                 onClick={handleGenerate}
-                disabled={!imageUrl || (!selectedProductId && !prompt.trim()) || isGenerating || noProductWantsBrandButMissing}
+                disabled={authenticated && (!imageUrl || (!selectedProductId && !prompt.trim()) || isGenerating || noProductWantsBrandButMissing)}
                 className="mt-6 w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isGenerating ? 'Generating... (30–90 sec)' : 'Generate Image'}
+                {!authenticated ? 'Sign Up to Generate' : isGenerating ? 'Generating... (30–90 sec)' : 'Generate Image'}
               </button>
 
               {isGenerating && (
@@ -420,12 +414,10 @@ export default function CreatePage() {
         </div>
       </section>
 
-      {/* Popup risultato: sia per utenti loggati (senza watermark) sia free (con watermark da backend) */}
       {resultImageUrl && (
         <ResultPopup
           imageUrl={resultImageUrl}
           onClose={() => setResultImageUrl(null)}
-          isFree={!authenticated}
         />
       )}
     </div>

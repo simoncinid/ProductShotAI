@@ -55,10 +55,10 @@ export default function UseCasesIndexPage() {
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <Link
-                  href="/create"
+                  href="/signup"
                   className="inline-flex items-center justify-center rounded-full bg-brand px-7 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
                 >
-                  Start free generation
+                  Get Started
                 </Link>
                 <Link
                   href="/login"
@@ -68,7 +68,7 @@ export default function UseCasesIndexPage() {
                 </Link>
               </div>
               <p className="mt-3 text-[12px] text-muted">
-                1 free watermarked image per device each month. No credit card required.
+                Sign up, buy credits, and start generating. No subscription.
               </p>
             </div>
 
@@ -154,10 +154,10 @@ export default function UseCasesIndexPage() {
                     View use case
                   </Link>
                   <Link
-                    href="/create"
+                    href="/signup"
                     className="inline-flex items-center justify-center text-[13px] font-semibold text-anthracite hover:underline"
                   >
-                    Start a free generation →
+                    Get started →
                   </Link>
                 </div>
               </article>

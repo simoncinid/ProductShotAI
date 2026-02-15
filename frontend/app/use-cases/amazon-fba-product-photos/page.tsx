@@ -49,7 +49,7 @@ export default function AmazonFbaUseCasePage() {
                   href="/create"
                   className="inline-flex items-center justify-center rounded-full bg-brand px-7 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
                 >
-                  Start free Amazon shoot
+                  Start Amazon shoot
                 </Link>
                 <Link
                   href="/login"
@@ -59,7 +59,7 @@ export default function AmazonFbaUseCasePage() {
                 </Link>
               </div>
               <p className="mt-3 text-[12px] text-muted">
-                1 free watermarked image per device each month. Perfect to test AI product photos for your Amazon listings.
+                Sign up, buy credits, and generate AI product photos for your Amazon listings. No subscription.
               </p>
             </div>
 
@@ -193,15 +193,15 @@ export default function AmazonFbaUseCasePage() {
                 Ready to refresh your Amazon FBA product photos with AI?
               </p>
               <p className="mt-1 text-[13px] text-muted md:text-[14px]">
-                Start with a free generation, then log in to run full photoshoots for your ASINs.
+                Sign up and buy credits to run full photoshoots for your ASINs.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/create"
+                href="/signup"
                 className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
               >
-                Start free generation
+                Get Started
               </Link>
               <Link
                 href="/login"

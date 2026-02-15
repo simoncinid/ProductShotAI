@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     default: 'ProductShotAI – AI Product Photo & Product Photo AI | Image Product AI',
     template: '%s | ProductShotAI',
   },
-  description: 'Create stunning AI product photos and product photo AI in seconds. Free ai image product and image product ai tool. 8K quality for e‑commerce and Amazon product photos. No subscription.',
+  description: 'Create stunning AI product photos and product photo AI in seconds. 8K quality for e‑commerce and Amazon product photos. No subscription. Pay per image.',
   keywords: ['ai product photo', 'product photo ai', 'ai image product', 'image product ai', 'amazon product photo', 'AI product photography', 'product image generator', 'ecommerce product photos'],
   authors: [{ name: 'ProductShotAI', url: SITE_URL }],
   creator: 'ProductShotAI',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: 'ProductShotAI',
     title: 'ProductShotAI – AI Product Photo & Product Photo AI | Image Product AI',
-    description: 'Create stunning AI product photos and product photo AI in seconds. Free ai image product tool. 8K for e‑commerce and Amazon product photos. No subscription.',
+    description: 'Create stunning AI product photos and product photo AI in seconds. 8K for e‑commerce and Amazon product photos. No subscription. Pay per image.',
     images: [{ url: '/logo1.png', width: 512, height: 512, alt: 'ProductShotAI - AI product photo and product photo AI' }],
   },
   twitter: {

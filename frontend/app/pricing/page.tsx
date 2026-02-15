@@ -189,18 +189,18 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* ——— CTA Try Free ——— */}
+      {/* ——— CTA ——— */}
       <section className="border-t border-white/10 bg-page-bg py-16 md:py-20">
         <div className={`${CONTAINER} text-center`}>
-          <h2 className="text-[20px] font-bold text-on-dark md:text-[24px]">Try It Free First</h2>
+          <h2 className="text-[20px] font-bold text-on-dark md:text-[24px]">Ready to Get Started?</h2>
           <p className="mt-3 text-[16px] text-muted">
-            Get 1 free watermarked image per month. No credit card required.
+            Sign up, purchase credits, and start creating stunning product photos.
           </p>
           <Link
-            href="/create"
+            href="/signup"
             className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
           >
-            Start Free Trial
+            Sign Up Now
           </Link>
         </div>
       </section>

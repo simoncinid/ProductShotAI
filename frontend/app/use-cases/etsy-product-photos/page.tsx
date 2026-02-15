@@ -49,7 +49,7 @@ export default function EtsyUseCasePage() {
                   href="/create"
                   className="inline-flex items-center justify-center rounded-full bg-brand px-7 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
                 >
-                  Start free Etsy shoot
+                  Start Etsy shoot
                 </Link>
                 <Link
                   href="/login"
@@ -190,15 +190,15 @@ export default function EtsyUseCasePage() {
                 Ready to glow up your Etsy candle photos?
               </p>
               <p className="mt-1 text-[13px] text-muted md:text-[14px]">
-                Start with a free generation, then log in to build full candle photoshoots on demand.
+                Sign up and buy credits to build full candle photoshoots on demand.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/create"
+                href="/signup"
                 className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
               >
-                Start free generation
+                Get Started
               </Link>
               <Link
                 href="/login"

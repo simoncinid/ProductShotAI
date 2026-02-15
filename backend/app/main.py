@@ -16,8 +16,8 @@ import stripe
 
 from app.config import settings
 from app.database import get_db, AsyncSessionLocal
-from app import models, schemas, auth, storage, wavespeed, watermark, utils, credit_packs, email_sender
-from app.auth import get_current_user, get_current_user_optional
+from app import models, schemas, auth, storage, wavespeed, utils, credit_packs, email_sender
+from app.auth import get_current_user
 from app.models import User, Generation, CreditTransaction, BrandIdentity, Product, StoredFile
 from app.storage import get_storage_adapter
 from app import brand_identity, products, shooting, prompt_edit
@@ -301,21 +301,16 @@ async def get_generations_no_product(
 @app.get("/api/generations/{generation_id}")
 async def get_generation_status(
     generation_id: str,
-    device_id: str | None = None,
-    current_user: User | None = Depends(get_current_user_optional),
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Stato di una generation (per polling dopo 202). Paid: auth. Free: device_id in query."""
+    """Stato di una generation (per polling dopo 202). Richiede autenticazione."""
     r = await db.execute(select(Generation).where(Generation.id == generation_id))
     gen = r.scalar_one_or_none()
     if not gen:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Generation not found")
-    if current_user:
-        if gen.user_id != current_user.id:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Generation not found")
-    else:
-        if not gen.is_free or not device_id or gen.device_id != device_id:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Generation not found")
+    if gen.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Generation not found")
     return {
         "id": str(gen.id),
         "status": gen.status,
@@ -394,8 +389,8 @@ async def _process_wavespeed_webhook_task(
     error: str | None,
 ) -> None:
     """
-    Elabora il risultato del webhook WaveSpeed in background. Scorre output, watermark (free),
-    upload, aggiorna Generation. Idempotente: se già completed/failed non fa nulla.
+    Elabora il risultato del webhook WaveSpeed in background.
+    Upload, aggiorna Generation. Idempotente: se già completed/failed non fa nulla.
     """
     async with AsyncSessionLocal() as db:
         try:
@@ -418,14 +413,11 @@ async def _process_wavespeed_webhook_task(
             if status != "completed" or not output_url:
                 return
 
-            # completed: download, (watermark se free), upload, aggiorna
+            # completed: download, upload, aggiorna
             async with httpx.AsyncClient(timeout=httpx.Timeout(60.0)) as client:
                 resp = await client.get(output_url)
                 resp.raise_for_status()
                 output_bytes = resp.content
-
-            if gen.is_free:
-                output_bytes = await watermark.apply_watermark(output_bytes)
 
             storage_adapter = get_storage_adapter()
             final_url = await storage_adapter.upload_file(output_bytes, ".jpg")
@@ -435,9 +427,7 @@ async def _process_wavespeed_webhook_task(
             gen.completed_at = datetime.now(timezone.utc)
             await db.commit()
 
-            # Il conteggio free è già stato incrementato alla richiesta (per evitare doppie generazioni ravvicinate)
-
-            if not gen.is_free and gen.user_id:
+            if gen.user_id:
                 credits_to_deduct = 2 if gen.resolution == "8k" else 1
                 r2 = await db.execute(select(User).where(User.id == gen.user_id))
                 user = r2.scalar_one_or_none()
@@ -464,73 +454,6 @@ async def _process_wavespeed_webhook_task(
                     await db.commit()
             except Exception:
                 pass
-
-
-# Free generation: WaveSpeed with webhook. POST returns 202, frontend polls GET /api/generations/{id}.
-@app.post("/api/generate-free")
-@limiter.limit("10/minute")
-async def generate_free(
-    request: Request,
-    generate_request: schemas.GenerateRequest,
-    db: AsyncSession = Depends(get_db)
-):
-    """Generate image for free (with watermark). Creates WaveSpeed task with webhook, returns 202."""
-    ip_address = utils.get_client_ip(request)
-    if not generate_request.device_id:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="device_id is required")
-    # Riserva atomica dello slot (check + increment) nella stessa transazione della creazione
-    # per evitare race: più richieste non possono più passare tutte il limite
-    reserved = await utils.reserve_free_generation_slot(db, generate_request.device_id, ip_address)
-    if not reserved:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"Free generation limit reached ({settings.free_generations_per_month} per month). Please sign up and purchase credits for unlimited generations.",
-        )
-    # Prompt finale sempre con Image quality + Constraints (paesaggio, texture, luci, prodotto iper-realistico)
-    final_prompt = compose_final_prompt(base_prompt=generate_request.prompt or "")
-    generation = Generation(
-        device_id=generate_request.device_id,
-        ip_address=ip_address,
-        input_image_url=generate_request.image_url,
-        prompt=generate_request.prompt,
-        final_prompt=final_prompt,
-        resolution="4k",  # Free: always 4k to reduce WaveSpeed costs (paid can use 8k)
-        aspect_ratio=generate_request.aspect_ratio,
-        is_free=True,
-        status="pending",
-    )
-    db.add(generation)
-    await db.commit()
-    await db.refresh(generation)
-    try:
-        image_url = _ensure_absolute_image_url(generate_request.image_url)
-        generation.status = "processing"
-        webhook_url = _get_wavespeed_webhook_url()
-        ws = wavespeed.get_wavespeed_client()
-        task_result = await ws.create_edit_task(
-            image_url=image_url,
-            prompt=final_prompt,
-            resolution="4k",
-            aspect_ratio=generate_request.aspect_ratio or "1:1",
-            webhook_url=webhook_url,
-        )
-        generation.wavespeed_request_id = task_result.get("id")
-        await db.commit()
-
-        logger.info(f"WaveSpeed task created for free generation {generation.id} wavespeed_id={generation.wavespeed_request_id}")
-        return JSONResponse(
-            content={"generation_id": str(generation.id), "status": "processing", "output_image_url": None, "error_message": None},
-            status_code=202,
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.exception(f"Error in free generation {generation.id}: {e}")
-        generation.status = "failed"
-        generation.error_message = str(e)
-        generation.completed_at = datetime.utcnow()
-        await db.commit()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Generation failed: {str(e)}")
 
 
 # Paid generation: WaveSpeed con webhook. Supporta product_id, apply_brand_identity, composizione final_prompt.

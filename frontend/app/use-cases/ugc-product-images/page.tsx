@@ -49,7 +49,7 @@ export default function UgcUseCasePage() {
                   href="/create"
                   className="inline-flex items-center justify-center rounded-full bg-brand px-7 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
                 >
-                  Start free UGC shoot
+                  Start UGC shoot
                 </Link>
                 <Link
                   href="/login"
@@ -185,15 +185,15 @@ export default function UgcUseCasePage() {
                 Ready to scale your UGC-style creatives?
               </p>
               <p className="mt-1 text-[13px] text-muted md:text-[14px]">
-                Start with a free generation, then log in to build ongoing UGC-style product photoshoots.
+                Sign up and buy credits to build ongoing UGC-style product photoshoots.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/create"
+                href="/signup"
                 className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
               >
-                Start free generation
+                Get Started
               </Link>
               <Link
                 href="/login"

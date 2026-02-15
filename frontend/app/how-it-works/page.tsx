@@ -99,7 +99,7 @@ const steps = [
     content: (
       <>
         <p className="text-[15px] leading-relaxed text-secondary md:text-[16px]">
-          Here are your on-brand variations. Within 30–60 seconds you receive high-quality 8K images, optimized for e‑commerce and Amazon (correct aspect ratio, no watermarks for paid credits). Download and use them in your listings right away.
+          Here are your on-brand variations. Within 30–60 seconds you receive high-quality 8K images, optimized for e‑commerce and Amazon (correct aspect ratio, clean output). Download and use them in your listings right away.
         </p>
         <p className="mt-3 text-[14px] leading-relaxed text-secondary md:text-[15px]">
           Each image keeps your product accurate while applying the chosen style, background and lighting. Results meet marketplace quality standards and are ready for conversion-focused product pages.
@@ -292,10 +292,10 @@ export default function HowItWorksPage() {
         <div className={`${CONTAINER} text-center`}>
           <p className="text-[18px] font-semibold text-white md:text-[20px]">Ready to transform your product photos?</p>
           <Link
-            href="/create"
+            href="/signup"
             className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
           >
-            Try It Free Now
+            Get Started Now
           </Link>
         </div>
       </section>

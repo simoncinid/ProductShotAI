@@ -27,7 +27,7 @@ export default function PrivacyPage() {
             <li>Images you upload: the files themselves and associated URLs</li>
             <li>Generation data: prompts, preferences, input/output image URLs, resolution, aspect ratio</li>
             <li>Payment data: processed by third‑party payment providers; we do not store full card numbers</li>
-            <li>Usage and technical data: device ID, IP address (including for free‑tier limits), and analytics (see Analytics)</li>
+            <li>Usage and technical data: device ID, IP address, and analytics (see Analytics)</li>
           </ul>
         </section>
 
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
           <ul className="list-disc list-inside text-gray-700 space-y-2">
             <li>Provide, maintain, and improve the service (including image storage, CDN delivery, and AI processing)</li>
             <li>Process generations and manage credits</li>
-            <li>Enforce free‑tier limits (device ID, IP)</li>
+            <li>Enforce usage limits and prevent abuse</li>
             <li>Send service‑related and, where permitted, marketing communications</li>
             <li>Detect and prevent fraud, abuse, and security incidents</li>
             <li>Comply with legal obligations and defend our rights</li>
@@ -88,7 +88,7 @@ export default function PrivacyPage() {
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-rich-black mb-4">7. Cookies, Local Storage, and Analytics</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            We use localStorage (and similar technologies) for authentication tokens and device ID (for free‑tier limits). We may use essential cookies for the operation of the service.
+            We use localStorage (and similar technologies) for authentication tokens and device ID. We may use essential cookies for the operation of the service.
           </p>
           <p className="text-gray-700 leading-relaxed mb-4">
             <strong>Analytics:</strong> We use Vercel Analytics to understand how the site is used (e.g. page views, interactions). This helps us improve the service. Vercel’s practices are described in their privacy documentation. By using the site, you acknowledge this analytics processing.

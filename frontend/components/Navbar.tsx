@@ -14,7 +14,7 @@ const navLinks = [
   { href: '/pricing', label: 'Pricing' },
   { href: '/faq', label: 'FAQ' },
   { href: '/blog', label: 'Blog' },
-  { href: '/create', label: 'Try free' },
+  { href: '/create', label: 'Create' },
 ]
 
 export function Navbar() {
@@ -75,7 +75,7 @@ export function Navbar() {
                 Blog
               </Link>
               <Link href="/create" className={`px-3 py-2 text-[14px] font-medium transition hover:text-primary ${isActive('/create') ? 'text-primary font-semibold' : 'text-secondary'}`}>
-                Try free
+                Create
               </Link>
               {user && (
                 <span className="px-3 py-2 text-[14px] text-secondary">
@@ -154,7 +154,7 @@ export function Navbar() {
               <Link href="/pricing" className={`py-3 text-base font-medium ${isActive('/pricing') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Pricing</Link>
               <Link href="/faq" className={`py-3 text-base font-medium ${isActive('/faq') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>FAQ</Link>
               <Link href="/blog" className={`py-3 text-base font-medium ${isActive('/blog') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Blog</Link>
-              <Link href="/create" className={`py-3 text-base font-medium ${isActive('/create') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Try free</Link>
+              <Link href="/create" className={`py-3 text-base font-medium ${isActive('/create') ? 'text-primary font-semibold' : 'text-primary'}`} onClick={() => setIsMenuOpen(false)}>Create</Link>
               {user && <span className="py-3 text-base text-secondary">Credits: {user.credits_balance}</span>}
               <Link href="/dashboard" className="mt-2 block rounded-full bg-anthracite px-6 py-3 text-center font-medium text-on-dark" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
               <button onClick={handleLogout} className="py-3 text-left text-base font-medium text-primary">Logout</button>

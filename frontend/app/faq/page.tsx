@@ -5,18 +5,17 @@ import { useState } from 'react'
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
 const faqs = [
-  { q: "How many free images do I get?", a: "Every device gets 1 free watermarked image per month. This is tracked by device ID and IP address. No signup or credit card required!" },
-  { q: "What is the watermark on free images?", a: "Free images include a diagonal watermark that says 'AI SAMPLE – UPGRADE FOR CLEAN IMAGE'. This watermark is designed to be clearly visible and difficult to remove. To get clean images without watermark, sign up and purchase credits." },
+  { q: "How do I get started?", a: "Sign up for an account, purchase a credit pack, and start generating professional product photos right away. No subscription required!" },
   { q: "Do I need a subscription?", a: "No! We don't offer monthly subscriptions. You only pay for the credits you need, when you need them. Credits never expire, so you can use them at your own pace." },
   { q: "What image formats do you support?", a: "We accept JPEG and PNG uploads (up to 10MB). All outputs are delivered as high-quality JPEG images in 8K resolution, optimized for Amazon listings." },
   { q: "What aspect ratios are available?", a: "You can choose from three aspect ratios: 1:1 (square, perfect for Amazon main images), 4:5 (portrait), and 16:9 (landscape). The default is 1:1 for Amazon compatibility." },
   { q: "How long does generation take?", a: "Most generations complete within 30-60 seconds. The AI processes your image and prompt, then returns a high-quality 8K result. You'll see a progress indicator while waiting." },
   { q: "Can I use these images on Amazon?", a: "Yes! Our images are specifically optimized for Amazon product listings. However, you should always ensure your images comply with Amazon's current image requirements and policies. We recommend reviewing Amazon's guidelines for your specific category." },
-  { q: "What happens if a generation fails?", a: "If a generation fails, you won't be charged a credit (for paid users). Free users won't have their free generation count deducted. You can simply try again with a different prompt or image." },
+  { q: "What happens if a generation fails?", a: "If a generation fails, you won't be charged a credit. You can simply try again with a different prompt or image." },
   { q: "Do credits expire?", a: "No, credits never expire. Once you purchase credits, they remain in your account until you use them. There's no time limit or expiration date." },
   { q: "Can I get a refund?", a: "We don't offer refunds for credit purchases, but credits never expire so you can use them whenever you need. If you experience technical issues, please contact our support team." },
   { q: "Is my data secure?", a: "Yes, we take data security seriously. Your images are stored securely and are only used for generation purposes. We don't share your data with third parties. See our Privacy Policy for more details." },
-  { q: "Can I use the images commercially?", a: "Yes, once you generate an image (whether free or paid), you have the right to use it for commercial purposes including Amazon listings, marketing materials, and other business uses." },
+  { q: "Can I use the images commercially?", a: "Yes, once you generate an image, you have the right to use it for commercial purposes including Amazon listings, marketing materials, and other business uses." },
 ]
 
 export default function FAQPage() {

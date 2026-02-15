@@ -233,16 +233,6 @@ export type GenerationStatus = {
 
 // Generation
 export const generationApi = {
-  generateFree: async (data: {
-    prompt: string
-    image_url: string
-    aspect_ratio?: string
-    resolution?: string
-    device_id: string
-  }) => {
-    const response = await api.post('/api/generate-free', data, { timeout: GENERATE_TIMEOUT_MS })
-    return response.data
-  },
   generatePaid: async (data: {
     prompt: string
     image_url: string
@@ -256,11 +246,9 @@ export const generationApi = {
     const response = await api.post('/api/generate-paid', data, { timeout: GENERATE_TIMEOUT_MS })
     return response.data
   },
-  /** Polling sullo stato dopo 202. Per free passare deviceId, per paid usare auth. */
-  getGeneration: async (generationId: string, deviceId?: string): Promise<GenerationStatus> => {
-    const res = await api.get<GenerationStatus>(`/api/generations/${generationId}`, {
-      params: deviceId != null ? { device_id: deviceId } : undefined,
-    })
+  /** Polling sullo stato dopo 202. Richiede autenticazione. */
+  getGeneration: async (generationId: string, _deviceId?: string): Promise<GenerationStatus> => {
+    const res = await api.get<GenerationStatus>(`/api/generations/${generationId}`)
     return res.data
   },
 }

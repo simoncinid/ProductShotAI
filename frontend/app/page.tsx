@@ -304,7 +304,7 @@ export default function Home() {
   const howItWorksSectionRef = useRef<HTMLElement>(null)
 
   const faqItems = [
-    { q: 'How many free images do I get?', a: 'Every device gets 1 free watermarked image per month. No signup required!' },
+    { q: 'How do I get started?', a: 'Sign up, purchase a credit pack, and start generating professional product photos right away.' },
     { q: 'Do I need a subscription?', a: "No! We don't offer subscriptions. You only pay for the credits you need, when you need them." },
     { q: 'What image formats do you support?', a: 'We accept JPEG and PNG uploads. All outputs are delivered as high-quality JPEG images in 8K resolution.' },
     { q: 'What aspect ratios are available?', a: '1:1 (square, perfect for Amazon), 4:5 (portrait), and 16:9 (landscape). Default is 1:1.' },
@@ -313,7 +313,7 @@ export default function Home() {
   ]
 
   const faqCompact = [
-    { q: 'How many free images do I get?', a: '1 free watermarked image per month, no signup required.' },
+    { q: 'How do I get started?', a: 'Sign up, buy credits, start generating. No subscription.' },
     { q: 'Do I need a subscription?', a: 'No. Pay only for the credits you need. Credits never expire.' },
     { q: 'What image formats?', a: 'JPEG and PNG in, 8K JPEG out, Amazon-optimized.' },
   ]
@@ -350,10 +350,10 @@ export default function Home() {
               </p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <Link
-                  href="/create"
+                  href="/signup"
                   className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
-                  Try Free Now
+                  Get Started
                 </Link>
                 <Link
                   href="/how-it-works"
@@ -363,7 +363,7 @@ export default function Home() {
                 </Link>
               </div>
               <p className="mt-4 text-[11px] text-muted sm:text-[12px] md:text-[13px]">
-                Get 1 free watermarked image per month. No credit card required.
+                Sign up, buy credits, create product photos. No subscription.
               </p>
             </div>
 
@@ -398,10 +398,10 @@ export default function Home() {
             <div className="order-3 flex flex-col items-center lg:hidden">
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center">
                 <Link
-                  href="/create"
+                  href="/signup"
                   className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
                 >
-                  Try Free Now
+                  Get Started
                 </Link>
                 <Link
                   href="/how-it-works"
@@ -411,7 +411,7 @@ export default function Home() {
                 </Link>
               </div>
               <p className="mt-4 text-[11px] text-muted sm:text-[12px] md:text-[13px]">
-                Get 1 free watermarked image per month. No credit card required.
+                Sign up, buy credits, create product photos. No subscription.
               </p>
             </div>
           </div>
@@ -630,12 +630,12 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-anthracite via-anthracite to-primary/90" aria-hidden />
         <div className={`${CONTAINER} relative text-center`}>
           <h2 className="text-[22px] font-bold leading-tight text-on-dark sm:text-3xl md:text-4xl">Ready to Create Your AI Product Photo?</h2>
-          <p className="mx-auto mt-3 max-w-md text-[14px] text-muted md:mt-4 md:text-[16px]">1 free image. No credit card. AI product photos in seconds.</p>
+          <p className="mx-auto mt-3 max-w-md text-[14px] text-muted md:mt-4 md:text-[16px]">Sign up and buy credits. AI product photos in seconds.</p>
           <Link
-            href="/create"
+            href="/signup"
             className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-on-brand shadow-soft-hover transition-smooth hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-card-hover md:mt-8 md:px-10 md:py-4 md:text-lg"
           >
-            Get Started Free
+            Get Started
           </Link>
         </div>
       </section>
