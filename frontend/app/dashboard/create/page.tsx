@@ -316,7 +316,6 @@ export default function DashboardCreatePage() {
         <ResultPopup
           imageUrl={resultImageUrl}
           onClose={() => setResultImageUrl(null)}
-          isFree={false}
         />
       )}
     </div>

@@ -319,7 +319,6 @@ export default function HubPage() {
         <ResultPopup
           imageUrl={resultImageUrl}
           onClose={() => setResultImageUrl(null)}
-          isFree={false}
         />
       )}
     </div>
