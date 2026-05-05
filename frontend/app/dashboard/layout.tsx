@@ -51,7 +51,7 @@ export default function DashboardLayout({
 
   if (!authenticated || userLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#090d16]">
+      <div className="flex min-h-screen items-center justify-center bg-[#120d1a]">
         <p className="text-white/70">Loading...</p>
       </div>
     )
@@ -60,15 +60,15 @@ export default function DashboardLayout({
   const credits = user?.credits_balance ?? 0
 
   return (
-    <div className="h-screen bg-[radial-gradient(circle_at_25%_12%,_#1a2a43_0%,_#0c1320_45%,_#090d16_100%)] text-white">
+    <div className="h-screen bg-[radial-gradient(circle_at_25%_12%,_#34264a_0%,_#1a1426_45%,_#120d1a_100%)] text-white">
       <div className="grid h-full grid-cols-[78px,minmax(0,1fr)] gap-3 p-3 md:grid-cols-[264px,minmax(0,1fr)]">
-        <aside className="flex min-h-0 flex-col rounded-[22px] border border-white/10 bg-[#0b111d]/90 px-2 py-3 backdrop-blur md:px-3 md:py-4">
+        <aside className="flex min-h-0 flex-col rounded-[22px] border border-white/10 bg-[#1a1426]/90 px-2 py-3 backdrop-blur md:px-3 md:py-4">
           <div className="mb-4 flex items-center gap-2 px-1.5 md:px-2">
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-cyan-300 to-blue-500 text-sm font-extrabold text-[#0b111d]">
+            <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-purple-300 to-purple-500 text-sm font-extrabold text-[#1a1426]">
               PS
             </div>
             <div className="hidden md:block">
-              <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/85">Studio</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-purple-200/85">Studio</p>
               <p className="text-[11px] text-white/55">Creative Workspace</p>
             </div>
           </div>
@@ -82,13 +82,13 @@ export default function DashboardLayout({
                   href={item.href}
                   className={`group flex items-center gap-2.5 rounded-xl px-2 py-2.5 transition ${
                     active
-                      ? 'bg-gradient-to-r from-cyan-300/25 to-blue-400/20 text-cyan-100'
+                      ? 'bg-gradient-to-r from-purple-300/25 to-purple-500/20 text-purple-200'
                       : 'text-white/70 hover:bg-white/8 hover:text-white'
                   }`}
                 >
                   <span
                     className={`grid h-7 w-7 place-items-center rounded-lg text-xs font-bold ${
-                      active ? 'bg-cyan-200/25 text-cyan-100' : 'bg-white/6 text-white/70 group-hover:bg-white/10'
+                      active ? 'bg-purple-400/25 text-purple-200' : 'bg-white/6 text-white/70 group-hover:bg-white/10'
                     }`}
                   >
                     {item.glyph}
@@ -106,7 +106,7 @@ export default function DashboardLayout({
             </div>
             <Link
               href="/pricing"
-              className="block rounded-xl bg-white px-3 py-2 text-center text-xs font-semibold text-[#0b111d] transition hover:bg-white/90"
+              className="block rounded-xl bg-white px-3 py-2 text-center text-xs font-semibold text-[#1a1426] transition hover:bg-white/90"
             >
               Buy Credits
             </Link>
@@ -120,7 +120,7 @@ export default function DashboardLayout({
           </div>
         </aside>
 
-        <main className="min-h-0 overflow-hidden rounded-[26px] border border-white/10 bg-[#0f1726]/85 shadow-[0_30px_90px_rgba(2,7,14,0.45)] backdrop-blur">
+        <main className="min-h-0 overflow-hidden rounded-[26px] border border-white/10 bg-[#221b33]/85 shadow-[0_30px_90px_rgba(2,7,14,0.45)] backdrop-blur">
           <div className="h-full overflow-hidden p-3 md:p-5">{children}</div>
         </main>
       </div>

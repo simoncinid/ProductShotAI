@@ -37,7 +37,7 @@ export default function ShootingResultPage() {
     return (
       <div className="mx-auto max-w-5xl px-4 py-12">
         <p className="text-white/70">Shooting not found.</p>
-        <Link href="/dashboard/shooting" className="mt-4 inline-block text-cyan-100 hover:underline">
+        <Link href="/dashboard/shooting" className="mt-4 inline-block text-purple-200 hover:underline">
           Create new shooting
         </Link>
       </div>
@@ -110,7 +110,7 @@ export default function ShootingResultPage() {
                     >
                       Download
                     </a>
-                    <Link href={`/dashboard/hub?generation_id=${gen.id}`} className="font-semibold text-cyan-100 hover:underline">
+                    <Link href={`/dashboard/hub?generation_id=${gen.id}`} className="font-semibold text-purple-200 hover:underline">
                       Edit in Hub
                     </Link>
                   </div>

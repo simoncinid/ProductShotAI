@@ -268,10 +268,10 @@ export default function DashboardCreatePage() {
 
   return (
     <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[1.2fr,0.8fr]">
-      <section className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0a1220]">
+      <section className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#181224]">
         <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/75">Generate Image</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-purple-200/75">Generate Image</p>
             <h1 className="text-xl font-semibold">Creative Session</h1>
           </div>
           <div className="flex gap-2">
@@ -281,7 +281,7 @@ export default function DashboardCreatePage() {
                 type="button"
                 onClick={() => setStep(s as 1 | 2 | 3)}
                 className={`h-8 rounded-lg px-3 text-xs font-semibold ${
-                  step === s ? 'bg-cyan-200/20 text-cyan-100' : 'bg-white/5 text-white/65 hover:bg-white/10'
+                  step === s ? 'bg-purple-400/20 text-purple-200' : 'bg-white/5 text-white/65 hover:bg-white/10'
                 }`}
               >
                 Step {s}
@@ -298,7 +298,7 @@ export default function DashboardCreatePage() {
                   type="button"
                   onClick={() => setSourceMode('upload')}
                   className={`rounded-lg px-3 py-2 text-sm ${
-                    sourceMode === 'upload' ? 'bg-white text-[#0b111d]' : 'bg-white/10 text-white hover:bg-white/20'
+                    sourceMode === 'upload' ? 'bg-white text-[#1a1426]' : 'bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
                   Upload
@@ -307,7 +307,7 @@ export default function DashboardCreatePage() {
                   type="button"
                   onClick={() => setSourceMode('catalog')}
                   className={`rounded-lg px-3 py-2 text-sm ${
-                    sourceMode === 'catalog' ? 'bg-white text-[#0b111d]' : 'bg-white/10 text-white hover:bg-white/20'
+                    sourceMode === 'catalog' ? 'bg-white text-[#1a1426]' : 'bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
                   Product catalog
@@ -377,7 +377,7 @@ export default function DashboardCreatePage() {
                           type="button"
                           onClick={() => handleSelectCatalogImage(img)}
                           className={`overflow-hidden rounded-lg border-2 ${
-                            selectedCatalogImageId === img.id ? 'border-cyan-200' : 'border-transparent'
+                            selectedCatalogImageId === img.id ? 'border-purple-300' : 'border-transparent'
                           }`}
                         >
                           <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="Reference" className="h-24 w-full object-cover" />
@@ -403,7 +403,7 @@ export default function DashboardCreatePage() {
                     type="button"
                     onClick={() => handleGoalChange(goal.id)}
                     className={`rounded-lg border px-3 py-2 text-left text-sm transition ${
-                      selectedGoal === goal.id ? 'border-white bg-white text-[#0b111d]' : 'border-white/20 bg-white/5 text-white hover:bg-white/12'
+                      selectedGoal === goal.id ? 'border-white bg-white text-[#1a1426]' : 'border-white/20 bg-white/5 text-white hover:bg-white/12'
                     }`}
                   >
                     {goal.label}
@@ -439,7 +439,7 @@ export default function DashboardCreatePage() {
               <button
                 type="button"
                 onClick={() => setShowAdvanced((prev) => !prev)}
-                className="text-sm text-cyan-100 underline underline-offset-4"
+                className="text-sm text-purple-200 underline underline-offset-4"
               >
                 {showAdvanced ? 'Hide advanced settings' : 'Show advanced settings'}
               </button>
@@ -482,7 +482,7 @@ export default function DashboardCreatePage() {
               <button
                 onClick={handleGenerate}
                 disabled={!imageUrl || !prompt.trim() || isGenerating || uploadMutation.isPending}
-                className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#0b111d] hover:bg-white/90 disabled:opacity-50"
+                className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#1a1426] hover:bg-white/90 disabled:opacity-50"
               >
                 {isGenerating ? 'Generating...' : 'Generate image'}
               </button>
@@ -503,16 +503,16 @@ export default function DashboardCreatePage() {
             type="button"
             onClick={() => setStep((prev) => (prev === 3 ? prev : ((prev + 1) as 1 | 2 | 3)))}
             disabled={(step === 1 && !stepReady[1]) || (step === 2 && !stepReady[2]) || step === 3}
-            className="rounded-lg bg-cyan-100/20 px-3 py-1.5 text-xs font-semibold text-cyan-100 disabled:opacity-40"
+            className="rounded-lg bg-purple-400/20 px-3 py-1.5 text-xs font-semibold text-purple-200 disabled:opacity-40"
           >
             Next
           </button>
         </div>
       </section>
 
-      <aside className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0d1627]">
+      <aside className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#1f1830]">
         <div className="border-b border-white/10 px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Session Status</p>
+          <p className="text-xs uppercase tracking-[0.18em] text-purple-200/70">Session Status</p>
           <p className="mt-1 text-sm text-white/70">Reference, prompt, and generation readiness.</p>
         </div>
         <div className="min-h-0 flex-1 space-y-3 overflow-auto p-4">

@@ -124,7 +124,7 @@ export default function ProductDetailPage() {
   if (error || !product) {
     return (
       <div className="p-8">
-        <Link href="/dashboard/products" className="text-cyan-100 hover:underline">
+        <Link href="/dashboard/products" className="text-purple-200 hover:underline">
           Back to products
         </Link>
         <p className="mt-4 text-white/70">Product not found.</p>
@@ -225,7 +225,7 @@ export default function ProductDetailPage() {
           ))}
 
           {images.length < maxImages && (
-            <label className="flex h-36 w-36 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-white/35 bg-black/20 hover:border-cyan-200">
+            <label className="flex h-36 w-36 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-white/35 bg-black/20 hover:border-purple-300">
               <input
                 type="file"
                 accept="image/jpeg,image/png"

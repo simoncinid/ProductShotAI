@@ -260,26 +260,26 @@ export default function HubPage() {
           {imageUrlParam && (
             <Link
               href={`/dashboard/shooting?reference_url=${encodeURIComponent(imageUrlParam)}${productId ? `&product_id=${productId}` : ''}`}
-              className="mt-3 inline-block text-sm text-cyan-100 hover:underline"
+              className="mt-3 inline-block text-sm text-purple-200 hover:underline"
             >
               Use this image to start a full shooting
             </Link>
           )}
         </section>
 
-        <section className="rounded-2xl border border-cyan-200/40 bg-gradient-to-br from-[#10223d] to-[#1f3b61] p-5 text-white space-y-4">
+        <section className="rounded-2xl border border-purple-300/40 bg-gradient-to-br from-[#34264a] to-[#2a2140] p-5 text-white space-y-4">
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setMode('similar')}
-              className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'similar' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'similar' ? 'bg-white text-[#261f32]' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
               Similar variation
             </button>
             <button
               type="button"
               onClick={() => setMode('modify')}
-              className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'modify' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'modify' ? 'bg-white text-[#261f32]' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
               Edit image
             </button>
@@ -350,7 +350,7 @@ export default function HubPage() {
             type="button"
             onClick={handleGenerate}
             disabled={!prompt.trim() || isGenerating}
-            className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#13233d] hover:bg-white/90 disabled:opacity-50"
+            className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#261f32] hover:bg-white/90 disabled:opacity-50"
           >
             {isGenerating ? 'Generating...' : 'Generate variation'}
           </button>

@@ -145,7 +145,7 @@ export default function BrandIdentityPage() {
               type="submit"
               form="brand-identity-form"
               disabled={updateMutation.isPending}
-              className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-[#13233d] disabled:opacity-50"
+              className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-[#261f32] disabled:opacity-50"
             >
               {updateMutation.isPending ? 'Saving...' : 'Save'}
             </button>

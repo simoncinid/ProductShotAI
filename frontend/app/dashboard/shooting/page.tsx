@@ -164,24 +164,24 @@ export default function ShootingWizardPage() {
     <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[1.2fr,0.8fr]">
       {phase === 'setup' ? (
         <>
-          <section className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0a1220]">
+          <section className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#181224]">
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
               <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/75">Full Shooting</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-purple-200/75">Full Shooting</p>
                 <h1 className="text-xl font-semibold">Batch Session</h1>
               </div>
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setSetupStep(1)}
-                  className={`h-8 rounded-lg px-3 text-xs font-semibold ${setupStep === 1 ? 'bg-cyan-200/20 text-cyan-100' : 'bg-white/5 text-white/65'}`}
+                  className={`h-8 rounded-lg px-3 text-xs font-semibold ${setupStep === 1 ? 'bg-purple-400/20 text-purple-200' : 'bg-white/5 text-white/65'}`}
                 >
                   Setup
                 </button>
                 <button
                   type="button"
                   onClick={() => setSetupStep(2)}
-                  className={`h-8 rounded-lg px-3 text-xs font-semibold ${setupStep === 2 ? 'bg-cyan-200/20 text-cyan-100' : 'bg-white/5 text-white/65'}`}
+                  className={`h-8 rounded-lg px-3 text-xs font-semibold ${setupStep === 2 ? 'bg-purple-400/20 text-purple-200' : 'bg-white/5 text-white/65'}`}
                 >
                   Config
                 </button>
@@ -201,7 +201,7 @@ export default function ShootingWizardPage() {
                           setReferenceImageUrl(null)
                         }}
                         className={`rounded-lg border px-3 py-2 text-left text-sm ${
-                          productId === p.id ? 'border-white bg-white text-[#0b111d]' : 'border-white/20 bg-white/5 text-white hover:bg-white/12'
+                          productId === p.id ? 'border-white bg-white text-[#1a1426]' : 'border-white/20 bg-white/5 text-white hover:bg-white/12'
                         }`}
                       >
                         {p.name}
@@ -235,7 +235,7 @@ export default function ShootingWizardPage() {
                           type="button"
                           onClick={() => setReferenceImageUrl(img.image_url)}
                           className={`overflow-hidden rounded-lg border-2 ${
-                            referenceImageUrl === img.image_url ? 'border-cyan-200' : 'border-transparent'
+                            referenceImageUrl === img.image_url ? 'border-purple-300' : 'border-transparent'
                           }`}
                         >
                           <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="h-24 w-full object-cover" />
@@ -319,16 +319,16 @@ export default function ShootingWizardPage() {
                 type="button"
                 onClick={() => setSetupStep((prev) => (prev === 2 ? 2 : 2))}
                 disabled={setupStep === 2 || !stepProductDone || !stepReferenceDone}
-                className="rounded-lg bg-cyan-100/20 px-3 py-1.5 text-xs font-semibold text-cyan-100 disabled:opacity-40"
+                className="rounded-lg bg-purple-400/20 px-3 py-1.5 text-xs font-semibold text-purple-200 disabled:opacity-40"
               >
                 Next
               </button>
             </div>
           </section>
 
-          <aside className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0d1627]">
+          <aside className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#1f1830]">
             <div className="border-b border-white/10 px-4 py-3">
-              <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/75">Batch Summary</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-purple-200/75">Batch Summary</p>
               <p className="mt-1 text-sm text-white/70">Production cost and launch controls.</p>
             </div>
             <div className="min-h-0 flex-1 space-y-3 overflow-auto p-4">
@@ -358,7 +358,7 @@ export default function ShootingWizardPage() {
                 type="button"
                 onClick={handleCreateShooting}
                 disabled={!productId || !referenceImageUrl || promptsMutation.isPending || generateMutation.isPending}
-                className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#0b111d] hover:bg-white/90 disabled:opacity-50"
+                className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#1a1426] hover:bg-white/90 disabled:opacity-50"
               >
                 {promptsMutation.isPending
                   ? 'Generating prompts...'
@@ -372,7 +372,7 @@ export default function ShootingWizardPage() {
           </aside>
         </>
       ) : (
-        <section className="col-span-full rounded-2xl border border-white/10 bg-[#0a1220] p-4 text-white">
+        <section className="col-span-full rounded-2xl border border-white/10 bg-[#181224] p-4 text-white">
           <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
             <h2 className="text-xl font-semibold">Prompt review ({prompts.length})</h2>
             <button
@@ -419,7 +419,7 @@ export default function ShootingWizardPage() {
               type="button"
               onClick={() => startGeneration(prompts)}
               disabled={generateMutation.isPending}
-              className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#13233d] disabled:opacity-50"
+              className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#261f32] disabled:opacity-50"
             >
               {generateMutation.isPending ? 'Starting shooting...' : 'Start shooting'}
             </button>

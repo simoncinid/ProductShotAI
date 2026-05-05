@@ -119,7 +119,7 @@ export default function GenerationsPage() {
                             <a href={imageUrl} download className="text-white/75 hover:underline">
                               Download
                             </a>
-                            <Link href={hubUrl(gen.id)} className="font-semibold text-cyan-100 hover:underline">
+                            <Link href={hubUrl(gen.id)} className="font-semibold text-purple-200 hover:underline">
                               Open in Hub
                             </Link>
                           </div>

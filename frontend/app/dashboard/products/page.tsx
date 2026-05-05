@@ -74,7 +74,7 @@ export default function ProductsPage() {
           <button
             type="button"
             onClick={() => setShowCreate((prev) => !prev)}
-            className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#13233d]"
+            className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#261f32]"
           >
             {showCreate ? 'Close form' : 'New product'}
           </button>
@@ -219,7 +219,7 @@ function CreateProductForm({
       </div>
 
       <div className="flex gap-2">
-        <button type="submit" disabled={isSubmitting} className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-[#13233d] disabled:opacity-50">
+        <button type="submit" disabled={isSubmitting} className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-[#261f32] disabled:opacity-50">
           {isSubmitting ? 'Creating...' : 'Create product'}
         </button>
         <button type="button" onClick={onCancel} className="rounded-full border border-white/30 px-5 py-2 text-sm text-white hover:bg-white/10">
