@@ -2,9 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useRef, useEffect, useCallback } from 'react'
-import ProductShotAIMotion from '@/components/ProductShotAIMotion'
-import { ResultGalleryModal } from '@/components/ResultGalleryModal'
+import { useState } from 'react'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-4 sm:px-6 md:px-10 lg:px-14'
 
@@ -25,273 +23,102 @@ function SectionH2({ children, light }: { children: React.ReactNode; light?: boo
   )
 }
 
-// Esempi di prompt (stessi del motion) e immagini risultati per How It Works
-const PROMPT_EXAMPLES = [
-  { tag: 'Lifestyle', text: 'Outdoor café, morning light, leather bag on table with coffee and sunglasses, lifestyle shot, on-brand for e-commerce.' },
-  { tag: 'Flat lay', text: 'Flat lay of open bag with laptop and accessories, top-down view, soft light, minimalist background, e-commerce ready.' },
-  { tag: 'Macro', text: 'Macro of brass buckle and leather texture, stitching details, shallow depth of field, premium look for product zoom.' },
-] as const
-const RESULT_IMAGES = ['/images/res1.png', '/images/res2.png', '/images/res3.png'] as const
-const PRODUCT_IMAGE = '/images/product1.png'
+const HERO_RESULTS = ['/images/res1.png', '/images/res2.png', '/images/res3.png'] as const
 
 const HOW_STEPS = [
   {
-    n: 1,
-    title: 'Brand Identity',
-    desc: 'Tell us about your brand: style, colors, mood and where you sell. The AI will follow these guidelines every time it generates images for your products.',
-    icon: '/icone/bradIdentity.png',
-    media: 'icon' as const,
+    n: '01',
+    title: 'Set Your Brand DNA',
+    text: 'Define tone, visual style, and constraints once. ProductShotAI keeps every generation aligned automatically.',
+    bullets: ['Brand tone and visual rules', 'Marketplace context', 'Reusable style memory'],
   },
   {
-    n: 2,
-    title: 'Upload Product',
-    desc: 'Drop a photo of your product. We isolate the product so the AI can place it in any scene—lifestyle, flat lay, macro or studio.',
-    media: 'product' as const,
+    n: '02',
+    title: 'Upload Product Reference',
+    text: 'Provide one clear product shot. The model isolates key geometry and texture for consistent placement in scenes.',
+    bullets: ['PNG/JPG upload', 'Product isolation', 'Angle-safe reconstruction'],
   },
   {
-    n: 3,
-    title: 'Brand-matched Prompts',
-    desc: 'We generate prompts that match your brand. Review and customize them, then trigger the generation to get your photoshoot.',
-    media: 'prompts' as const,
+    n: '03',
+    title: 'Generate Prompt Set',
+    text: 'Get conversion-oriented prompts for lifestyle, studio, detail and ad compositions, already adapted to your brand.',
+    bullets: ['Prompt presets', 'AI prompt rewriting', 'Manual override'],
   },
   {
-    n: 4,
-    title: 'Results',
-    desc: 'Here are your on-brand variations in 8K, ready for e‑commerce and Amazon. Download and use them right away.',
-    media: 'results' as const,
+    n: '04',
+    title: 'Export 8K Results',
+    text: 'Generate clean outputs for Amazon and e-commerce. Iterate in Creative Hub, then download and publish.',
+    bullets: ['4K/8K output', 'Creative Hub refinements', 'Production-ready downloads'],
   },
-]
+] as const
 
-// Layout: mobile = colonna (titolo → media full width → testo), desktop = due colonne come prima
-const MEDIA_BOX_CLASS = 'h-[200px] w-full md:h-[240px] md:w-[240px] shrink-0'
-const MEDIA_BOX_LEFT_COL = 'hidden md:flex shrink-0 flex-col border-r border-muted/40 bg-muted/10 p-4 md:p-5'
-
-/** Prompt box: tag in alto, testo che riempie tutto il div */
-function PromptBox({ tag, text, className = '' }: { tag: string; text: string; className?: string }) {
+function HeroStudioPreview() {
   return (
-    <div className={`flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-muted/60 bg-cream p-2 text-left md:p-2 ${className}`}>
-      <span className="shrink-0 truncate rounded bg-brand/15 px-1.5 py-0.5 text-[9px] font-semibold text-primary md:text-[10px]">{tag}</span>
-      <p className="min-h-0 flex-1 overflow-y-auto text-[9px] leading-tight text-primary md:text-[10px]">{text}</p>
-    </div>
-  )
-}
-
-/** Cella immagine risultato: cliccabile + icona espansione in basso (sempre visibile) */
-function ResultImageCell({ src, index, onExpand }: { src: string; index: number; onExpand: (i: number) => void }) {
-  return (
-    <button
-      type="button"
-      onClick={() => onExpand(index)}
-      className="group flex flex-col overflow-hidden rounded-lg bg-muted/20 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
-    >
-      <span className="relative block min-h-0 flex-1">
-        <Image src={src} alt="" width={80} height={80} className="h-full w-full object-cover transition group-hover:opacity-95" />
-      </span>
-      <span className="flex shrink-0 items-center justify-center bg-primary/80 py-1.5 text-on-dark" aria-hidden>
-        <svg className="h-3.5 w-3.5 md:h-4 md:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-        </svg>
-      </span>
-    </button>
-  )
-}
-
-function StepCard({ step, isActive, onResultImageClick }: { step: (typeof HOW_STEPS)[0]; isActive?: boolean; onResultImageClick?: (index: number) => void }) {
-  const { n, title, desc, media } = step
-  return (
-    <div
-      className={`flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border bg-cream shadow-soft transition-all duration-300 md:flex-row md:rounded-3xl ${
-        isActive ? 'border-brand/50 shadow-soft-hover scale-[1.02]' : 'border-muted/40 hover:border-brand/30 hover:shadow-soft-hover hover:scale-[1.01]'
-      }`}
-    >
-      {/* Mobile: riga 1 — numero + titolo */}
-      <div className="flex flex-row items-center gap-3 border-b border-muted/40 p-4 md:hidden">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-on-brand">
-          {n}
-        </div>
-        <h3 className="min-w-0 break-words text-base font-semibold text-primary">{title}</h3>
-      </div>
-
-      {/* Colonna 1 (desktop) */}
-      <div className={MEDIA_BOX_LEFT_COL}>
-        <div className="mb-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-on-brand md:h-9 md:w-9">
-          {n}
-        </div>
-        <div className={`flex items-center justify-center overflow-hidden rounded-xl bg-cream shadow-sm ${MEDIA_BOX_CLASS} md:rounded-xl`}>
-          {media === 'icon' && (
-            <Image src="/icone/bradIdentity.png" alt="" width={120} height={120} className="h-16 w-16 object-contain md:h-20 md:w-20" />
-          )}
-          {media === 'product' && (
-            <Image src={PRODUCT_IMAGE} alt="Product" width={200} height={200} className="h-full w-full object-contain p-3 md:p-2" />
-          )}
-          {media === 'prompts' && (
-            <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-2 p-2 md:gap-1.5 md:p-2">
-              {PROMPT_EXAMPLES.map((p, i) => (
-                <PromptBox key={i} tag={p.tag} text={p.text} className="h-full" />
-              ))}
-            </div>
-          )}
-          {media === 'results' && (
-            <div className="grid h-full w-full grid-cols-3 gap-2 p-2 md:gap-1.5 md:p-2">
-              {RESULT_IMAGES.map((src, i) => (
-                <ResultImageCell key={i} src={src} index={i} onExpand={onResultImageClick ?? (() => {})} />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Mobile: blocco media a tutta larghezza */}
-      <div className="flex w-full px-4 py-4 md:hidden">
-        <div className={`flex w-full items-stretch justify-center overflow-hidden rounded-xl bg-muted/10 ${MEDIA_BOX_CLASS}`}>
-          {media === 'icon' && (
-            <div className="flex items-center justify-center">
-              <Image src="/icone/bradIdentity.png" alt="" width={100} height={100} className="h-20 w-20 object-contain" />
-            </div>
-          )}
-          {media === 'product' && (
-            <Image src={PRODUCT_IMAGE} alt="Product" width={200} height={200} className="h-full w-full max-h-[200px] object-contain p-4" />
-          )}
-          {media === 'prompts' && (
-            <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-2 p-3">
-              {PROMPT_EXAMPLES.map((p, i) => (
-                <PromptBox key={i} tag={p.tag} text={p.text} className="h-full" />
-              ))}
-            </div>
-          )}
-          {media === 'results' && (
-            <div className="grid w-full grid-cols-3 gap-2 p-3">
-              {RESULT_IMAGES.map((src, i) => (
-                <ResultImageCell key={i} src={src} index={i} onExpand={onResultImageClick ?? (() => {})} />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Colonna 2: titolo (solo desktop) + testo */}
-      <div className="flex min-w-0 flex-1 flex-col justify-start p-4 md:p-5 md:pt-5">
-        <h3 className="mb-3 hidden min-w-0 break-words text-[15px] font-semibold text-primary md:block md:text-base">{title}</h3>
-        <p className="min-w-0 flex-1 break-words text-[13px] leading-relaxed text-muted-dark md:text-[14px]">{desc}</p>
-      </div>
-    </div>
-  )
-}
-
-const TOTAL_STEPS = HOW_STEPS.length
-const CAROUSEL_START_DELAY_MS = 2500
-const CAROUSEL_INTERVAL_MS = 4500
-
-function HowItWorksCarousel({ sectionRef, onResultImageClick }: { sectionRef: React.RefObject<HTMLElement | null>; onResultImageClick?: (index: number) => void }) {
-  const [index, setIndex] = useState(0)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const goTo = useCallback((i: number) => {
-    const next = (i + TOTAL_STEPS) % TOTAL_STEPS
-    setIndex(next)
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    intervalRef.current = setInterval(
-      () => setIndex((prev: number) => (prev + 1) % TOTAL_STEPS),
-      CAROUSEL_INTERVAL_MS
-    )
-  }, [])
-
-  // Start carousel only when section is visible, after a short delay
-  useEffect(() => {
-    const el = sectionRef?.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
-        if (!entry?.isIntersecting) {
-          if (delayRef.current) clearTimeout(delayRef.current)
-          if (intervalRef.current) clearInterval(intervalRef.current)
-          return
-        }
-        setIndex(0)
-        delayRef.current = setTimeout(() => {
-          intervalRef.current = setInterval(
-            () => setIndex((prev: number) => (prev + 1) % TOTAL_STEPS),
-            CAROUSEL_INTERVAL_MS
-          )
-        }, CAROUSEL_START_DELAY_MS)
-      },
-      { threshold: 0.2, rootMargin: '0px' }
-    )
-    observer.observe(el)
-    return () => {
-      observer.disconnect()
-      if (delayRef.current) clearTimeout(delayRef.current)
-      if (intervalRef.current) clearInterval(intervalRef.current)
-    }
-  }, [sectionRef])
-
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-    const slideWidth = el.offsetWidth
-    el.scrollTo({ left: index * slideWidth, behavior: 'smooth' })
-  }, [index])
-
-  return (
-    <div className="w-full min-w-0">
-      <div
-        ref={containerRef}
-        className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [-webkit-overflow-scrolling:touch] scrollbar-hide"
-      >
-        {HOW_STEPS.map((step, i) => (
-          <div
-            key={step.n}
-            className="w-full min-w-full max-w-full flex-shrink-0 snap-center px-2 py-2"
-          >
-            <StepCard step={step} isActive={index === i} onResultImageClick={onResultImageClick} />
-          </div>
-        ))}
-      </div>
-
-      {/* Nav: prev, dots, next — below the card, no overlap */}
-      <div className="mt-6 flex flex-col items-center gap-3">
-        <div className="flex items-center justify-center gap-4">
-          <button
-            type="button"
-            onClick={() => goTo(index - 1)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-muted bg-cream text-primary shadow-soft transition hover:border-brand hover:bg-brand hover:text-on-brand md:h-11 md:w-11"
-            aria-label="Previous step"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <div className="flex items-center gap-2">
-            {HOW_STEPS.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => goTo(i)}
-                className={`rounded-full transition-all ${
-                  index === i ? 'h-2.5 w-2.5 bg-brand' : 'h-2 w-2 bg-muted hover:bg-muted-dark'
-                }`}
-                aria-label={`Go to step ${i + 1}`}
-              />
+    <div className="relative overflow-hidden rounded-[26px] border border-on-dark/15 bg-anthracite shadow-[0_30px_70px_rgba(10,7,16,0.45)]">
+      <div className="grid grid-cols-[110px,1fr]">
+        <aside className="border-r border-on-dark/10 bg-rich-black/70 p-3">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted">Studio</p>
+          <div className="mt-3 space-y-2">
+            {['Brand', 'Product', 'Prompts', 'Results'].map((item, i) => (
+              <div
+                key={item}
+                className={`rounded-lg px-2 py-1.5 text-[11px] ${i === 2 ? 'bg-brand/30 text-on-dark' : 'bg-on-dark/8 text-muted'}`}
+              >
+                {item}
+              </div>
             ))}
           </div>
-          <button
-            type="button"
-            onClick={() => goTo(index + 1)}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-muted bg-cream text-primary shadow-soft transition hover:border-brand hover:bg-brand hover:text-on-brand md:h-11 md:w-11"
-            aria-label="Next step"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+        </aside>
+        <div className="p-4">
+          <div className="grid gap-3 md:grid-cols-[1.1fr,0.9fr]">
+            <div className="rounded-xl border border-on-dark/15 bg-page-bg/45 p-3">
+              <p className="text-[11px] uppercase tracking-[0.15em] text-muted">Reference</p>
+              <div className="mt-2 rounded-lg bg-on-dark/5 p-2">
+                <Image src="/images/product1.png" alt="Product reference" width={300} height={220} className="h-36 w-full object-contain" />
+              </div>
+            </div>
+            <div className="rounded-xl border border-on-dark/15 bg-page-bg/45 p-3">
+              <p className="text-[11px] uppercase tracking-[0.15em] text-muted">Prompt Set</p>
+              <div className="mt-2 space-y-2 text-[11px] text-muted">
+                <p className="rounded-md bg-on-dark/7 px-2 py-1.5">Lifestyle hero shot with warm light</p>
+                <p className="rounded-md bg-on-dark/7 px-2 py-1.5">Studio clean front angle for listing</p>
+                <p className="rounded-md bg-on-dark/7 px-2 py-1.5">Macro texture detail with contrast</p>
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            {HERO_RESULTS.map((src) => (
+              <div key={src} className="overflow-hidden rounded-lg border border-on-dark/15 bg-on-dark/5">
+                <Image src={src} alt="" width={220} height={150} className="h-20 w-full object-cover" />
+              </div>
+            ))}
+          </div>
         </div>
-        <p className="text-[12px] text-muted">
-          {index + 1} / {TOTAL_STEPS}
-        </p>
       </div>
+    </div>
+  )
+}
+
+function HowItWorksGrid() {
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      {HOW_STEPS.map((step) => (
+        <article key={step.n} className="rounded-2xl border border-muted/40 bg-cream p-5 shadow-soft transition-smooth hover:-translate-y-0.5 hover:shadow-soft-hover">
+          <div className="flex items-center gap-3">
+            <span className="rounded-full bg-brand px-2.5 py-1 text-[11px] font-bold text-on-brand">{step.n}</span>
+            <h3 className="text-[18px] font-semibold text-primary">{step.title}</h3>
+          </div>
+          <p className="mt-3 text-[14px] leading-relaxed text-muted-dark">{step.text}</p>
+          <ul className="mt-4 space-y-1.5">
+            {step.bullets.map((bullet) => (
+              <li key={bullet} className="flex items-start gap-2 text-[13px] text-primary">
+                <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
+                <span>{bullet}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
     </div>
   )
 }
@@ -299,9 +126,6 @@ function HowItWorksCarousel({ sectionRef, onResultImageClick }: { sectionRef: Re
 export default function Home() {
   const [faqOpen, setFaqOpen] = useState<number | null>(null)
   const [faqCompactOpen, setFaqCompactOpen] = useState<number | null>(0)
-  const [galleryOpen, setGalleryOpen] = useState(false)
-  const [galleryIndex, setGalleryIndex] = useState(0)
-  const howItWorksSectionRef = useRef<HTMLElement>(null)
 
   const faqItems = [
     { q: 'How do I get started?', a: 'Sign up, purchase a credit pack, and start generating professional product photos right away.' },
@@ -333,10 +157,8 @@ export default function Home() {
         <div className="absolute -bottom-20 left-1/2 h-64 w-[140%] -translate-x-1/2 rounded-[50%] bg-brand/10 blur-2xl pointer-events-none" aria-hidden />
 
         <div className={`${CONTAINER} relative`}>
-          {/* Mobile: title → subtitle → animation → CTA. Desktop: 2 cols with text+CTA left, ProductShotAIMotion right. */}
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-x-16">
-            {/* Desktop: single block left (title + paragraph + CTA right below, no gap) */}
-            <div className="hidden lg:flex lg:col-start-1 lg:row-start-1 lg:flex-col lg:items-start">
+            <div className="hidden lg:flex lg:flex-col lg:items-start">
               <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-muted sm:text-xs">Product Photo AI & AI Image Product</p>
               <h1 className="font-extrabold leading-tight text-on-dark [font-size:clamp(26px,5vw,52px)]">
                 Studio Quality
@@ -367,7 +189,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* A: titolo + sottotitolo — solo mobile */}
             <div className="order-1 flex flex-col items-center text-center lg:hidden">
               <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-muted sm:text-xs">Product Photo AI & AI Image Product</p>
               <h1 className="font-extrabold leading-tight text-on-dark [font-size:clamp(26px,5vw,52px)]">
@@ -382,19 +203,13 @@ export default function Home() {
               </p>
             </div>
 
-            {/* B: ProductShotAIMotion — stessa animazione su mobile e desktop */}
-            <div className="order-2 lg:col-start-2 lg:row-start-1 lg:flex lg:items-start lg:min-w-0 lg:self-start">
+            <div className="order-2 lg:flex lg:items-start lg:min-w-0 lg:self-start">
               <div className="relative w-full min-w-0 max-w-full">
                 <div className="hidden lg:block absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl pointer-events-none" aria-hidden />
-                <ProductShotAIMotion
-                  logoSrc="/logo.png"
-                  productSrc="/images/product1.png"
-                  results={['/images/res1.png', '/images/res2.png', '/images/res3.png']}
-                />
+                <HeroStudioPreview />
               </div>
             </div>
 
-            {/* C: CTA + footnote — solo mobile */}
             <div className="order-3 flex flex-col items-center lg:hidden">
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center">
                 <Link
@@ -426,7 +241,7 @@ export default function Home() {
       </div>
 
       {/* ——— How it works ——— */}
-      <section ref={howItWorksSectionRef} className="bg-page-bg pb-12 pt-10 md:pb-28 md:pt-20">
+      <section className="bg-page-bg pb-12 pt-10 md:pb-28 md:pt-20">
         <div className={CONTAINER}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-3 md:gap-4">
@@ -435,27 +250,13 @@ export default function Home() {
               <span className="h-px w-8 bg-muted md:w-12" />
             </div>
             <p className="mx-auto mt-3 max-w-2xl text-[14px] text-gray-300 md:mt-4 md:text-[16px]">
-              From brand identity to upload, prompts and 8K results. Here are the four steps.
+              A clear 4-step production system from brand setup to final 8K outputs.
             </p>
           </div>
 
-          {/* Carousel for mobile and desktop */}
-          <div className="mt-8 md:mt-14 max-w-4xl mx-auto">
-            <HowItWorksCarousel
-              sectionRef={howItWorksSectionRef}
-              onResultImageClick={(i) => {
-                setGalleryIndex(i)
-                setGalleryOpen(true)
-              }}
-            />
+          <div className="mx-auto mt-8 max-w-5xl md:mt-14">
+            <HowItWorksGrid />
           </div>
-          <ResultGalleryModal
-            images={RESULT_IMAGES}
-            currentIndex={galleryIndex}
-            open={galleryOpen}
-            onClose={() => setGalleryOpen(false)}
-            onIndexChange={setGalleryIndex}
-          />
         </div>
       </section>
 
