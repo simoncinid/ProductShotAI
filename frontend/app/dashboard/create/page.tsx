@@ -1,15 +1,55 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { uploadApi, generationApi, userApi, getDeviceId, getAbsoluteImageUrl } from '@/lib/api'
+import { generationApi, getAbsoluteImageUrl, getDeviceId, productsApi, uploadApi, userApi } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
 import { EditPromptWithAI } from '@/components/EditPromptWithAI'
 
 const POLL_INTERVAL_MS = 3000
+
+const GOAL_PRESETS = [
+  {
+    id: 'catalog',
+    label: 'Catalog clean',
+    prompt:
+      'Place the product on a clean white background, centered, with soft diffused light and a natural shadow for a premium ecommerce look.',
+  },
+  {
+    id: 'lifestyle',
+    label: 'Lifestyle',
+    prompt:
+      'Place the product in a natural lifestyle context with realistic props, warm light, shallow depth of field, and editorial composition.',
+  },
+  {
+    id: 'hero',
+    label: 'Hero shot',
+    prompt:
+      'Create a dramatic hero shot with directional studio light, deep contrast, premium reflections, and a cinematic product focus.',
+  },
+  {
+    id: 'social',
+    label: 'Social ad',
+    prompt:
+      'Generate a high-converting social ad visual with a vivid background, clean negative space for copy, and bold product framing.',
+  },
+]
+
+type ProductImage = {
+  id: string
+  image_url: string
+}
+
+type ProductDetail = {
+  id: string
+  product_prompt: string
+  default_apply_brand_identity: boolean
+  images?: ProductImage[]
+}
 
 function startPolling(
   generationId: string,
@@ -31,17 +71,24 @@ function startPolling(
       // retry next poll
     }
   }, POLL_INTERVAL_MS)
+
   return () => clearInterval(id)
 }
 
 export default function DashboardCreatePage() {
   const router = useRouter()
+  const [sourceMode, setSourceMode] = useState<'upload' | 'catalog'>('upload')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
-  const [prompt, setPrompt] = useState('')
+  const [selectedProductId, setSelectedProductId] = useState('')
+  const [selectedCatalogImageId, setSelectedCatalogImageId] = useState('')
+  const [useProductContext, setUseProductContext] = useState(false)
+  const [selectedGoal, setSelectedGoal] = useState(GOAL_PRESETS[0].id)
+  const [prompt, setPrompt] = useState(GOAL_PRESETS[0].prompt)
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [resolution, setResolution] = useState<'4k' | '8k'>('4k')
+  const [showAdvanced, setShowAdvanced] = useState(false)
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -52,8 +99,22 @@ export default function DashboardCreatePage() {
     queryFn: userApi.getMe,
     enabled: isAuthenticated(),
   })
+
+  const { data: products = [] } = useQuery({
+    queryKey: ['products'],
+    queryFn: productsApi.list,
+    enabled: isAuthenticated(),
+  })
+
+  const { data: productDetail } = useQuery<ProductDetail>({
+    queryKey: ['product', selectedProductId],
+    queryFn: () => productsApi.get(selectedProductId),
+    enabled: isAuthenticated() && !!selectedProductId,
+  })
+
   const credits = user?.credits_balance ?? 0
   const canChoose8k = credits >= 2
+
   useEffect(() => {
     if (!canChoose8k && resolution === '8k') setResolution('4k')
   }, [canChoose8k, resolution])
@@ -66,21 +127,36 @@ export default function DashboardCreatePage() {
 
   useEffect(() => {
     return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
       stopPollingRef.current?.()
     }
-  }, [])
+  }, [previewUrl])
+
+  useEffect(() => {
+    if (!selectedProductId) {
+      setUseProductContext(false)
+      setSelectedCatalogImageId('')
+      if (sourceMode === 'catalog') {
+        setImageUrl(null)
+        setPreviewUrl(null)
+      }
+      return
+    }
+    setUseProductContext(true)
+  }, [selectedProductId, sourceMode])
 
   const uploadMutation = useMutation({
     mutationFn: uploadApi.uploadImage,
     onSuccess: (data, variables) => {
       if (variables !== selectedFile) return
       setImageUrl(data.image_url)
-      toast.success('Image uploaded successfully!')
+      toast.success('Reference caricata')
     },
     onError: (error: unknown) => {
-      const msg = error && typeof error === 'object' && 'response' in error
-        ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
-        : null
+      const msg =
+        error && typeof error === 'object' && 'response' in error
+          ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
       toast.error(msg || 'Upload failed')
     },
   })
@@ -93,7 +169,7 @@ export default function DashboardCreatePage() {
           data.generation_id,
           (url) => {
             setIsGenerating(false)
-            toast.success('Generation completed!')
+            toast.success('Generazione completata')
             setResultImageUrl(url)
           },
           (msg) => {
@@ -103,7 +179,7 @@ export default function DashboardCreatePage() {
         )
       } else if (data?.status === 'completed' && data?.output_image_url) {
         setIsGenerating(false)
-        toast.success('Generation completed!')
+        toast.success('Generazione completata')
         setResultImageUrl(getAbsoluteImageUrl(data.output_image_url) ?? data.output_image_url ?? null)
       } else {
         setIsGenerating(false)
@@ -111,213 +187,317 @@ export default function DashboardCreatePage() {
     },
     onError: (error: unknown) => {
       setIsGenerating(false)
-      const msg = error && typeof error === 'object' && 'response' in error
-        ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
-        : null
+      const msg =
+        error && typeof error === 'object' && 'response' in error
+          ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
       toast.error(msg || 'Generation failed')
     },
   })
 
+  const productImages = useMemo(() => productDetail?.images ?? [], [productDetail?.images])
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
-      if (previewUrl) URL.revokeObjectURL(previewUrl)
-      setSelectedFile(file)
-      setPreviewUrl(URL.createObjectURL(file))
-      setImageUrl(null)
-      uploadMutation.mutate(file)
-    }
+    if (!file) return
+
+    setSourceMode('upload')
+    setSelectedCatalogImageId('')
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+
+    setSelectedFile(file)
+    setPreviewUrl(URL.createObjectURL(file))
+    setImageUrl(null)
+    uploadMutation.mutate(file)
   }
 
-  const handleChangeImage = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-      fileInputRef.current.click()
-    }
+  const handleGoalChange = (goalId: string) => {
+    setSelectedGoal(goalId)
+    const preset = GOAL_PRESETS.find((item) => item.id === goalId)
+    if (preset) setPrompt(preset.prompt)
+  }
+
+  const handleSelectCatalogImage = (img: ProductImage) => {
+    setSourceMode('catalog')
+    setSelectedCatalogImageId(img.id)
+    setImageUrl(img.image_url)
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(getAbsoluteImageUrl(img.image_url) ?? img.image_url)
   }
 
   const handleGenerate = () => {
     if (!imageUrl || !prompt.trim()) {
-      toast.error('Please upload an image and enter a prompt')
+      toast.error('Seleziona una reference e definisci il prompt')
       return
     }
+
     setIsGenerating(true)
-    generateMutation.mutate({
-      prompt: prompt.trim(),
-      image_url: imageUrl,
-      aspect_ratio: aspectRatio,
-      resolution,
-      device_id: getDeviceId(),
-    })
+
+    const canUseProductPayload = useProductContext && !!selectedProductId && !!productDetail
+
+    const payload = canUseProductPayload
+      ? {
+          prompt: productDetail.product_prompt,
+          image_url: imageUrl,
+          aspect_ratio: aspectRatio,
+          resolution,
+          device_id: getDeviceId(),
+          product_id: selectedProductId,
+          apply_brand_identity: productDetail.default_apply_brand_identity,
+          user_prompt_input: prompt.trim(),
+        }
+      : {
+          prompt: prompt.trim(),
+          image_url: imageUrl,
+          aspect_ratio: aspectRatio,
+          resolution,
+          device_id: getDeviceId(),
+        }
+
+    generateMutation.mutate(payload)
   }
 
+  const effectivePreviewUrl = previewUrl
+  const stepReferenceDone = !!imageUrl
+  const stepPromptDone = !!prompt.trim()
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-on-dark mb-4">
-          Create Your Product Photo
-        </h1>
-        <p className="text-muted">
-          Upload your product image and describe how you want it transformed
-        </p>
-        <p className="text-sm text-green-400 mt-2">
-          ✓ Clean images without watermark
-        </p>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Genera foto</h1>
+          <p className="mt-1 text-sm text-white/70">
+            Flusso guidato: 1) scegli reference, 2) definisci risultato, 3) genera.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Link href="/dashboard/shooting" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
+            Crea shooting
+          </Link>
+          <Link href="/dashboard/products" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
+            Catalogo
+          </Link>
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* Upload Section */}
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-on-dark mb-2">
-              Upload Product Image
-            </label>
-            <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center bg-on-dark/5">
-              <input
-                ref={fileInputRef}
-                type="file"
-                id="file-upload"
-                accept="image/jpeg,image/png"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-              {previewUrl ? (
-                <div className="space-y-4">
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="max-w-full h-auto mx-auto rounded-lg"
-                  />
-                  {uploadMutation.isPending && (
-                    <p className="text-sm text-muted">Uploading…</p>
-                  )}
-                  {uploadMutation.isError && (
-                    <p className="text-sm">
-                      <span className="text-red-400">Upload failed.</span>{' '}
-                      <button
-                        type="button"
-                        onClick={() => selectedFile && uploadMutation.mutate(selectedFile)}
-                        className="font-semibold text-brand underline hover:no-underline"
-                      >
-                        Retry
-                      </button>
-                    </p>
-                  )}
-                  {imageUrl && (
-                    <p className="text-sm text-green-400">✓ Image uploaded</p>
-                  )}
-                  <button
-                    type="button"
-                    onClick={handleChangeImage}
-                    className="text-xs text-muted underline hover:text-muted"
-                  >
-                    Change image
-                  </button>
-                </div>
-              ) : (
-                <label htmlFor="file-upload" className="cursor-pointer block">
-                  <svg
-                    className="mx-auto h-12 w-12 text-muted-dark"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 48 48"
-                  >
-                    <path
-                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span className="mt-2 block text-sm font-medium text-muted">
-                    Click to upload
-                  </span>
-                  <span className="mt-1 block text-xs text-muted-dark">
-                    JPEG or PNG (max 10MB)
-                  </span>
-                </label>
-              )}
-            </div>
+      <div className="grid gap-6 lg:grid-cols-[1.15fr,0.85fr]">
+        <section className="space-y-5 rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">1. Reference</h2>
+            <span className={`text-xs font-semibold ${stepReferenceDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+              {stepReferenceDone ? 'Completato' : 'Richiesto'}
+            </span>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-on-dark mb-2">
-              Aspect Ratio
-            </label>
-            <select
-              value={aspectRatio}
-              onChange={(e) => setAspectRatio(e.target.value)}
-              className="w-full border border-muted rounded-md px-3 py-2 bg-cream text-primary focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
-            >
-              <option value="1:1">1:1 (Square - Amazon Main)</option>
-              <option value="4:5">4:5 (Portrait)</option>
-              <option value="16:9">16:9 (Landscape)</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-on-dark mb-2">
-              Resolution
-            </label>
-            <select
-              value={resolution}
-              onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-              className="w-full border border-muted rounded-md px-3 py-2 bg-cream text-primary focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
-            >
-              <option value="4k">4K — 1 credit</option>
-              <option value="8k" disabled={!canChoose8k}>8K — 2 credits{!canChoose8k ? ' (requires at least 2 credits)' : ''}</option>
-            </select>
-            {!canChoose8k && (
-              <p className="mt-1 text-xs text-amber-400">8K available only with at least 2 credits. Current: {credits}</p>
+          <div className="rounded-xl border border-white/15 bg-black/20 p-4">
+            <div className="mb-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setSourceMode('upload')}
+                className={`rounded-full px-4 py-2 text-sm ${sourceMode === 'upload' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              >
+                Upload file
+              </button>
+              <button
+                type="button"
+                onClick={() => setSourceMode('catalog')}
+                className={`rounded-full px-4 py-2 text-sm ${sourceMode === 'catalog' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              >
+                Da catalogo
+              </button>
+            </div>
+
+            {sourceMode === 'upload' ? (
+              <div className="space-y-3">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                {effectivePreviewUrl ? (
+                  <>
+                    <img src={effectivePreviewUrl} alt="Preview" className="max-h-72 w-full rounded-xl object-contain bg-black/20" />
+                    {uploadMutation.isPending && <p className="text-sm text-white/70">Upload in corso...</p>}
+                    {imageUrl && <p className="text-sm text-emerald-300">Reference pronta</p>}
+                  </>
+                ) : (
+                  <p className="text-sm text-white/75">Carica una reference JPG/PNG per iniziare.</p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10"
+                >
+                  {effectivePreviewUrl ? 'Cambia file' : 'Seleziona file'}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <select
+                  value={selectedProductId}
+                  onChange={(e) => {
+                    setSelectedProductId(e.target.value)
+                    setSelectedCatalogImageId('')
+                    setImageUrl(null)
+                    setPreviewUrl(null)
+                  }}
+                  className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                >
+                  <option value="">Seleziona prodotto...</option>
+                  {products.map((p: { id: string; name: string }) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+
+                {!selectedProductId ? (
+                  <p className="text-sm text-white/75">Scegli un prodotto per vedere le sue reference.</p>
+                ) : productImages.length === 0 ? (
+                  <p className="text-sm text-white/75">Nessuna reference disponibile per questo prodotto.</p>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2">
+                    {productImages.map((img) => (
+                      <button
+                        key={img.id}
+                        type="button"
+                        onClick={() => handleSelectCatalogImage(img)}
+                        className={`overflow-hidden rounded-lg border-2 ${
+                          selectedCatalogImageId === img.id ? 'border-cyan-200' : 'border-transparent'
+                        }`}
+                      >
+                        <img
+                          src={getAbsoluteImageUrl(img.image_url) ?? img.image_url}
+                          alt="Reference"
+                          className="h-24 w-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {effectivePreviewUrl && (
+                  <img src={effectivePreviewUrl} alt="Catalog preview" className="max-h-72 w-full rounded-xl object-contain bg-black/20" />
+                )}
+              </div>
             )}
           </div>
-        </div>
 
-        {/* Prompt Section */}
-        <div className="space-y-4">
           <div>
-            <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
-              <label className="block text-sm font-medium text-on-dark">
-                Describe Your Vision
-              </label>
-              <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-lg font-semibold">2. Obiettivo creativo</h2>
+              <span className={`text-xs font-semibold ${stepPromptDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+                {stepPromptDone ? 'Completato' : 'Richiesto'}
+              </span>
             </div>
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Example: Place the product on a clean white background with soft lighting, add a subtle shadow underneath, make the colors more vibrant..."
-              rows={8}
-              className="w-full border border-muted rounded-md px-3 py-2 bg-cream text-primary placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
-            />
-            <p className="text-xs text-muted mt-1">
-              Describe how you want your product to look. Be specific about background, lighting, and style.
-            </p>
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {GOAL_PRESETS.map((goal) => (
+                <button
+                  key={goal.id}
+                  type="button"
+                  onClick={() => handleGoalChange(goal.id)}
+                  className={`rounded-lg border px-3 py-2 text-left text-sm transition ${
+                    selectedGoal === goal.id
+                      ? 'border-white bg-white text-[#13233d]'
+                      : 'border-white/25 bg-white/5 text-white hover:bg-white/15'
+                  }`}
+                >
+                  {goal.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-4">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <label className="text-sm font-medium">Prompt finale</label>
+                <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Migliora con AI" applyLabel="Applica" />
+              </div>
+              <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={7}
+                className="w-full rounded-lg border border-white/20 bg-black/20 px-3 py-2 text-white placeholder:text-white/60"
+                placeholder="Descrivi il risultato che vuoi ottenere..."
+              />
+            </div>
+
+            {selectedProductId && (
+              <label className="mt-3 flex items-center gap-2 text-sm text-white/85">
+                <input
+                  type="checkbox"
+                  checked={useProductContext}
+                  onChange={(e) => setUseProductContext(e.target.checked)}
+                />
+                Applica contesto prodotto (prompt base + brand identity)
+              </label>
+            )}
+          </div>
+        </section>
+
+        <section className="space-y-4 rounded-2xl border border-cyan-200/40 bg-gradient-to-br from-[#10223d] to-[#1f3b61] p-5 text-white">
+          <h2 className="text-lg font-semibold">3. Genera</h2>
+
+          <button
+            type="button"
+            onClick={() => setShowAdvanced((prev) => !prev)}
+            className="text-sm text-white/85 underline underline-offset-4"
+          >
+            {showAdvanced ? 'Nascondi impostazioni avanzate' : 'Mostra impostazioni avanzate'}
+          </button>
+
+          {showAdvanced && (
+            <div className="space-y-3 rounded-xl border border-white/20 bg-black/20 p-4">
+              <div>
+                <label className="mb-1 block text-sm text-white/90">Aspect ratio</label>
+                <select
+                  value={aspectRatio}
+                  onChange={(e) => setAspectRatio(e.target.value)}
+                  className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                >
+                  <option value="1:1">1:1 (Square)</option>
+                  <option value="4:5">4:5 (Portrait)</option>
+                  <option value="16:9">16:9 (Landscape)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm text-white/90">Resolution</label>
+                <select
+                  value={resolution}
+                  onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
+                  className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                >
+                  <option value="4k">4K - 1 credito</option>
+                  <option value="8k" disabled={!canChoose8k}>
+                    8K - 2 crediti{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}
+                  </option>
+                </select>
+                {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Crediti attuali: {credits}</p>}
+              </div>
+            </div>
+          )}
+
+          <div className="rounded-xl border border-white/25 bg-black/20 p-4 text-sm text-white/85">
+            <p>{resolution === '8k' ? 'Costo stimato: 2 crediti' : 'Costo stimato: 1 credito'}</p>
+            <p className="mt-1 text-xs">Il risultato sarà salvato in Libreria e apribile nel Creative Hub.</p>
           </div>
 
           <button
             onClick={handleGenerate}
-            disabled={!imageUrl || !prompt.trim() || isGenerating}
-            className="w-full bg-brand text-on-brand px-6 py-3 rounded-md font-semibold hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!imageUrl || !prompt.trim() || isGenerating || uploadMutation.isPending}
+            className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#13233d] hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {isGenerating
-              ? 'Generating... (30–90 sec)'
-              : 'Generate Image'}
+            {isGenerating ? 'Generazione in corso...' : 'Genera immagine'}
           </button>
 
-          {isGenerating && (
-            <div className="text-center text-sm text-muted">
-              <p>Processing your image...</p>
-              <p className="text-xs mt-1">This usually takes 30–90 seconds</p>
-            </div>
-          )}
-        </div>
+          {isGenerating && <p className="text-center text-xs text-white/70">Tempo medio: 30-90 secondi</p>}
+        </section>
       </div>
 
-      {resultImageUrl && (
-        <ResultPopup
-          imageUrl={resultImageUrl}
-          onClose={() => setResultImageUrl(null)}
-        />
-      )}
+      {resultImageUrl && <ResultPopup imageUrl={resultImageUrl} onClose={() => setResultImageUrl(null)} />}
     </div>
   )
 }

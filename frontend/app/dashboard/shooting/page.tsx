@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { productsApi, uploadApi, shootingApi, userApi, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
@@ -10,27 +10,26 @@ import toast from 'react-hot-toast'
 import { EditPromptWithAI } from '@/components/EditPromptWithAI'
 
 const SHOOTING_STYLE_OPTIONS = [
-  { value: 'Zoom into details', label: 'Zoom on details (close-up, texture)' },
-  { value: 'Lifestyle', label: 'Lifestyle (usage context, environment)' },
-  { value: 'Studio shooting', label: 'Studio shooting (neutral background, controlled light)' },
-  { value: 'Mix: 3 zoomed 1 detail 2 lifestyle (one with text)', label: 'Mix: 3 zoom, 1 detail, 2 lifestyle (one with text)' },
-  { value: 'Mix (balanced)', label: 'Mix (balanced)' },
-  { value: 'Clean e-commerce set', label: 'Clean e-commerce set (white, minimal)' },
+  { value: 'Clean e-commerce set', label: 'E-commerce clean' },
+  { value: 'Studio shooting', label: 'Studio' },
+  { value: 'Lifestyle', label: 'Lifestyle' },
+  { value: 'Zoom into details', label: 'Detail zoom' },
+  { value: 'Mix (balanced)', label: 'Mix balanced' },
 ]
-
-const STEPS = ['Product', 'Reference photo', 'Count & style', 'Prompt', 'Generate'] as const
 
 export default function ShootingWizardPage() {
   const router = useRouter()
-  const [step, setStep] = useState(0)
-  const [productId, setProductId] = useState<string | null>(null)
-  const [referenceImageUrl, setReferenceImageUrl] = useState<string | null>(null)
-  const [referenceFile, setReferenceFile] = useState<File | null>(null)
+  const searchParams = useSearchParams()
+  const presetProductId = searchParams.get('product_id')
+  const presetReferenceUrl = searchParams.get('reference_url')
+  const [productId, setProductId] = useState<string | null>(presetProductId)
+  const [referenceImageUrl, setReferenceImageUrl] = useState<string | null>(presetReferenceUrl)
   const [count, setCount] = useState(4)
   const [shootingStyle, setShootingStyle] = useState(SHOOTING_STYLE_OPTIONS[0].value)
   const [resolution, setResolution] = useState<'4k' | '8k'>('4k')
+  const [reviewPrompts, setReviewPrompts] = useState(false)
   const [prompts, setPrompts] = useState<string[]>([])
-  const [promptIndex, setPromptIndex] = useState(0)
+  const [phase, setPhase] = useState<'setup' | 'review'>('setup')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -42,321 +41,353 @@ export default function ShootingWizardPage() {
     queryFn: productsApi.list,
     enabled: isAuthenticated(),
   })
+
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: userApi.getMe,
     enabled: isAuthenticated(),
   })
-  const credits = user?.credits_balance ?? 0
-  const canChoose8k = credits >= 2
-  useEffect(() => {
-    if (!canChoose8k && resolution === '8k') setResolution('4k')
-  }, [canChoose8k, resolution])
 
   const { data: productDetail } = useQuery({
     queryKey: ['product', productId],
     queryFn: () => productsApi.get(productId!),
-    enabled: !!productId && step === 1,
+    enabled: !!productId,
   })
+
+  const credits = user?.credits_balance ?? 0
+  const canChoose8k = credits >= 2
+
+  useEffect(() => {
+    if (!canChoose8k && resolution === '8k') setResolution('4k')
+  }, [canChoose8k, resolution])
 
   const uploadMutation = useMutation({
     mutationFn: uploadApi.uploadImage,
     onSuccess: (data) => {
       setReferenceImageUrl(data.image_url)
-      toast.success('Image uploaded')
+      toast.success('Reference uploaded')
     },
     onError: (e: unknown) => {
-      const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
+      const msg =
+        e && typeof e === 'object' && 'response' in e
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
       toast.error(msg || 'Upload failed')
     },
   })
 
-  const promptsMutation = useMutation({
-    mutationFn: (data: { product_id: string; shooting_style: string; count: number }) => shootingApi.createPrompts(data),
-    onSuccess: (data) => {
-      setPrompts(data.prompts)
-      setPromptIndex(0)
-      setStep(3) // review prompts (step 3 = Prompt)
-      toast.success('Prompts generated')
-    },
-    onError: (e: unknown) => {
-      const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
-      toast.error(msg || 'Prompt generation failed')
-    },
-  })
-
   const generateMutation = useMutation({
-    mutationFn: (data: { product_id: string; reference_image_url: string; prompts: string[]; aspect_ratio: string; resolution: string }) => shootingApi.generate(data),
+    mutationFn: (data: { product_id: string; reference_image_url: string; prompts: string[]; aspect_ratio: string; resolution: string }) =>
+      shootingApi.generate(data),
     onSuccess: (data) => {
       toast.success('Shooting started')
       router.push(`/dashboard/shooting/${data.shooting_id}`)
     },
     onError: (e: unknown) => {
-      const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
+      const msg =
+        e && typeof e === 'object' && 'response' in e
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
       toast.error(msg || 'Starting shooting failed')
+    },
+  })
+
+  const startGeneration = (generatedPrompts: string[]) => {
+    if (!productId || !referenceImageUrl || generatedPrompts.length === 0) return
+
+    generateMutation.mutate({
+      product_id: productId,
+      reference_image_url: referenceImageUrl,
+      prompts: generatedPrompts,
+      aspect_ratio: '1:1',
+      resolution,
+    })
+  }
+
+  const promptsMutation = useMutation({
+    mutationFn: (data: { product_id: string; shooting_style: string; count: number }) => shootingApi.createPrompts(data),
+    onSuccess: (data) => {
+      if (reviewPrompts) {
+        setPrompts(data.prompts)
+        setPhase('review')
+        toast.success('Prompts ready, review and launch')
+      } else {
+        startGeneration(data.prompts)
+      }
+    },
+    onError: (e: unknown) => {
+      const msg =
+        e && typeof e === 'object' && 'response' in e
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
+      toast.error(msg || 'Prompt generation failed')
     },
   })
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      setReferenceFile(file)
       uploadMutation.mutate(file)
     }
   }
 
-  const handleSelectProductImage = (imageUrl: string) => {
-    setReferenceImageUrl(imageUrl)
-    setReferenceFile(null)
-  }
-
-  const handleGeneratePrompts = () => {
-    if (!productId) return
-    promptsMutation.mutate({ product_id: productId, shooting_style: shootingStyle, count })
-  }
-
-  const handleConfirmPrompt = () => {
-    if (promptIndex < prompts.length - 1) {
-      setPromptIndex(promptIndex + 1)
-    } else {
-      setStep(4) // final step: Generate
+  const handleCreateShooting = () => {
+    if (!productId || !referenceImageUrl) {
+      toast.error('Select product and reference image')
+      return
     }
-  }
 
-  const handleStartGeneration = () => {
-    if (!productId || !referenceImageUrl || prompts.length === 0) return
-    generateMutation.mutate({
-      product_id: productId,
-      reference_image_url: referenceImageUrl,
-      prompts,
-      aspect_ratio: '1:1',
-      resolution,
-    })
+    promptsMutation.mutate({ product_id: productId, shooting_style: shootingStyle, count })
   }
 
   if (!isAuthenticated()) return null
   if (productsLoading) return <div className="p-8 text-muted">Loading...</div>
 
-  if (products.length === 0 && step === 0) {
+  if (products.length === 0) {
     return (
       <div className="max-w-xl mx-auto px-4 py-12">
-        <h1 className="text-2xl font-bold text-on-dark mb-4">Product Photoshooting</h1>
-        <p className="text-muted mb-6">You don&apos;t have any products yet. Create a product to generate a shooting.</p>
-        <Link href="/dashboard/products" className="inline-block px-4 py-2 bg-brand text-on-brand rounded-md font-semibold">
-          Create product
+        <h1 className="text-2xl font-bold text-on-dark mb-3">Shooting multiplo</h1>
+        <p className="text-muted mb-6">Prima crea almeno un prodotto con immagini reference.</p>
+        <Link href="/dashboard/products" className="inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary">
+          Crea prodotto
         </Link>
-        <Link href="/dashboard" className="ml-4 text-brand hover:underline">← Dashboard</Link>
       </div>
     )
   }
 
+  const totalCredits = count * (resolution === '8k' ? 2 : 1)
+  const stepProductDone = !!productId
+  const stepReferenceDone = !!referenceImageUrl
+
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-on-dark">Product Photoshooting</h1>
-        <Link href="/dashboard" className="text-brand hover:underline">← Dashboard</Link>
-      </div>
-
-      {/* Step indicator */}
-      <div className="flex gap-2 mb-8 overflow-x-auto">
-        {STEPS.map((label, i) => (
-          <button
-            key={label}
-            type="button"
-            onClick={() => i < step ? setStep(i) : undefined}
-            className={`shrink-0 px-3 py-1.5 rounded-md text-sm font-medium ${
-              i === step ? 'bg-brand text-on-brand' : i < step ? 'bg-on-dark/20 text-on-dark border border-muted' : 'bg-on-dark/10 text-muted-dark border border-muted-dark/60'
-            } ${i < step ? 'cursor-pointer' : ''}`}
-          >
-            {i + 1}. {label}
-          </button>
-        ))}
-      </div>
-
-      {/* Step 0: Select product */}
-      {step === 0 && (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-on-dark">Select product</h2>
-          <div className="grid gap-2">
-            {products.map((p: { id: string; name: string }) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => { setProductId(p.id); setStep(1); }}
-                className={`text-left p-4 rounded-lg border-2 transition text-on-dark ${
-                  productId === p.id ? 'border-brand bg-brand/20 text-on-dark' : 'border-muted-dark/60 hover:border-muted bg-on-dark/5'
-                }`}
-              >
-                {p.name}
-              </button>
-            ))}
-          </div>
+    <div className="mx-auto max-w-6xl">
+      <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Crea shooting</h1>
+          <p className="mt-1 text-sm text-white/70">Flusso guidato per generare un set coerente di immagini in pochi passaggi.</p>
         </div>
-      )}
+        <Link href="/dashboard/create" className="rounded-full border border-white/30 px-4 py-2 text-sm text-white hover:bg-white/10">
+          Genera foto singola
+        </Link>
+      </div>
 
-      {/* Step 1: Reference photo */}
-      {step === 1 && productId && (
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-on-dark">Reference photo</h2>
-          <p className="text-sm text-muted">Upload a photo or choose from a product image.</p>
-          <div className="border-2 border-dashed border-muted rounded-lg p-6 text-center bg-on-dark/5">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png"
-              className="hidden"
-              onChange={handleFileSelect}
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="px-4 py-2 bg-on-dark/10 border border-muted text-on-dark rounded-md font-medium hover:bg-white/20"
-            >
-              Upload image
-            </button>
-            {uploadMutation.isPending && <p className="mt-2 text-sm text-muted">Uploading…</p>}
-          </div>
-          {productDetail?.images?.length ? (
+      {phase === 'setup' ? (
+        <div className="grid gap-6 lg:grid-cols-[1.15fr,0.85fr]">
+          <section className="space-y-5 rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
             <div>
-              <p className="text-sm font-medium text-on-dark mb-2">Or choose from product images:</p>
-              <div className="flex flex-wrap gap-2">
-                {(productDetail.images as { id: string; image_url: string }[]).map((img) => (
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">1. Seleziona prodotto</h2>
+                <span className={`text-xs font-semibold ${stepProductDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+                  {stepProductDone ? 'Completato' : 'Richiesto'}
+                </span>
+              </div>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {products.map((p: { id: string; name: string }) => (
                   <button
-                    key={img.id}
+                    key={p.id}
                     type="button"
-                    onClick={() => handleSelectProductImage(img.image_url)}
-                    className="w-20 h-20 rounded-lg overflow-hidden border-2 border-muted hover:border-brand focus:ring-2 focus:ring-brand"
+                    onClick={() => {
+                      setProductId(p.id)
+                      setReferenceImageUrl(null)
+                    }}
+                    className={`rounded-lg border px-3 py-2 text-left text-sm transition ${
+                      productId === p.id
+                        ? 'border-white bg-white text-[#13233d]'
+                        : 'border-white/25 bg-white/5 text-white hover:bg-white/15'
+                    }`}
                   >
-                    <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="w-full h-full object-cover" />
+                    {p.name}
                   </button>
                 ))}
               </div>
             </div>
-          ) : null}
-          {referenceImageUrl && (
-            <div className="mt-4">
-              <p className="text-sm text-green-400 mb-2">✓ Image selected</p>
-              <img src={getAbsoluteImageUrl(referenceImageUrl) ?? referenceImageUrl} alt="" className="max-h-40 rounded-lg border border-muted-dark/60" />
-              <div className="mt-4 flex gap-2">
-                <button type="button" onClick={() => setStep(2)} className="px-4 py-2 bg-brand text-on-brand rounded-md font-semibold">
-                  Next
+
+            <div>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-lg font-semibold">2. Scegli reference</h2>
+                  <span className={`text-xs font-semibold ${stepReferenceDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+                    {stepReferenceDone ? 'Completato' : 'Richiesto'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10"
+                >
+                  Upload
                 </button>
-                <button type="button" onClick={() => setReferenceImageUrl(null)} className="px-4 py-2 border border-muted text-on-dark rounded-md hover:bg-on-dark/10">Change</button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png"
+                  className="hidden"
+                  onChange={handleFileSelect}
+                />
               </div>
+
+              {uploadMutation.isPending && <p className="mt-2 text-sm text-muted">Uploading...</p>}
+
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                {(productDetail?.images as { id: string; image_url: string }[] | undefined)?.map((img) => (
+                  <button
+                    key={img.id}
+                    type="button"
+                    onClick={() => setReferenceImageUrl(img.image_url)}
+                    className={`overflow-hidden rounded-lg border-2 ${
+                      referenceImageUrl === img.image_url ? 'border-cyan-200' : 'border-transparent'
+                    }`}
+                  >
+                    <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="h-24 w-full object-cover" />
+                  </button>
+                ))}
+              </div>
+
+              {referenceImageUrl && (
+                <div className="mt-3 rounded-lg border border-white/20 bg-black/20 p-3">
+                  <p className="mb-2 text-xs text-emerald-300">Reference selezionata</p>
+                  <img
+                    src={getAbsoluteImageUrl(referenceImageUrl) ?? referenceImageUrl}
+                    alt="Reference selected"
+                    className="max-h-44 rounded-lg"
+                  />
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      )}
+          </section>
 
-      {/* Step 2: Count + style */}
-      {step === 2 && (
-        <div className="space-y-6">
-          <h2 className="text-lg font-semibold text-on-dark">Number of photos and style</h2>
-          <div>
-            <label className="block text-sm font-medium text-on-dark mb-2">Number of photos (2–10)</label>
-            <input
-              type="number"
-              min={2}
-              max={10}
-              value={count}
-              onChange={(e) => setCount(Math.min(10, Math.max(2, parseInt(e.target.value, 10) || 2)))}
-              className="w-full border border-muted rounded-lg px-3 py-2 bg-cream text-primary"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-on-dark mb-2">Shooting style (suggestions)</label>
-            <select
-              value={shootingStyle}
-              onChange={(e) => setShootingStyle(e.target.value)}
-              className="w-full border border-muted rounded-lg px-3 py-2 bg-cream text-primary"
+          <section className="space-y-4 rounded-2xl border border-cyan-200/40 bg-gradient-to-br from-[#10223d] to-[#1f3b61] p-5 text-white">
+            <h2 className="text-lg font-semibold">3. Configura e lancia</h2>
+            <p className="text-sm text-white/75">L'AI genera i prompt in automatico, tu scegli solo obiettivo e volume.</p>
+
+            <div>
+              <label className="mb-1 block text-sm text-white/90">Numero immagini</label>
+              <input
+                type="number"
+                min={2}
+                max={10}
+                value={count}
+                onChange={(e) => setCount(Math.min(10, Math.max(2, Number(e.target.value) || 2)))}
+                className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
+              />
+              <p className="mt-1 text-xs text-white/70">Consigliato: 4 per test rapido, 8-10 per set completo.</p>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-white/90">Stile shooting</label>
+              <select
+                value={shootingStyle}
+                onChange={(e) => setShootingStyle(e.target.value)}
+                className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
+              >
+                {SHOOTING_STYLE_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-white/90">Resolution</label>
+              <select
+                value={resolution}
+                onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
+                className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
+              >
+                <option value="4k">4K - 1 credito / immagine</option>
+                <option value="8k" disabled={!canChoose8k}>
+                  8K - 2 crediti / immagine{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}
+                </option>
+              </select>
+              {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Crediti attuali: {credits}</p>}
+            </div>
+
+            <label className="flex items-center gap-2 text-sm text-white/90">
+              <input
+                type="checkbox"
+                checked={reviewPrompts}
+                onChange={(e) => setReviewPrompts(e.target.checked)}
+                className="rounded"
+              />
+              Voglio revisionare i prompt prima del lancio
+            </label>
+
+            <div className="rounded-xl border border-white/25 bg-black/20 p-4 text-sm text-white/85">
+              <p>Costo stimato: {totalCredits} crediti</p>
+              <p className="mt-1 text-xs">{count} immagini x {resolution === '8k' ? 2 : 1} credito/i per immagine.</p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleCreateShooting}
+              disabled={!productId || !referenceImageUrl || promptsMutation.isPending || generateMutation.isPending}
+              className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#1f2d45] hover:bg-white/90 disabled:opacity-50"
             >
-              {SHOOTING_STYLE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex gap-2">
-            <button type="button" onClick={handleGeneratePrompts} disabled={promptsMutation.isPending} className="px-4 py-2 bg-brand text-on-brand rounded-md font-semibold disabled:opacity-50">
-              {promptsMutation.isPending ? 'Generating prompts…' : 'Generate prompts with AI'}
+              {promptsMutation.isPending
+                ? 'Genero prompt...'
+                : generateMutation.isPending
+                  ? 'Avvio shooting...'
+                  : reviewPrompts
+                    ? 'Genera prompt e rivedi'
+                    : 'Avvia shooting'}
             </button>
-            <button type="button" onClick={() => setStep(1)} className="px-4 py-2 border border-muted text-on-dark rounded-md hover:bg-on-dark/10">Back</button>
-          </div>
+          </section>
         </div>
-      )}
-
-      {/* Step 3: Review/edit prompts one by one */}
-      {step === 3 && prompts.length > 0 && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <h2 className="text-lg font-semibold text-on-dark">
-              Prompt {promptIndex + 1} of {prompts.length}
-            </h2>
-            <EditPromptWithAI
-              value={prompts[promptIndex] ?? ''}
-              onChange={(newVal) => {
-                const next = [...prompts]
-                next[promptIndex] = newVal
-                setPrompts(next)
-              }}
-              buttonLabel="Edit prompt with AI"
-              applyLabel="Apply"
-            />
-          </div>
-          <p className="text-sm text-muted">Edit if needed (e.g. add text on photo, zoom details) and confirm.</p>
-          <textarea
-            value={prompts[promptIndex] ?? ''}
-            onChange={(e) => {
-              const next = [...prompts]
-              next[promptIndex] = e.target.value
-              setPrompts(next)
-            }}
-            rows={8}
-            className="w-full border border-muted rounded-lg px-3 py-2 font-mono text-sm bg-cream text-primary"
-          />
-          <div className="flex gap-2">
-            <button type="button" onClick={handleConfirmPrompt} className="px-4 py-2 bg-brand text-on-brand rounded-md font-semibold">
-              {promptIndex < prompts.length - 1 ? 'Confirm and next' : 'Confirm and go to Generate'}
-            </button>
-            {promptIndex > 0 && (
-              <button type="button" onClick={() => setPromptIndex(promptIndex - 1)} className="px-4 py-2 border border-muted text-on-dark rounded-md hover:bg-on-dark/10">Back</button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Step 4: Generate */}
-      {step === 4 && (
-        <div className="space-y-6">
-          <h2 className="text-lg font-semibold text-on-dark">Generate shooting</h2>
-          <div>
-            <label className="block text-sm font-medium text-on-dark mb-2">Resolution</label>
-            <select
-              value={resolution}
-              onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-              className="w-full border border-muted rounded-lg px-3 py-2 bg-cream text-primary mb-3"
+      ) : (
+        <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+          <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
+            <h2 className="text-xl font-semibold">Review prompt ({prompts.length})</h2>
+            <button
+              type="button"
+              onClick={() => setPhase('setup')}
+              className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10"
             >
-              <option value="4k">4K — 1 credit per image</option>
-              <option value="8k" disabled={!canChoose8k}>8K — 2 credits per image{!canChoose8k ? ' (requires at least 2 credits)' : ''}</option>
-            </select>
-            {!canChoose8k && (
-              <p className="text-xs text-amber-400 mb-2">8K available only with at least 2 credits. Current: {credits}</p>
-            )}
+              Torna a setup
+            </button>
           </div>
-          <p className="text-muted">
-            {prompts.length} images × {resolution === '8k' ? 2 : 1} credit(s) = {prompts.length * (resolution === '8k' ? 2 : 1)} total credits.
-          </p>
-          <button
-            type="button"
-            onClick={handleStartGeneration}
-            disabled={generateMutation.isPending}
-            className="w-full px-4 py-3 bg-surface border border-muted-dark/60 text-on-dark rounded-lg font-semibold hover:bg-surface/80 disabled:opacity-50"
-          >
-            {generateMutation.isPending ? 'Starting…' : 'Generate'}
-          </button>
-          <button type="button" onClick={() => setStep(3)} className="block w-full text-center text-brand hover:underline">
-            ← Edit prompts
-          </button>
-        </div>
+
+          <div className="space-y-3">
+            {prompts.map((prompt, index) => (
+              <div key={index} className="rounded-xl border border-white/15 bg-black/20 p-3">
+                <div className="mb-2 flex items-center justify-between gap-2 flex-wrap">
+                  <p className="text-sm font-semibold">Prompt {index + 1}</p>
+                  <EditPromptWithAI
+                    value={prompt}
+                    onChange={(newVal) => {
+                      const next = [...prompts]
+                      next[index] = newVal
+                      setPrompts(next)
+                    }}
+                    buttonLabel="Migliora con AI"
+                    applyLabel="Applica"
+                  />
+                </div>
+                <textarea
+                  value={prompt}
+                  onChange={(e) => {
+                    const next = [...prompts]
+                    next[index] = e.target.value
+                    setPrompts(next)
+                  }}
+                  rows={4}
+                  className="w-full rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white"
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 flex gap-3">
+            <button
+              type="button"
+              onClick={() => startGeneration(prompts)}
+              disabled={generateMutation.isPending}
+              className="rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#13233d] disabled:opacity-50"
+            >
+              {generateMutation.isPending ? 'Avvio shooting...' : 'Avvia shooting'}
+            </button>
+          </div>
+        </section>
       )}
     </div>
   )

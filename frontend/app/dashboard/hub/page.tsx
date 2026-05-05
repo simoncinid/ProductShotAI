@@ -32,6 +32,7 @@ function startPolling(
       // retry next poll
     }
   }, POLL_INTERVAL_MS)
+
   return () => clearInterval(id)
 }
 
@@ -47,6 +48,7 @@ export default function HubPage() {
   const [prompt, setPrompt] = useState('')
   const [aspectRatio, setAspectRatio] = useState('1:1')
   const [resolution, setResolution] = useState<'4k' | '8k'>('4k')
+  const [showAdvanced, setShowAdvanced] = useState(false)
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const stopPollingRef = useRef<(() => void) | null>(null)
@@ -57,7 +59,10 @@ export default function HubPage() {
     enabled: !!generationId && isAuthenticated(),
   })
 
-  const productIdFromGen = generation && 'product_id' in generation ? (generation as { product_id?: string }).product_id : undefined
+  const productIdFromGen = generation && 'product_id' in generation
+    ? (generation as { product_id?: string }).product_id
+    : undefined
+
   const effectiveProductId = productId || productIdFromGen
 
   const { data: product } = useQuery({
@@ -65,13 +70,16 @@ export default function HubPage() {
     queryFn: () => productsApi.get(effectiveProductId!),
     enabled: isAuthenticated() && !!effectiveProductId,
   })
+
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: userApi.getMe,
     enabled: isAuthenticated(),
   })
+
   const credits = user?.credits_balance ?? 0
   const canChoose8k = credits >= 2
+
   useEffect(() => {
     if (!canChoose8k && resolution === '8k') setResolution('4k')
   }, [canChoose8k, resolution])
@@ -82,25 +90,30 @@ export default function HubPage() {
 
   useEffect(() => {
     if (mode === 'similar') {
-      setPrompt('Same style and product, slight variation. Keep composition and lighting consistent.')
+      setPrompt('Keep the same product and style, change angle and composition slightly while preserving lighting consistency.')
     } else {
       setPrompt('')
     }
   }, [mode])
 
   useEffect(() => {
-    return () => { stopPollingRef.current?.() }
+    return () => {
+      stopPollingRef.current?.()
+    }
   }, [])
 
   const displayImageUrl = (() => {
     if (generationId && generation?.output_image_url) {
       return getAbsoluteImageUrl(generation.output_image_url) ?? generation.output_image_url
     }
+
     if (imageUrlParam) return getAbsoluteImageUrl(imageUrlParam) ?? imageUrlParam
+
     if (productId && imageId && product?.images) {
-      const img = product.images.find((i: { id: string }) => i.id === imageId)
+      const img = (product.images as { id: string; image_url: string }[]).find((i) => i.id === imageId)
       return img ? (getAbsoluteImageUrl(img.image_url) ?? img.image_url) : null
     }
+
     return null
   })()
 
@@ -115,7 +128,7 @@ export default function HubPage() {
           data.generation_id,
           (url) => {
             setIsGenerating(false)
-            toast.success('Generation completed!')
+            toast.success('Generation completed')
             setResultImageUrl(url)
           },
           (msg) => {
@@ -132,17 +145,22 @@ export default function HubPage() {
     },
     onError: (e: unknown) => {
       setIsGenerating(false)
-      const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
+      const msg =
+        e && typeof e === 'object' && 'response' in e
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
       toast.error(msg || 'Generation failed')
     },
   })
 
   const handleGenerate = () => {
     if (!displayImageUrl || !prompt.trim()) {
-      toast.error('Enter a description to generate')
+      toast.error('Add a prompt before generating')
       return
     }
+
     setIsGenerating(true)
+
     const payload = canUseProductContext && hubProductId
       ? {
           prompt: product!.product_prompt,
@@ -161,14 +179,17 @@ export default function HubPage() {
           resolution,
           device_id: getDeviceId(),
         }
+
     generateMutation.mutate(payload)
   }
 
   if (!displayImageUrl && !generationId && !productId) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-muted">Specify an image via link (product_id + image_id, generation_id, or image_url).</p>
-        <Link href="/dashboard/products" className="mt-4 inline-block text-brand hover:underline">← Products</Link>
+        <p className="text-muted">No image selected. Open this page from products or generations.</p>
+        <Link href="/dashboard/products" className="mt-4 inline-block text-brand hover:underline">
+          Products
+        </Link>
       </div>
     )
   }
@@ -177,16 +198,20 @@ export default function HubPage() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
         <p className="text-muted">Missing image_id or image_url for this product.</p>
-        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-brand hover:underline">← Product</Link>
+        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-brand hover:underline">
+          Product
+        </Link>
       </div>
     )
   }
 
-  if (productId && imageId && product && !product.images?.find((i: { id: string }) => i.id === imageId)) {
+  if (productId && imageId && product && !(product.images as { id: string }[] | undefined)?.find((i) => i.id === imageId)) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
         <p className="text-muted">Image not found for this product.</p>
-        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-brand hover:underline">← Product</Link>
+        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-brand hover:underline">
+          Product
+        </Link>
       </div>
     )
   }
@@ -195,132 +220,144 @@ export default function HubPage() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
         <p className="text-muted">Loading image...</p>
-        <Link href="/dashboard" className="mt-4 inline-block text-brand hover:underline">← Dashboard</Link>
       </div>
     )
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
-        <h1 className="text-2xl font-bold text-on-dark">Creative Hub</h1>
-        <div className="flex items-center gap-3">
+    <div className="mx-auto max-w-6xl">
+      <div className="mb-6 flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Creative Hub</h1>
+          <p className="mt-1 text-sm text-white/70">Ottimizza una foto esistente con variazioni rapide o modifiche precise.</p>
+        </div>
+        <div className="flex gap-2">
           <a
             href={displayImageUrl!}
             download
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-on-dark/10 border border-muted text-on-dark hover:bg-on-dark/20 font-medium"
-            title="Download image"
+            className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-            Download
+            Download reference
           </a>
-          <Link href={effectiveProductId ? `/dashboard/products/${effectiveProductId}` : '/dashboard'} className="text-brand hover:underline">
-            {effectiveProductId ? '← Product' : '← Dashboard'}
+          <Link
+            href={effectiveProductId ? `/dashboard/products/${effectiveProductId}` : '/dashboard/generations'}
+            className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10"
+          >
+            Back
           </Link>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="space-y-4">
-          <div className="rounded-xl overflow-hidden border border-muted-dark/60 bg-on-dark/10">
-            <img
-              src={displayImageUrl!}
-              alt="Reference"
-              className="w-full h-auto object-contain max-h-[400px] mx-auto"
-            />
-          </div>
+      <div className="grid gap-6 lg:grid-cols-[1.05fr,0.95fr]">
+        <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+          <img src={displayImageUrl!} alt="Reference" className="max-h-[500px] w-full rounded-xl object-contain bg-black/20" />
           {canUseProductContext && (
-            <p className="text-sm text-muted">Product context active: prompt and brand identity will be applied if configured.</p>
+            <p className="mt-3 text-xs text-emerald-300">
+              Contesto prodotto attivo: prompt base e brand identity applicabili automaticamente.
+            </p>
           )}
-        </div>
 
-        <div className="space-y-6">
+          {imageUrlParam && (
+            <Link
+              href={`/dashboard/shooting?reference_url=${encodeURIComponent(imageUrlParam)}${productId ? `&product_id=${productId}` : ''}`}
+              className="mt-3 inline-block text-sm text-cyan-100 hover:underline"
+            >
+              Usa questa immagine per avviare uno shooting
+            </Link>
+          )}
+        </section>
+
+        <section className="rounded-2xl border border-cyan-200/40 bg-gradient-to-br from-[#10223d] to-[#1f3b61] p-5 text-white space-y-4">
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setMode('similar')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${mode === 'similar' ? 'bg-brand text-on-brand' : 'bg-on-dark/10 text-muted hover:bg-on-dark/20 border border-muted'}`}
+              className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'similar' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
-              Generate similar
+              Variazione simile
             </button>
             <button
               type="button"
               onClick={() => setMode('modify')}
-              className={`px-4 py-2 rounded-lg font-medium transition ${mode === 'modify' ? 'bg-brand text-on-brand' : 'bg-on-dark/10 text-muted hover:bg-on-dark/20 border border-muted'}`}
+              className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'modify' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
-              Edit image
+              Modifica immagine
             </button>
           </div>
 
           <div>
-            <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
-              <label className="block text-sm font-medium text-on-dark">
-                {mode === 'similar' ? 'Variation description (optional)' : 'What to change'}
+            <div className="mb-2 flex items-center justify-between gap-2 flex-wrap">
+              <label className="text-sm font-medium text-white">
+                {mode === 'similar' ? 'Descrivi la variazione' : 'Descrivi cosa cambiare'}
               </label>
-              <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
+              <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Migliora con AI" applyLabel="Applica" />
             </div>
+
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder={mode === 'similar' ? 'E.g.: same colors, slightly lighter background...' : 'E.g.: change background to white, add soft shadow...'}
-              rows={5}
-              className="w-full border border-muted rounded-lg px-3 py-2 bg-cream text-primary placeholder:text-muted focus:ring-2 focus:ring-brand focus:border-transparent"
+              placeholder={
+                mode === 'similar'
+                  ? 'es. stessa scena, angolo diverso, più contrasto...'
+                  : 'es. rimuovi sfondo, aggiungi ombra, colori più caldi...'
+              }
+              rows={6}
+              className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/70"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-on-dark mb-2">Aspect ratio</label>
-            <select
-              value={aspectRatio}
-              onChange={(e) => setAspectRatio(e.target.value)}
-              className="w-full border border-muted rounded-lg px-3 py-2 bg-cream text-primary"
-            >
-              <option value="1:1">1:1 (Square)</option>
-              <option value="4:5">4:5 (Portrait)</option>
-              <option value="16:9">16:9 (Landscape)</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-on-dark mb-2">Resolution</label>
-            <select
-              value={resolution}
-              onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-              className="w-full border border-muted rounded-lg px-3 py-2 bg-cream text-primary"
-            >
-              <option value="4k">4K — 1 credit</option>
-              <option value="8k" disabled={!canChoose8k}>8K — 2 credits{!canChoose8k ? ' (requires at least 2 credits)' : ''}</option>
-            </select>
-            {!canChoose8k && (
-              <p className="mt-1 text-xs text-amber-400">8K only with at least 2 credits. Current: {credits}</p>
-            )}
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowAdvanced((prev) => !prev)}
+            className="text-sm text-white/80 underline underline-offset-4"
+          >
+            {showAdvanced ? 'Nascondi impostazioni avanzate' : 'Mostra impostazioni avanzate'}
+          </button>
+
+          {showAdvanced && (
+            <div className="space-y-3 rounded-xl border border-white/25 bg-black/20 p-4">
+              <div>
+                <label className="mb-1 block text-sm text-white/90">Aspect ratio</label>
+                <select
+                  value={aspectRatio}
+                  onChange={(e) => setAspectRatio(e.target.value)}
+                  className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
+                >
+                  <option value="1:1">1:1 (Square)</option>
+                  <option value="4:5">4:5 (Portrait)</option>
+                  <option value="16:9">16:9 (Landscape)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm text-white/90">Resolution</label>
+                <select
+                  value={resolution}
+                  onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
+                  className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
+                >
+                  <option value="4k">4K - 1 credito</option>
+                  <option value="8k" disabled={!canChoose8k}>
+                    8K - 2 crediti{!canChoose8k ? ' (minimo 2 crediti)' : ''}
+                  </option>
+                </select>
+                {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Crediti attuali: {credits}</p>}
+              </div>
+            </div>
+          )}
 
           <button
             type="button"
             onClick={handleGenerate}
             disabled={!prompt.trim() || isGenerating}
-            className="w-full bg-surface border border-muted-dark/60 text-on-dark py-3 rounded-lg font-semibold hover:bg-surface/80 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#13233d] hover:bg-white/90 disabled:opacity-50"
           >
-            {isGenerating ? 'Generating…' : 'Generate'}
+            {isGenerating ? 'Generazione in corso...' : 'Genera variazione'}
           </button>
-
-          {imageUrlParam && (
-            <Link
-              href={`/dashboard/shooting?reference_url=${encodeURIComponent(imageUrlParam)}${productId ? `&product_id=${productId}` : ''}`}
-              className="block text-center text-sm text-brand hover:underline mt-2"
-            >
-              Use this image in a product photoshooting →
-            </Link>
-          )}
-        </div>
+        </section>
       </div>
 
-      {resultImageUrl && (
-        <ResultPopup
-          imageUrl={resultImageUrl}
-          onClose={() => setResultImageUrl(null)}
-        />
-      )}
+      {resultImageUrl && <ResultPopup imageUrl={resultImageUrl} onClose={() => setResultImageUrl(null)} />}
     </div>
   )
 }

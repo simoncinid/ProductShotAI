@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { brandIdentityApi } from '@/lib/api'
+import { brandIdentityApi, getAbsoluteImageUrl } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
-import { getAbsoluteImageUrl } from '@/lib/api'
 import toast from 'react-hot-toast'
 
 const PHOTO_STYLE_OPTIONS = [
@@ -18,6 +18,17 @@ const PHOTO_STYLE_OPTIONS = [
   { value: 'other', label: 'Other' },
 ]
 
+type BrandData = {
+  average_customer?: string
+  sales_channels?: string
+  price_range?: string
+  lighting_style?: string
+  photo_style?: Record<string, unknown>
+  brand_notes?: string
+  analysis_text?: string
+  images?: { id: string; image_url: string }[]
+}
+
 export default function BrandIdentityPage() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -27,7 +38,7 @@ export default function BrandIdentityPage() {
     if (!authenticated) router.push('/login')
   }, [authenticated, router])
 
-  const { data: brand, isLoading, error } = useQuery({
+  const { data: brand, isLoading, error } = useQuery<BrandData>({
     queryKey: ['brand-identity'],
     queryFn: brandIdentityApi.get,
     enabled: authenticated,
@@ -38,10 +49,13 @@ export default function BrandIdentityPage() {
     mutationFn: (data: Parameters<typeof brandIdentityApi.createOrUpdate>[0]) => brandIdentityApi.createOrUpdate(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brand-identity'] })
-      toast.success('Brand Identity saved')
+      toast.success('Brand identity saved')
     },
     onError: (e: unknown) => {
-      const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
+      const msg =
+        e && typeof e === 'object' && 'response' in e
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
       toast.error(msg || 'Save failed')
     },
   })
@@ -53,7 +67,10 @@ export default function BrandIdentityPage() {
       toast.success('Image uploaded')
     },
     onError: (e: unknown) => {
-      const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
+      const msg =
+        e && typeof e === 'object' && 'response' in e
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
       toast.error(msg || 'Upload failed')
     },
   })
@@ -65,36 +82,37 @@ export default function BrandIdentityPage() {
       toast.success('Analysis updated')
     },
     onError: (e: unknown) => {
-      const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
+      const msg =
+        e && typeof e === 'object' && 'response' in e
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
       toast.error(msg || 'Analysis failed')
     },
   })
 
   const deleteImageMutation = useMutation({
     mutationFn: (imageId: string) => brandIdentityApi.deleteImage(imageId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['brand-identity'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['brand-identity'] })
+      toast.success('Image removed')
+    },
   })
 
   const deleteMutation = useMutation({
     mutationFn: () => brandIdentityApi.delete(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brand-identity'] })
-      toast.success('Brand Identity deleted')
+      toast.success('Brand identity deleted')
       router.push('/dashboard')
     },
   })
 
   if (!authenticated) return null
-  if (isLoading) return <div className="p-8 text-gray-400">Loading...</div>
-  const is404 = error && typeof error === 'object' && 'response' in error && (error as { response?: { status?: number } }).response?.status === 404
-  if (is404) {
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        <p className="text-gray-300 mb-4">No Brand Identity. Fill in the form below and save to create one.</p>
-        <BrandIdentityForm existing={undefined} onSave={(d) => updateMutation.mutate(d)} isSaving={updateMutation.isPending} />
-      </div>
-    )
-  }
+  if (isLoading) return <div className="p-8 text-white/70">Loading...</div>
+
+  const is404 =
+    error && typeof error === 'object' && 'response' in error &&
+    (error as { response?: { status?: number } }).response?.status === 404
 
   const images = brand?.images ?? []
   const maxImages = 3
@@ -102,86 +120,95 @@ export default function BrandIdentityPage() {
   const handleMultipleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files?.length) return
+
     const remaining = maxImages - images.length
     const toUpload = Array.from(files).slice(0, remaining)
-    toUpload.forEach((f) => uploadMutation.mutate(f))
+    toUpload.forEach((file) => uploadMutation.mutate(file))
     e.target.value = ''
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-white">Brand Identity</h1>
-        <button
-          type="submit"
-          form="brand-identity-form"
-          disabled={updateMutation.isPending}
-          className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50"
-        >
-          {updateMutation.isPending ? 'Saving…' : 'Save'}
-        </button>
-      </div>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h1 className="text-2xl font-bold">Brand identity</h1>
+            <p className="mt-1 text-sm text-white/70">
+              Definisci regole visive globali: saranno applicate automaticamente ai flussi prodotto.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Link href="/dashboard/products" className="rounded-full border border-white/30 px-4 py-2 text-sm text-white hover:bg-white/10">
+              Prodotti
+            </Link>
+            <button
+              type="submit"
+              form="brand-identity-form"
+              disabled={updateMutation.isPending}
+              className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-[#13233d] disabled:opacity-50"
+            >
+              {updateMutation.isPending ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </div>
 
-      <BrandIdentityForm
-        formId="brand-identity-form"
-        existing={brand ?? undefined}
-        onSave={(d) => updateMutation.mutate(d)}
-        isSaving={updateMutation.isPending}
-      />
+        <div className="mt-5">
+          <BrandIdentityForm
+            formId="brand-identity-form"
+            existing={is404 ? undefined : brand ?? undefined}
+            onSave={(d) => updateMutation.mutate(d)}
+          />
+        </div>
+      </section>
 
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold text-white mb-2">Reference images (max 3)</h2>
-        <div className="flex flex-wrap gap-4">
-          {images.map((img: { id: string; image_url: string }) => (
-            <div key={img.id} className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-600">
-              <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="w-full h-full object-cover" />
+      <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+        <div className="mb-3 flex items-center justify-between gap-3 flex-wrap">
+          <h2 className="text-lg font-semibold">Reference images ({images.length}/{maxImages})</h2>
+          <div className="flex gap-2">
+            {images.length > 0 && (
+              <button
+                type="button"
+                onClick={() => analyzeMutation.mutate()}
+                disabled={analyzeMutation.isPending}
+                className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10 disabled:opacity-50"
+              >
+                {analyzeMutation.isPending ? 'Analyzing...' : 'Analyze images'}
+              </button>
+            )}
+            <label className="cursor-pointer rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10">
+              Upload
+              <input type="file" accept="image/jpeg,image/png" className="hidden" multiple onChange={handleMultipleUpload} />
+            </label>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          {images.map((img) => (
+            <div key={img.id} className="relative h-36 w-36 overflow-hidden rounded-lg border border-white/20">
+              <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="Brand reference" className="w-full h-full object-cover" />
               <button
                 type="button"
                 onClick={() => deleteImageMutation.mutate(img.id)}
-                className="absolute top-1 right-1 bg-red-500 text-white rounded p-1 text-xs"
+                className="absolute top-1 right-1 rounded bg-red-600 px-1.5 py-0.5 text-xs text-white"
               >
                 Remove
               </button>
             </div>
           ))}
-          {images.length < maxImages && (
-            <label className="w-32 h-32 rounded-lg border-2 border-dashed border-gray-500 flex items-center justify-center cursor-pointer hover:border-vivid-yellow bg-white/5">
-              <input type="file" accept="image/jpeg,image/png" className="hidden" multiple onChange={handleMultipleUpload} />
-              <span className="text-gray-400 text-sm text-center px-1">+ Upload (multiple)</span>
-            </label>
-          )}
         </div>
-        {images.length > 0 && (
-          <button
-            type="button"
-            onClick={() => analyzeMutation.mutate()}
-            disabled={analyzeMutation.isPending}
-            className="mt-4 px-4 py-2 bg-rich-black text-white rounded-md font-medium disabled:opacity-50"
-          >
-            {analyzeMutation.isPending ? 'Analyzing…' : 'Analyze images'}
-          </button>
-        )}
-      </div>
+      </section>
 
-      {brand && (
-        <div className="mt-8 pt-6 border-t border-gray-600 flex items-center gap-4">
+      {!is404 && brand && (
+        <section className="pb-4">
           <button
             type="button"
             onClick={() => window.confirm('Delete Brand Identity?') && deleteMutation.mutate()}
             disabled={deleteMutation.isPending}
-            className="px-4 py-2 bg-red-600 text-white rounded-md font-medium"
+            className="rounded-full border border-red-500 px-5 py-2 text-sm text-red-300 hover:bg-red-500/10"
           >
-            Delete Brand Identity
+            Delete brand identity
           </button>
-          <button
-            type="submit"
-            form="brand-identity-form"
-            disabled={updateMutation.isPending}
-            className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50"
-          >
-            {updateMutation.isPending ? 'Saving…' : 'Save'}
-          </button>
-        </div>
+        </section>
       )}
     </div>
   )
@@ -191,18 +218,27 @@ function BrandIdentityForm({
   formId,
   existing,
   onSave,
-  isSaving,
 }: {
   formId?: string
-  existing?: { average_customer?: string; sales_channels?: string; price_range?: string; lighting_style?: string; photo_style?: Record<string, unknown>; brand_notes?: string; analysis_text?: string }
+  existing?: {
+    average_customer?: string
+    sales_channels?: string
+    price_range?: string
+    lighting_style?: string
+    photo_style?: Record<string, unknown>
+    brand_notes?: string
+    analysis_text?: string
+  }
   onSave: (data: Record<string, unknown>) => void
-  isSaving: boolean
 }) {
   const [averageCustomer, setAverageCustomer] = useState(existing?.average_customer ?? '')
   const [salesChannels, setSalesChannels] = useState(existing?.sales_channels ?? '')
   const [priceRange, setPriceRange] = useState(existing?.price_range ?? '')
   const [lightingStyle, setLightingStyle] = useState(existing?.lighting_style ?? '')
-  const photoStyleRaw = existing?.photo_style && typeof existing.photo_style === 'object' && 'key' in existing.photo_style ? String((existing.photo_style as { key?: string }).key) : ''
+  const photoStyleRaw =
+    existing?.photo_style && typeof existing.photo_style === 'object' && 'key' in existing.photo_style
+      ? String((existing.photo_style as { key?: string }).key)
+      : ''
   const [photoStyleKey, setPhotoStyleKey] = useState(photoStyleRaw || '')
   const [brandNotes, setBrandNotes] = useState(existing?.brand_notes ?? '')
   const [analysis, setAnalysis] = useState(existing?.analysis_text ?? '')
@@ -212,11 +248,22 @@ function BrandIdentityForm({
     setSalesChannels(existing?.sales_channels ?? '')
     setPriceRange(existing?.price_range ?? '')
     setLightingStyle(existing?.lighting_style ?? '')
-    const pr = existing?.photo_style && typeof existing.photo_style === 'object' && 'key' in existing.photo_style ? String((existing.photo_style as { key?: string }).key) : ''
+    const pr =
+      existing?.photo_style && typeof existing.photo_style === 'object' && 'key' in existing.photo_style
+        ? String((existing.photo_style as { key?: string }).key)
+        : ''
     setPhotoStyleKey(pr || '')
     setBrandNotes(existing?.brand_notes ?? '')
     setAnalysis(existing?.analysis_text ?? '')
-  }, [existing?.average_customer, existing?.sales_channels, existing?.price_range, existing?.lighting_style, existing?.photo_style, existing?.brand_notes, existing?.analysis_text])
+  }, [
+    existing?.average_customer,
+    existing?.sales_channels,
+    existing?.price_range,
+    existing?.lighting_style,
+    existing?.photo_style,
+    existing?.brand_notes,
+    existing?.analysis_text,
+  ])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -232,48 +279,92 @@ function BrandIdentityForm({
   }
 
   return (
-    <form id={formId} onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">What does your ecommerce sell?</label>
-        <input type="text" value={salesChannels} onChange={(e) => setSalesChannels(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="e.g. pet food, cosmetics, clothing" />
+    <form id={formId} onSubmit={handleSubmit} className="space-y-4 text-white">
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-sm font-medium">Cosa vendi?</label>
+          <input
+            type="text"
+            value={salesChannels}
+            onChange={(e) => setSalesChannels(e.target.value)}
+            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            placeholder="es. cosmetics, pet food, tech accessories"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium">Cliente target</label>
+          <input
+            type="text"
+            value={averageCustomer}
+            onChange={(e) => setAverageCustomer(e.target.value)}
+            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            placeholder="es. women 25-40, premium buyers"
+          />
+        </div>
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">Target / typical customer</label>
-        <input type="text" value={averageCustomer} onChange={(e) => setAverageCustomer(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="e.g. women 25-40, pet lover, premium" />
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-sm font-medium">Price range</label>
+          <input
+            type="text"
+            value={priceRange}
+            onChange={(e) => setPriceRange(e.target.value)}
+            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            placeholder="es. budget, mid, premium"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium">Preferred photo style</label>
+          <select
+            value={photoStyleKey}
+            onChange={(e) => setPhotoStyleKey(e.target.value)}
+            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+          >
+            <option value="">Select...</option>
+            {PHOTO_STYLE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
+
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">Price range</label>
-        <input type="text" value={priceRange} onChange={(e) => setPriceRange(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="e.g. budget, mid, premium, luxury" />
+          <label className="mb-1 block text-sm font-medium">Lighting style</label>
+        <input
+          type="text"
+          value={lightingStyle}
+          onChange={(e) => setLightingStyle(e.target.value)}
+          className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+          placeholder="es. soft daylight, high contrast studio"
+        />
       </div>
+
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">Preferred photo style</label>
-        <select value={photoStyleKey} onChange={(e) => setPhotoStyleKey(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900">
-          <option value="">— Select —</option>
-          {PHOTO_STYLE_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">Lighting style</label>
-        <input type="text" value={lightingStyle} onChange={(e) => setLightingStyle(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="e.g. natural light, soft, daylight" />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">Brand notes</label>
-        <textarea value={brandNotes} onChange={(e) => setBrandNotes(e.target.value)} rows={3} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="Rules, do/don't, extra constraints" />
+        <label className="mb-1 block text-sm font-medium">Brand notes</label>
+        <textarea
+          value={brandNotes}
+          onChange={(e) => setBrandNotes(e.target.value)}
+          rows={4}
+          className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+          placeholder="Do / do not, visual rules, mandatory elements"
+        />
       </div>
 
       {existing && (
         <div>
-          <h3 className="font-semibold text-gray-200 mb-2">Style analysis (editable)</h3>
-          <textarea value={analysis} onChange={(e) => setAnalysis(e.target.value)} rows={16} className="w-full border border-gray-400 rounded px-3 py-2 resize-y bg-white text-gray-900 placeholder:text-gray-500" placeholder="Analysis generated from images or write here..." />
+          <label className="mb-1 block text-sm font-medium">Style analysis (editable)</label>
+          <textarea
+            value={analysis}
+            onChange={(e) => setAnalysis(e.target.value)}
+            rows={12}
+            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+          />
         </div>
-      )}
-
-      {!formId && (
-        <button type="submit" disabled={isSaving} className="px-6 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">
-          {isSaving ? 'Saving…' : 'Save Brand Identity'}
-        </button>
       )}
     </form>
   )

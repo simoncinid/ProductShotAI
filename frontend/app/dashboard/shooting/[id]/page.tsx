@@ -18,111 +18,117 @@ export default function ShootingResultPage() {
     if (!isAuthenticated()) router.push('/login')
   }, [router])
 
-  const { data: shooting, isLoading, error, refetch } = useQuery({
+  const { data: shooting, isLoading, error } = useQuery({
     queryKey: ['shooting', id],
     queryFn: () => shootingApi.get(id),
     enabled: isAuthenticated() && !!id,
     refetchInterval: (query) => {
-      const d = query.state.data
-      if (!d) return false
-      const allDone = d.generations?.every((g: { status: string }) => g.status === 'completed' || g.status === 'failed')
+      const data = query.state.data
+      if (!data) return false
+      const allDone = data.generations?.every((g: { status: string }) => g.status === 'completed' || g.status === 'failed')
       return allDone ? false : POLL_INTERVAL_MS
     },
   })
 
   if (!id || !isAuthenticated()) return null
-  if (isLoading) return <div className="max-w-4xl mx-auto px-4 py-12 text-gray-400">Loading...</div>
+  if (isLoading) return <div className="mx-auto max-w-5xl px-4 py-12 text-white/70">Loading...</div>
+
   if (error || !shooting) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <p className="text-gray-300">Shooting not found.</p>
-        <Link href="/dashboard/shooting" className="mt-4 inline-block text-vivid-yellow hover:underline">← New shooting</Link>
+      <div className="mx-auto max-w-5xl px-4 py-12">
+        <p className="text-white/70">Shooting non trovato.</p>
+        <Link href="/dashboard/shooting" className="mt-4 inline-block text-cyan-100 hover:underline">
+          Create new shooting
+        </Link>
       </div>
     )
   }
 
   const generations = shooting.generations ?? []
   const completed = generations.filter((g: { status: string }) => g.status === 'completed')
+  const failed = generations.filter((g: { status: string }) => g.status === 'failed')
   const pending = generations.filter((g: { status: string }) => g.status !== 'completed' && g.status !== 'failed')
+  const completionRate = generations.length ? Math.round((completed.length / generations.length) * 100) : 0
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-white">Shooting results</h1>
-        <div className="flex gap-2">
-          <Link href="/dashboard/shooting" className="px-4 py-2 border border-gray-500 rounded-md hover:bg-white/10 text-gray-200">
-            New shooting
-          </Link>
-          <Link href="/dashboard" className="text-vivid-yellow hover:underline">← Dashboard</Link>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-2xl font-bold">Risultati shooting</h1>
+            <p className="mt-1 text-sm text-white/70">
+              {pending.length > 0
+                ? `Elaborazione in corso: ${completed.length}/${generations.length} completate`
+                : `Completato: ${completed.length} ok, ${failed.length} fallite`}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Link href="/dashboard/shooting" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
+              Nuovo shooting
+            </Link>
+            <Link href="/dashboard/generations" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
+              Libreria
+            </Link>
+          </div>
         </div>
-      </div>
 
-      {/* Original reference */}
-      <section className="mb-10">
-        <h2 className="text-lg font-semibold text-white mb-4">Product / Reference photo</h2>
-        <div className="rounded-xl overflow-hidden border border-gray-600 bg-white/10 max-w-md">
-          <img
-            src={getAbsoluteImageUrl(shooting.reference_image_url) ?? shooting.reference_image_url}
-            alt="Reference"
-            className="w-full h-auto object-contain max-h-80 mx-auto"
-          />
+        <div className="mt-4">
+          <div className="h-2 rounded-full bg-on-dark/10">
+            <div className="h-2 rounded-full bg-brand transition-all" style={{ width: `${completionRate}%` }} />
+          </div>
         </div>
       </section>
 
-      {/* Generated images - creative hub style */}
+      <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+        <h2 className="mb-3 text-lg font-semibold">Reference image</h2>
+        <img
+          src={getAbsoluteImageUrl(shooting.reference_image_url) ?? shooting.reference_image_url}
+          alt="Reference"
+          className="max-h-72 rounded-xl border border-white/20"
+        />
+      </section>
+
       <section>
-        <h2 className="text-lg font-semibold text-white mb-4">
-          Generated images {pending.length > 0 && `(${completed.length}/${generations.length} ready)`}
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h2 className="mb-3 text-lg font-semibold text-white">Generated images</h2>
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {generations.map((gen: { id: string; status: string; output_image_url: string | null; error_message: string | null }) => (
-            <div key={gen.id} className="border border-gray-600 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition">
+            <article key={gen.id} className="overflow-hidden rounded-xl border border-white/15 bg-white/10 text-white">
               {gen.status === 'completed' && gen.output_image_url ? (
                 <>
-                  <Link href={`/dashboard/hub?generation_id=${gen.id}`} className="block focus:outline-none focus:ring-2 focus:ring-vivid-yellow focus:ring-inset">
+                  <Link href={`/dashboard/hub?generation_id=${gen.id}`}>
                     <img
                       src={getAbsoluteImageUrl(gen.output_image_url) ?? gen.output_image_url}
-                      alt=""
-                      className="w-full h-48 object-cover hover:opacity-95 transition"
+                      alt="Generated"
+                      className="h-52 w-full object-cover"
                     />
                   </Link>
-                  <div className="p-3 flex flex-wrap gap-2">
+                  <div className="flex items-center justify-between gap-2 p-3 text-sm">
                     <a
                       href={getAbsoluteImageUrl(gen.output_image_url) ?? gen.output_image_url}
                       download
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-100 rounded-md text-sm font-medium text-rich-black hover:bg-gray-200"
+                      className="rounded-md border border-white/30 px-3 py-1.5 hover:bg-white/10"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                       Download
                     </a>
-                    <Link
-                      href={`/dashboard/hub?generation_id=${gen.id}`}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-vivid-yellow text-rich-black rounded-md text-sm font-semibold hover:bg-opacity-90"
-                    >
+                    <Link href={`/dashboard/hub?generation_id=${gen.id}`} className="font-semibold text-cyan-100 hover:underline">
                       Edit in Hub
                     </Link>
                   </div>
                 </>
               ) : gen.status === 'failed' ? (
-                <div className="w-full h-48 bg-red-50 flex flex-col items-center justify-center p-4">
-                  <span className="text-red-600 text-sm font-medium">Error</span>
-                  <span className="text-gray-500 text-xs mt-1">{gen.error_message || 'Generation failed'}</span>
+                <div className="flex h-52 flex-col items-center justify-center px-4 text-center">
+                  <p className="font-semibold text-red-600">Generation failed</p>
+                  <p className="mt-1 text-xs text-white/70">{gen.error_message || 'Unknown error'}</p>
                 </div>
               ) : (
-                <div className="w-full h-48 bg-gray-100 flex items-center justify-center">
-                  <span className="text-gray-500 text-sm">{gen.status === 'processing' ? 'Processing…' : gen.status}</span>
+                <div className="flex h-52 items-center justify-center text-sm text-white/70">
+                  {gen.status === 'processing' ? 'Processing...' : gen.status}
                 </div>
               )}
-            </div>
+            </article>
           ))}
         </div>
       </section>
-
-      {pending.length > 0 && (
-        <p className="mt-4 text-sm text-gray-400">
-          Auto-refresh. {pending.length} image{pending.length === 1 ? '' : 's'} processing.
-        </p>
-      )}
     </div>
   )
 }

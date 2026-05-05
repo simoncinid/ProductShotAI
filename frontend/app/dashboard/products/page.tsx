@@ -26,7 +26,8 @@ export default function ProductsPage() {
   })
 
   const createMutation = useMutation({
-    mutationFn: (data: { name: string; sku?: string; category?: string; default_apply_brand_identity: boolean; product_prompt: string }) => productsApi.create(data),
+    mutationFn: (data: { name: string; sku?: string; category?: string; default_apply_brand_identity: boolean; product_prompt: string }) =>
+      productsApi.create(data),
     onSuccess: (created) => {
       queryClient.invalidateQueries({ queryKey: ['products'] })
       toast.success('Product created')
@@ -34,7 +35,10 @@ export default function ProductsPage() {
       router.push(`/dashboard/products/${created.id}`)
     },
     onError: (e: unknown) => {
-      const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
+      const msg =
+        e && typeof e === 'object' && 'response' in e
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
       toast.error(msg || 'Creation failed')
     },
   })
@@ -46,81 +50,82 @@ export default function ProductsPage() {
       toast.success('Product deleted')
     },
     onError: (e: unknown) => {
-      const msg = e && typeof e === 'object' && 'response' in e ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail : null
+      const msg =
+        e && typeof e === 'object' && 'response' in e
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          : null
       toast.error(msg || 'Deletion failed')
     },
   })
 
   if (!authenticated) return null
-  if (isLoading) return <div className="p-8 text-gray-400">Loading...</div>
+  if (isLoading) return <div className="p-8 text-muted">Loading...</div>
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">Products</h1>
-        <button
-          type="button"
-          onClick={() => setShowCreate(true)}
-          className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold"
-        >
-          Create product
-        </button>
-      </div>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h1 className="text-2xl font-bold">Catalogo prodotti</h1>
+            <p className="mt-1 text-sm text-white/70">
+              Setup una volta i tuoi prodotti e riusali in foto singole, shooting e Creative Hub.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowCreate((prev) => !prev)}
+            className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#13233d]"
+          >
+            {showCreate ? 'Chiudi form' : 'Nuovo prodotto'}
+          </button>
+        </div>
 
-      {showCreate && (
-        <CreateProductForm
-          onCancel={() => setShowCreate(false)}
-          onSubmit={(data) => createMutation.mutate(data)}
-          isSubmitting={createMutation.isPending}
-        />
-      )}
-
-      <ul className="space-y-3">
-        {products.length === 0 && !showCreate && (
-          <li className="text-gray-400 py-8">No products. Create one to use product-specific prompts in /create.</li>
+        {showCreate && (
+          <div className="mt-5">
+            <CreateProductForm
+              onCancel={() => setShowCreate(false)}
+              onSubmit={(data) => createMutation.mutate(data)}
+              isSubmitting={createMutation.isPending}
+            />
+          </div>
         )}
-        {products.map((p: { id: string; name: string; sku?: string; default_apply_brand_identity: boolean; created_at: string }) => (
-          <li key={p.id} className="bg-white border border-gray-300 rounded-lg overflow-hidden">
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => router.push(`/dashboard/products/${p.id}`)}
-              onKeyDown={(e) => e.key === 'Enter' && router.push(`/dashboard/products/${p.id}`)}
-              className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex-1 min-w-0">
-                <span className="font-medium text-rich-black">{p.name}</span>
-                {p.sku && <span className="text-gray-500 ml-2">({p.sku})</span>}
-                <span className="text-xs text-gray-500 ml-2">Brand identity: {p.default_apply_brand_identity ? 'On' : 'Off'}</span>
-              </div>
-              <div className="flex items-center gap-2 ml-4 shrink-0" onClick={(e) => e.stopPropagation()}>
-                <Link
-                  href={`/dashboard/products/${p.id}`}
-                  className="px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-100 text-rich-black"
-                >
-                  View
+      </section>
+
+      {products.length === 0 ? (
+        <section className="rounded-2xl border border-white/15 bg-black/20 p-8 text-center text-white">
+          <p className="font-semibold">Nessun prodotto creato</p>
+          <p className="mt-1 text-sm text-white/70">Aggiungi un prodotto con prompt base e immagini reference per semplificare il flusso operativo.</p>
+        </section>
+      ) : (
+        <section className="grid gap-4 md:grid-cols-2">
+          {products.map((p: { id: string; name: string; sku?: string; default_apply_brand_identity: boolean }) => (
+            <article key={p.id} className="rounded-xl border border-white/15 bg-white/10 p-4 text-white">
+              <h2 className="text-lg font-semibold">{p.name}</h2>
+              <p className="mt-1 text-sm text-white/75">SKU: {p.sku || 'n/a'}</p>
+              <p className="mt-1 text-xs text-white/70">
+                Brand identity: {p.default_apply_brand_identity ? 'attiva' : 'disattiva'}
+              </p>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link href={`/dashboard/products/${p.id}`} className="rounded-md border border-white/30 px-3 py-1.5 text-sm hover:bg-white/10">
+                  Apri setup
                 </Link>
-                <Link
-                  href={`/dashboard/products/${p.id}?edit=1`}
-                  className="p-1.5 border border-gray-300 rounded-md hover:bg-gray-100 text-rich-black"
-                  title="Edit"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                <Link href="/dashboard/shooting" className="rounded-md border border-white/30 px-3 py-1.5 text-sm hover:bg-white/10">
+                  Avvia shooting
                 </Link>
                 <button
                   type="button"
                   onClick={() => window.confirm('Delete this product?') && deleteMutation.mutate(p.id)}
                   disabled={deleteMutation.isPending}
-                  className="p-1.5 border border-red-300 rounded-md hover:bg-red-50 text-red-600"
-                  title="Delete"
+                  className="rounded-md border border-red-300/70 px-3 py-1.5 text-sm text-red-200 hover:bg-red-500/10"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                  Elimina
                 </button>
               </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </article>
+          ))}
+        </section>
+      )}
     </div>
   )
 }
@@ -138,7 +143,7 @@ function CreateProductForm({
   const [sku, setSku] = useState('')
   const [category, setCategory] = useState('')
   const [defaultApplyBrandIdentity, setDefaultApplyBrandIdentity] = useState(true)
-  const [productPrompt, setProductPrompt] = useState('')
+  const [productPrompt, setProductPrompt] = useState('Professional product photo, clean and premium style.')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -146,6 +151,7 @@ function CreateProductForm({
       toast.error('Name is required')
       return
     }
+
     onSubmit({
       name: name.trim(),
       sku: sku.trim() || undefined,
@@ -156,37 +162,68 @@ function CreateProductForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mb-8 p-6 border border-gray-600 rounded-lg bg-white/10 space-y-4">
-      <h2 className="text-lg font-semibold text-white">New product</h2>
-      <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">Name *</label>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900" required />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">SKU</label>
-        <input type="text" value={sku} onChange={(e) => setSku(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900" />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">Category</label>
-        <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900" />
-      </div>
-      <div className="flex items-center gap-2">
-        <input type="checkbox" id="defaultBi" checked={defaultApplyBrandIdentity} onChange={(e) => setDefaultApplyBrandIdentity(e.target.checked)} className="rounded border-gray-400" />
-        <label htmlFor="defaultBi" className="text-sm text-gray-200">Apply Brand Identity by default</label>
-      </div>
-      <div>
-        <div className="flex items-center justify-between gap-2 flex-wrap mb-1">
-          <label className="block text-sm font-medium text-gray-200">Product prompt</label>
-          <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Edit prompt with AI" applyLabel="Apply" />
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-white/20 bg-black/20 p-4">
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-sm font-medium text-white">Nome prodotto *</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            required
+          />
         </div>
-        <textarea value={productPrompt} onChange={(e) => setProductPrompt(e.target.value)} rows={4} className="w-full border border-gray-400 rounded px-3 py-2 bg-white text-gray-900 placeholder:text-gray-500" placeholder="Describe how you want to photograph this product..." />
+        <div>
+          <label className="mb-1 block text-sm font-medium text-white">SKU</label>
+          <input
+            type="text"
+            value={sku}
+            onChange={(e) => setSku(e.target.value)}
+            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+          />
+        </div>
       </div>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-white">Categoria</label>
+        <input
+          type="text"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+        />
+      </div>
+
+      <label className="flex items-center gap-2 text-sm text-white">
+        <input
+          type="checkbox"
+          checked={defaultApplyBrandIdentity}
+          onChange={(e) => setDefaultApplyBrandIdentity(e.target.checked)}
+          className="rounded"
+        />
+        Applica brand identity di default
+      </label>
+
+      <div>
+        <div className="mb-1 flex items-center justify-between gap-2 flex-wrap">
+          <label className="text-sm font-medium text-white">Prompt base prodotto</label>
+          <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Migliora con AI" applyLabel="Applica" />
+        </div>
+        <textarea
+          value={productPrompt}
+          onChange={(e) => setProductPrompt(e.target.value)}
+          rows={4}
+          className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+        />
+      </div>
+
       <div className="flex gap-2">
-        <button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-vivid-yellow text-rich-black rounded-md font-semibold disabled:opacity-50">
-          {isSubmitting ? 'Creating…' : 'Create'}
+        <button type="submit" disabled={isSubmitting} className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-[#13233d] disabled:opacity-50">
+          {isSubmitting ? 'Creazione...' : 'Crea prodotto'}
         </button>
-        <button type="button" onClick={onCancel} className="px-4 py-2 border border-gray-500 text-gray-200 rounded-md hover:bg-white/10">
-          Cancel
+        <button type="button" onClick={onCancel} className="rounded-full border border-white/30 px-5 py-2 text-sm text-white hover:bg-white/10">
+          Annulla
         </button>
       </div>
     </form>
