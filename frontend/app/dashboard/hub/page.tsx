@@ -186,8 +186,8 @@ export default function HubPage() {
   if (!displayImageUrl && !generationId && !productId) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-muted">No image selected. Open this page from products or generations.</p>
-        <Link href="/dashboard/products" className="mt-4 inline-block text-brand hover:underline">
+        <p className="text-[#1f1a2a]/70">No image selected. Open this page from products or generations.</p>
+        <Link href="/dashboard/products" className="mt-4 inline-block text-[#5b34a0] hover:underline">
           Products
         </Link>
       </div>
@@ -197,8 +197,8 @@ export default function HubPage() {
   if (productId && !imageUrlParam && !imageId && !generationId) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-muted">Missing image_id or image_url for this product.</p>
-        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-brand hover:underline">
+        <p className="text-[#1f1a2a]/70">Missing image_id or image_url for this product.</p>
+        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-[#5b34a0] hover:underline">
           Product
         </Link>
       </div>
@@ -208,8 +208,8 @@ export default function HubPage() {
   if (productId && imageId && product && !(product.images as { id: string }[] | undefined)?.find((i) => i.id === imageId)) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-muted">Image not found for this product.</p>
-        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-brand hover:underline">
+        <p className="text-[#1f1a2a]/70">Image not found for this product.</p>
+        <Link href={`/dashboard/products/${productId}`} className="mt-4 inline-block text-[#5b34a0] hover:underline">
           Product
         </Link>
       </div>
@@ -219,7 +219,7 @@ export default function HubPage() {
   if (!displayImageUrl && (generationId || productId)) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-12">
-        <p className="text-muted">Loading image...</p>
+        <p className="text-[#1f1a2a]/70">Loading image...</p>
       </div>
     )
   }
@@ -228,20 +228,20 @@ export default function HubPage() {
     <div className="mx-auto h-full max-w-6xl overflow-auto">
       <div className="mb-6 flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-white">Creative Hub</h1>
-          <p className="mt-1 text-sm text-white/70">Refine existing images with quick variations or precise edits.</p>
+          <h1 className="text-2xl font-bold text-[#1f1a2a]">Creative Hub</h1>
+          <p className="mt-1 text-sm text-[#1f1a2a]/70">Refine existing images with quick variations or precise edits.</p>
         </div>
         <div className="flex gap-2">
           <a
             href={displayImageUrl!}
             download
-            className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10"
+            className="rounded-full border border-[#d9caef] px-4 py-2 text-sm text-[#1f1a2a] hover:bg-[#fcfaff]"
           >
             Download reference
           </a>
           <Link
             href={effectiveProductId ? `/dashboard/products/${effectiveProductId}` : '/dashboard/generations'}
-            className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10"
+            className="rounded-full border border-[#d9caef] px-4 py-2 text-sm text-[#1f1a2a] hover:bg-[#fcfaff]"
           >
             Back
           </Link>
@@ -249,10 +249,10 @@ export default function HubPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.05fr,0.95fr]">
-        <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
-          <img src={displayImageUrl!} alt="Reference" className="max-h-[500px] w-full rounded-xl object-contain bg-black/20" />
+        <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
+          <img src={displayImageUrl!} alt="Reference" className="max-h-[500px] w-full rounded-xl object-contain bg-[#fcfaff]" />
           {canUseProductContext && (
-            <p className="mt-3 text-xs text-emerald-300">
+            <p className="mt-3 text-xs text-emerald-600">
               Product context active: base prompt and brand identity can be applied automatically.
             </p>
           )}
@@ -260,26 +260,26 @@ export default function HubPage() {
           {imageUrlParam && (
             <Link
               href={`/dashboard/shooting?reference_url=${encodeURIComponent(imageUrlParam)}${productId ? `&product_id=${productId}` : ''}`}
-              className="mt-3 inline-block text-sm text-purple-200 hover:underline"
+              className="mt-3 inline-block text-sm text-[#5b34a0] hover:underline"
             >
               Use this image to start a full shooting
             </Link>
           )}
         </section>
 
-        <section className="rounded-2xl border border-purple-300/40 bg-gradient-to-br from-[#34264a] to-[#2a2140] p-5 text-white space-y-4">
+        <section className="rounded-2xl border border-[#e8e0f5] bg-gradient-to-br from-[#f8f3ff] to-[#ffffff] p-5 text-[#1f1a2a] space-y-4">
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setMode('similar')}
-              className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'similar' ? 'bg-white text-[#261f32]' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'similar' ? 'bg-white text-[#261f32]' : 'bg-[#fcfaff] text-[#1f1a2a] hover:bg-[#f2e9ff]'}`}
             >
               Similar variation
             </button>
             <button
               type="button"
               onClick={() => setMode('modify')}
-              className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'modify' ? 'bg-white text-[#261f32]' : 'bg-white/10 text-white hover:bg-white/20'}`}
+              className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'modify' ? 'bg-white text-[#261f32]' : 'bg-[#fcfaff] text-[#1f1a2a] hover:bg-[#f2e9ff]'}`}
             >
               Edit image
             </button>
@@ -287,7 +287,7 @@ export default function HubPage() {
 
           <div>
             <div className="mb-2 flex items-center justify-between gap-2 flex-wrap">
-              <label className="text-sm font-medium text-white">
+              <label className="text-sm font-medium text-[#1f1a2a]">
                 {mode === 'similar' ? 'Describe the variation' : 'Describe what to change'}
               </label>
               <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Improve with AI" applyLabel="Apply" />
@@ -302,26 +302,26 @@ export default function HubPage() {
                   : 'e.g. remove background, add shadow, warmer colors...'
               }
               rows={6}
-              className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/70"
+              className="w-full rounded-lg border border-[#d2c2ea] bg-[#fcfaff] px-3 py-2 text-sm text-[#1f1a2a] placeholder:text-[#1f1a2a]/70"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setShowAdvanced((prev) => !prev)}
-            className="text-sm text-white/80 underline underline-offset-4"
+            className="text-sm text-[#1f1a2a]/80 underline underline-offset-4"
           >
             {showAdvanced ? 'Hide advanced settings' : 'Show advanced settings'}
           </button>
 
           {showAdvanced && (
-            <div className="space-y-3 rounded-xl border border-white/25 bg-black/20 p-4">
+            <div className="space-y-3 rounded-xl border border-[#d9caef] bg-[#fcfaff] p-4">
               <div>
-                <label className="mb-1 block text-sm text-white/90">Aspect ratio</label>
+                <label className="mb-1 block text-sm text-[#1f1a2a]/90">Aspect ratio</label>
                 <select
                   value={aspectRatio}
                   onChange={(e) => setAspectRatio(e.target.value)}
-                  className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
+                  className="w-full rounded-md border border-[#d2c2ea] bg-[#fcfaff] px-3 py-2 text-sm"
                 >
                   <option value="1:1">1:1 (Square)</option>
                   <option value="4:5">4:5 (Portrait)</option>
@@ -330,18 +330,18 @@ export default function HubPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm text-white/90">Resolution</label>
+                <label className="mb-1 block text-sm text-[#1f1a2a]/90">Resolution</label>
                 <select
                   value={resolution}
                   onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-                  className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
+                  className="w-full rounded-md border border-[#d2c2ea] bg-[#fcfaff] px-3 py-2 text-sm"
                 >
                   <option value="4k">4K - 1 credit</option>
                   <option value="8k" disabled={!canChoose8k}>
                     8K - 2 credits{!canChoose8k ? ' (minimum 2 credits)' : ''}
                   </option>
                 </select>
-                {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Current credits: {credits}</p>}
+                {!canChoose8k && <p className="mt-1 text-xs text-amber-600">Current credits: {credits}</p>}
               </div>
             </div>
           )}
@@ -350,7 +350,7 @@ export default function HubPage() {
             type="button"
             onClick={handleGenerate}
             disabled={!prompt.trim() || isGenerating}
-            className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#261f32] hover:bg-white/90 disabled:opacity-50"
+            className="w-full rounded-full bg-[#1f162f] px-6 py-3 text-sm font-semibold text-white hover:bg-[#2f2145] disabled:opacity-50"
           >
             {isGenerating ? 'Generating...' : 'Generate variation'}
           </button>

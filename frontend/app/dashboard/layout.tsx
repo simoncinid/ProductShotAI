@@ -51,8 +51,8 @@ export default function DashboardLayout({
 
   if (!authenticated || userLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#120d1a]">
-        <p className="text-white/70">Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#f6f4fb]">
+        <p className="text-[#1e1a28]/70">Loading...</p>
       </div>
     )
   }
@@ -60,16 +60,16 @@ export default function DashboardLayout({
   const credits = user?.credits_balance ?? 0
 
   return (
-    <div className="h-screen bg-[radial-gradient(circle_at_25%_12%,_#34264a_0%,_#1a1426_45%,_#120d1a_100%)] text-white">
+    <div className="h-screen bg-[radial-gradient(circle_at_15%_10%,_#f1ebff_0%,_#f7f5fc_38%,_#ffffff_100%)] text-[#181420]">
       <div className="grid h-full grid-cols-[78px,minmax(0,1fr)] gap-3 p-3 md:grid-cols-[264px,minmax(0,1fr)]">
-        <aside className="flex min-h-0 flex-col rounded-[22px] border border-white/10 bg-[#1a1426]/90 px-2 py-3 backdrop-blur md:px-3 md:py-4">
+        <aside className="flex min-h-0 flex-col rounded-[22px] border border-[#e7e0f4] bg-white/95 px-2 py-3 shadow-[0_12px_30px_rgba(102,73,164,0.08)] backdrop-blur md:px-3 md:py-4">
           <div className="mb-4 flex items-center gap-2 px-1.5 md:px-2">
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-purple-300 to-purple-500 text-sm font-extrabold text-[#1a1426]">
+            <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#d8b6ff] to-[#8d5cff] text-sm font-extrabold text-white">
               PS
             </div>
             <div className="hidden md:block">
-              <p className="text-xs uppercase tracking-[0.2em] text-purple-200/85">Studio</p>
-              <p className="text-[11px] text-white/55">Creative Workspace</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-[#6c42b4]">Studio</p>
+              <p className="text-[11px] text-[#1e1a28]/55">Creative Workspace</p>
             </div>
           </div>
 
@@ -82,13 +82,15 @@ export default function DashboardLayout({
                   href={item.href}
                   className={`group flex items-center gap-2.5 rounded-xl px-2 py-2.5 transition ${
                     active
-                      ? 'bg-gradient-to-r from-purple-300/25 to-purple-500/20 text-purple-200'
-                      : 'text-white/70 hover:bg-white/8 hover:text-white'
+                      ? 'bg-gradient-to-r from-[#f0e7ff] to-[#e3d3ff] text-[#5b34a0]'
+                      : 'text-[#1e1a28]/70 hover:bg-[#f5f0ff] hover:text-[#1e1a28]'
                   }`}
                 >
                   <span
                     className={`grid h-7 w-7 place-items-center rounded-lg text-xs font-bold ${
-                      active ? 'bg-purple-400/25 text-purple-200' : 'bg-white/6 text-white/70 group-hover:bg-white/10'
+                      active
+                        ? 'bg-[#d8c0ff] text-[#5b34a0]'
+                        : 'bg-[#f3edf9] text-[#1e1a28]/65 group-hover:bg-[#ece3fb]'
                     }`}
                   >
                     {item.glyph}
@@ -99,32 +101,31 @@ export default function DashboardLayout({
             })}
           </nav>
 
-          <div className="mt-3 space-y-2 border-t border-white/10 px-1 pt-3">
-            <div className="rounded-xl border border-white/10 bg-white/5 px-2 py-2">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-white/45">Credits</p>
+          <div className="mt-3 space-y-2 border-t border-[#ece5f8] px-1 pt-3">
+            <div className="rounded-xl border border-[#ece5f8] bg-[#faf8ff] px-2 py-2">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-[#1e1a28]/45">Credits</p>
               <p className="mt-1 text-lg font-semibold">{credits}</p>
             </div>
             <Link
               href="/pricing"
-              className="block rounded-xl bg-white px-3 py-2 text-center text-xs font-semibold text-[#1a1426] transition hover:bg-white/90"
+              className="block rounded-xl bg-[#1f162f] px-3 py-2 text-center text-xs font-semibold text-white transition hover:bg-[#2f2145]"
             >
               Buy Credits
             </Link>
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full rounded-xl border border-white/20 px-3 py-2 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+              className="w-full rounded-xl border border-[#ded4ef] px-3 py-2 text-xs font-medium text-[#1e1a28]/80 transition hover:bg-[#f5f0ff] hover:text-[#1e1a28]"
             >
               Logout
             </button>
           </div>
         </aside>
 
-        <main className="min-h-0 overflow-hidden rounded-[26px] border border-white/10 bg-[#221b33]/85 shadow-[0_30px_90px_rgba(2,7,14,0.45)] backdrop-blur">
+        <main className="min-h-0 overflow-hidden rounded-[26px] border border-[#e7e0f4] bg-white shadow-[0_20px_50px_rgba(48,30,84,0.08)] backdrop-blur">
           <div className="h-full overflow-hidden p-3 md:p-5">{children}</div>
         </main>
       </div>
     </div>
   )
 }
-

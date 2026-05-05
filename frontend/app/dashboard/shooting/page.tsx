@@ -142,14 +142,14 @@ export default function ShootingWizardPage() {
   }
 
   if (!isAuthenticated()) return null
-  if (productsLoading) return <div className="p-8 text-muted">Loading...</div>
+  if (productsLoading) return <div className="p-8 text-[#1f1a2a]/70">Loading...</div>
 
   if (products.length === 0) {
     return (
       <div className="max-w-xl mx-auto px-4 py-12">
-        <h1 className="mb-3 text-2xl font-bold text-on-dark">Full Shooting</h1>
-        <p className="mb-6 text-muted">Create at least one product with references first.</p>
-        <Link href="/dashboard/products" className="inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary">
+        <h1 className="mb-3 text-2xl font-bold text-[#1f1a2a]">Full Shooting</h1>
+        <p className="mb-6 text-[#1f1a2a]/70">Create at least one product with references first.</p>
+        <Link href="/dashboard/products" className="inline-flex rounded-full bg-[#1f162f] px-5 py-2.5 text-sm font-semibold text-white">
           Create product
         </Link>
       </div>
@@ -164,24 +164,32 @@ export default function ShootingWizardPage() {
     <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[1.2fr,0.8fr]">
       {phase === 'setup' ? (
         <>
-          <section className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#181224]">
-            <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+          <section className="flex min-h-0 flex-col rounded-2xl border border-[#e8e0f5] bg-white">
+            <div className="flex items-center justify-between border-b border-[#ece4f9] px-4 py-3">
               <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-purple-200/75">Full Shooting</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-[#6a43ad]/75">Full Shooting</p>
                 <h1 className="text-xl font-semibold">Batch Session</h1>
               </div>
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setSetupStep(1)}
-                  className={`h-8 rounded-lg px-3 text-xs font-semibold ${setupStep === 1 ? 'bg-purple-400/20 text-purple-200' : 'bg-white/5 text-white/65'}`}
+                  className={`h-8 rounded-lg px-3 text-xs font-semibold ${
+                    setupStep === 1
+                      ? 'bg-[#eee4ff] text-[#5b34a0]'
+                      : 'border border-[#ded3f3] bg-white text-[#1f1a2a]/65 hover:bg-[#f7f1ff]'
+                  }`}
                 >
                   Setup
                 </button>
                 <button
                   type="button"
                   onClick={() => setSetupStep(2)}
-                  className={`h-8 rounded-lg px-3 text-xs font-semibold ${setupStep === 2 ? 'bg-purple-400/20 text-purple-200' : 'bg-white/5 text-white/65'}`}
+                  className={`h-8 rounded-lg px-3 text-xs font-semibold ${
+                    setupStep === 2
+                      ? 'bg-[#eee4ff] text-[#5b34a0]'
+                      : 'border border-[#ded3f3] bg-white text-[#1f1a2a]/65 hover:bg-[#f7f1ff]'
+                  }`}
                 >
                   Config
                 </button>
@@ -201,7 +209,9 @@ export default function ShootingWizardPage() {
                           setReferenceImageUrl(null)
                         }}
                         className={`rounded-lg border px-3 py-2 text-left text-sm ${
-                          productId === p.id ? 'border-white bg-white text-[#1a1426]' : 'border-white/20 bg-white/5 text-white hover:bg-white/12'
+                          productId === p.id
+                            ? 'border-[#8f62d7] bg-[#f4ecff] text-[#3e246f]'
+                            : 'border-[#ded3f3] bg-white text-[#1f1a2a] hover:bg-[#f7f1ff]'
                         }`}
                       >
                         {p.name}
@@ -210,11 +220,11 @@ export default function ShootingWizardPage() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <p className="text-sm text-white/75">Select one product reference or upload a new image.</p>
+                    <p className="text-sm text-[#1f1a2a]/75">Select one product reference or upload a new image.</p>
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="rounded-lg border border-white/30 px-3 py-1.5 text-xs text-white hover:bg-white/10"
+                      className="rounded-lg border border-[#d9caef] px-3 py-1.5 text-xs text-[#1f1a2a] hover:bg-[#f7f1ff]"
                     >
                       Upload
                     </button>
@@ -235,7 +245,7 @@ export default function ShootingWizardPage() {
                           type="button"
                           onClick={() => setReferenceImageUrl(img.image_url)}
                           className={`overflow-hidden rounded-lg border-2 ${
-                            referenceImageUrl === img.image_url ? 'border-purple-300' : 'border-transparent'
+                            referenceImageUrl === img.image_url ? 'border-[#8f62d7]' : 'border-transparent'
                           }`}
                         >
                           <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="h-24 w-full object-cover" />
@@ -248,29 +258,29 @@ export default function ShootingWizardPage() {
                     <img
                       src={getAbsoluteImageUrl(referenceImageUrl) ?? referenceImageUrl}
                       alt="Selected reference"
-                      className="max-h-[340px] w-full rounded-xl object-contain bg-black/30"
+                      className="max-h-[340px] w-full rounded-xl object-contain bg-[#f3eef9]"
                     />
                   )}
                 </div>
               ) : (
                 <div className="space-y-4">
                   <div>
-                    <label className="mb-1 block text-sm text-white/90">Number of images</label>
+                    <label className="mb-1 block text-sm text-[#1f1a2a]/90">Number of images</label>
                     <input
                       type="number"
                       min={2}
                       max={10}
                       value={count}
                       onChange={(e) => setCount(Math.min(10, Math.max(2, Number(e.target.value) || 2)))}
-                      className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                      className="w-full rounded-lg border border-[#d9caef] bg-white px-3 py-2 text-sm text-[#1f1a2a]"
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm text-white/90">Shooting style</label>
+                    <label className="mb-1 block text-sm text-[#1f1a2a]/90">Shooting style</label>
                     <select
                       value={shootingStyle}
                       onChange={(e) => setShootingStyle(e.target.value)}
-                      className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                      className="w-full rounded-lg border border-[#d9caef] bg-white px-3 py-2 text-sm text-[#1f1a2a]"
                     >
                       {SHOOTING_STYLE_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -280,20 +290,20 @@ export default function ShootingWizardPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm text-white/90">Resolution</label>
+                    <label className="mb-1 block text-sm text-[#1f1a2a]/90">Resolution</label>
                     <select
                       value={resolution}
                       onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-                      className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                      className="w-full rounded-lg border border-[#d9caef] bg-white px-3 py-2 text-sm text-[#1f1a2a]"
                     >
                       <option value="4k">4K - 1 credit / image</option>
                       <option value="8k" disabled={!canChoose8k}>
                         8K - 2 credits / image{!canChoose8k ? ' (requires at least 2 credits)' : ''}
                       </option>
                     </select>
-                    {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Current credits: {credits}</p>}
+                    {!canChoose8k && <p className="mt-1 text-xs text-amber-600">Current credits: {credits}</p>}
                   </div>
-                  <label className="flex items-center gap-2 text-sm text-white/90">
+                  <label className="flex items-center gap-2 text-sm text-[#1f1a2a]/90">
                     <input
                       type="checkbox"
                       checked={reviewPrompts}
@@ -306,12 +316,12 @@ export default function ShootingWizardPage() {
               )}
             </div>
 
-            <div className="flex items-center justify-between border-t border-white/10 px-4 py-3">
+            <div className="flex items-center justify-between border-t border-[#ece4f9] px-4 py-3">
               <button
                 type="button"
                 onClick={() => setSetupStep((prev) => (prev === 1 ? 1 : 1))}
                 disabled={setupStep === 1}
-                className="rounded-lg border border-white/25 px-3 py-1.5 text-xs text-white disabled:opacity-40"
+                className="rounded-lg border border-[#d9caef] px-3 py-1.5 text-xs text-[#1f1a2a] disabled:opacity-40"
               >
                 Back
               </button>
@@ -319,46 +329,46 @@ export default function ShootingWizardPage() {
                 type="button"
                 onClick={() => setSetupStep((prev) => (prev === 2 ? 2 : 2))}
                 disabled={setupStep === 2 || !stepProductDone || !stepReferenceDone}
-                className="rounded-lg bg-purple-400/20 px-3 py-1.5 text-xs font-semibold text-purple-200 disabled:opacity-40"
+                className="rounded-lg bg-[#eee4ff] px-3 py-1.5 text-xs font-semibold text-[#5b34a0] disabled:opacity-40"
               >
                 Next
               </button>
             </div>
           </section>
 
-          <aside className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#1f1830]">
-            <div className="border-b border-white/10 px-4 py-3">
-              <p className="text-xs uppercase tracking-[0.18em] text-purple-200/75">Batch Summary</p>
-              <p className="mt-1 text-sm text-white/70">Production cost and launch controls.</p>
+          <aside className="flex min-h-0 flex-col rounded-2xl border border-[#e8e0f5] bg-[#fdfbff]">
+            <div className="border-b border-[#ece4f9] px-4 py-3">
+              <p className="text-xs uppercase tracking-[0.18em] text-[#6a43ad]/75">Batch Summary</p>
+              <p className="mt-1 text-sm text-[#1f1a2a]/70">Production cost and launch controls.</p>
             </div>
             <div className="min-h-0 flex-1 space-y-3 overflow-auto p-4">
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                <p className="text-xs uppercase tracking-[0.14em] text-white/55">Product</p>
-                <p className={`mt-1 text-sm ${stepProductDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+              <div className="rounded-xl border border-[#e7def4] bg-white p-3">
+                <p className="text-xs uppercase tracking-[0.14em] text-[#1f1a2a]/55">Product</p>
+                <p className={`mt-1 text-sm ${stepProductDone ? 'text-emerald-600' : 'text-amber-600'}`}>
                   {stepProductDone ? 'Selected' : 'Missing'}
                 </p>
               </div>
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                <p className="text-xs uppercase tracking-[0.14em] text-white/55">Reference</p>
-                <p className={`mt-1 text-sm ${stepReferenceDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+              <div className="rounded-xl border border-[#e7def4] bg-white p-3">
+                <p className="text-xs uppercase tracking-[0.14em] text-[#1f1a2a]/55">Reference</p>
+                <p className={`mt-1 text-sm ${stepReferenceDone ? 'text-emerald-600' : 'text-amber-600'}`}>
                   {stepReferenceDone ? 'Selected' : 'Missing'}
                 </p>
               </div>
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-white/80">
+              <div className="rounded-xl border border-[#e7def4] bg-white p-3 text-sm text-[#1f1a2a]/80">
                 <p>Style: {shootingStyle}</p>
                 <p className="mt-1">Output: {count} images · {resolution.toUpperCase()}</p>
               </div>
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-white/85">
+              <div className="rounded-xl border border-[#e7def4] bg-white p-3 text-sm text-[#1f1a2a]/85">
                 <p>Estimated cost: {totalCredits} credits</p>
                 <p className="mt-1 text-xs">{count} images x {resolution === '8k' ? 2 : 1} credit(s) each.</p>
               </div>
             </div>
-            <div className="border-t border-white/10 p-4">
+            <div className="border-t border-[#ece4f9] p-4">
               <button
                 type="button"
                 onClick={handleCreateShooting}
                 disabled={!productId || !referenceImageUrl || promptsMutation.isPending || generateMutation.isPending}
-                className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#1a1426] hover:bg-white/90 disabled:opacity-50"
+                className="w-full rounded-xl bg-[#1f162f] px-4 py-3 text-sm font-semibold text-white hover:bg-[#2f2145] disabled:opacity-50"
               >
                 {promptsMutation.isPending
                   ? 'Generating prompts...'
@@ -372,13 +382,13 @@ export default function ShootingWizardPage() {
           </aside>
         </>
       ) : (
-        <section className="col-span-full rounded-2xl border border-white/10 bg-[#181224] p-4 text-white">
+        <section className="col-span-full rounded-2xl border border-[#e8e0f5] bg-white p-4 text-[#1f1a2a]">
           <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
             <h2 className="text-xl font-semibold">Prompt review ({prompts.length})</h2>
             <button
               type="button"
               onClick={() => setPhase('setup')}
-              className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10"
+              className="rounded-md border border-[#d9caef] px-3 py-1.5 text-sm text-[#1f1a2a] hover:bg-[#f7f1ff]"
             >
               Back to setup
             </button>
@@ -386,7 +396,7 @@ export default function ShootingWizardPage() {
 
           <div className="grid gap-3 lg:grid-cols-2">
             {prompts.map((prompt, index) => (
-              <div key={index} className="rounded-xl border border-white/15 bg-black/20 p-3">
+              <div key={index} className="rounded-xl border border-[#e7def4] bg-[#fcfaff] p-3">
                 <div className="mb-2 flex items-center justify-between gap-2 flex-wrap">
                   <p className="text-sm font-semibold">Prompt {index + 1}</p>
                   <EditPromptWithAI
@@ -408,7 +418,7 @@ export default function ShootingWizardPage() {
                     setPrompts(next)
                   }}
                   rows={5}
-                  className="w-full rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white"
+                  className="w-full rounded-md border border-[#d9caef] bg-white px-3 py-2 text-sm text-[#1f1a2a]"
                 />
               </div>
             ))}
@@ -419,7 +429,7 @@ export default function ShootingWizardPage() {
               type="button"
               onClick={() => startGeneration(prompts)}
               disabled={generateMutation.isPending}
-              className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#261f32] disabled:opacity-50"
+              className="rounded-xl bg-[#1f162f] px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
             >
               {generateMutation.isPending ? 'Starting shooting...' : 'Start shooting'}
             </button>

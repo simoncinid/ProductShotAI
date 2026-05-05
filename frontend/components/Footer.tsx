@@ -14,7 +14,6 @@ export function Footer() {
           <Link href="/pricing" className="transition hover:text-primary">Pricing</Link>
           <Link href="/faq" className="transition hover:text-primary">FAQ</Link>
           <Link href="/blog" className="transition hover:text-primary">Blog</Link>
-          <Link href="/create" className="transition hover:text-primary">Create</Link>
           <Link href="/privacy" className="transition hover:text-primary">Privacy</Link>
           <Link href="/terms" className="transition hover:text-primary">Terms</Link>
           <a href="mailto:reservationwebbitz@gmail.com" className="transition hover:text-primary">Contact</a>

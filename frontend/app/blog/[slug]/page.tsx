@@ -160,28 +160,28 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Link
-        href="/blog"
-        className="text-brand hover:underline mb-8 inline-block font-medium"
-      >
-        ← Back to Blog
-      </Link>
+          href="/blog"
+          className="mb-8 inline-block font-medium text-brand hover:underline"
+        >
+          ← Back to Blog
+        </Link>
 
-      <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-soft md:p-8">
-        <div className="text-sm text-gray-500 mb-4">
-          {new Date(post.date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </div>
-        <h1 className="text-5xl font-bold text-primary mb-8">
-          {post.title}
-        </h1>
-        <div
-          className="prose prose-lg max-w-none prose-headings:text-primary prose-p:text-secondary prose-a:text-anthracite"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
-      </article>
+        <article className="rounded-2xl border border-gray-200 bg-white p-6 text-primary shadow-soft md:p-8">
+          <div className="mb-4 text-sm text-gray-500">
+            {new Date(post.date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </div>
+          <h1 className="mb-8 text-5xl font-bold text-primary">
+            {post.title}
+          </h1>
+          <div
+            className="[&_h2]:mb-3 [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-primary [&_li]:text-secondary [&_p]:mb-4 [&_p]:leading-relaxed [&_p]:text-secondary [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-6"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
+        </article>
       </div>
     </>
   )

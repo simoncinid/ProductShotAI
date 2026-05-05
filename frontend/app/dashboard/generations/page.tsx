@@ -50,31 +50,31 @@ export default function GenerationsPage() {
 
   return (
     <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
-      <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+      <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold">Generation Library</h1>
-            <p className="mt-1 text-sm text-white/70">Filter by product and reopen outputs instantly in Creative Hub.</p>
+            <p className="mt-1 text-sm text-[#1f1a2a]/70">Filter by product and reopen outputs instantly in Creative Hub.</p>
           </div>
           <div className="flex gap-2">
-            <Link href="/dashboard/create" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
+            <Link href="/dashboard/create" className="rounded-full border border-[#d9caef] px-4 py-2 text-sm text-[#1f1a2a] hover:bg-[#fcfaff]">
               New image
             </Link>
-            <Link href="/dashboard/shooting" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
+            <Link href="/dashboard/shooting" className="rounded-full border border-[#d9caef] px-4 py-2 text-sm text-[#1f1a2a] hover:bg-[#fcfaff]">
               New shooting
             </Link>
           </div>
         </div>
 
         <div className="mt-4">
-          <label className="mb-1 block text-sm text-white/70">Product filter</label>
+          <label className="mb-1 block text-sm text-[#1f1a2a]/70">Product filter</label>
           <select
             value={selected}
             onChange={(e) => {
               setSelected(e.target.value)
               setPage(1)
             }}
-            className="w-full max-w-sm rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-white"
+            className="w-full max-w-sm rounded-lg border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
           >
             <option value={NO_PRODUCT_VALUE}>No product (NO PRODUCT)</option>
             {products.map((p: { id: string; name: string }) => (
@@ -87,9 +87,9 @@ export default function GenerationsPage() {
       </section>
 
       {isLoading ? (
-        <p className="text-muted">Loading...</p>
+        <p className="text-[#1f1a2a]/70">Loading...</p>
       ) : items.length === 0 ? (
-        <section className="rounded-2xl border border-white/15 bg-black/20 p-10 text-center text-white">
+        <section className="rounded-2xl border border-[#e8e0f5] bg-[#fcfaff] p-10 text-center text-[#1f1a2a]">
           <p>No generations found for {isNoProduct ? 'NO PRODUCT' : selectedProduct?.name ?? 'this product'}.</p>
         </section>
       ) : (
@@ -107,26 +107,26 @@ export default function GenerationsPage() {
                   : null
 
                 return (
-                  <article key={gen.id} className="overflow-hidden rounded-xl border border-white/15 bg-white/10 text-white">
+                  <article key={gen.id} className="overflow-hidden rounded-xl border border-[#e8e0f5] bg-[#fcfaff] text-[#1f1a2a]">
                     {imageUrl ? (
                       <>
                         <Link href={hubUrl(gen.id)}>
                           <img src={imageUrl} alt="Generated" className="h-52 w-full object-cover" />
                         </Link>
                         <div className="p-3 text-sm flex items-center justify-between">
-                          <span className="text-white/70">{new Date(gen.created_at).toLocaleDateString()}</span>
+                          <span className="text-[#1f1a2a]/70">{new Date(gen.created_at).toLocaleDateString()}</span>
                           <div className="flex items-center gap-3">
-                            <a href={imageUrl} download className="text-white/75 hover:underline">
+                            <a href={imageUrl} download className="text-[#1f1a2a]/75 hover:underline">
                               Download
                             </a>
-                            <Link href={hubUrl(gen.id)} className="font-semibold text-purple-200 hover:underline">
+                            <Link href={hubUrl(gen.id)} className="font-semibold text-[#5b34a0] hover:underline">
                               Open in Hub
                             </Link>
                           </div>
                         </div>
                       </>
                     ) : (
-                      <div className="flex h-52 items-center justify-center text-sm text-white/70">{gen.status}</div>
+                      <div className="flex h-52 items-center justify-center text-sm text-[#1f1a2a]/70">{gen.status}</div>
                     )}
                   </article>
                 )
@@ -140,18 +140,18 @@ export default function GenerationsPage() {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="rounded-md border border-white/25 px-4 py-2 text-white disabled:opacity-50"
+                className="rounded-md border border-[#d9caef] px-4 py-2 text-[#1f1a2a] disabled:opacity-50"
               >
                 Previous
               </button>
-              <span className="px-3 py-2 text-sm text-white/70">
+              <span className="px-3 py-2 text-sm text-[#1f1a2a]/70">
                 Page {page} of {totalPages}
               </span>
               <button
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages}
-                className="rounded-md border border-white/25 px-4 py-2 text-white disabled:opacity-50"
+                className="rounded-md border border-[#d9caef] px-4 py-2 text-[#1f1a2a] disabled:opacity-50"
               >
                 Next
               </button>

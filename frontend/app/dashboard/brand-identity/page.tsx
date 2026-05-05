@@ -108,7 +108,7 @@ export default function BrandIdentityPage() {
   })
 
   if (!authenticated) return null
-  if (isLoading) return <div className="p-8 text-white/70">Loading...</div>
+  if (isLoading) return <div className="p-8 text-[#1f1a2a]/70">Loading...</div>
 
   const is404 =
     error && typeof error === 'object' && 'response' in error &&
@@ -129,23 +129,23 @@ export default function BrandIdentityPage() {
 
   return (
     <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
-      <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+      <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold">Brand identity</h1>
-            <p className="mt-1 text-sm text-white/70">
+            <p className="mt-1 text-sm text-[#1f1a2a]/70">
               Define global visual rules once. They are reused automatically across product flows.
             </p>
           </div>
           <div className="flex gap-2">
-            <Link href="/dashboard/products" className="rounded-full border border-white/30 px-4 py-2 text-sm text-white hover:bg-white/10">
+            <Link href="/dashboard/products" className="rounded-full border border-[#d2c2ea] px-4 py-2 text-sm text-[#1f1a2a] hover:bg-[#fcfaff]">
               Products
             </Link>
             <button
               type="submit"
               form="brand-identity-form"
               disabled={updateMutation.isPending}
-              className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-[#261f32] disabled:opacity-50"
+              className="rounded-full bg-[#1f162f] px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
             >
               {updateMutation.isPending ? 'Saving...' : 'Save'}
             </button>
@@ -161,7 +161,7 @@ export default function BrandIdentityPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+      <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
         <div className="mb-3 flex items-center justify-between gap-3 flex-wrap">
           <h2 className="text-lg font-semibold">Reference images ({images.length}/{maxImages})</h2>
           <div className="flex gap-2">
@@ -170,12 +170,12 @@ export default function BrandIdentityPage() {
                 type="button"
                 onClick={() => analyzeMutation.mutate()}
                 disabled={analyzeMutation.isPending}
-                className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10 disabled:opacity-50"
+                className="rounded-md border border-[#d2c2ea] px-3 py-1.5 text-sm text-[#1f1a2a] hover:bg-[#fcfaff] disabled:opacity-50"
               >
                 {analyzeMutation.isPending ? 'Analyzing...' : 'Analyze images'}
               </button>
             )}
-            <label className="cursor-pointer rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10">
+            <label className="cursor-pointer rounded-md border border-[#d2c2ea] px-3 py-1.5 text-sm text-[#1f1a2a] hover:bg-[#fcfaff]">
               Upload
               <input type="file" accept="image/jpeg,image/png" className="hidden" multiple onChange={handleMultipleUpload} />
             </label>
@@ -184,7 +184,7 @@ export default function BrandIdentityPage() {
 
         <div className="flex flex-wrap gap-3">
           {images.map((img) => (
-            <div key={img.id} className="relative h-36 w-36 overflow-hidden rounded-lg border border-white/20">
+            <div key={img.id} className="relative h-36 w-36 overflow-hidden rounded-lg border border-[#e2d8f2]">
               <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="Brand reference" className="w-full h-full object-cover" />
               <button
                 type="button"
@@ -204,7 +204,7 @@ export default function BrandIdentityPage() {
             type="button"
             onClick={() => window.confirm('Delete Brand Identity?') && deleteMutation.mutate()}
             disabled={deleteMutation.isPending}
-            className="rounded-full border border-red-500 px-5 py-2 text-sm text-red-300 hover:bg-red-500/10"
+            className="rounded-full border border-red-500 px-5 py-2 text-sm text-red-600 hover:bg-red-500/10"
           >
             Delete brand identity
           </button>
@@ -279,15 +279,15 @@ function BrandIdentityForm({
   }
 
   return (
-    <form id={formId} onSubmit={handleSubmit} className="space-y-4 text-white">
+    <form id={formId} onSubmit={handleSubmit} className="space-y-4 text-[#1f1a2a]">
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium">Cosa vendi?</label>
+          <label className="mb-1 block text-sm font-medium">What do you sell?</label>
           <input
             type="text"
             value={salesChannels}
             onChange={(e) => setSalesChannels(e.target.value)}
-            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
             placeholder="e.g. cosmetics, pet food, tech accessories"
           />
         </div>
@@ -298,7 +298,7 @@ function BrandIdentityForm({
             type="text"
             value={averageCustomer}
             onChange={(e) => setAverageCustomer(e.target.value)}
-            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
             placeholder="e.g. women 25-40, premium buyers"
           />
         </div>
@@ -311,7 +311,7 @@ function BrandIdentityForm({
             type="text"
             value={priceRange}
             onChange={(e) => setPriceRange(e.target.value)}
-            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
           placeholder="e.g. budget, mid, premium"
           />
         </div>
@@ -321,7 +321,7 @@ function BrandIdentityForm({
           <select
             value={photoStyleKey}
             onChange={(e) => setPhotoStyleKey(e.target.value)}
-            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
           >
             <option value="">Select...</option>
             {PHOTO_STYLE_OPTIONS.map((opt) => (
@@ -339,7 +339,7 @@ function BrandIdentityForm({
           type="text"
           value={lightingStyle}
           onChange={(e) => setLightingStyle(e.target.value)}
-          className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+          className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
           placeholder="e.g. soft daylight, high contrast studio"
         />
       </div>
@@ -350,7 +350,7 @@ function BrandIdentityForm({
           value={brandNotes}
           onChange={(e) => setBrandNotes(e.target.value)}
           rows={4}
-          className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+          className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
           placeholder="Do / do not, visual rules, mandatory elements"
         />
       </div>
@@ -362,7 +362,7 @@ function BrandIdentityForm({
             value={analysis}
             onChange={(e) => setAnalysis(e.target.value)}
             rows={12}
-            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
           />
         </div>
       )}

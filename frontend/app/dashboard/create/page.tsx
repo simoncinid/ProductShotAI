@@ -268,10 +268,10 @@ export default function DashboardCreatePage() {
 
   return (
     <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[1.2fr,0.8fr]">
-      <section className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#181224]">
-        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+      <section className="flex min-h-0 flex-col rounded-2xl border border-[#e8e0f5] bg-white">
+        <div className="flex items-center justify-between border-b border-[#ece4f9] px-4 py-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-purple-200/75">Generate Image</p>
+            <p className="text-xs uppercase tracking-[0.18em] text-[#6a43ad]/75">Generate Image</p>
             <h1 className="text-xl font-semibold">Creative Session</h1>
           </div>
           <div className="flex gap-2">
@@ -281,7 +281,9 @@ export default function DashboardCreatePage() {
                 type="button"
                 onClick={() => setStep(s as 1 | 2 | 3)}
                 className={`h-8 rounded-lg px-3 text-xs font-semibold ${
-                  step === s ? 'bg-purple-400/20 text-purple-200' : 'bg-white/5 text-white/65 hover:bg-white/10'
+                  step === s
+                    ? 'bg-[#eee4ff] text-[#5b34a0]'
+                    : 'border border-[#ded3f3] bg-white text-[#1f1a2a]/65 hover:bg-[#f7f1ff]'
                 }`}
               >
                 Step {s}
@@ -298,7 +300,9 @@ export default function DashboardCreatePage() {
                   type="button"
                   onClick={() => setSourceMode('upload')}
                   className={`rounded-lg px-3 py-2 text-sm ${
-                    sourceMode === 'upload' ? 'bg-white text-[#1a1426]' : 'bg-white/10 text-white hover:bg-white/20'
+                    sourceMode === 'upload'
+                      ? 'bg-[#1f162f] text-white'
+                      : 'border border-[#ded3f3] bg-white text-[#1f1a2a] hover:bg-[#f7f1ff]'
                   }`}
                 >
                   Upload
@@ -307,7 +311,9 @@ export default function DashboardCreatePage() {
                   type="button"
                   onClick={() => setSourceMode('catalog')}
                   className={`rounded-lg px-3 py-2 text-sm ${
-                    sourceMode === 'catalog' ? 'bg-white text-[#1a1426]' : 'bg-white/10 text-white hover:bg-white/20'
+                    sourceMode === 'catalog'
+                      ? 'bg-[#1f162f] text-white'
+                      : 'border border-[#ded3f3] bg-white text-[#1f1a2a] hover:bg-[#f7f1ff]'
                   }`}
                 >
                   Product catalog
@@ -327,24 +333,24 @@ export default function DashboardCreatePage() {
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="rounded-xl border border-white/25 bg-white/5 px-4 py-3 text-sm text-white hover:bg-white/10"
+                      className="rounded-xl border border-[#d9caef] bg-[#faf7ff] px-4 py-3 text-sm text-[#1f1a2a] hover:bg-[#f2e9ff]"
                     >
                       Select image file
                     </button>
                   )}
                   {effectivePreviewUrl && (
                     <div className="space-y-2">
-                      <img src={effectivePreviewUrl} alt="Preview" className="max-h-[360px] w-full rounded-xl object-contain bg-black/30" />
+                      <img src={effectivePreviewUrl} alt="Preview" className="max-h-[360px] w-full rounded-xl object-contain bg-[#f3eef9]" />
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
-                          className="rounded-lg border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10"
+                          className="rounded-lg border border-[#d9caef] px-3 py-1.5 text-sm text-[#1f1a2a] hover:bg-[#f7f1ff]"
                         >
                           Change file
                         </button>
-                        {uploadMutation.isPending && <span className="text-xs text-white/60">Uploading...</span>}
-                        {imageUrl && <span className="text-xs text-emerald-300">Reference ready</span>}
+                        {uploadMutation.isPending && <span className="text-xs text-[#1f1a2a]/60">Uploading...</span>}
+                        {imageUrl && <span className="text-xs text-emerald-600">Reference ready</span>}
                       </div>
                     </div>
                   )}
@@ -359,7 +365,7 @@ export default function DashboardCreatePage() {
                       setImageUrl(null)
                       setPreviewUrl(null)
                     }}
-                    className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                    className="w-full rounded-lg border border-[#d9caef] bg-white px-3 py-2 text-sm text-[#1f1a2a]"
                   >
                     <option value="">Select product...</option>
                     {products.map((p: { id: string; name: string }) => (
@@ -377,7 +383,7 @@ export default function DashboardCreatePage() {
                           type="button"
                           onClick={() => handleSelectCatalogImage(img)}
                           className={`overflow-hidden rounded-lg border-2 ${
-                            selectedCatalogImageId === img.id ? 'border-purple-300' : 'border-transparent'
+                            selectedCatalogImageId === img.id ? 'border-[#8f62d7]' : 'border-transparent'
                           }`}
                         >
                           <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="Reference" className="h-24 w-full object-cover" />
@@ -387,7 +393,11 @@ export default function DashboardCreatePage() {
                   )}
 
                   {effectivePreviewUrl && (
-                    <img src={effectivePreviewUrl} alt="Selected reference" className="max-h-[360px] w-full rounded-xl object-contain bg-black/30" />
+                    <img
+                      src={effectivePreviewUrl}
+                      alt="Selected reference"
+                      className="max-h-[360px] w-full rounded-xl object-contain bg-[#f3eef9]"
+                    />
                   )}
                 </div>
               )}
@@ -403,7 +413,9 @@ export default function DashboardCreatePage() {
                     type="button"
                     onClick={() => handleGoalChange(goal.id)}
                     className={`rounded-lg border px-3 py-2 text-left text-sm transition ${
-                      selectedGoal === goal.id ? 'border-white bg-white text-[#1a1426]' : 'border-white/20 bg-white/5 text-white hover:bg-white/12'
+                      selectedGoal === goal.id
+                        ? 'border-[#8f62d7] bg-[#f4ecff] text-[#3e246f]'
+                        : 'border-[#ded3f3] bg-white text-[#1f1a2a] hover:bg-[#f7f1ff]'
                     }`}
                   >
                     {goal.label}
@@ -413,20 +425,20 @@ export default function DashboardCreatePage() {
 
               <div>
                 <div className="mb-2 flex items-center justify-between gap-2">
-                  <label className="text-sm font-medium text-white">Prompt</label>
+                  <label className="text-sm font-medium text-[#1f1a2a]">Prompt</label>
                   <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Improve with AI" applyLabel="Apply" />
                 </div>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   rows={9}
-                  className="w-full rounded-xl border border-white/20 bg-white/5 px-3 py-2 text-white placeholder:text-white/50"
+                  className="w-full rounded-xl border border-[#d9caef] bg-white px-3 py-2 text-[#1f1a2a] placeholder:text-[#1f1a2a]/45"
                   placeholder="Describe the desired output..."
                 />
               </div>
 
               {selectedProductId && (
-                <label className="flex items-center gap-2 text-sm text-white/80">
+                <label className="flex items-center gap-2 text-sm text-[#1f1a2a]/80">
                   <input type="checkbox" checked={useProductContext} onChange={(e) => setUseProductContext(e.target.checked)} />
                   Apply product context (base prompt + brand identity)
                 </label>
@@ -439,7 +451,7 @@ export default function DashboardCreatePage() {
               <button
                 type="button"
                 onClick={() => setShowAdvanced((prev) => !prev)}
-                className="text-sm text-purple-200 underline underline-offset-4"
+                className="text-sm text-[#5b34a0] underline underline-offset-4"
               >
                 {showAdvanced ? 'Hide advanced settings' : 'Show advanced settings'}
               </button>
@@ -447,11 +459,11 @@ export default function DashboardCreatePage() {
               {showAdvanced && (
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1 block text-xs uppercase tracking-[0.14em] text-white/65">Aspect ratio</label>
+                    <label className="mb-1 block text-xs uppercase tracking-[0.14em] text-[#1f1a2a]/65">Aspect ratio</label>
                     <select
                       value={aspectRatio}
                       onChange={(e) => setAspectRatio(e.target.value)}
-                      className="w-full rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-sm text-white"
+                      className="w-full rounded-lg border border-[#d9caef] bg-white px-3 py-2 text-sm text-[#1f1a2a]"
                     >
                       <option value="1:1">1:1</option>
                       <option value="4:5">4:5</option>
@@ -459,11 +471,11 @@ export default function DashboardCreatePage() {
                     </select>
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs uppercase tracking-[0.14em] text-white/65">Resolution</label>
+                    <label className="mb-1 block text-xs uppercase tracking-[0.14em] text-[#1f1a2a]/65">Resolution</label>
                     <select
                       value={resolution}
                       onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-                      className="w-full rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-sm text-white"
+                      className="w-full rounded-lg border border-[#d9caef] bg-white px-3 py-2 text-sm text-[#1f1a2a]"
                     >
                       <option value="4k">4K - 1 credit</option>
                       <option value="8k" disabled={!canChoose8k}>
@@ -474,15 +486,15 @@ export default function DashboardCreatePage() {
                 </div>
               )}
 
-              <div className="rounded-xl border border-white/15 bg-white/[0.03] p-3 text-sm text-white/80">
+              <div className="rounded-xl border border-[#e7def4] bg-[#faf7ff] p-3 text-sm text-[#1f1a2a]/80">
                 <p>{resolution === '8k' ? 'Estimated cost: 2 credits' : 'Estimated cost: 1 credit'}</p>
-                {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Current credits: {credits}</p>}
+                {!canChoose8k && <p className="mt-1 text-xs text-amber-600">Current credits: {credits}</p>}
               </div>
 
               <button
                 onClick={handleGenerate}
                 disabled={!imageUrl || !prompt.trim() || isGenerating || uploadMutation.isPending}
-                className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#1a1426] hover:bg-white/90 disabled:opacity-50"
+                className="w-full rounded-xl bg-[#1f162f] px-4 py-3 text-sm font-semibold text-white hover:bg-[#2f2145] disabled:opacity-50"
               >
                 {isGenerating ? 'Generating...' : 'Generate image'}
               </button>
@@ -490,12 +502,12 @@ export default function DashboardCreatePage() {
           )}
         </div>
 
-        <div className="flex items-center justify-between border-t border-white/10 px-4 py-3">
+        <div className="flex items-center justify-between border-t border-[#ece4f9] px-4 py-3">
           <button
             type="button"
             onClick={() => setStep((prev) => (prev === 1 ? prev : ((prev - 1) as 1 | 2 | 3)))}
             disabled={step === 1}
-            className="rounded-lg border border-white/25 px-3 py-1.5 text-xs text-white disabled:opacity-40"
+            className="rounded-lg border border-[#d9caef] px-3 py-1.5 text-xs text-[#1f1a2a] disabled:opacity-40"
           >
             Back
           </button>
@@ -503,38 +515,38 @@ export default function DashboardCreatePage() {
             type="button"
             onClick={() => setStep((prev) => (prev === 3 ? prev : ((prev + 1) as 1 | 2 | 3)))}
             disabled={(step === 1 && !stepReady[1]) || (step === 2 && !stepReady[2]) || step === 3}
-            className="rounded-lg bg-purple-400/20 px-3 py-1.5 text-xs font-semibold text-purple-200 disabled:opacity-40"
+            className="rounded-lg bg-[#eee4ff] px-3 py-1.5 text-xs font-semibold text-[#5b34a0] disabled:opacity-40"
           >
             Next
           </button>
         </div>
       </section>
 
-      <aside className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#1f1830]">
-        <div className="border-b border-white/10 px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.18em] text-purple-200/70">Session Status</p>
-          <p className="mt-1 text-sm text-white/70">Reference, prompt, and generation readiness.</p>
+      <aside className="flex min-h-0 flex-col rounded-2xl border border-[#e8e0f5] bg-[#fdfbff]">
+        <div className="border-b border-[#ece4f9] px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-[#6a43ad]/70">Session Status</p>
+          <p className="mt-1 text-sm text-[#1f1a2a]/70">Reference, prompt, and generation readiness.</p>
         </div>
         <div className="min-h-0 flex-1 space-y-3 overflow-auto p-4">
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-            <p className="text-xs uppercase tracking-[0.14em] text-white/55">Reference</p>
-            <p className={`mt-1 text-sm ${stepReferenceDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+          <div className="rounded-xl border border-[#e7def4] bg-white p-3">
+            <p className="text-xs uppercase tracking-[0.14em] text-[#1f1a2a]/55">Reference</p>
+            <p className={`mt-1 text-sm ${stepReferenceDone ? 'text-emerald-600' : 'text-amber-600'}`}>
               {stepReferenceDone ? 'Ready' : 'Missing'}
             </p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-            <p className="text-xs uppercase tracking-[0.14em] text-white/55">Prompt</p>
-            <p className={`mt-1 text-sm ${stepPromptDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+          <div className="rounded-xl border border-[#e7def4] bg-white p-3">
+            <p className="text-xs uppercase tracking-[0.14em] text-[#1f1a2a]/55">Prompt</p>
+            <p className={`mt-1 text-sm ${stepPromptDone ? 'text-emerald-600' : 'text-amber-600'}`}>
               {stepPromptDone ? 'Ready' : 'Missing'}
             </p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-            <p className="text-xs uppercase tracking-[0.14em] text-white/55">Mode</p>
-            <p className="mt-1 text-sm text-white/80">{sourceMode === 'upload' ? 'Direct upload' : 'Product catalog'}</p>
+          <div className="rounded-xl border border-[#e7def4] bg-white p-3">
+            <p className="text-xs uppercase tracking-[0.14em] text-[#1f1a2a]/55">Mode</p>
+            <p className="mt-1 text-sm text-[#1f1a2a]/80">{sourceMode === 'upload' ? 'Direct upload' : 'Product catalog'}</p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-            <p className="text-xs uppercase tracking-[0.14em] text-white/55">Output</p>
-            <p className="mt-1 text-sm text-white/80">{resolution.toUpperCase()} · {aspectRatio}</p>
+          <div className="rounded-xl border border-[#e7def4] bg-white p-3">
+            <p className="text-xs uppercase tracking-[0.14em] text-[#1f1a2a]/55">Output</p>
+            <p className="mt-1 text-sm text-[#1f1a2a]/80">{resolution.toUpperCase()} · {aspectRatio}</p>
           </div>
         </div>
       </aside>

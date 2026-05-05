@@ -59,22 +59,22 @@ export default function ProductsPage() {
   })
 
   if (!authenticated) return null
-  if (isLoading) return <div className="p-8 text-muted">Loading...</div>
+  if (isLoading) return <div className="p-8 text-[#1f1a2a]/70">Loading...</div>
 
   return (
     <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
-      <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+      <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold">Products</h1>
-            <p className="mt-1 text-sm text-white/70">
+            <p className="mt-1 text-sm text-[#1f1a2a]/70">
               Create products once and reuse them in single image, full shooting, and hub flows.
             </p>
           </div>
           <button
             type="button"
             onClick={() => setShowCreate((prev) => !prev)}
-            className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#261f32]"
+            className="rounded-full bg-[#1f162f] px-5 py-2.5 text-sm font-semibold text-white"
           >
             {showCreate ? 'Close form' : 'New product'}
           </button>
@@ -92,32 +92,32 @@ export default function ProductsPage() {
       </section>
 
       {products.length === 0 ? (
-        <section className="rounded-2xl border border-white/15 bg-black/20 p-8 text-center text-white">
+        <section className="rounded-2xl border border-[#e8e0f5] bg-[#fcfaff] p-8 text-center text-[#1f1a2a]">
           <p className="font-semibold">No products yet</p>
-          <p className="mt-1 text-sm text-white/70">Add one product with references to unlock faster generation workflows.</p>
+          <p className="mt-1 text-sm text-[#1f1a2a]/70">Add one product with references to unlock faster generation workflows.</p>
         </section>
       ) : (
         <section className="grid gap-4 md:grid-cols-2">
           {products.map((p: { id: string; name: string; sku?: string; default_apply_brand_identity: boolean }) => (
-            <article key={p.id} className="rounded-xl border border-white/15 bg-white/10 p-4 text-white">
+            <article key={p.id} className="rounded-xl border border-[#e8e0f5] bg-[#fcfaff] p-4 text-[#1f1a2a]">
               <h2 className="text-lg font-semibold">{p.name}</h2>
-              <p className="mt-1 text-sm text-white/75">SKU: {p.sku || 'n/a'}</p>
-              <p className="mt-1 text-xs text-white/70">
+              <p className="mt-1 text-sm text-[#1f1a2a]/75">SKU: {p.sku || 'n/a'}</p>
+              <p className="mt-1 text-xs text-[#1f1a2a]/70">
                 Brand identity: {p.default_apply_brand_identity ? 'enabled' : 'disabled'}
               </p>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                <Link href={`/dashboard/products/${p.id}`} className="rounded-md border border-white/30 px-3 py-1.5 text-sm hover:bg-white/10">
+                <Link href={`/dashboard/products/${p.id}`} className="rounded-md border border-[#d2c2ea] px-3 py-1.5 text-sm hover:bg-[#fcfaff]">
                   Open setup
                 </Link>
-                <Link href="/dashboard/shooting" className="rounded-md border border-white/30 px-3 py-1.5 text-sm hover:bg-white/10">
+                <Link href="/dashboard/shooting" className="rounded-md border border-[#d2c2ea] px-3 py-1.5 text-sm hover:bg-[#fcfaff]">
                   Start shooting
                 </Link>
                 <button
                   type="button"
                   onClick={() => window.confirm('Delete this product?') && deleteMutation.mutate(p.id)}
                   disabled={deleteMutation.isPending}
-                  className="rounded-md border border-red-300/70 px-3 py-1.5 text-sm text-red-200 hover:bg-red-500/10"
+                  className="rounded-md border border-red-300/70 px-3 py-1.5 text-sm text-red-600 hover:bg-red-500/10"
                 >
                   Delete
                 </button>
@@ -162,40 +162,40 @@ function CreateProductForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-white/20 bg-black/20 p-4">
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-[#e2d8f2] bg-[#fcfaff] p-4">
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium text-white">Product name *</label>
+          <label className="mb-1 block text-sm font-medium text-[#1f1a2a]">Product name *</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
             required
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-white">SKU</label>
+          <label className="mb-1 block text-sm font-medium text-[#1f1a2a]">SKU</label>
           <input
             type="text"
             value={sku}
             onChange={(e) => setSku(e.target.value)}
-            className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
           />
         </div>
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-white">Category</label>
+        <label className="mb-1 block text-sm font-medium text-[#1f1a2a]">Category</label>
         <input
           type="text"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+          className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
         />
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-white">
+      <label className="flex items-center gap-2 text-sm text-[#1f1a2a]">
         <input
           type="checkbox"
           checked={defaultApplyBrandIdentity}
@@ -207,22 +207,26 @@ function CreateProductForm({
 
       <div>
         <div className="mb-1 flex items-center justify-between gap-2 flex-wrap">
-          <label className="text-sm font-medium text-white">Base product prompt</label>
+          <label className="text-sm font-medium text-[#1f1a2a]">Base product prompt</label>
           <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Improve with AI" applyLabel="Apply" />
         </div>
         <textarea
           value={productPrompt}
           onChange={(e) => setProductPrompt(e.target.value)}
           rows={4}
-          className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
+          className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
         />
       </div>
 
       <div className="flex gap-2">
-        <button type="submit" disabled={isSubmitting} className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-[#261f32] disabled:opacity-50">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="rounded-full bg-[#1f162f] px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
+        >
           {isSubmitting ? 'Creating...' : 'Create product'}
         </button>
-        <button type="button" onClick={onCancel} className="rounded-full border border-white/30 px-5 py-2 text-sm text-white hover:bg-white/10">
+        <button type="button" onClick={onCancel} className="rounded-full border border-[#d2c2ea] px-5 py-2 text-sm text-[#1f1a2a] hover:bg-[#fcfaff]">
           Cancel
         </button>
       </div>
