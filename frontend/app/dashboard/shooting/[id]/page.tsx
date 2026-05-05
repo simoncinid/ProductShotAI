@@ -36,7 +36,7 @@ export default function ShootingResultPage() {
   if (error || !shooting) {
     return (
       <div className="mx-auto max-w-5xl px-4 py-12">
-        <p className="text-white/70">Shooting non trovato.</p>
+        <p className="text-white/70">Shooting not found.</p>
         <Link href="/dashboard/shooting" className="mt-4 inline-block text-cyan-100 hover:underline">
           Create new shooting
         </Link>
@@ -51,23 +51,23 @@ export default function ShootingResultPage() {
   const completionRate = generations.length ? Math.round((completed.length / generations.length) * 100) : 0
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
       <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold">Risultati shooting</h1>
+            <h1 className="text-2xl font-bold">Shooting results</h1>
             <p className="mt-1 text-sm text-white/70">
               {pending.length > 0
-                ? `Elaborazione in corso: ${completed.length}/${generations.length} completate`
-                : `Completato: ${completed.length} ok, ${failed.length} fallite`}
+                ? `Processing: ${completed.length}/${generations.length} completed`
+                : `Completed: ${completed.length} success, ${failed.length} failed`}
             </p>
           </div>
           <div className="flex gap-2">
             <Link href="/dashboard/shooting" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
-              Nuovo shooting
+              New shooting
             </Link>
             <Link href="/dashboard/generations" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
-              Libreria
+              Library
             </Link>
           </div>
         </div>

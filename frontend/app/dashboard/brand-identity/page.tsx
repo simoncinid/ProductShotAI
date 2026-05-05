@@ -128,18 +128,18 @@ export default function BrandIdentityPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
       <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold">Brand identity</h1>
             <p className="mt-1 text-sm text-white/70">
-              Definisci regole visive globali: saranno applicate automaticamente ai flussi prodotto.
+              Define global visual rules once. They are reused automatically across product flows.
             </p>
           </div>
           <div className="flex gap-2">
             <Link href="/dashboard/products" className="rounded-full border border-white/30 px-4 py-2 text-sm text-white hover:bg-white/10">
-              Prodotti
+              Products
             </Link>
             <button
               type="submit"
@@ -288,18 +288,18 @@ function BrandIdentityForm({
             value={salesChannels}
             onChange={(e) => setSalesChannels(e.target.value)}
             className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
-            placeholder="es. cosmetics, pet food, tech accessories"
+            placeholder="e.g. cosmetics, pet food, tech accessories"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">Cliente target</label>
+          <label className="mb-1 block text-sm font-medium">Target customer</label>
           <input
             type="text"
             value={averageCustomer}
             onChange={(e) => setAverageCustomer(e.target.value)}
             className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
-            placeholder="es. women 25-40, premium buyers"
+            placeholder="e.g. women 25-40, premium buyers"
           />
         </div>
       </div>
@@ -312,7 +312,7 @@ function BrandIdentityForm({
             value={priceRange}
             onChange={(e) => setPriceRange(e.target.value)}
             className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
-            placeholder="es. budget, mid, premium"
+          placeholder="e.g. budget, mid, premium"
           />
         </div>
 
@@ -340,7 +340,7 @@ function BrandIdentityForm({
           value={lightingStyle}
           onChange={(e) => setLightingStyle(e.target.value)}
           className="w-full rounded-md border border-white/25 bg-white/10 px-3 py-2 text-white"
-          placeholder="es. soft daylight, high contrast studio"
+          placeholder="e.g. soft daylight, high contrast studio"
         />
       </div>
 

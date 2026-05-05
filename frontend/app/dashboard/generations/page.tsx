@@ -49,25 +49,25 @@ export default function GenerationsPage() {
   if (!authenticated) return null
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
       <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold">Libreria generazioni</h1>
-            <p className="mt-1 text-sm text-white/70">Filtra per prodotto e riapri velocemente i risultati nel Creative Hub.</p>
+            <h1 className="text-2xl font-bold">Generation Library</h1>
+            <p className="mt-1 text-sm text-white/70">Filter by product and reopen outputs instantly in Creative Hub.</p>
           </div>
           <div className="flex gap-2">
             <Link href="/dashboard/create" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
-              Nuova foto
+              New image
             </Link>
             <Link href="/dashboard/shooting" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
-              Nuovo shooting
+              New shooting
             </Link>
           </div>
         </div>
 
         <div className="mt-4">
-          <label className="mb-1 block text-sm text-white/70">Filtro prodotto</label>
+          <label className="mb-1 block text-sm text-white/70">Product filter</label>
           <select
             value={selected}
             onChange={(e) => {
@@ -76,7 +76,7 @@ export default function GenerationsPage() {
             }}
             className="w-full max-w-sm rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-white"
           >
-            <option value={NO_PRODUCT_VALUE}>Senza prodotto (NO PRODUCT)</option>
+            <option value={NO_PRODUCT_VALUE}>No product (NO PRODUCT)</option>
             {products.map((p: { id: string; name: string }) => (
               <option key={p.id} value={p.id}>
                 {p.name}
@@ -90,7 +90,7 @@ export default function GenerationsPage() {
         <p className="text-muted">Loading...</p>
       ) : items.length === 0 ? (
         <section className="rounded-2xl border border-white/15 bg-black/20 p-10 text-center text-white">
-          <p>Nessuna generazione per {isNoProduct ? 'NO PRODUCT' : selectedProduct?.name ?? 'questo prodotto'}.</p>
+          <p>No generations found for {isNoProduct ? 'NO PRODUCT' : selectedProduct?.name ?? 'this product'}.</p>
         </section>
       ) : (
         <>
@@ -120,7 +120,7 @@ export default function GenerationsPage() {
                               Download
                             </a>
                             <Link href={hubUrl(gen.id)} className="font-semibold text-cyan-100 hover:underline">
-                              Apri in Hub
+                              Open in Hub
                             </Link>
                           </div>
                         </div>

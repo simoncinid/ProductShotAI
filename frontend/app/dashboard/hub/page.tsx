@@ -225,11 +225,11 @@ export default function HubPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="mx-auto h-full max-w-6xl overflow-auto">
       <div className="mb-6 flex items-start justify-between gap-3 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-white">Creative Hub</h1>
-          <p className="mt-1 text-sm text-white/70">Ottimizza una foto esistente con variazioni rapide o modifiche precise.</p>
+          <p className="mt-1 text-sm text-white/70">Refine existing images with quick variations or precise edits.</p>
         </div>
         <div className="flex gap-2">
           <a
@@ -253,7 +253,7 @@ export default function HubPage() {
           <img src={displayImageUrl!} alt="Reference" className="max-h-[500px] w-full rounded-xl object-contain bg-black/20" />
           {canUseProductContext && (
             <p className="mt-3 text-xs text-emerald-300">
-              Contesto prodotto attivo: prompt base e brand identity applicabili automaticamente.
+              Product context active: base prompt and brand identity can be applied automatically.
             </p>
           )}
 
@@ -262,7 +262,7 @@ export default function HubPage() {
               href={`/dashboard/shooting?reference_url=${encodeURIComponent(imageUrlParam)}${productId ? `&product_id=${productId}` : ''}`}
               className="mt-3 inline-block text-sm text-cyan-100 hover:underline"
             >
-              Usa questa immagine per avviare uno shooting
+              Use this image to start a full shooting
             </Link>
           )}
         </section>
@@ -274,23 +274,23 @@ export default function HubPage() {
               onClick={() => setMode('similar')}
               className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'similar' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
-              Variazione simile
+              Similar variation
             </button>
             <button
               type="button"
               onClick={() => setMode('modify')}
               className={`rounded-full px-4 py-2 text-sm font-medium ${mode === 'modify' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
             >
-              Modifica immagine
+              Edit image
             </button>
           </div>
 
           <div>
             <div className="mb-2 flex items-center justify-between gap-2 flex-wrap">
               <label className="text-sm font-medium text-white">
-                {mode === 'similar' ? 'Descrivi la variazione' : 'Descrivi cosa cambiare'}
+                {mode === 'similar' ? 'Describe the variation' : 'Describe what to change'}
               </label>
-              <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Migliora con AI" applyLabel="Applica" />
+              <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Improve with AI" applyLabel="Apply" />
             </div>
 
             <textarea
@@ -298,8 +298,8 @@ export default function HubPage() {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder={
                 mode === 'similar'
-                  ? 'es. stessa scena, angolo diverso, più contrasto...'
-                  : 'es. rimuovi sfondo, aggiungi ombra, colori più caldi...'
+                  ? 'e.g. same setup, different angle, stronger contrast...'
+                  : 'e.g. remove background, add shadow, warmer colors...'
               }
               rows={6}
               className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/70"
@@ -311,7 +311,7 @@ export default function HubPage() {
             onClick={() => setShowAdvanced((prev) => !prev)}
             className="text-sm text-white/80 underline underline-offset-4"
           >
-            {showAdvanced ? 'Nascondi impostazioni avanzate' : 'Mostra impostazioni avanzate'}
+            {showAdvanced ? 'Hide advanced settings' : 'Show advanced settings'}
           </button>
 
           {showAdvanced && (
@@ -338,10 +338,10 @@ export default function HubPage() {
                 >
                   <option value="4k">4K - 1 credito</option>
                   <option value="8k" disabled={!canChoose8k}>
-                    8K - 2 crediti{!canChoose8k ? ' (minimo 2 crediti)' : ''}
+                    8K - 2 credits{!canChoose8k ? ' (minimum 2 credits)' : ''}
                   </option>
                 </select>
-                {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Crediti attuali: {credits}</p>}
+                {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Current credits: {credits}</p>}
               </div>
             </div>
           )}
@@ -352,7 +352,7 @@ export default function HubPage() {
             disabled={!prompt.trim() || isGenerating}
             className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#13233d] hover:bg-white/90 disabled:opacity-50"
           >
-            {isGenerating ? 'Generazione in corso...' : 'Genera variazione'}
+            {isGenerating ? 'Generating...' : 'Generate variation'}
           </button>
         </section>
       </div>

@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { generationApi, getAbsoluteImageUrl, getDeviceId, productsApi, uploadApi, userApi } from '@/lib/api'
@@ -150,7 +149,7 @@ export default function DashboardCreatePage() {
     onSuccess: (data, variables) => {
       if (variables !== selectedFile) return
       setImageUrl(data.image_url)
-      toast.success('Reference caricata')
+      toast.success('Reference uploaded')
     },
     onError: (error: unknown) => {
       const msg =
@@ -169,7 +168,7 @@ export default function DashboardCreatePage() {
           data.generation_id,
           (url) => {
             setIsGenerating(false)
-            toast.success('Generazione completata')
+            toast.success('Generation completed')
             setResultImageUrl(url)
           },
           (msg) => {
@@ -179,7 +178,7 @@ export default function DashboardCreatePage() {
         )
       } else if (data?.status === 'completed' && data?.output_image_url) {
         setIsGenerating(false)
-        toast.success('Generazione completata')
+        toast.success('Generation completed')
         setResultImageUrl(getAbsoluteImageUrl(data.output_image_url) ?? data.output_image_url ?? null)
       } else {
         setIsGenerating(false)
@@ -227,7 +226,7 @@ export default function DashboardCreatePage() {
 
   const handleGenerate = () => {
     if (!imageUrl || !prompt.trim()) {
-      toast.error('Seleziona una reference e definisci il prompt')
+      toast.error('Select a reference and define your prompt')
       return
     }
 
@@ -262,21 +261,13 @@ export default function DashboardCreatePage() {
   const stepPromptDone = !!prompt.trim()
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto h-full max-w-6xl overflow-auto">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Genera foto</h1>
+          <h1 className="text-3xl font-bold text-white">Generate Image</h1>
           <p className="mt-1 text-sm text-white/70">
-            Flusso guidato: 1) scegli reference, 2) definisci risultato, 3) genera.
+            Guided flow: 1) pick reference, 2) define output, 3) generate.
           </p>
-        </div>
-        <div className="flex gap-2">
-          <Link href="/dashboard/shooting" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
-            Crea shooting
-          </Link>
-          <Link href="/dashboard/products" className="rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10">
-            Catalogo
-          </Link>
         </div>
       </div>
 
@@ -285,7 +276,7 @@ export default function DashboardCreatePage() {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">1. Reference</h2>
             <span className={`text-xs font-semibold ${stepReferenceDone ? 'text-emerald-300' : 'text-amber-300'}`}>
-              {stepReferenceDone ? 'Completato' : 'Richiesto'}
+              {stepReferenceDone ? 'Done' : 'Required'}
             </span>
           </div>
 
@@ -303,7 +294,7 @@ export default function DashboardCreatePage() {
                 onClick={() => setSourceMode('catalog')}
                 className={`rounded-full px-4 py-2 text-sm ${sourceMode === 'catalog' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
               >
-                Da catalogo
+                From catalog
               </button>
             </div>
 
@@ -320,17 +311,17 @@ export default function DashboardCreatePage() {
                   <>
                     <img src={effectivePreviewUrl} alt="Preview" className="max-h-72 w-full rounded-xl object-contain bg-black/20" />
                     {uploadMutation.isPending && <p className="text-sm text-white/70">Upload in corso...</p>}
-                    {imageUrl && <p className="text-sm text-emerald-300">Reference pronta</p>}
+                    {imageUrl && <p className="text-sm text-emerald-300">Reference ready</p>}
                   </>
                 ) : (
-                  <p className="text-sm text-white/75">Carica una reference JPG/PNG per iniziare.</p>
+                  <p className="text-sm text-white/75">Upload a JPG/PNG reference to start.</p>
                 )}
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10"
                 >
-                  {effectivePreviewUrl ? 'Cambia file' : 'Seleziona file'}
+                  {effectivePreviewUrl ? 'Change file' : 'Select file'}
                 </button>
               </div>
             ) : (
@@ -345,7 +336,7 @@ export default function DashboardCreatePage() {
                   }}
                   className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
                 >
-                  <option value="">Seleziona prodotto...</option>
+                  <option value="">Select product...</option>
                   {products.map((p: { id: string; name: string }) => (
                     <option key={p.id} value={p.id}>
                       {p.name}
@@ -354,9 +345,9 @@ export default function DashboardCreatePage() {
                 </select>
 
                 {!selectedProductId ? (
-                  <p className="text-sm text-white/75">Scegli un prodotto per vedere le sue reference.</p>
+                  <p className="text-sm text-white/75">Select a product to load its references.</p>
                 ) : productImages.length === 0 ? (
-                  <p className="text-sm text-white/75">Nessuna reference disponibile per questo prodotto.</p>
+                  <p className="text-sm text-white/75">No references available for this product.</p>
                 ) : (
                   <div className="grid grid-cols-3 gap-2">
                     {productImages.map((img) => (
@@ -389,7 +380,7 @@ export default function DashboardCreatePage() {
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-lg font-semibold">2. Obiettivo creativo</h2>
               <span className={`text-xs font-semibold ${stepPromptDone ? 'text-emerald-300' : 'text-amber-300'}`}>
-                {stepPromptDone ? 'Completato' : 'Richiesto'}
+              {stepPromptDone ? 'Done' : 'Required'}
               </span>
             </div>
 
@@ -413,14 +404,14 @@ export default function DashboardCreatePage() {
             <div className="mt-4">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <label className="text-sm font-medium">Prompt finale</label>
-                <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Migliora con AI" applyLabel="Applica" />
+                <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Improve with AI" applyLabel="Apply" />
               </div>
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 rows={7}
                 className="w-full rounded-lg border border-white/20 bg-black/20 px-3 py-2 text-white placeholder:text-white/60"
-                placeholder="Descrivi il risultato che vuoi ottenere..."
+                placeholder="Describe the result you want..."
               />
             </div>
 
@@ -431,21 +422,21 @@ export default function DashboardCreatePage() {
                   checked={useProductContext}
                   onChange={(e) => setUseProductContext(e.target.checked)}
                 />
-                Applica contesto prodotto (prompt base + brand identity)
+                Apply product context (base prompt + brand identity)
               </label>
             )}
           </div>
         </section>
 
         <section className="space-y-4 rounded-2xl border border-cyan-200/40 bg-gradient-to-br from-[#10223d] to-[#1f3b61] p-5 text-white">
-          <h2 className="text-lg font-semibold">3. Genera</h2>
+          <h2 className="text-lg font-semibold">3. Generate</h2>
 
           <button
             type="button"
             onClick={() => setShowAdvanced((prev) => !prev)}
             className="text-sm text-white/85 underline underline-offset-4"
           >
-            {showAdvanced ? 'Nascondi impostazioni avanzate' : 'Mostra impostazioni avanzate'}
+            {showAdvanced ? 'Hide advanced settings' : 'Show advanced settings'}
           </button>
 
           {showAdvanced && (
@@ -472,17 +463,17 @@ export default function DashboardCreatePage() {
                 >
                   <option value="4k">4K - 1 credito</option>
                   <option value="8k" disabled={!canChoose8k}>
-                    8K - 2 crediti{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}
+                    8K - 2 credits{!canChoose8k ? ' (requires at least 2 credits)' : ''}
                   </option>
                 </select>
-                {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Crediti attuali: {credits}</p>}
+                {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Current credits: {credits}</p>}
               </div>
             </div>
           )}
 
           <div className="rounded-xl border border-white/25 bg-black/20 p-4 text-sm text-white/85">
-            <p>{resolution === '8k' ? 'Costo stimato: 2 crediti' : 'Costo stimato: 1 credito'}</p>
-            <p className="mt-1 text-xs">Il risultato sarà salvato in Libreria e apribile nel Creative Hub.</p>
+            <p>{resolution === '8k' ? 'Estimated cost: 2 credits' : 'Estimated cost: 1 credit'}</p>
+            <p className="mt-1 text-xs">Result will be saved in Library and editable in Creative Hub.</p>
           </div>
 
           <button
@@ -490,10 +481,10 @@ export default function DashboardCreatePage() {
             disabled={!imageUrl || !prompt.trim() || isGenerating || uploadMutation.isPending}
             className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#13233d] hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {isGenerating ? 'Generazione in corso...' : 'Genera immagine'}
+            {isGenerating ? 'Generating...' : 'Generate image'}
           </button>
 
-          {isGenerating && <p className="text-center text-xs text-white/70">Tempo medio: 30-90 secondi</p>}
+          {isGenerating && <p className="text-center text-xs text-white/70">Typical time: 30-90 seconds</p>}
         </section>
       </div>
 

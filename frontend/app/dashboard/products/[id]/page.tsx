@@ -136,16 +136,16 @@ export default function ProductDetailPage() {
   const maxImages = 3
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
       <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold">{product.name}</h1>
-            <p className="mt-1 text-sm text-white/70">Setup prodotto per foto singole, shooting e iterazioni in Hub.</p>
+            <p className="mt-1 text-sm text-white/70">Product setup for single image, full shooting, and Hub refinement.</p>
           </div>
           <div className="flex gap-2">
             <Link href="/dashboard/products" className="rounded-full border border-white/30 px-4 py-2 text-sm text-white hover:bg-white/10">
-              Prodotti
+              Products
             </Link>
             {!editing && (
               <button
@@ -196,7 +196,7 @@ export default function ProductDetailPage() {
                 {analyzeMutation.isPending ? 'Analyzing...' : 'Analyze images'}
               </button>
               <Link href="/dashboard/shooting" className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10">
-                Avvia shooting
+                Start shooting
               </Link>
             </div>
           )}
@@ -243,10 +243,10 @@ export default function ProductDetailPage() {
 
         <div className="mt-4 flex gap-2">
           <Link href="/dashboard/create" className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10">
-            Foto singola
+            Single image
           </Link>
           <Link href="/dashboard/shooting" className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10">
-            Shooting multiplo
+            Full shooting
           </Link>
         </div>
       </section>
@@ -415,7 +415,7 @@ function EditProductForm({
       <div>
         <div className="mb-1 flex items-center justify-between gap-2 flex-wrap">
           <label className="text-sm font-medium">Product prompt</label>
-          <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Migliora con AI" applyLabel="Applica" />
+          <EditPromptWithAI value={productPrompt} onChange={setProductPrompt} buttonLabel="Improve with AI" applyLabel="Apply" />
         </div>
         <textarea
           value={productPrompt}

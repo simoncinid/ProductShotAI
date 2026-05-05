@@ -146,10 +146,10 @@ export default function ShootingWizardPage() {
   if (products.length === 0) {
     return (
       <div className="max-w-xl mx-auto px-4 py-12">
-        <h1 className="text-2xl font-bold text-on-dark mb-3">Shooting multiplo</h1>
-        <p className="text-muted mb-6">Prima crea almeno un prodotto con immagini reference.</p>
+        <h1 className="text-2xl font-bold text-on-dark mb-3">Full Shooting</h1>
+        <p className="text-muted mb-6">Create at least one product with references first.</p>
         <Link href="/dashboard/products" className="inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary">
-          Crea prodotto
+          Create product
         </Link>
       </div>
     )
@@ -160,15 +160,12 @@ export default function ShootingWizardPage() {
   const stepReferenceDone = !!referenceImageUrl
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="mx-auto h-full max-w-6xl overflow-auto">
       <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl font-bold text-white">Crea shooting</h1>
-          <p className="mt-1 text-sm text-white/70">Flusso guidato per generare un set coerente di immagini in pochi passaggi.</p>
+          <h1 className="text-3xl font-bold text-white">Full Shooting</h1>
+          <p className="mt-1 text-sm text-white/70">Create a coherent set of images in a single guided flow.</p>
         </div>
-        <Link href="/dashboard/create" className="rounded-full border border-white/30 px-4 py-2 text-sm text-white hover:bg-white/10">
-          Genera foto singola
-        </Link>
       </div>
 
       {phase === 'setup' ? (
@@ -176,9 +173,9 @@ export default function ShootingWizardPage() {
           <section className="space-y-5 rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
             <div>
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">1. Seleziona prodotto</h2>
+                <h2 className="text-lg font-semibold">1. Select product</h2>
                 <span className={`text-xs font-semibold ${stepProductDone ? 'text-emerald-300' : 'text-amber-300'}`}>
-                  {stepProductDone ? 'Completato' : 'Richiesto'}
+                  {stepProductDone ? 'Done' : 'Required'}
                 </span>
               </div>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -205,9 +202,9 @@ export default function ShootingWizardPage() {
             <div>
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-lg font-semibold">2. Scegli reference</h2>
+                  <h2 className="text-lg font-semibold">2. Select reference</h2>
                   <span className={`text-xs font-semibold ${stepReferenceDone ? 'text-emerald-300' : 'text-amber-300'}`}>
-                    {stepReferenceDone ? 'Completato' : 'Richiesto'}
+                    {stepReferenceDone ? 'Done' : 'Required'}
                   </span>
                 </div>
                 <button
@@ -245,7 +242,7 @@ export default function ShootingWizardPage() {
 
               {referenceImageUrl && (
                 <div className="mt-3 rounded-lg border border-white/20 bg-black/20 p-3">
-                  <p className="mb-2 text-xs text-emerald-300">Reference selezionata</p>
+                  <p className="mb-2 text-xs text-emerald-300">Reference selected</p>
                   <img
                     src={getAbsoluteImageUrl(referenceImageUrl) ?? referenceImageUrl}
                     alt="Reference selected"
@@ -257,11 +254,11 @@ export default function ShootingWizardPage() {
           </section>
 
           <section className="space-y-4 rounded-2xl border border-cyan-200/40 bg-gradient-to-br from-[#10223d] to-[#1f3b61] p-5 text-white">
-            <h2 className="text-lg font-semibold">3. Configura e lancia</h2>
-            <p className="text-sm text-white/75">L'AI genera i prompt in automatico, tu scegli solo obiettivo e volume.</p>
+            <h2 className="text-lg font-semibold">3. Configure and launch</h2>
+            <p className="text-sm text-white/75">AI generates prompts automatically, you only control direction and volume.</p>
 
             <div>
-              <label className="mb-1 block text-sm text-white/90">Numero immagini</label>
+              <label className="mb-1 block text-sm text-white/90">Number of images</label>
               <input
                 type="number"
                 min={2}
@@ -270,11 +267,11 @@ export default function ShootingWizardPage() {
                 onChange={(e) => setCount(Math.min(10, Math.max(2, Number(e.target.value) || 2)))}
                 className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
               />
-              <p className="mt-1 text-xs text-white/70">Consigliato: 4 per test rapido, 8-10 per set completo.</p>
+              <p className="mt-1 text-xs text-white/70">Recommended: 4 for quick tests, 8-10 for full sets.</p>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm text-white/90">Stile shooting</label>
+              <label className="mb-1 block text-sm text-white/90">Shooting style</label>
               <select
                 value={shootingStyle}
                 onChange={(e) => setShootingStyle(e.target.value)}
@@ -295,12 +292,12 @@ export default function ShootingWizardPage() {
                 onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
                 className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
               >
-                <option value="4k">4K - 1 credito / immagine</option>
+                <option value="4k">4K - 1 credit / image</option>
                 <option value="8k" disabled={!canChoose8k}>
-                  8K - 2 crediti / immagine{!canChoose8k ? ' (servono almeno 2 crediti)' : ''}
+                  8K - 2 credits / image{!canChoose8k ? ' (requires at least 2 credits)' : ''}
                 </option>
               </select>
-              {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Crediti attuali: {credits}</p>}
+              {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Current credits: {credits}</p>}
             </div>
 
             <label className="flex items-center gap-2 text-sm text-white/90">
@@ -310,12 +307,12 @@ export default function ShootingWizardPage() {
                 onChange={(e) => setReviewPrompts(e.target.checked)}
                 className="rounded"
               />
-              Voglio revisionare i prompt prima del lancio
+              Review prompts before generation
             </label>
 
             <div className="rounded-xl border border-white/25 bg-black/20 p-4 text-sm text-white/85">
-              <p>Costo stimato: {totalCredits} crediti</p>
-              <p className="mt-1 text-xs">{count} immagini x {resolution === '8k' ? 2 : 1} credito/i per immagine.</p>
+              <p>Estimated cost: {totalCredits} credits</p>
+              <p className="mt-1 text-xs">{count} images x {resolution === '8k' ? 2 : 1} credit(s) per image.</p>
             </div>
 
             <button
@@ -325,25 +322,25 @@ export default function ShootingWizardPage() {
               className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#1f2d45] hover:bg-white/90 disabled:opacity-50"
             >
               {promptsMutation.isPending
-                ? 'Genero prompt...'
+                ? 'Generating prompts...'
                 : generateMutation.isPending
-                  ? 'Avvio shooting...'
+                  ? 'Starting shooting...'
                   : reviewPrompts
-                    ? 'Genera prompt e rivedi'
-                    : 'Avvia shooting'}
+                    ? 'Generate prompts and review'
+                    : 'Start shooting'}
             </button>
           </section>
         </div>
       ) : (
         <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
           <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
-            <h2 className="text-xl font-semibold">Review prompt ({prompts.length})</h2>
+            <h2 className="text-xl font-semibold">Prompt review ({prompts.length})</h2>
             <button
               type="button"
               onClick={() => setPhase('setup')}
               className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10"
             >
-              Torna a setup
+              Back to setup
             </button>
           </div>
 
@@ -359,8 +356,8 @@ export default function ShootingWizardPage() {
                       next[index] = newVal
                       setPrompts(next)
                     }}
-                    buttonLabel="Migliora con AI"
-                    applyLabel="Applica"
+                    buttonLabel="Improve with AI"
+                    applyLabel="Apply"
                   />
                 </div>
                 <textarea
@@ -384,7 +381,7 @@ export default function ShootingWizardPage() {
               disabled={generateMutation.isPending}
               className="rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#13233d] disabled:opacity-50"
             >
-              {generateMutation.isPending ? 'Avvio shooting...' : 'Avvia shooting'}
+              {generateMutation.isPending ? 'Starting shooting...' : 'Start shooting'}
             </button>
           </div>
         </section>
