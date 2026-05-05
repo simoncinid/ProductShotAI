@@ -3,8 +3,7 @@ import { DM_Sans, Playfair_Display, Great_Vibes } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { Providers } from './providers'
-import { Navbar } from '@/components/Navbar'
-import { Footer } from '@/components/Footer'
+import { SiteChrome } from '@/components/SiteChrome'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'
 
@@ -97,11 +96,7 @@ export default function RootLayout({
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
         <Providers>
-          <Navbar />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
         </Providers>
         <Analytics />
       </body>

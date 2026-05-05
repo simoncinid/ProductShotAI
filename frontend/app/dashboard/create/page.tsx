@@ -90,6 +90,7 @@ export default function DashboardCreatePage() {
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [step, setStep] = useState<1 | 2 | 3>(1)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const stopPollingRef = useRef<(() => void) | null>(null)
 
@@ -259,234 +260,284 @@ export default function DashboardCreatePage() {
   const effectivePreviewUrl = previewUrl
   const stepReferenceDone = !!imageUrl
   const stepPromptDone = !!prompt.trim()
+  const stepReady = {
+    1: stepReferenceDone,
+    2: stepPromptDone,
+    3: stepReferenceDone && stepPromptDone,
+  } as const
 
   return (
-    <div className="mx-auto h-full max-w-6xl overflow-auto">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Generate Image</h1>
-          <p className="mt-1 text-sm text-white/70">
-            Guided flow: 1) pick reference, 2) define output, 3) generate.
-          </p>
-        </div>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-[1.15fr,0.85fr]">
-        <section className="space-y-5 rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">1. Reference</h2>
-            <span className={`text-xs font-semibold ${stepReferenceDone ? 'text-emerald-300' : 'text-amber-300'}`}>
-              {stepReferenceDone ? 'Done' : 'Required'}
-            </span>
-          </div>
-
-          <div className="rounded-xl border border-white/15 bg-black/20 p-4">
-            <div className="mb-3 flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => setSourceMode('upload')}
-                className={`rounded-full px-4 py-2 text-sm ${sourceMode === 'upload' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
-              >
-                Upload file
-              </button>
-              <button
-                type="button"
-                onClick={() => setSourceMode('catalog')}
-                className={`rounded-full px-4 py-2 text-sm ${sourceMode === 'catalog' ? 'bg-white text-[#13233d]' : 'bg-white/10 text-white hover:bg-white/20'}`}
-              >
-                From catalog
-              </button>
-            </div>
-
-            {sourceMode === 'upload' ? (
-              <div className="space-y-3">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-                {effectivePreviewUrl ? (
-                  <>
-                    <img src={effectivePreviewUrl} alt="Preview" className="max-h-72 w-full rounded-xl object-contain bg-black/20" />
-                    {uploadMutation.isPending && <p className="text-sm text-white/70">Upload in corso...</p>}
-                    {imageUrl && <p className="text-sm text-emerald-300">Reference ready</p>}
-                  </>
-                ) : (
-                  <p className="text-sm text-white/75">Upload a JPG/PNG reference to start.</p>
-                )}
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10"
-                >
-                  {effectivePreviewUrl ? 'Change file' : 'Select file'}
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <select
-                  value={selectedProductId}
-                  onChange={(e) => {
-                    setSelectedProductId(e.target.value)
-                    setSelectedCatalogImageId('')
-                    setImageUrl(null)
-                    setPreviewUrl(null)
-                  }}
-                  className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
-                >
-                  <option value="">Select product...</option>
-                  {products.map((p: { id: string; name: string }) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-
-                {!selectedProductId ? (
-                  <p className="text-sm text-white/75">Select a product to load its references.</p>
-                ) : productImages.length === 0 ? (
-                  <p className="text-sm text-white/75">No references available for this product.</p>
-                ) : (
-                  <div className="grid grid-cols-3 gap-2">
-                    {productImages.map((img) => (
-                      <button
-                        key={img.id}
-                        type="button"
-                        onClick={() => handleSelectCatalogImage(img)}
-                        className={`overflow-hidden rounded-lg border-2 ${
-                          selectedCatalogImageId === img.id ? 'border-cyan-200' : 'border-transparent'
-                        }`}
-                      >
-                        <img
-                          src={getAbsoluteImageUrl(img.image_url) ?? img.image_url}
-                          alt="Reference"
-                          className="h-24 w-full object-cover"
-                        />
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {effectivePreviewUrl && (
-                  <img src={effectivePreviewUrl} alt="Catalog preview" className="max-h-72 w-full rounded-xl object-contain bg-black/20" />
-                )}
-              </div>
-            )}
-          </div>
-
+    <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[1.2fr,0.8fr]">
+      <section className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0a1220]">
+        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
           <div>
-            <div className="flex items-center justify-between gap-2">
-              <h2 className="text-lg font-semibold">2. Obiettivo creativo</h2>
-              <span className={`text-xs font-semibold ${stepPromptDone ? 'text-emerald-300' : 'text-amber-300'}`}>
-              {stepPromptDone ? 'Done' : 'Required'}
-              </span>
-            </div>
+            <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/75">Generate Image</p>
+            <h1 className="text-xl font-semibold">Creative Session</h1>
+          </div>
+          <div className="flex gap-2">
+            {[1, 2, 3].map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setStep(s as 1 | 2 | 3)}
+                className={`h-8 rounded-lg px-3 text-xs font-semibold ${
+                  step === s ? 'bg-cyan-200/20 text-cyan-100' : 'bg-white/5 text-white/65 hover:bg-white/10'
+                }`}
+              >
+                Step {s}
+              </button>
+            ))}
+          </div>
+        </div>
 
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {GOAL_PRESETS.map((goal) => (
+        <div className="min-h-0 flex-1 overflow-auto p-4">
+          {step === 1 && (
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
                 <button
-                  key={goal.id}
                   type="button"
-                  onClick={() => handleGoalChange(goal.id)}
-                  className={`rounded-lg border px-3 py-2 text-left text-sm transition ${
-                    selectedGoal === goal.id
-                      ? 'border-white bg-white text-[#13233d]'
-                      : 'border-white/25 bg-white/5 text-white hover:bg-white/15'
+                  onClick={() => setSourceMode('upload')}
+                  className={`rounded-lg px-3 py-2 text-sm ${
+                    sourceMode === 'upload' ? 'bg-white text-[#0b111d]' : 'bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
-                  {goal.label}
+                  Upload
                 </button>
-              ))}
-            </div>
-
-            <div className="mt-4">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <label className="text-sm font-medium">Prompt finale</label>
-                <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Improve with AI" applyLabel="Apply" />
-              </div>
-              <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                rows={7}
-                className="w-full rounded-lg border border-white/20 bg-black/20 px-3 py-2 text-white placeholder:text-white/60"
-                placeholder="Describe the result you want..."
-              />
-            </div>
-
-            {selectedProductId && (
-              <label className="mt-3 flex items-center gap-2 text-sm text-white/85">
-                <input
-                  type="checkbox"
-                  checked={useProductContext}
-                  onChange={(e) => setUseProductContext(e.target.checked)}
-                />
-                Apply product context (base prompt + brand identity)
-              </label>
-            )}
-          </div>
-        </section>
-
-        <section className="space-y-4 rounded-2xl border border-cyan-200/40 bg-gradient-to-br from-[#10223d] to-[#1f3b61] p-5 text-white">
-          <h2 className="text-lg font-semibold">3. Generate</h2>
-
-          <button
-            type="button"
-            onClick={() => setShowAdvanced((prev) => !prev)}
-            className="text-sm text-white/85 underline underline-offset-4"
-          >
-            {showAdvanced ? 'Hide advanced settings' : 'Show advanced settings'}
-          </button>
-
-          {showAdvanced && (
-            <div className="space-y-3 rounded-xl border border-white/20 bg-black/20 p-4">
-              <div>
-                <label className="mb-1 block text-sm text-white/90">Aspect ratio</label>
-                <select
-                  value={aspectRatio}
-                  onChange={(e) => setAspectRatio(e.target.value)}
-                  className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                <button
+                  type="button"
+                  onClick={() => setSourceMode('catalog')}
+                  className={`rounded-lg px-3 py-2 text-sm ${
+                    sourceMode === 'catalog' ? 'bg-white text-[#0b111d]' : 'bg-white/10 text-white hover:bg-white/20'
+                  }`}
                 >
-                  <option value="1:1">1:1 (Square)</option>
-                  <option value="4:5">4:5 (Portrait)</option>
-                  <option value="16:9">16:9 (Landscape)</option>
-                </select>
+                  Product catalog
+                </button>
               </div>
 
-              <div>
-                <label className="mb-1 block text-sm text-white/90">Resolution</label>
-                <select
-                  value={resolution}
-                  onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-                  className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
-                >
-                  <option value="4k">4K - 1 credito</option>
-                  <option value="8k" disabled={!canChoose8k}>
-                    8K - 2 credits{!canChoose8k ? ' (requires at least 2 credits)' : ''}
-                  </option>
-                </select>
-                {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Current credits: {credits}</p>}
-              </div>
+              {sourceMode === 'upload' ? (
+                <div className="space-y-3">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  {!effectivePreviewUrl && (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="rounded-xl border border-white/25 bg-white/5 px-4 py-3 text-sm text-white hover:bg-white/10"
+                    >
+                      Select image file
+                    </button>
+                  )}
+                  {effectivePreviewUrl && (
+                    <div className="space-y-2">
+                      <img src={effectivePreviewUrl} alt="Preview" className="max-h-[360px] w-full rounded-xl object-contain bg-black/30" />
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="rounded-lg border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10"
+                        >
+                          Change file
+                        </button>
+                        {uploadMutation.isPending && <span className="text-xs text-white/60">Uploading...</span>}
+                        {imageUrl && <span className="text-xs text-emerald-300">Reference ready</span>}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <select
+                    value={selectedProductId}
+                    onChange={(e) => {
+                      setSelectedProductId(e.target.value)
+                      setSelectedCatalogImageId('')
+                      setImageUrl(null)
+                      setPreviewUrl(null)
+                    }}
+                    className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                  >
+                    <option value="">Select product...</option>
+                    {products.map((p: { id: string; name: string }) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {selectedProductId && productImages.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2">
+                      {productImages.map((img) => (
+                        <button
+                          key={img.id}
+                          type="button"
+                          onClick={() => handleSelectCatalogImage(img)}
+                          className={`overflow-hidden rounded-lg border-2 ${
+                            selectedCatalogImageId === img.id ? 'border-cyan-200' : 'border-transparent'
+                          }`}
+                        >
+                          <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="Reference" className="h-24 w-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {effectivePreviewUrl && (
+                    <img src={effectivePreviewUrl} alt="Selected reference" className="max-h-[360px] w-full rounded-xl object-contain bg-black/30" />
+                  )}
+                </div>
+              )}
             </div>
           )}
 
-          <div className="rounded-xl border border-white/25 bg-black/20 p-4 text-sm text-white/85">
-            <p>{resolution === '8k' ? 'Estimated cost: 2 credits' : 'Estimated cost: 1 credit'}</p>
-            <p className="mt-1 text-xs">Result will be saved in Library and editable in Creative Hub.</p>
-          </div>
+          {step === 2 && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-2">
+                {GOAL_PRESETS.map((goal) => (
+                  <button
+                    key={goal.id}
+                    type="button"
+                    onClick={() => handleGoalChange(goal.id)}
+                    className={`rounded-lg border px-3 py-2 text-left text-sm transition ${
+                      selectedGoal === goal.id ? 'border-white bg-white text-[#0b111d]' : 'border-white/20 bg-white/5 text-white hover:bg-white/12'
+                    }`}
+                  >
+                    {goal.label}
+                  </button>
+                ))}
+              </div>
 
+              <div>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <label className="text-sm font-medium text-white">Prompt</label>
+                  <EditPromptWithAI value={prompt} onChange={setPrompt} buttonLabel="Improve with AI" applyLabel="Apply" />
+                </div>
+                <textarea
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  rows={9}
+                  className="w-full rounded-xl border border-white/20 bg-white/5 px-3 py-2 text-white placeholder:text-white/50"
+                  placeholder="Describe the desired output..."
+                />
+              </div>
+
+              {selectedProductId && (
+                <label className="flex items-center gap-2 text-sm text-white/80">
+                  <input type="checkbox" checked={useProductContext} onChange={(e) => setUseProductContext(e.target.checked)} />
+                  Apply product context (base prompt + brand identity)
+                </label>
+              )}
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-4">
+              <button
+                type="button"
+                onClick={() => setShowAdvanced((prev) => !prev)}
+                className="text-sm text-cyan-100 underline underline-offset-4"
+              >
+                {showAdvanced ? 'Hide advanced settings' : 'Show advanced settings'}
+              </button>
+
+              {showAdvanced && (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-1 block text-xs uppercase tracking-[0.14em] text-white/65">Aspect ratio</label>
+                    <select
+                      value={aspectRatio}
+                      onChange={(e) => setAspectRatio(e.target.value)}
+                      className="w-full rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-sm text-white"
+                    >
+                      <option value="1:1">1:1</option>
+                      <option value="4:5">4:5</option>
+                      <option value="16:9">16:9</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs uppercase tracking-[0.14em] text-white/65">Resolution</label>
+                    <select
+                      value={resolution}
+                      onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
+                      className="w-full rounded-lg border border-white/25 bg-white/10 px-3 py-2 text-sm text-white"
+                    >
+                      <option value="4k">4K - 1 credit</option>
+                      <option value="8k" disabled={!canChoose8k}>
+                        8K - 2 credits{!canChoose8k ? ' (requires 2+ credits)' : ''}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              <div className="rounded-xl border border-white/15 bg-white/[0.03] p-3 text-sm text-white/80">
+                <p>{resolution === '8k' ? 'Estimated cost: 2 credits' : 'Estimated cost: 1 credit'}</p>
+                {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Current credits: {credits}</p>}
+              </div>
+
+              <button
+                onClick={handleGenerate}
+                disabled={!imageUrl || !prompt.trim() || isGenerating || uploadMutation.isPending}
+                className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#0b111d] hover:bg-white/90 disabled:opacity-50"
+              >
+                {isGenerating ? 'Generating...' : 'Generate image'}
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between border-t border-white/10 px-4 py-3">
           <button
-            onClick={handleGenerate}
-            disabled={!imageUrl || !prompt.trim() || isGenerating || uploadMutation.isPending}
-            className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#13233d] hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
+            type="button"
+            onClick={() => setStep((prev) => (prev === 1 ? prev : ((prev - 1) as 1 | 2 | 3)))}
+            disabled={step === 1}
+            className="rounded-lg border border-white/25 px-3 py-1.5 text-xs text-white disabled:opacity-40"
           >
-            {isGenerating ? 'Generating...' : 'Generate image'}
+            Back
           </button>
+          <button
+            type="button"
+            onClick={() => setStep((prev) => (prev === 3 ? prev : ((prev + 1) as 1 | 2 | 3)))}
+            disabled={(step === 1 && !stepReady[1]) || (step === 2 && !stepReady[2]) || step === 3}
+            className="rounded-lg bg-cyan-100/20 px-3 py-1.5 text-xs font-semibold text-cyan-100 disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
+      </section>
 
-          {isGenerating && <p className="text-center text-xs text-white/70">Typical time: 30-90 seconds</p>}
-        </section>
-      </div>
+      <aside className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0d1627]">
+        <div className="border-b border-white/10 px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Session Status</p>
+          <p className="mt-1 text-sm text-white/70">Reference, prompt, and generation readiness.</p>
+        </div>
+        <div className="min-h-0 flex-1 space-y-3 overflow-auto p-4">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <p className="text-xs uppercase tracking-[0.14em] text-white/55">Reference</p>
+            <p className={`mt-1 text-sm ${stepReferenceDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+              {stepReferenceDone ? 'Ready' : 'Missing'}
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <p className="text-xs uppercase tracking-[0.14em] text-white/55">Prompt</p>
+            <p className={`mt-1 text-sm ${stepPromptDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+              {stepPromptDone ? 'Ready' : 'Missing'}
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <p className="text-xs uppercase tracking-[0.14em] text-white/55">Mode</p>
+            <p className="mt-1 text-sm text-white/80">{sourceMode === 'upload' ? 'Direct upload' : 'Product catalog'}</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <p className="text-xs uppercase tracking-[0.14em] text-white/55">Output</p>
+            <p className="mt-1 text-sm text-white/80">{resolution.toUpperCase()} · {aspectRatio}</p>
+          </div>
+        </div>
+      </aside>
 
       {resultImageUrl && <ResultPopup imageUrl={resultImageUrl} onClose={() => setResultImageUrl(null)} />}
     </div>

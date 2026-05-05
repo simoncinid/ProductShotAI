@@ -336,7 +336,7 @@ export default function HubPage() {
                   onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
                   className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
                 >
-                  <option value="4k">4K - 1 credito</option>
+                  <option value="4k">4K - 1 credit</option>
                   <option value="8k" disabled={!canChoose8k}>
                     8K - 2 credits{!canChoose8k ? ' (minimum 2 credits)' : ''}
                   </option>

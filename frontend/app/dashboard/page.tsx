@@ -23,83 +23,117 @@ export default function DashboardPage() {
   })
 
   if (userLoading || productsLoading || brandLoading) {
-    return <p className="text-muted">Loading...</p>
+    return <p className="px-2 py-3 text-white/70">Loading...</p>
   }
 
-  const hasBrandIdentity = !!brandIdentity && !brandError
+  const hasBrand = !!brandIdentity && !brandError
   const hasProducts = products.length > 0
   const hasCredits = (user?.credits_balance ?? 0) > 0
 
-  const blockers = [
+  const readiness = [
     {
-      title: 'Brand',
-      done: hasBrandIdentity,
-      description: 'Set brand rules once and keep style consistent everywhere.',
+      title: 'Brand profile',
+      done: hasBrand,
       href: '/dashboard/brand-identity',
-      cta: hasBrandIdentity ? 'Edit Brand' : 'Set Brand',
+      action: hasBrand ? 'Edit' : 'Setup',
     },
     {
-      title: 'Products',
+      title: 'Product catalog',
       done: hasProducts,
-      description: 'At least one product with references unlocks the fastest flow.',
       href: '/dashboard/products',
-      cta: hasProducts ? 'Manage Products' : 'Create Product',
+      action: hasProducts ? 'Manage' : 'Create',
     },
     {
-      title: 'Credits',
+      title: 'Generation credits',
       done: hasCredits,
-      description: 'Credits are required to generate 4K/8K outputs.',
       href: '/pricing',
-      cta: hasCredits ? 'View Plans' : 'Buy Credits',
+      action: hasCredits ? 'Review plans' : 'Buy credits',
     },
   ]
 
   return (
-    <div className="h-full overflow-auto">
-      <section className="grid h-full content-start gap-4 lg:grid-rows-[auto,1fr]">
-        <div className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
-          <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/80">Studio Flow</p>
-          <h2 className="mt-2 text-2xl font-bold">Generate in 3 clear steps</h2>
-          <p className="mt-1 text-sm text-white/70">Set brand and products once, then generate single images or full shootings.</p>
+    <div className="grid h-full gap-3 lg:grid-cols-[1.35fr,0.65fr]">
+      <section className="grid min-h-0 grid-rows-[auto,1fr] gap-3">
+        <div className="rounded-2xl border border-cyan-200/25 bg-gradient-to-r from-[#122340] to-[#172d4f] px-5 py-4">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-cyan-100/80">Creative Studio</p>
+          <h1 className="mt-1 text-2xl font-bold">Production Console</h1>
+          <p className="mt-1 text-sm text-white/70">
+            Build references, generate outputs, and iterate in one consistent workspace.
+          </p>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[1.2fr,0.8fr]">
-          <div className="rounded-2xl border border-cyan-200/40 bg-gradient-to-br from-[#10213a] to-[#1f3b63] p-5 text-white shadow-soft">
-            <h3 className="text-xl font-bold">Quick Start</h3>
-            <ol className="mt-3 space-y-2 text-sm text-white/85">
-              <li>1. Open Generate Image for single output.</li>
-              <li>2. Open Full Shooting for a batch set.</li>
-              <li>3. Refine results in Creative Hub from Library or Product pages.</li>
-            </ol>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Link href="/dashboard/create" className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#122035] hover:bg-white/90">
-                Generate Image
-              </Link>
-              <Link href="/dashboard/shooting" className="rounded-full border border-white/35 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10">
-                Full Shooting
-              </Link>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-white/15 bg-white/5 p-5">
-            <h3 className="text-lg font-semibold text-white">Readiness</h3>
-            <div className="mt-3 grid gap-3">
-          {blockers.map((item) => (
-            <div key={item.title} className="rounded-xl border border-white/15 bg-black/20 p-4 text-white">
-              <p className="text-sm font-semibold">{item.title}</p>
-              <p className={`mt-1 text-xs ${item.done ? 'text-emerald-300' : 'text-amber-300'}`}>
-                {item.done ? 'Done' : 'Missing'}
+        <div className="grid min-h-0 gap-3 xl:grid-cols-2">
+          <article className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0c1525] p-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Single Output</p>
+              <h2 className="mt-1 text-xl font-semibold">Generate Image</h2>
+              <p className="mt-2 text-sm text-white/70">
+                Fastest path for one high-quality image from a single reference.
               </p>
-              <p className="mt-2 text-xs text-white/70">{item.description}</p>
+            </div>
+            <div className="mt-4 flex-1 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+              <ol className="space-y-2 text-sm text-white/75">
+                <li>1. Upload or pick a product reference.</li>
+                <li>2. Define creative intent.</li>
+                <li>3. Generate and open in Hub.</li>
+              </ol>
+            </div>
+            <Link
+              href="/dashboard/create"
+              className="mt-4 inline-flex w-fit rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#0b111d] hover:bg-white/90"
+            >
+              Open Generate Image
+            </Link>
+          </article>
+
+          <article className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0b182a] p-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/70">Batch Output</p>
+              <h2 className="mt-1 text-xl font-semibold">Full Shooting</h2>
+              <p className="mt-2 text-sm text-white/70">
+                Produce multi-image sets with coherent style and framing.
+              </p>
+            </div>
+            <div className="mt-4 flex-1 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+              <ol className="space-y-2 text-sm text-white/75">
+                <li>1. Select product and reference.</li>
+                <li>2. Set volume and shooting style.</li>
+                <li>3. Track progress and refine outputs.</li>
+              </ol>
+            </div>
+            <Link
+              href="/dashboard/shooting"
+              className="mt-4 inline-flex w-fit rounded-full border border-white/30 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+            >
+              Open Full Shooting
+            </Link>
+          </article>
+        </div>
+      </section>
+
+      <section className="grid min-h-0 grid-rows-[auto,1fr] gap-3">
+        <div className="rounded-2xl border border-white/10 bg-[#0c1525] p-4">
+          <h3 className="text-sm uppercase tracking-[0.18em] text-cyan-100/75">Workspace Status</h3>
+          <p className="mt-2 text-sm text-white/70">Current account setup required for clean production.</p>
+        </div>
+
+        <div className="space-y-3 overflow-auto pr-1">
+          {readiness.map((item) => (
+            <article key={item.title} className="rounded-2xl border border-white/10 bg-[#0c1525] p-4">
+              <div className="flex items-start justify-between gap-2">
+                <p className="font-medium">{item.title}</p>
+                <span className={`text-xs ${item.done ? 'text-emerald-300' : 'text-amber-300'}`}>
+                  {item.done ? 'Ready' : 'Missing'}
+                </span>
+              </div>
               <Link href={item.href} className="mt-3 inline-flex text-sm font-semibold text-cyan-100 hover:underline">
-                {item.cta}
+                {item.action}
               </Link>
-            </div>
+            </article>
           ))}
-            </div>
-          </div>
         </div>
       </section>
     </div>
   )
 }
+

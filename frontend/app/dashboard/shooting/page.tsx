@@ -30,6 +30,7 @@ export default function ShootingWizardPage() {
   const [reviewPrompts, setReviewPrompts] = useState(false)
   const [prompts, setPrompts] = useState<string[]>([])
   const [phase, setPhase] = useState<'setup' | 'review'>('setup')
+  const [setupStep, setSetupStep] = useState<1 | 2>(1)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -146,8 +147,8 @@ export default function ShootingWizardPage() {
   if (products.length === 0) {
     return (
       <div className="max-w-xl mx-auto px-4 py-12">
-        <h1 className="text-2xl font-bold text-on-dark mb-3">Full Shooting</h1>
-        <p className="text-muted mb-6">Create at least one product with references first.</p>
+        <h1 className="mb-3 text-2xl font-bold text-on-dark">Full Shooting</h1>
+        <p className="mb-6 text-muted">Create at least one product with references first.</p>
         <Link href="/dashboard/products" className="inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary">
           Create product
         </Link>
@@ -160,179 +161,218 @@ export default function ShootingWizardPage() {
   const stepReferenceDone = !!referenceImageUrl
 
   return (
-    <div className="mx-auto h-full max-w-6xl overflow-auto">
-      <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Full Shooting</h1>
-          <p className="mt-1 text-sm text-white/70">Create a coherent set of images in a single guided flow.</p>
-        </div>
-      </div>
-
+    <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[1.2fr,0.8fr]">
       {phase === 'setup' ? (
-        <div className="grid gap-6 lg:grid-cols-[1.15fr,0.85fr]">
-          <section className="space-y-5 rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
-            <div>
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">1. Select product</h2>
-                <span className={`text-xs font-semibold ${stepProductDone ? 'text-emerald-300' : 'text-amber-300'}`}>
-                  {stepProductDone ? 'Done' : 'Required'}
-                </span>
+        <>
+          <section className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0a1220]">
+            <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/75">Full Shooting</p>
+                <h1 className="text-xl font-semibold">Batch Session</h1>
               </div>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                {products.map((p: { id: string; name: string }) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => {
-                      setProductId(p.id)
-                      setReferenceImageUrl(null)
-                    }}
-                    className={`rounded-lg border px-3 py-2 text-left text-sm transition ${
-                      productId === p.id
-                        ? 'border-white bg-white text-[#13233d]'
-                        : 'border-white/25 bg-white/5 text-white hover:bg-white/15'
-                    }`}
-                  >
-                    {p.name}
-                  </button>
-                ))}
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSetupStep(1)}
+                  className={`h-8 rounded-lg px-3 text-xs font-semibold ${setupStep === 1 ? 'bg-cyan-200/20 text-cyan-100' : 'bg-white/5 text-white/65'}`}
+                >
+                  Setup
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSetupStep(2)}
+                  className={`h-8 rounded-lg px-3 text-xs font-semibold ${setupStep === 2 ? 'bg-cyan-200/20 text-cyan-100' : 'bg-white/5 text-white/65'}`}
+                >
+                  Config
+                </button>
               </div>
             </div>
 
-            <div>
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-3">
-                  <h2 className="text-lg font-semibold">2. Select reference</h2>
-                  <span className={`text-xs font-semibold ${stepReferenceDone ? 'text-emerald-300' : 'text-amber-300'}`}>
-                    {stepReferenceDone ? 'Done' : 'Required'}
-                  </span>
+            <div className="min-h-0 flex-1 overflow-auto p-4">
+              {setupStep === 1 ? (
+                <div className="space-y-4">
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {products.map((p: { id: string; name: string }) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => {
+                          setProductId(p.id)
+                          setReferenceImageUrl(null)
+                        }}
+                        className={`rounded-lg border px-3 py-2 text-left text-sm ${
+                          productId === p.id ? 'border-white bg-white text-[#0b111d]' : 'border-white/20 bg-white/5 text-white hover:bg-white/12'
+                        }`}
+                      >
+                        {p.name}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-white/75">Select one product reference or upload a new image.</p>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="rounded-lg border border-white/30 px-3 py-1.5 text-xs text-white hover:bg-white/10"
+                    >
+                      Upload
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png"
+                      className="hidden"
+                      onChange={handleFileSelect}
+                    />
+                  </div>
+
+                  {(productDetail?.images as { id: string; image_url: string }[] | undefined)?.length ? (
+                    <div className="grid grid-cols-3 gap-2">
+                      {(productDetail?.images as { id: string; image_url: string }[]).map((img) => (
+                        <button
+                          key={img.id}
+                          type="button"
+                          onClick={() => setReferenceImageUrl(img.image_url)}
+                          className={`overflow-hidden rounded-lg border-2 ${
+                            referenceImageUrl === img.image_url ? 'border-cyan-200' : 'border-transparent'
+                          }`}
+                        >
+                          <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="h-24 w-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  {referenceImageUrl && (
+                    <img
+                      src={getAbsoluteImageUrl(referenceImageUrl) ?? referenceImageUrl}
+                      alt="Selected reference"
+                      className="max-h-[340px] w-full rounded-xl object-contain bg-black/30"
+                    />
+                  )}
                 </div>
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="rounded-md border border-white/30 px-3 py-1.5 text-sm text-white hover:bg-white/10"
-                >
-                  Upload
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png"
-                  className="hidden"
-                  onChange={handleFileSelect}
-                />
-              </div>
-
-              {uploadMutation.isPending && <p className="mt-2 text-sm text-muted">Uploading...</p>}
-
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                {(productDetail?.images as { id: string; image_url: string }[] | undefined)?.map((img) => (
-                  <button
-                    key={img.id}
-                    type="button"
-                    onClick={() => setReferenceImageUrl(img.image_url)}
-                    className={`overflow-hidden rounded-lg border-2 ${
-                      referenceImageUrl === img.image_url ? 'border-cyan-200' : 'border-transparent'
-                    }`}
-                  >
-                    <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="" className="h-24 w-full object-cover" />
-                  </button>
-                ))}
-              </div>
-
-              {referenceImageUrl && (
-                <div className="mt-3 rounded-lg border border-white/20 bg-black/20 p-3">
-                  <p className="mb-2 text-xs text-emerald-300">Reference selected</p>
-                  <img
-                    src={getAbsoluteImageUrl(referenceImageUrl) ?? referenceImageUrl}
-                    alt="Reference selected"
-                    className="max-h-44 rounded-lg"
-                  />
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="mb-1 block text-sm text-white/90">Number of images</label>
+                    <input
+                      type="number"
+                      min={2}
+                      max={10}
+                      value={count}
+                      onChange={(e) => setCount(Math.min(10, Math.max(2, Number(e.target.value) || 2)))}
+                      className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-sm text-white/90">Shooting style</label>
+                    <select
+                      value={shootingStyle}
+                      onChange={(e) => setShootingStyle(e.target.value)}
+                      className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                    >
+                      {SHOOTING_STYLE_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-sm text-white/90">Resolution</label>
+                    <select
+                      value={resolution}
+                      onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
+                      className="w-full rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white"
+                    >
+                      <option value="4k">4K - 1 credit / image</option>
+                      <option value="8k" disabled={!canChoose8k}>
+                        8K - 2 credits / image{!canChoose8k ? ' (requires at least 2 credits)' : ''}
+                      </option>
+                    </select>
+                    {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Current credits: {credits}</p>}
+                  </div>
+                  <label className="flex items-center gap-2 text-sm text-white/90">
+                    <input
+                      type="checkbox"
+                      checked={reviewPrompts}
+                      onChange={(e) => setReviewPrompts(e.target.checked)}
+                      className="rounded"
+                    />
+                    Review prompts before generation
+                  </label>
                 </div>
               )}
             </div>
+
+            <div className="flex items-center justify-between border-t border-white/10 px-4 py-3">
+              <button
+                type="button"
+                onClick={() => setSetupStep((prev) => (prev === 1 ? 1 : 1))}
+                disabled={setupStep === 1}
+                className="rounded-lg border border-white/25 px-3 py-1.5 text-xs text-white disabled:opacity-40"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={() => setSetupStep((prev) => (prev === 2 ? 2 : 2))}
+                disabled={setupStep === 2 || !stepProductDone || !stepReferenceDone}
+                className="rounded-lg bg-cyan-100/20 px-3 py-1.5 text-xs font-semibold text-cyan-100 disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
           </section>
 
-          <section className="space-y-4 rounded-2xl border border-cyan-200/40 bg-gradient-to-br from-[#10223d] to-[#1f3b61] p-5 text-white">
-            <h2 className="text-lg font-semibold">3. Configure and launch</h2>
-            <p className="text-sm text-white/75">AI generates prompts automatically, you only control direction and volume.</p>
-
-            <div>
-              <label className="mb-1 block text-sm text-white/90">Number of images</label>
-              <input
-                type="number"
-                min={2}
-                max={10}
-                value={count}
-                onChange={(e) => setCount(Math.min(10, Math.max(2, Number(e.target.value) || 2)))}
-                className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
-              />
-              <p className="mt-1 text-xs text-white/70">Recommended: 4 for quick tests, 8-10 for full sets.</p>
+          <aside className="flex min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0d1627]">
+            <div className="border-b border-white/10 px-4 py-3">
+              <p className="text-xs uppercase tracking-[0.18em] text-cyan-100/75">Batch Summary</p>
+              <p className="mt-1 text-sm text-white/70">Production cost and launch controls.</p>
             </div>
-
-            <div>
-              <label className="mb-1 block text-sm text-white/90">Shooting style</label>
-              <select
-                value={shootingStyle}
-                onChange={(e) => setShootingStyle(e.target.value)}
-                className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
+            <div className="min-h-0 flex-1 space-y-3 overflow-auto p-4">
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                <p className="text-xs uppercase tracking-[0.14em] text-white/55">Product</p>
+                <p className={`mt-1 text-sm ${stepProductDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+                  {stepProductDone ? 'Selected' : 'Missing'}
+                </p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                <p className="text-xs uppercase tracking-[0.14em] text-white/55">Reference</p>
+                <p className={`mt-1 text-sm ${stepReferenceDone ? 'text-emerald-300' : 'text-amber-300'}`}>
+                  {stepReferenceDone ? 'Selected' : 'Missing'}
+                </p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-white/80">
+                <p>Style: {shootingStyle}</p>
+                <p className="mt-1">Output: {count} images · {resolution.toUpperCase()}</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-white/85">
+                <p>Estimated cost: {totalCredits} credits</p>
+                <p className="mt-1 text-xs">{count} images x {resolution === '8k' ? 2 : 1} credit(s) each.</p>
+              </div>
+            </div>
+            <div className="border-t border-white/10 p-4">
+              <button
+                type="button"
+                onClick={handleCreateShooting}
+                disabled={!productId || !referenceImageUrl || promptsMutation.isPending || generateMutation.isPending}
+                className="w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[#0b111d] hover:bg-white/90 disabled:opacity-50"
               >
-                {SHOOTING_STYLE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+                {promptsMutation.isPending
+                  ? 'Generating prompts...'
+                  : generateMutation.isPending
+                    ? 'Starting shooting...'
+                    : reviewPrompts
+                      ? 'Generate prompts and review'
+                      : 'Start shooting'}
+              </button>
             </div>
-
-            <div>
-              <label className="mb-1 block text-sm text-white/90">Resolution</label>
-              <select
-                value={resolution}
-                onChange={(e) => setResolution(e.target.value as '4k' | '8k')}
-                className="w-full rounded-md border border-white/30 bg-white/10 px-3 py-2 text-sm"
-              >
-                <option value="4k">4K - 1 credit / image</option>
-                <option value="8k" disabled={!canChoose8k}>
-                  8K - 2 credits / image{!canChoose8k ? ' (requires at least 2 credits)' : ''}
-                </option>
-              </select>
-              {!canChoose8k && <p className="mt-1 text-xs text-amber-200">Current credits: {credits}</p>}
-            </div>
-
-            <label className="flex items-center gap-2 text-sm text-white/90">
-              <input
-                type="checkbox"
-                checked={reviewPrompts}
-                onChange={(e) => setReviewPrompts(e.target.checked)}
-                className="rounded"
-              />
-              Review prompts before generation
-            </label>
-
-            <div className="rounded-xl border border-white/25 bg-black/20 p-4 text-sm text-white/85">
-              <p>Estimated cost: {totalCredits} credits</p>
-              <p className="mt-1 text-xs">{count} images x {resolution === '8k' ? 2 : 1} credit(s) per image.</p>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleCreateShooting}
-              disabled={!productId || !referenceImageUrl || promptsMutation.isPending || generateMutation.isPending}
-              className="w-full rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#1f2d45] hover:bg-white/90 disabled:opacity-50"
-            >
-              {promptsMutation.isPending
-                ? 'Generating prompts...'
-                : generateMutation.isPending
-                  ? 'Starting shooting...'
-                  : reviewPrompts
-                    ? 'Generate prompts and review'
-                    : 'Start shooting'}
-            </button>
-          </section>
-        </div>
+          </aside>
+        </>
       ) : (
-        <section className="rounded-2xl border border-white/15 bg-white/5 p-5 text-white">
+        <section className="col-span-full rounded-2xl border border-white/10 bg-[#0a1220] p-4 text-white">
           <div className="mb-4 flex items-center justify-between gap-3 flex-wrap">
             <h2 className="text-xl font-semibold">Prompt review ({prompts.length})</h2>
             <button
@@ -344,7 +384,7 @@ export default function ShootingWizardPage() {
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="grid gap-3 lg:grid-cols-2">
             {prompts.map((prompt, index) => (
               <div key={index} className="rounded-xl border border-white/15 bg-black/20 p-3">
                 <div className="mb-2 flex items-center justify-between gap-2 flex-wrap">
@@ -367,7 +407,7 @@ export default function ShootingWizardPage() {
                     next[index] = e.target.value
                     setPrompts(next)
                   }}
-                  rows={4}
+                  rows={5}
                   className="w-full rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white"
                 />
               </div>
@@ -379,7 +419,7 @@ export default function ShootingWizardPage() {
               type="button"
               onClick={() => startGeneration(prompts)}
               disabled={generateMutation.isPending}
-              className="rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#13233d] disabled:opacity-50"
+              className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-[#13233d] disabled:opacity-50"
             >
               {generateMutation.isPending ? 'Starting shooting...' : 'Start shooting'}
             </button>
