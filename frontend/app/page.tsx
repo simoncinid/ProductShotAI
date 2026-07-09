@@ -3,13 +3,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
+import { DynamicBackdropSection } from '@/components/DynamicBackdropSection'
+import { PricingShowcase, type PricingPlan } from '@/components/PricingShowcase'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-4 sm:px-6 md:px-10 lg:px-14'
 
-/** Section title in Playfair italic (same font as hero "Shots"/"Seconds"). Use light when section has light bg. */
 function SectionScript({ children, light }: { children: React.ReactNode; light?: boolean }) {
   return (
-    <p className={`font-playfair-italic text-xl md:text-2xl lg:text-3xl ${light ? 'text-primary' : 'text-on-dark'}`}>
+    <p className={`text-[14px] font-medium uppercase tracking-[0.35px] ${light ? 'text-muted-dark' : 'text-muted'}`}>
       {children}
     </p>
   )
@@ -17,7 +18,7 @@ function SectionScript({ children, light }: { children: React.ReactNode; light?:
 
 function SectionH2({ children, light }: { children: React.ReactNode; light?: boolean }) {
   return (
-    <h2 className={`mt-1 text-[22px] md:text-[28px] font-bold leading-tight lg:text-[34px] ${light ? 'text-primary' : 'text-on-dark'}`}>
+    <h2 className={`mt-2 text-[28px] font-normal leading-none md:text-[36px] lg:text-[40px] ${light ? 'text-primary' : 'text-on-dark'}`}>
       {children}
     </h2>
   )
@@ -54,7 +55,7 @@ const HOW_STEPS = [
 
 function HeroStudioPreview() {
   return (
-    <div className="relative overflow-hidden rounded-[26px] border border-on-dark/15 bg-anthracite shadow-[0_30px_70px_rgba(10,7,16,0.45)]">
+    <div className="relative overflow-hidden rounded border border-[#27272a] bg-anthracite">
       <div className="grid grid-cols-[110px,1fr]">
         <aside className="border-r border-on-dark/10 bg-rich-black/70 p-3">
           <p className="text-[10px] uppercase tracking-[0.2em] text-muted">Studio</p>
@@ -103,16 +104,16 @@ function HowItWorksGrid() {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {HOW_STEPS.map((step) => (
-        <article key={step.n} className="rounded-2xl border border-muted/40 bg-cream p-5 shadow-soft transition-smooth hover:-translate-y-0.5 hover:shadow-soft-hover">
+        <article key={step.n} className="rounded border border-[#27272a] bg-[#1a1a1a] p-5 transition-smooth hover:border-[#c9ccd1]">
           <div className="flex items-center gap-3">
-            <span className="rounded-full bg-brand px-2.5 py-1 text-[11px] font-bold text-on-brand">{step.n}</span>
-            <h3 className="text-[18px] font-semibold text-primary">{step.title}</h3>
+            <span className="rounded border border-[#27272a] px-2.5 py-1 text-[11px] font-medium text-muted">{step.n}</span>
+            <h3 className="text-[18px] font-normal text-white">{step.title}</h3>
           </div>
-          <p className="mt-3 text-[14px] leading-relaxed text-muted-dark">{step.text}</p>
+          <p className="mt-3 text-[14px] leading-snug text-[#a7a7a7]">{step.text}</p>
           <ul className="mt-4 space-y-1.5">
             {step.bullets.map((bullet) => (
-              <li key={bullet} className="flex items-start gap-2 text-[13px] text-primary">
-                <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
+              <li key={bullet} className="flex items-start gap-2 text-[13px] text-[#c9ccd1]">
+                <span className="mt-[6px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#767d88]" />
                 <span>{bullet}</span>
               </li>
             ))}
@@ -142,44 +143,45 @@ export default function Home() {
     { q: 'What image formats?', a: 'JPEG and PNG in, 8K JPEG out, Amazon-optimized.' },
   ]
 
-  const pricing = [
-    { name: 'Starter', price: '$4.95', credits: 5, each: '$0.99', dark: false },
-    { name: 'Standard', price: '$13.35', credits: 15, each: '$0.89', popular: true },
-    { name: 'Pro', price: '$31.60', credits: 40, each: '$0.79', dark: false },
-    { name: 'Power', price: '$69.00', credits: 100, each: '$0.69', dark: false },
+  const pricing: PricingPlan[] = [
+    { id: 'starter', name: 'Starter', price: '$4.95', credits: 5, each: '$0.99' },
+    { id: 'standard', name: 'Standard', price: '$13.35', credits: 15, each: '$0.89', popular: true },
+    { id: 'pro', name: 'Pro', price: '$31.60', credits: 40, each: '$0.79' },
+    { id: 'power', name: 'Power', price: '$69.00', credits: 100, each: '$0.69' },
   ]
 
   return (
     <div className="bg-page-bg">
       {/* ——— Hero ——— */}
-      <section className="relative overflow-hidden bg-page-bg pt-12 pb-14 md:pt-20 md:pb-28 lg:pt-24 lg:pb-32">
-        <div className="absolute bottom-0 left-0 right-0 h-32 md:h-52 bg-gradient-to-t from-page-bg/80 to-transparent pointer-events-none" />
-        <div className="absolute -bottom-20 left-1/2 h-64 w-[140%] -translate-x-1/2 rounded-[50%] bg-brand/10 blur-2xl pointer-events-none" aria-hidden />
+      <section className="relative flex h-[calc(100vh-72px)] overflow-hidden bg-page-bg">
+        <Image src="/images/res6.jpeg" alt="" fill priority className="object-cover" />
+        <div className="absolute inset-0 bg-black/78" aria-hidden />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.72)_0%,rgba(0,0,0,0.56)_38%,rgba(0,0,0,0.42)_72%,rgba(0,0,0,0.64)_100%)]" aria-hidden />
 
-        <div className={`${CONTAINER} relative`}>
+        <div className={`${CONTAINER} relative flex h-full items-center`}>
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-x-16">
             <div className="hidden lg:flex lg:flex-col lg:items-start">
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-muted sm:text-xs">Product Photo AI & AI Image Product</p>
-              <h1 className="font-extrabold leading-tight text-on-dark [font-size:clamp(26px,5vw,52px)]">
+              <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.35px] text-muted sm:text-xs">Product Photo AI & AI Image Product</p>
+              <h1 className="font-normal leading-none text-on-dark [font-size:clamp(36px,5vw,56px)]">
                 Studio Quality
                 <br />
-                Product <span className="font-playfair-italic text-brand">Shots</span>
+                Product Shots
                 <br />
-                in <span className="font-playfair-italic text-brand">Seconds</span>
+                in Seconds
               </h1>
-              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-muted sm:text-[16px] md:text-[18px]">
+              <p className="mt-4 max-w-md text-[14px] leading-snug text-[#c9ccd1] sm:text-[16px] md:text-[18px]">
                 Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
               </p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded bg-white px-6 py-3 text-[14px] font-semibold text-black transition-smooth hover:bg-[#e9ecf2] sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Get Started
                 </Link>
                 <Link
                   href="/how-it-works"
-                  className="inline-flex items-center justify-center rounded-full bg-on-dark/10 px-6 py-3 text-[14px] font-semibold text-on-dark transition-smooth hover:bg-on-dark/20 hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded border border-white/30 bg-transparent px-6 py-3 text-[14px] font-semibold text-white transition-smooth hover:bg-white hover:text-black sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Learn More
                 </Link>
@@ -190,22 +192,21 @@ export default function Home() {
             </div>
 
             <div className="order-1 flex flex-col items-center text-center lg:hidden">
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-muted sm:text-xs">Product Photo AI & AI Image Product</p>
-              <h1 className="font-extrabold leading-tight text-on-dark [font-size:clamp(26px,5vw,52px)]">
+              <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.35px] text-muted sm:text-xs">Product Photo AI & AI Image Product</p>
+              <h1 className="font-normal leading-none text-on-dark [font-size:clamp(34px,10vw,52px)]">
                 Studio-Quality
                 <br />
-                Product <span className="font-playfair-italic text-brand">Shots</span>
+                Product Shots
                 <br />
-                in <span className="font-playfair-italic text-brand">Seconds</span>
+                in Seconds
               </h1>
-              <p className="mt-3 max-w-md text-[14px] leading-relaxed text-muted sm:text-[16px] md:text-[18px] mx-auto">
+              <p className="mt-3 max-w-md text-[14px] leading-snug text-[#c9ccd1] sm:text-[16px] md:text-[18px] mx-auto">
                 Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
               </p>
             </div>
 
             <div className="order-2 lg:flex lg:items-start lg:min-w-0 lg:self-start">
               <div className="relative w-full min-w-0 max-w-full">
-                <div className="hidden lg:block absolute -inset-4 rounded-3xl bg-brand/5 blur-2xl pointer-events-none" aria-hidden />
                 <HeroStudioPreview />
               </div>
             </div>
@@ -214,13 +215,13 @@ export default function Home() {
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center">
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded bg-white px-6 py-3 text-[14px] font-semibold text-black transition-smooth hover:bg-[#e9ecf2] sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Get Started
                 </Link>
                 <Link
                   href="/how-it-works"
-                  className="inline-flex items-center justify-center rounded-full bg-on-dark/10 px-6 py-3 text-[14px] font-semibold text-on-dark transition-smooth hover:bg-on-dark/20 hover:shadow-soft-hover sm:px-8 sm:py-3.5 sm:text-base"
+                  className="inline-flex items-center justify-center rounded border border-white/30 bg-transparent px-6 py-3 text-[14px] font-semibold text-white transition-smooth hover:bg-white hover:text-black sm:px-8 sm:py-3.5 sm:text-base"
                 >
                   Learn More
                 </Link>
@@ -260,64 +261,37 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Divisore curvo How it works → Pricing */}
-      <div className="relative h-8 w-full overflow-hidden bg-cream md:h-16">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute top-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
-          <path d="M0 0v48h1200V0c-200 0-400 24-600 24S200 0 0 0z" fill="currentColor" />
-        </svg>
-      </div>
+      <DynamicBackdropSection
+        eyebrow="ProductShotAI Intelligence"
+        title="Turn a single product reference into campaign-ready worlds, controlled by brand memory and production rules."
+        ctaLabel="Open Studio"
+        ctaHref="/dashboard"
+        image="/images/res5.jpeg"
+        items={[
+          {
+            title: 'Brand Memory',
+            text: 'Store visual rules once and reuse them across every generation, from clean catalog shots to campaign scenes.',
+            href: '/dashboard/brand-identity',
+          },
+          {
+            title: 'Scene Direction',
+            text: 'Generate product prompts that preserve the item while changing lighting, context, framing and visual intent.',
+            href: '/dashboard/create',
+          },
+          {
+            title: 'Production Sets',
+            text: 'Move from one approved image to complete image sets for marketplaces, PDP galleries and paid social tests.',
+            href: '/dashboard/shooting',
+          },
+        ]}
+      />
 
       {/* ——— Pricing ——— */}
-      <section className="relative overflow-hidden bg-cream pb-12 pt-12 md:pb-28 md:pt-24">
-        <div className="absolute inset-0 bg-gradient-to-b from-white to-page-bg/30" aria-hidden />
-        <div className={`${CONTAINER} relative`}>
-          <div className="text-center">
-            <SectionScript light>Simple, Transparent Pricing</SectionScript>
-            <p className="mx-auto mt-3 max-w-2xl text-[14px] text-muted-dark md:mt-4 md:text-[16px]">
-              No monthly subscription. Pay only for the images you need. The more credits you buy, the less you pay per image.
-            </p>
-          </div>
-
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-            {pricing.map((p) => (
-              <div
-                key={p.name}
-                className={`group relative flex flex-col rounded-[20px] p-4 transition-smooth sm:p-6 ${
-                  p.dark ? 'bg-anthracite text-on-dark' : 'bg-cream shadow-soft'
-                } ${p.popular ? 'ring-2 ring-brand ring-offset-2' : ''} hover:-translate-y-1 hover:shadow-card-hover`}
-              >
-                {p.popular && (
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-brand px-2.5 py-0.5 text-[11px] font-semibold text-on-brand sm:-top-3 sm:px-3 sm:py-1 sm:text-xs">
-                    Most Popular
-                  </span>
-                )}
-                <h3 className="text-[15px] font-semibold sm:text-base text-primary">{p.name}</h3>
-                <p className={`mt-2 text-[26px] font-bold sm:mt-3 sm:text-[32px] ${p.dark ? 'text-on-dark' : 'text-anthracite'}`}>{p.price}</p>
-                <p className="text-[12px] text-muted-dark sm:text-[13px]">{p.credits} credits – {p.each} each</p>
-                <Link
-                  href="/pricing"
-                  className={`mt-4 block w-full rounded-full py-2.5 text-center text-[13px] font-semibold transition-smooth sm:mt-6 sm:py-3 sm:text-[14px] ${
-                    p.popular
-                      ? 'bg-brand text-on-brand hover:scale-[1.02]'
-                      : p.dark
-                      ? 'border border-on-dark/40 text-on-dark hover:bg-on-dark/10'
-                      : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-on-dark'
-                  }`}
-                >
-                  View Details
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Divisore curvo Pricing → Trusted */}
-      <div className="relative -mt-px h-8 w-full overflow-hidden bg-page-bg md:h-16">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
-          <path d="M0 48V0h1200v48c-200 0-400-24-600-24S200 48 0 48z" fill="currentColor" />
-        </svg>
-      </div>
+      <PricingShowcase
+        plans={pricing}
+        title="Pricing that follows production volume."
+        description="Standard is highlighted because it gives enough credits to test several visual directions without committing to a large pack."
+      />
 
       {/* ——— Trusted by Amazon Sellers ——— */}
       <section className="bg-page-bg pb-12 pt-10 md:pb-28 md:pt-20">

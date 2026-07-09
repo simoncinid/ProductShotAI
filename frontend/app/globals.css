@@ -3,16 +3,36 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 251, 250, 251;
-  --background-rgb: 38, 31, 50;
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 0, 0, 0;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #261f32;
+  background: #000;
+  letter-spacing: -0.16px;
 }
 
-/* Transizioni fluide per pulsanti e card */
+::selection {
+  background: #c9ccd1;
+  color: #030303;
+}
+
+@layer base {
+  h1, h2, h3 {
+    font-weight: 400;
+    letter-spacing: -0.9px;
+  }
+
+  h1 {
+    line-height: 1;
+  }
+
+  button, a, input, textarea, select {
+    outline-color: #c9ccd1;
+  }
+}
+
 @layer utilities {
   .transition-smooth {
     @apply transition-all duration-[175ms] ease-out;
@@ -23,5 +43,54 @@ body {
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  .rounded-full {
+    border-radius: 4px;
+  }
+
+  .rounded-2xl,
+  .rounded-3xl,
+  .rounded-\[20px\],
+  .rounded-\[22px\],
+  .rounded-\[24px\],
+  .rounded-\[26px\],
+  .rounded-\[28px\],
+  .rounded-\[32px\] {
+    border-radius: 8px;
+  }
+
+  .dashboard-shell,
+  .dashboard-shell * {
+    scrollbar-width: none;
+  }
+
+  .dashboard-shell::-webkit-scrollbar,
+  .dashboard-shell *::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes dynamic-backdrop-drift {
+  0% {
+    transform: scale(1.08) translate3d(-1.5%, -1%, 0);
+  }
+  50% {
+    transform: scale(1.16) translate3d(1.5%, 1%, 0);
+  }
+  100% {
+    transform: scale(1.08) translate3d(-1.5%, -1%, 0);
+  }
+}
+
+.dynamic-backdrop-image {
+  animation: dynamic-backdrop-drift 18s ease-in-out infinite;
+  filter: saturate(0.82) blur(10px);
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dynamic-backdrop-image {
+    animation: none;
   }
 }

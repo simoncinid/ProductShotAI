@@ -1,19 +1,32 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useQuery } from '@tanstack/react-query'
+import {
+  CreditCard,
+  Images,
+  LayoutDashboard,
+  LogOut,
+  Package,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Palette,
+  Sparkles,
+  WandSparkles,
+} from 'lucide-react'
 import { authApi, userApi } from '@/lib/api'
 import { clearAuth, isAuthenticated } from '@/lib/auth'
 
 const studioNav = [
-  { href: '/dashboard', label: 'Studio', glyph: 'S' },
-  { href: '/dashboard/create', label: 'Generate Image', glyph: 'G' },
-  { href: '/dashboard/shooting', label: 'Full Shooting', glyph: 'F' },
-  { href: '/dashboard/products', label: 'Products', glyph: 'P' },
-  { href: '/dashboard/generations', label: 'Library', glyph: 'L' },
-  { href: '/dashboard/brand-identity', label: 'Brand', glyph: 'B' },
+  { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, hint: 'Start here' },
+  { href: '/dashboard/create', label: 'Generate', icon: WandSparkles, hint: 'Single image' },
+  { href: '/dashboard/shooting', label: 'Shooting', icon: Images, hint: 'Image set' },
+  { href: '/dashboard/products', label: 'Products', icon: Package, hint: 'Catalog' },
+  { href: '/dashboard/generations', label: 'Library', icon: Sparkles, hint: 'Outputs' },
+  { href: '/dashboard/brand-identity', label: 'Brand', icon: Palette, hint: 'Guidelines' },
 ]
 
 function isActive(pathname: string, href: string) {
@@ -31,6 +44,7 @@ export default function DashboardLayout({
   const router = useRouter()
   const pathname = usePathname()
   const authenticated = isAuthenticated()
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   useEffect(() => {
     if (!authenticated) router.push('/login')
@@ -51,8 +65,8 @@ export default function DashboardLayout({
 
   if (!authenticated || userLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f6f4fb]">
-        <p className="text-[#1e1a28]/70">Loading...</p>
+      <div className="flex min-h-screen items-center justify-center bg-[#e9ecf2]">
+        <p className="text-[#767d88]">Loading workspace...</p>
       </div>
     )
   }
@@ -60,71 +74,136 @@ export default function DashboardLayout({
   const credits = user?.credits_balance ?? 0
 
   return (
-    <div className="h-screen bg-[radial-gradient(circle_at_15%_10%,_#f1ebff_0%,_#f7f5fc_38%,_#ffffff_100%)] text-[#181420]">
-      <div className="grid h-full grid-cols-[78px,minmax(0,1fr)] gap-3 p-3 md:grid-cols-[264px,minmax(0,1fr)]">
-        <aside className="flex min-h-0 flex-col rounded-[22px] border border-[#e7e0f4] bg-white/95 px-2 py-3 shadow-[0_12px_30px_rgba(102,73,164,0.08)] backdrop-blur md:px-3 md:py-4">
-          <div className="mb-4 flex items-center gap-2 px-1.5 md:px-2">
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[#d8b6ff] to-[#8d5cff] text-sm font-extrabold text-white">
-              PS
+    <div className="dashboard-shell h-screen overflow-hidden bg-[#e9ecf2] text-[#0c0c0c]">
+      <div
+        className="grid h-screen min-h-0 grid-cols-1 overflow-hidden transition-[grid-template-columns] duration-200 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)]"
+        style={{ '--sidebar-width': sidebarCollapsed ? '88px' : '280px' } as React.CSSProperties}
+      >
+        <aside className="hidden min-h-0 border-r border-[#d0d4d4] bg-[#fefefe] lg:flex lg:flex-col">
+          <div className={`border-b border-[#d0d4d4] px-4 py-5 ${sidebarCollapsed ? 'flex flex-col items-center gap-4' : ''}`}>
+            <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between gap-3'}`}>
+              <Link href="/dashboard" className={`flex min-w-0 items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`} title="ProductShotAI">
+                <Image src="/logo1.png" alt="ProductShotAI" width={48} height={48} className="h-12 w-12 shrink-0 object-contain" />
+                {!sidebarCollapsed && (
+                  <div className="min-w-0">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.35px]">ProductShotAI</p>
+                <p className="mt-0.5 text-[12px] text-[#767d88]">Production workspace</p>
+              </div>
+                )}
+              </Link>
+              {!sidebarCollapsed && (
+                <button
+                  type="button"
+                  onClick={() => setSidebarCollapsed(true)}
+                  className="grid h-9 w-9 shrink-0 place-items-center rounded border border-[#d0d4d4] bg-white text-[#404040] transition hover:border-[#0c0c0c] hover:text-[#0c0c0c]"
+                  aria-label="Collapse sidebar"
+                  title="Collapse sidebar"
+                >
+                  <PanelLeftClose className="h-4 w-4" />
+                </button>
+              )}
             </div>
-            <div className="hidden md:block">
-              <p className="text-xs uppercase tracking-[0.2em] text-[#6c42b4]">Studio</p>
-              <p className="text-[11px] text-[#1e1a28]/55">Creative Workspace</p>
-            </div>
+            {sidebarCollapsed && (
+              <button
+                type="button"
+                onClick={() => setSidebarCollapsed(false)}
+                className="grid h-9 w-9 place-items-center rounded border border-[#d0d4d4] bg-white text-[#404040] transition hover:border-[#0c0c0c] hover:text-[#0c0c0c]"
+                aria-label="Expand sidebar"
+                title="Expand sidebar"
+              >
+                <PanelLeftOpen className="h-4 w-4" />
+              </button>
+            )}
           </div>
 
-          <nav className="flex-1 space-y-1 overflow-auto px-1">
+          <nav className={`flex-1 space-y-1 overflow-auto py-4 ${sidebarCollapsed ? 'px-3' : 'px-3'}`}>
             {studioNav.map((item) => {
               const active = isActive(pathname, item.href)
+              const Icon = item.icon
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`group flex items-center gap-2.5 rounded-xl px-2 py-2.5 transition ${
+                  title={sidebarCollapsed ? item.label : undefined}
+                  className={`group flex items-center rounded transition ${
                     active
-                      ? 'bg-gradient-to-r from-[#f0e7ff] to-[#e3d3ff] text-[#5b34a0]'
-                      : 'text-[#1e1a28]/70 hover:bg-[#f5f0ff] hover:text-[#1e1a28]'
-                  }`}
+                      ? 'bg-[#0c0c0c] text-white'
+                      : 'text-[#404040] hover:bg-[#e9ecf2] hover:text-[#0c0c0c]'
+                  } ${sidebarCollapsed ? 'justify-center px-0 py-3' : 'gap-3 px-3 py-3'}`}
                 >
                   <span
-                    className={`grid h-7 w-7 place-items-center rounded-lg text-xs font-bold ${
+                    className={`grid h-9 w-9 shrink-0 place-items-center rounded border ${
                       active
-                        ? 'bg-[#d8c0ff] text-[#5b34a0]'
-                        : 'bg-[#f3edf9] text-[#1e1a28]/65 group-hover:bg-[#ece3fb]'
+                        ? 'border-white/20 bg-white text-black'
+                        : 'border-[#d0d4d4] bg-white text-[#404040] group-hover:border-[#c9ccd1]'
                     }`}
                   >
-                    {item.glyph}
+                    <Icon className="h-4 w-4" strokeWidth={2} />
                   </span>
-                  <span className="hidden text-sm font-medium md:block">{item.label}</span>
+                  {!sidebarCollapsed && (
+                    <span className="min-w-0">
+                    <span className="block text-[14px] font-semibold">{item.label}</span>
+                    <span className={`block text-[12px] ${active ? 'text-white/60' : 'text-[#767d88]'}`}>{item.hint}</span>
+                  </span>
+                  )}
                 </Link>
               )
             })}
           </nav>
 
-          <div className="mt-3 space-y-2 border-t border-[#ece5f8] px-1 pt-3">
-            <div className="rounded-xl border border-[#ece5f8] bg-[#faf8ff] px-2 py-2">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-[#1e1a28]/45">Credits</p>
-              <p className="mt-1 text-lg font-semibold">{credits}</p>
+          <div className={`border-t border-[#d0d4d4] p-4 ${sidebarCollapsed ? 'space-y-3' : ''}`}>
+            <div className={`rounded border border-[#d0d4d4] bg-[#e9ecf2] ${sidebarCollapsed ? 'grid place-items-center p-2' : 'p-3'}`}>
+              {sidebarCollapsed ? (
+                <Link href="/pricing" className="grid h-10 w-10 place-items-center rounded bg-[#0c0c0c] text-white" title={`${credits} credits`}>
+                  <CreditCard className="h-4 w-4" />
+                </Link>
+              ) : (
+                <>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.35px] text-[#767d88]">Credits available</p>
+                  <div className="mt-2 flex items-end justify-between gap-3">
+                    <p className="text-[28px] leading-none tracking-[-0.9px]">{credits}</p>
+                    <Link href="/pricing" className="rounded bg-[#0c0c0c] px-3 py-2 text-[12px] font-semibold text-white">
+                  Add
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
-            <Link
-              href="/pricing"
-              className="block rounded-xl bg-[#1f162f] px-3 py-2 text-center text-xs font-semibold text-white transition hover:bg-[#2f2145]"
-            >
-              Buy Credits
-            </Link>
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full rounded-xl border border-[#ded4ef] px-3 py-2 text-xs font-medium text-[#1e1a28]/80 transition hover:bg-[#f5f0ff] hover:text-[#1e1a28]"
+              className={`w-full rounded border border-[#d0d4d4] bg-white text-[13px] font-semibold text-[#404040] transition hover:border-[#0c0c0c] hover:text-[#0c0c0c] ${sidebarCollapsed ? 'grid h-10 place-items-center px-0 py-0' : 'mt-3 px-3 py-2.5'}`}
+              title="Logout"
             >
-              Logout
+              {sidebarCollapsed ? <LogOut className="h-4 w-4" /> : 'Logout'}
             </button>
           </div>
         </aside>
 
-        <main className="min-h-0 overflow-hidden rounded-[26px] border border-[#e7e0f4] bg-white shadow-[0_20px_50px_rgba(48,30,84,0.08)] backdrop-blur">
-          <div className="h-full overflow-hidden p-3 md:p-5">{children}</div>
-        </main>
+        <div className="flex min-h-0 min-w-0 flex-col overflow-hidden">
+          <header className="shrink-0 border-b border-[#d0d4d4] bg-[#fefefe]/92 backdrop-blur">
+            <div className="flex min-h-[68px] items-center justify-between gap-4 px-4 md:px-6 lg:px-8">
+              <div className="min-w-0">
+                <p className="text-[11px] font-medium uppercase tracking-[0.35px] text-[#767d88]">Workspace</p>
+                <p className="truncate text-[16px] font-semibold text-[#0c0c0c]">AI product photo production</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link href="/dashboard/create" className="hidden rounded bg-[#0c0c0c] px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-[#404040] sm:inline-flex">
+                  Generate image
+                </Link>
+                <Link href="/pricing" className="rounded border border-[#d0d4d4] bg-white px-3 py-2.5 text-[13px] font-semibold text-[#404040] transition hover:border-[#0c0c0c]">
+                  {credits} credits
+                </Link>
+              </div>
+            </div>
+          </header>
+
+          <main className="min-h-0 min-w-0 flex-1 overflow-hidden">
+            <div className="mx-auto h-full min-h-0 w-full max-w-[1500px] overflow-hidden px-4 py-4 md:px-6 lg:px-8">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   )

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import ExampleGallery from '@/components/ExampleGallery'
 import { ResultGalleryModal } from '@/components/ResultGalleryModal'
+import { DynamicBackdropSection } from '@/components/DynamicBackdropSection'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
@@ -18,9 +19,9 @@ const RESULT_IMAGES = ['/images/res1.png', '/images/res2.png', '/images/res3.png
 /** Prompt box: tag in alto, testo che riempie tutto il div */
 function PromptBox({ tag, text }: { tag: string; text: string }) {
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-2.5 text-left md:p-2.5">
-      <span className="shrink-0 truncate rounded bg-brand/15 px-2 py-0.5 text-[10px] font-semibold text-rich-black md:text-xs">{tag}</span>
-      <p className="min-h-0 flex-1 overflow-y-auto text-[10px] leading-snug text-gray-800 md:text-[12px]">{text}</p>
+    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-3 text-left">
+      <span className="shrink-0 truncate rounded bg-brand/15 px-2 py-1 text-[11px] font-semibold text-rich-black md:text-xs">{tag}</span>
+      <p className="mt-2 min-h-0 flex-1 overflow-y-auto text-[11px] leading-snug text-gray-800 md:text-[13px]">{text}</p>
     </div>
   )
 }
@@ -179,26 +180,26 @@ export default function HowItWorksPage() {
                 </div>
 
                 {/* Colonna 1 (solo desktop): numero + media */}
-                <div className="hidden md:flex shrink-0 flex-col border-r border-gray-100 bg-gray-50/50 p-6">
+                <div className="hidden shrink-0 flex-col border-r border-gray-100 bg-gray-50/50 p-6 md:flex md:w-[380px] lg:w-[420px]">
                   <div className="mb-4 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand text-xl font-bold text-rich-black">
                     {step.n}
                   </div>
-                  <div className="flex h-[240px] w-[240px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm">
+                  <div className="flex h-[300px] w-full shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm lg:h-[320px]">
                     {step.media === 'icon' && (
-                      <Image src={step.icon!} alt="" width={120} height={120} className="h-24 w-24 object-contain" />
+                      <Image src={step.icon!} alt="" width={180} height={180} className="h-36 w-36 object-contain" />
                     )}
                     {step.media === 'product' && (
-                      <Image src="/images/product1.png" alt="Product" width={240} height={240} className="h-full w-full object-contain p-4" />
+                      <Image src="/images/product1.png" alt="Product" width={360} height={320} className="h-full w-full object-contain p-5" />
                     )}
                     {step.media === 'prompts' && (
-                      <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-2 p-3">
+                      <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-3 p-4">
                         {PROMPT_EXAMPLES.map((p, i) => (
                           <PromptBox key={i} tag={p.tag} text={p.text} />
                         ))}
                       </div>
                     )}
                     {step.media === 'results' && (
-                      <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-2 p-3">
+                      <div className="grid h-full w-full grid-cols-3 grid-rows-1 gap-3 p-4">
                         {RESULT_IMAGES.map((src, i) => (
                           <ResultImageCell key={i} src={src} index={i} onExpand={(idx) => { setGalleryIndex(idx); setGalleryOpen(true) }} />
                         ))}
@@ -250,6 +251,31 @@ export default function HowItWorksPage() {
         open={galleryOpen}
         onClose={() => setGalleryOpen(false)}
         onIndexChange={setGalleryIndex}
+      />
+
+      <DynamicBackdropSection
+        eyebrow="Controlled image generation"
+        title="The workflow keeps product accuracy, brand direction and marketplace requirements in the same production loop."
+        ctaLabel="Start from a product"
+        ctaHref="/create"
+        image="/images/res6.jpeg"
+        items={[
+          {
+            title: 'Reference first',
+            text: 'Upload the real product once so each scene keeps the item, proportions and core details intact.',
+            href: '/create',
+          },
+          {
+            title: 'Prompt system',
+            text: 'Turn brand direction into practical prompts for lifestyle, macro, studio and marketplace variants.',
+            href: '/how-it-works',
+          },
+          {
+            title: 'Production output',
+            text: 'Generate complete image sets for listings, landing pages and paid creative tests.',
+            href: '/dashboard/shooting',
+          },
+        ]}
       />
 
       {/* ——— Example (before → prompt → after) ——— */}

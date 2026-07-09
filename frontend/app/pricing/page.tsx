@@ -8,6 +8,8 @@ import { creditsApi, userApi } from '@/lib/api'
 import { isAuthenticated } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import { DynamicBackdropSection } from '@/components/DynamicBackdropSection'
+import { PricingShowcase, type PricingPlan } from '@/components/PricingShowcase'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
@@ -79,112 +81,80 @@ export default function PricingPage() {
 
   return (
     <div className="bg-page-bg">
-      {/* ——— Hero ——— */}
-      <section className="relative overflow-hidden bg-page-bg pt-16 pb-14 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20">
-        <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-page-bg/60 to-transparent" aria-hidden />
+      <section className="relative overflow-hidden bg-page-bg py-16 md:py-24">
         <div className={`${CONTAINER} relative`}>
-          <div className="flex flex-col items-center text-center">
-            <div className="flex items-center gap-4">
-              <span className="h-px w-8 bg-muted md:w-12" />
-              <p className="font-playfair-italic text-2xl text-on-dark md:text-3xl">Simple, Transparent Pricing</p>
-              <span className="h-px w-8 bg-muted md:w-12" />
-            </div>
-            <h1 className="mt-3 text-[28px] font-bold leading-tight text-on-dark md:text-[34px]">
-              Pay only for the images you need
+          <div className="max-w-4xl">
+            <p className="text-[14px] font-medium uppercase tracking-[0.35px] text-[#767d88]">Pricing</p>
+            <h1 className="mt-5 text-[42px] font-normal leading-none tracking-[-0.9px] text-white md:text-[64px]">
+              Credits for product image production, not another subscription.
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-[16px] text-muted md:text-[18px]">
-              No monthly subscriptions. Pay per ai product photo and image product ai. The more credits, the less per image.
+            <p className="mt-6 max-w-2xl text-[17px] leading-snug text-[#a7a7a7] md:text-[19px]">
+              Buy once, generate when needed. Standard is the recommended first pack because it gives enough room to test multiple scenes before scaling.
             </p>
-            {authenticated && user && (
-              <p className="mt-5 rounded-full bg-on-dark/10 px-5 py-2 text-[15px] font-medium text-on-dark">
-                Your balance: <span className="font-bold text-brand">{user.credits_balance} credits</span>
-              </p>
-            )}
           </div>
         </div>
       </section>
 
-      {/* Divisore curvo ——— */}
-      <div className="relative -mt-px h-10 w-full overflow-hidden bg-page-bg md:h-14">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
-          <path d="M0 48V0h1200v48c-200 0-400-24-600-24S200 48 0 48z" fill="currentColor" />
-        </svg>
-      </div>
+      <PricingShowcase
+        plans={packs.map((pack: { id: string; name: string; total_price: number; credits: number; price_per_credit: number }): PricingPlan => ({
+          id: pack.id,
+          name: pack.name,
+          price: `$${pack.total_price.toFixed(2)}`,
+          credits: pack.credits,
+          each: `$${pack.price_per_credit.toFixed(2)}`,
+          popular: isPopular(pack.id),
+        }))}
+        eyebrow="Choose a credit pack"
+        title="Start with Standard, scale when the winning style is clear."
+        description="The recommended pack is optimized for the first real production pass: enough variants to compare scenes, lighting and crops without jumping straight to high volume."
+        balance={authenticated && user ? user.credits_balance : null}
+        ctaMode="purchase"
+        pending={purchaseMutation.isPending}
+        onPurchase={handlePurchase}
+      />
 
-      {/* ——— Card pricing ——— */}
-      <section className="bg-page-bg pb-16 pt-12 md:pb-24 md:pt-16">
+      <DynamicBackdropSection
+        eyebrow="Credit-based production"
+        title="Standard is the cleanest way to validate four visual directions, then scale only what works."
+        ctaLabel="Start creating"
+        ctaHref="/dashboard/create"
+        image="/images/res6.jpeg"
+        items={[
+          {
+            title: 'Test directions',
+            text: 'Use small packs to compare lighting, backgrounds and product angles before committing to a larger set.',
+            href: '/dashboard/create',
+          },
+          {
+            title: 'Build galleries',
+            text: 'Use higher credit packs for complete product pages, marketplace assets and seasonal campaign refreshes.',
+            href: '/dashboard/shooting',
+          },
+          {
+            title: 'Keep control',
+            text: 'No monthly plan, no unused subscription seat. Credits stay available for the next production cycle.',
+            href: '/pricing',
+          },
+        ]}
+      />
+
+      <section className="border-y border-[#27272a] bg-black py-16 text-white md:py-24">
         <div className={CONTAINER}>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {packs.map((pack: { id: string; name: string; total_price: number; credits: number; price_per_credit: number }) => {
-              const popular = isPopular(pack.id)
-              return (
-                <div
-                  key={pack.id}
-                  className={`group relative flex flex-col rounded-[20px] bg-cream p-6 shadow-soft transition-smooth ${
-                    popular ? 'ring-2 ring-brand ring-offset-2' : ''
-                  } hover:-translate-y-1 hover:shadow-card-hover`}
-                >
-                  {popular && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-on-brand">
-                      Most Popular
-                    </span>
-                  )}
-                  <h3 className="text-base font-semibold capitalize text-primary">{pack.name}</h3>
-                  <p className="mt-3 text-[32px] font-bold text-anthracite">
-                    ${pack.total_price.toFixed(2)}
-                  </p>
-                  <p className="text-[13px] text-muted-dark">
-                    {pack.credits} credits – ${pack.price_per_credit.toFixed(2)} each
-                  </p>
-                  <button
-                    onClick={() => handlePurchase(pack.id)}
-                    disabled={purchaseMutation.isPending}
-                    className={`mt-6 w-full rounded-full py-3 text-center text-[14px] font-semibold transition-smooth disabled:opacity-50 ${
-                      popular
-                        ? 'bg-brand text-on-brand hover:scale-[1.02] hover:shadow-soft-hover'
-                        : 'border-2 border-anthracite text-anthracite hover:bg-anthracite hover:text-on-dark'
-                    }`}
-                  >
-                    {purchaseMutation.isPending ? 'Processing...' : 'Purchase'}
-                  </button>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Divisore curvo ——— */}
-      <div className="relative h-10 w-full overflow-hidden bg-cream md:h-14">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute top-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
-          <path d="M0 0v48h1200V0c-200 0-400 24-600 24S200 0 0 0z" fill="currentColor" />
-        </svg>
-      </div>
-
-      {/* ——— How Credits Work ——— */}
-      <section className="bg-cream py-16 md:py-24">
-        <div className={CONTAINER}>
-          <div className="flex flex-col items-center text-center">
-            <div className="flex items-center gap-4">
-              <span className="h-px w-8 bg-muted md:w-12" />
-              <p className="font-playfair-italic text-2xl text-primary md:text-3xl">How Credits Work</p>
-              <span className="h-px w-8 bg-muted md:w-12" />
+          <div className="grid gap-10 lg:grid-cols-[minmax(280px,0.45fr)_1fr] lg:items-start">
+            <div>
+              <p className="text-[14px] font-medium uppercase tracking-[0.35px] text-[#767d88]">Credit rules</p>
+              <h2 className="mt-5 text-[36px] font-normal leading-none tracking-[-0.9px] md:text-[48px]">
+                Simple enough to decide fast.
+              </h2>
             </div>
-          </div>
-
-          <div className="mx-auto mt-12 max-w-2xl rounded-[20px] border border-muted/40 bg-cream p-6 shadow-soft md:p-8">
-            <ul className="space-y-4">
+            <div className="grid gap-3 md:grid-cols-2">
               {creditFeatures.map((text, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <span className="mt-0.5 shrink-0 text-brand">
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </span>
-                  <span className="text-[15px] leading-relaxed text-muted-dark md:text-[16px]">{text}</span>
-                </li>
+                <div key={i} className="rounded-lg border border-[#27272a] bg-[#1a1a1a] p-5">
+                  <p className="text-[12px] font-medium uppercase tracking-[0.35px] text-[#767d88]">0{i + 1}</p>
+                  <p className="mt-4 text-[17px] leading-snug text-[#fefefe]">{text}</p>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -192,13 +162,13 @@ export default function PricingPage() {
       {/* ——— CTA ——— */}
       <section className="border-t border-white/10 bg-page-bg py-16 md:py-20">
         <div className={`${CONTAINER} text-center`}>
-          <h2 className="text-[20px] font-bold text-on-dark md:text-[24px]">Ready to Get Started?</h2>
-          <p className="mt-3 text-[16px] text-muted">
+          <h2 className="text-[32px] font-normal leading-none tracking-[-0.9px] text-on-dark md:text-[44px]">Ready to start producing?</h2>
+          <p className="mx-auto mt-4 max-w-xl text-[16px] leading-snug text-muted">
             Sign up, purchase credits, and start creating stunning product photos.
           </p>
           <Link
             href="/signup"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
+            className="mt-8 inline-flex items-center justify-center rounded border border-white bg-white px-8 py-3.5 text-base font-semibold text-black transition hover:bg-black hover:text-white"
           >
             Sign Up Now
           </Link>

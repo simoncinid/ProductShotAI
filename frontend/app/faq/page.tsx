@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { DynamicBackdropSection } from '@/components/DynamicBackdropSection'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
@@ -79,6 +80,31 @@ export default function FAQPage() {
           </div>
         </div>
       </section>
+
+      <DynamicBackdropSection
+        eyebrow="Production clarity"
+        title="The product workflow is built to be predictable: credits, prompts, outputs and rights stay visible before you generate."
+        ctaLabel="See pricing"
+        ctaHref="/pricing"
+        image="/images/res5.jpeg"
+        items={[
+          {
+            title: 'Credit rules',
+            text: 'Know how every image consumes credits before starting a generation or a full shooting.',
+            href: '/pricing',
+          },
+          {
+            title: 'Commercial use',
+            text: 'Generated images are designed for product pages, ads and marketplace publishing.',
+            href: '/terms',
+          },
+          {
+            title: 'Image handling',
+            text: 'Understand what happens to uploads, outputs and production assets inside the platform.',
+            href: '/privacy',
+          },
+        ]}
+      />
 
       {/* ——— CTA Still have questions ——— */}
       <section className="bg-page-bg py-16 md:py-20">

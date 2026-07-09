@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { DynamicBackdropSection } from '@/components/DynamicBackdropSection'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
 
@@ -112,6 +113,31 @@ export default function UseCasesIndexPage() {
         </div>
       </section>
 
+      <DynamicBackdropSection
+        eyebrow="Channel-specific production"
+        title="One product reference can become a marketplace hero, a campaign visual, a UGC-style frame and a detail shot."
+        ctaLabel="Create a shoot"
+        ctaHref="/dashboard/shooting"
+        image="/images/res6.jpeg"
+        items={[
+          {
+            title: 'Amazon & FBA',
+            text: 'Generate clean marketplace images and secondary visuals that stay focused on conversion.',
+            href: '/use-cases/amazon-fba-product-photos',
+          },
+          {
+            title: 'Shopify & DTC',
+            text: 'Build brand-consistent PDP galleries, landing page images and campaign assets.',
+            href: '/use-cases/shopify-product-images',
+          },
+          {
+            title: 'UGC & Social',
+            text: 'Create natural-looking product scenes for ads and organic content without organizing a shoot.',
+            href: '/use-cases/ugc-product-images',
+          },
+        ]}
+      />
+
       {/* Divider */}
       <div className="relative -mt-px h-10 w-full overflow-hidden bg-cream md:h-14">
         <svg
@@ -168,4 +194,3 @@ export default function UseCasesIndexPage() {
     </div>
   )
 }
-
