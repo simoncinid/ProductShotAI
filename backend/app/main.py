@@ -670,8 +670,11 @@ async def stripe_webhook(raw_request: Request, db: AsyncSession = Depends(get_db
     if event["type"] != "checkout.session.completed":
         return {"received": True}
     session = event["data"]["object"]
-    session_id = session.get("id")
-    metadata = session.get("metadata") or {}
+    # StripeObject non espone .get(); usare accesso per chiave / attributo
+    session_id = session["id"]
+    metadata = session["metadata"] or {}
+    if not isinstance(metadata, dict):
+        metadata = dict(metadata)
     user_id = metadata.get("user_id")
     pack_id = metadata.get("pack_id")
     credits_s = metadata.get("credits", "0")
