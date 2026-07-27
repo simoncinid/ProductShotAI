@@ -669,22 +669,20 @@ async def stripe_webhook(raw_request: Request, db: AsyncSession = Depends(get_db
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Firma webhook non valida: {e}")
     if event["type"] != "checkout.session.completed":
         return {"received": True}
-    session = event["data"]["object"]
-    # StripeObject non espone .get(); usare accesso per chiave / attributo
-    session_id = session["id"]
-    metadata = session["metadata"] or {}
-    if not isinstance(metadata, dict):
-        metadata = dict(metadata)
-    user_id = metadata.get("user_id")
-    pack_id = metadata.get("pack_id")
-    credits_s = metadata.get("credits", "0")
+    # StripeObject: niente .get()/dict(); solo accesso per chiave / "in"
+    obj = event["data"]["object"]
+    session_id = obj["id"]
+    md = obj["metadata"]
+    user_id = md["user_id"] if md is not None and "user_id" in md else None
+    pack_id = md["pack_id"] if md is not None and "pack_id" in md else None
+    credits_s = md["credits"] if md is not None and "credits" in md else "0"
     try:
         credits = int(credits_s)
     except ValueError:
         logger.error(f"Webhook Stripe: credits not numeric in metadata: {credits_s}")
         return {"received": True}
     if not user_id or not pack_id or credits <= 0:
-        logger.error(f"Webhook Stripe: missing or invalid metadata session={session_id} metadata={metadata}")
+        logger.error(f"Webhook Stripe: missing or invalid metadata session={session_id} metadata={md}")
         return {"received": True}
     # Idempotency: avoid crediting twice for the same checkout
     r = await db.execute(select(CreditTransaction).where(CreditTransaction.reference_id == session_id))
