@@ -139,7 +139,7 @@ class S3StorageAdapter(StorageAdapter):
 
 
 class DatabaseStorageAdapter(StorageAdapter):
-    """Storage nel DB PostgreSQL: foto persistenti senza costi S3 (ideale su Render)."""
+    """Storage nel DB MySQL: foto persistenti senza costi S3 (ideale su Render)."""
 
     def _url_to_id(self, url: str) -> Optional[str]:
         """Estrae l'id del file da URL tipo .../api/storage/{id}."""
@@ -164,7 +164,8 @@ class DatabaseStorageAdapter(StorageAdapter):
             )
             db.add(row)
             await db.commit()
-            await db.refresh(row)
+            # expire_on_commit=False: id resta disponibile senza refresh
+            # (refresh riaprirebbe una connessione e con aiomysql+pre_ping poteva crashare)
             file_id = row.id
 
         base = (settings.public_base_url or "").rstrip("/")
