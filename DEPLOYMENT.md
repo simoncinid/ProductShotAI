@@ -13,17 +13,11 @@
    - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - **Root Directory:** `backend` (IMPORTANTE!)
 
-5. Aggiungi un database PostgreSQL:
-   - Clicca "New +" → "PostgreSQL"
-   - Render genererà automaticamente la variabile `DATABASE_URL`
+5. Collega il database **MySQL** (es. DigitalOcean Managed MySQL):
+   - Imposta `DATABASE_URL=mysql+aiomysql://user:password@host:25060/defaultdb`
+   - Imposta `DATABASE_SSL_REJECT_UNAUTHORIZED=false` se il certificato è self-signed
 
-6. **Crea le tabelle a mano (una sola volta):** l'app non esegue DDL all’avvio. Dalla root del repo:
-   ```bash
-   psql "$DATABASE_URL" -f backend/scripts/init_schema.sql
-   psql "$DATABASE_URL" -f backend/scripts/migration_stored_files.sql
-   ```
-   (La seconda migrazione crea la tabella per le foto nel DB, persistente e gratis.)
-   (Su Render: Dashboard del DB → Connect → copia External Database URL e usalo come `DATABASE_URL`.)
+6. **Schema:** le tabelle `*_photoshotai` devono già esistere sul MySQL (migrate dal vecchio Postgres). Gli script in `backend/scripts/*.sql` sono legacy PostgreSQL; non usarli su MySQL.
 
 7. Configura le variabili d'ambiente (vedi `ENV_VARIABLES.md`)
 

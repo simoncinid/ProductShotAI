@@ -89,7 +89,8 @@ pip install -r requirements.txt
 4. Create a `.env` file in the `backend` directory:
 ```env
 # Database
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/productshotai
+DATABASE_URL=mysql+aiomysql://user:password@host:25060/defaultdb
+DATABASE_SSL_REJECT_UNAUTHORIZED=false
 
 # JWT
 JWT_SECRET_KEY=your-secret-key-change-in-production

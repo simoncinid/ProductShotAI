@@ -20,6 +20,7 @@ build/
 # Database
 *.db
 *.sqlite
+db_backup/
 
 # Storage (ignora upload/generated, non i statici in frontend)
 backend/storage/

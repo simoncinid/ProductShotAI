@@ -3,8 +3,8 @@ from typing import Optional
 from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, update
-from sqlalchemy.dialects.postgresql import insert as pg_insert
-from app.models import FreeGenerationLog
+from sqlalchemy.dialects.mysql import insert as mysql_insert
+from app.models import FreeGenerationLog, generate_uuid
 from app.config import settings
 
 
@@ -122,13 +122,14 @@ async def reserve_free_generation_slot(
     month_year = get_current_month_year()
     limit = settings.free_generations_per_month
 
-    # Garantire che esista una riga (count=0) per il mese
-    stmt_insert = pg_insert(FreeGenerationLog).values(
+    # Garantire che esista una riga (count=0) per il mese (MySQL INSERT IGNORE)
+    stmt_insert = mysql_insert(FreeGenerationLog).values(
+        id=generate_uuid(),
         device_id=device_id,
         ip_address=ip_address,
         month_year=month_year,
         count=0,
-    ).on_conflict_do_nothing(index_elements=["device_id", "ip_address", "month_year"])
+    ).prefix_with("IGNORE")
     await db.execute(stmt_insert)
 
     # Un solo UPDATE atomico: incrementa solo se count < limit. Solo una richiesta "vince".
@@ -141,8 +142,6 @@ async def reserve_free_generation_slot(
             FreeGenerationLog.count < limit,
         )
         .values(count=FreeGenerationLog.count + 1)
-        .returning(FreeGenerationLog.id)
     )
     result = await db.execute(stmt_update)
-    row = result.fetchone()
-    return row is not None
+    return (result.rowcount or 0) > 0

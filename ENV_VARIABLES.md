@@ -6,17 +6,17 @@ Configura queste variabili d'ambiente nella dashboard di Render per il servizio 
 
 ### Database
 ```
-DATABASE_URL=postgresql+asyncpg://user:password@host:5432/dbname
+DATABASE_URL=mysql+aiomysql://user:password@host:25060/dbname
 CA_CERTIFICATE=-----BEGIN CERTIFICATE-----
 ...certificato completo...
 -----END CERTIFICATE-----
 DATABASE_SSL_REJECT_UNAUTHORIZED=false
 ```
 **Nota:** 
-- Render fornisce automaticamente `DATABASE_URL` (formato `postgresql://`). L'app lo converte in `postgresql+asyncpg://` in automatico, non serve modificarlo.
-- Se usi un database esterno (es. DigitalOcean), inserisci `postgresql+asyncpg://user:password@host:5432/dbname`.
-- `CA_CERTIFICATE` è opzionale ma richiesto per database che richiedono SSL con certificato CA personalizzato. Inserisci il certificato completo incluso `-----BEGIN CERTIFICATE-----` e `-----END CERTIFICATE-----`.
-- **`DATABASE_SSL_REJECT_UNAUTHORIZED`**: su **Render** (PostgreSQL con certificati self-signed) imposta `false` per evitare `SSL: CERTIFICATE_VERIFY_FAILED`. Default: `true`.
+- Usa **MySQL** (DigitalOcean Managed MySQL). Formato: `mysql+aiomysql://user:password@host:25060/dbname`.
+- Se la URL è `mysql://...`, l'app la converte in `mysql+aiomysql://` automaticamente.
+- `CA_CERTIFICATE` è opzionale ma consigliato per DigitalOcean. In alternativa imposta `DATABASE_SSL_REJECT_UNAUTHORIZED=false`.
+- **`DATABASE_SSL_REJECT_UNAUTHORIZED`**: su managed DB con certificati self-signed imposta `false` per evitare `SSL: CERTIFICATE_VERIFY_FAILED`. Default: `true`.
 
 ### JWT Authentication
 ```
@@ -213,11 +213,13 @@ Per testare localmente, crea questi file:
 
 ### `backend/.env`
 ```env
-DATABASE_URL=postgresql+asyncpg://user:password@localhost:5432/productshotai
+DATABASE_URL=mysql+aiomysql://user:password@localhost:3306/productshotai
 JWT_SECRET_KEY=test-secret-key-change-in-production
 JWT_ALGORITHM=HS256
 JWT_EXPIRATION_HOURS=24
 WAVESPEED_API_KEY=your-wavespeed-api-key
+DATABASE_SSL_REJECT_UNAUTHORIZED=false
+
 STORAGE_TYPE=local
 STORAGE_PATH=./storage
 PUBLIC_BASE_URL=http://localhost:8000
