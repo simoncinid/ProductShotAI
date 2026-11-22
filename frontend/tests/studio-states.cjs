@@ -17,12 +17,14 @@ const photo = path.resolve(__dirname, '../public/images/product1.png')
     await p.goto(base + '/dashboard/products')
     await p.getByRole('button', { name: 'New product', exact: true }).click()
     await p.getByLabel('Product name *', { exact: true }).waitFor()
+    await p.evaluate(() => window.scrollTo(0, 0))
     await p.screenshot({
       path: out + '/' + width + '-product-new-form.png',
       fullPage: true,
     })
     await p.goto(base + '/dashboard/products/demo-product?edit=1')
     await p.waitForTimeout(150)
+    await p.evaluate(() => window.scrollTo(0, 0))
     await p.screenshot({
       path: out + '/' + width + '-product-edit-form.png',
       fullPage: true,
@@ -32,6 +34,7 @@ const photo = path.resolve(__dirname, '../public/images/product1.png')
     await p.locator('button:has(img)').first().click()
     await p.getByRole('button', { name: 'Next', exact: true }).click()
     await p.getByLabel('Number of images', { exact: true }).fill('2')
+    await p.evaluate(() => window.scrollTo(0, 0))
     await p.screenshot({
       path: out + '/' + width + '-image-set-config.png',
       fullPage: true,
@@ -40,6 +43,7 @@ const photo = path.resolve(__dirname, '../public/images/product1.png')
       .getByRole('button', { name: 'Review image descriptions', exact: true })
       .click()
     await p.getByRole('heading', { name: /Review your/ }).waitFor()
+    await p.evaluate(() => window.scrollTo(0, 0))
     await p.screenshot({
       path: out + '/' + width + '-image-set-review.png',
       fullPage: true,
@@ -82,6 +86,7 @@ const photo = path.resolve(__dirname, '../public/images/product1.png')
   await p.goto(base + '/dashboard/create')
   await p.getByLabel('Product photo', { exact: true }).setInputFiles(photo)
   await p.getByRole('alert').waitFor()
+  await p.evaluate(() => window.scrollTo(0, 0))
   await p.screenshot({ path: out + '/390-upload-error.png', fullPage: true })
   uploadFails = false
   await p
@@ -113,6 +118,7 @@ const photo = path.resolve(__dirname, '../public/images/product1.png')
   await p
     .getByText('We couldn’t load your images. They haven’t been removed.')
     .waitFor()
+  await p.evaluate(() => window.scrollTo(0, 0))
   await p.screenshot({ path: out + '/390-library-error.png', fullPage: true })
   console.log(
     'PASS secondary tools: new/edit product, image-set configuration and review, upload error/retry, resume pending generation without a second POST, dialog keyboard trap, library error.',

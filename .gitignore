@@ -62,3 +62,6 @@ htmlcov/
 # Misc
 *.bak
 *.tmp
+
+# Local UI audit screenshots and galleries
+/artifacts/studio-ux-*/

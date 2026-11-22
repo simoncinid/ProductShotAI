@@ -54,6 +54,7 @@ fs.mkdirSync(out, { recursive: true })
     await p
       .getByText('Your photo is ready. Next, choose its new look.')
       .waitFor()
+    await p.evaluate(() => window.scrollTo(0, 0))
     await p.screenshot({
       path: out + '/' + width + '-flow-1-uploaded.png',
       fullPage: true,
@@ -70,6 +71,7 @@ fs.mkdirSync(out, { recursive: true })
         'Describe any changes in your own words. No technical instructions needed.',
       )
       .fill('On a wooden table near a window.')
+    await p.evaluate(() => window.scrollTo(0, 0))
     await p.screenshot({
       path: out + '/' + width + '-flow-2-style.png',
       fullPage: true,
@@ -78,6 +80,7 @@ fs.mkdirSync(out, { recursive: true })
       .getByRole('button', { name: 'Review my photo', exact: true })
       .click()
     await p.getByText('This image uses 2 credits', { exact: true }).waitFor()
+    await p.evaluate(() => window.scrollTo(0, 0))
     await p.screenshot({
       path: out + '/' + width + '-flow-3-review.png',
       fullPage: true,
@@ -99,6 +102,7 @@ fs.mkdirSync(out, { recursive: true })
     await p
       .getByRole('heading', { name: 'We’re creating your photo' })
       .waitFor()
+    await p.evaluate(() => window.scrollTo(0, 0))
     await p.screenshot({
       path: out + '/' + width + '-flow-4-processing.png',
       fullPage: true,
@@ -108,9 +112,10 @@ fs.mkdirSync(out, { recursive: true })
     assert.equal(requests[0].resolution, '8k')
     assert.equal(requests[0].aspect_ratio, '4:5')
     assert.ok(requests[0].prompt.includes('wooden table'))
+    await p.evaluate(() => window.scrollTo(0, 0))
     await p.screenshot({
       path: out + '/' + width + '-flow-5-result.png',
-      fullPage: true,
+      fullPage: false,
     })
     const [download] = await Promise.all([
       p.waitForEvent('download'),
@@ -135,13 +140,11 @@ fs.mkdirSync(out, { recursive: true })
     if (r.url().endsWith('/api/generate-paid')) requests++
   })
   await p.goto(base + '/dashboard/create')
-  await p
-    .getByLabel('Product photo', { exact: true })
-    .setInputFiles({
-      name: 'wrong.gif',
-      mimeType: 'image/gif',
-      buffer: Buffer.from('gif'),
-    })
+  await p.getByLabel('Product photo', { exact: true }).setInputFiles({
+    name: 'wrong.gif',
+    mimeType: 'image/gif',
+    buffer: Buffer.from('gif'),
+  })
   await p
     .getByText(
       'Please choose a JPG or PNG photo. HEIC photos need to be saved as JPG first.',
@@ -160,6 +163,7 @@ fs.mkdirSync(out, { recursive: true })
     0,
   )
   assert.equal(requests, 0)
+  await p.evaluate(() => window.scrollTo(0, 0))
   await p.screenshot({
     path: out + '/320-no-credits-review.png',
     fullPage: true,

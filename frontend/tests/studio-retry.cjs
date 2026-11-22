@@ -40,6 +40,7 @@ fs.mkdirSync(out, { recursive: true })
   await p
     .getByRole('button', { name: 'Retry connection safely', exact: true })
     .waitFor()
+  await p.evaluate(() => window.scrollTo(0, 0))
   await p.screenshot({
     path: out + '/390-connection-retry.png',
     fullPage: true,

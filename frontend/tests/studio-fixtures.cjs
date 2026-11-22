@@ -1,5 +1,5 @@
 const base = process.env.STUDIO_BASE || 'http://localhost:3010'
-const image = base + '/images/before1.png',
+const image = base + '/images/product1.png',
   result = base + '/images/res1.png'
 const product = {
   id: 'demo-product',
@@ -25,6 +25,12 @@ const gen = {
   created_at: '2026-11-20T12:00:00Z',
 }
 async function mock(p, populated = true, credits = 15) {
+  // Keep QA visits out of production analytics.
+  await p.route('**/_vercel/insights/**', (route) =>
+    route.request().resourceType() === 'script'
+      ? route.fulfill({ contentType: 'application/javascript', body: '' })
+      : route.fulfill({ status: 204, body: '' }),
+  )
   await p.addInitScript(() => {
     localStorage.setItem('auth_token', 'studio-audit-fixture')
     localStorage.setItem('productshotai.analytics-consent', 'denied')
