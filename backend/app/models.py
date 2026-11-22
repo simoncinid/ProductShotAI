@@ -11,6 +11,7 @@ from sqlalchemy import (
     CheckConstraint,
     JSON,
 )
+from sqlalchemy.dialects.mysql import CHAR
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -232,3 +233,23 @@ class StoredFile(Base):
     content = Column(LargeBinary, nullable=False)
     content_type = Column(String(100), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class RecoveryInvitation(Base):
+    __tablename__ = "recovery_invitations_photoshotai"
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    user_id = Column(CHAR(36, collation="utf8mb4_unicode_ci"), ForeignKey("users_photoshotai.id"), unique=True, nullable=False)
+    campaign = Column(String(80), nullable=False)
+    token_hash = Column(String(64), unique=True, nullable=False)
+    unsubscribe_hash = Column(String(64), unique=True, nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    activated_at = Column(DateTime(timezone=True), nullable=True)
+    sent_at = Column(DateTime(timezone=True), nullable=True)
+    send_status = Column(String(30), nullable=False, default="prepared")
+    used_at = Column(DateTime(timezone=True), nullable=True)
+    unsubscribed_at = Column(DateTime(timezone=True), nullable=True)
+    checkout_session_id = Column(String(255), nullable=True)
+    checkout_key = Column(String(64), nullable=True)
+    checkout_pack_id = Column(String(30), nullable=True)
+    checkout_success_url = Column(Text, nullable=True)
+    checkout_cancel_url = Column(Text, nullable=True)

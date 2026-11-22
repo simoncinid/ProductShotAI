@@ -20,7 +20,7 @@ from app import models, schemas, auth, storage, wavespeed, utils, credit_packs, 
 from app.auth import get_current_user
 from app.models import User, Generation, CreditTransaction, BrandIdentity, Product, StoredFile
 from app.storage import get_storage_adapter
-from app import brand_identity, products, shooting, prompt_edit
+from app import brand_identity, products, shooting, prompt_edit, recovery
 from app.prompt_composer import compose_final_prompt, brand_identity_to_snapshot
 from app.time_utils import as_utc
 
@@ -67,6 +67,7 @@ else:
 app.include_router(brand_identity.router)
 app.include_router(products.router)
 app.include_router(shooting.router)
+app.include_router(recovery.router)
 
 
 # Health check
@@ -594,6 +595,7 @@ async def get_credit_packs():
 async def purchase_credits(
     request: schemas.PurchaseRequest,
     current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     """Crea una Stripe Checkout Session: l'utente viene reindirizzato a Stripe per pagare.
     I crediti vengono accreditati solo quando Stripe invia il webhook checkout.session.completed."""
@@ -617,7 +619,7 @@ async def purchase_credits(
             detail="Stripe non configurato per questo pack. Imposta STRIPE_SECRET_KEY e STRIPE_PRICE_*."
         )
     stripe.api_key = settings.stripe_secret_key
-    session = await asyncio.to_thread(stripe.checkout.Session.create,
+    parameters = dict(
         line_items=[{"price": price_id, "quantity": 1}],
         mode="payment",
         success_url=request.success_url,
@@ -628,6 +630,9 @@ async def purchase_credits(
             "credits": str(pack.credits),
         },
     )
+    session = await recovery.discounted_checkout(db, current_user, request.pack_id, parameters)
+    if session is None:
+        session = await asyncio.to_thread(stripe.checkout.Session.create, **parameters)
     logger.info(f"Checkout session created for user {current_user.id} pack={request.pack_id} session={session.id}")
     return {"checkout_url": session.url}
 
@@ -654,7 +659,10 @@ async def checkout_status(
         CreditTransaction.user_id == current_user.id,
         CreditTransaction.type == "purchase",
     ))
-    return {"payment_status": session["payment_status"], "credited": bool(credited)}
+    return {"payment_status": session["payment_status"], "credited": bool(credited),
+            "amount_total": session["amount_total"] if "amount_total" in session else None,
+            "currency": session["currency"] if "currency" in session else None,
+            "pack_id": metadata["pack_id"] if "pack_id" in metadata else None}
 
 
 # Webhook WaveSpeed: receives completed/failed, returns 2xx immediately, processes in background.
@@ -729,6 +737,12 @@ async def stripe_webhook(raw_request: Request, db: AsyncSession = Depends(get_db
     if r.scalar_one_or_none():
         logger.info(f"Webhook Stripe: checkout already processed session={session_id}")
         return {"received": True}
+    if md is not None and "recovery_id" in md:
+        invitation = await db.scalar(select(models.RecoveryInvitation).where(
+            models.RecoveryInvitation.id == md["recovery_id"],
+            models.RecoveryInvitation.user_id == user.id).with_for_update())
+        if invitation:
+            invitation.used_at = datetime.now(timezone.utc)
     user.credits_balance += credits
     t = CreditTransaction(
         user_id=user.id,

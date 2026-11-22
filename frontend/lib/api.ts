@@ -442,7 +442,7 @@ export const generationApi = {
 
 // Credits
 export const creditsApi = {
-  checkoutStatus: async (sessionId: string): Promise<{ payment_status: string; credited: boolean }> => {
+  checkoutStatus: async (sessionId: string): Promise<{ payment_status: string; credited: boolean; amount_total?: number; currency?: string; pack_id?: string }> => {
     const response = await api.get(`/api/credits/checkout/${encodeURIComponent(sessionId)}`)
     return response.data
   },
@@ -545,3 +545,5 @@ export const getDeviceId = (): string => {
   }
   return deviceId
 }
+
+export const recoveryApi = { offer: async (): Promise<{available: boolean; percent_off: number; expires_at: string | null}> => (await api.get('/api/recovery/offer')).data }

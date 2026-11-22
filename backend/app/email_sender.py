@@ -56,7 +56,7 @@ def send_verification_otp(to_email: str, otp: str) -> None:
     msg.attach(MIMEText(BODY_PLAIN.replace("{otp}", otp), "plain"))
     msg.attach(MIMEText(BODY_HTML.replace("{otp}", otp), "html"))
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
+    with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as smtp:
         smtp.starttls()
         smtp.login(settings.gmail_user, settings.gmail_pass)
         smtp.sendmail(settings.gmail_user, to_email, msg.as_string())

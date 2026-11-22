@@ -3,6 +3,7 @@ import { DM_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { Providers } from './providers'
+import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 import { SiteChrome } from '@/components/SiteChrome'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'
@@ -82,6 +83,7 @@ export default function RootLayout({
           <SiteChrome>{children}</SiteChrome>
         </Providers>
         <Analytics />
+        <GoogleAnalytics />
       </body>
     </html>
   )

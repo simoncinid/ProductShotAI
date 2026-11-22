@@ -92,7 +92,7 @@ export default function PrivacyPage() {
             We use localStorage (and similar technologies) for authentication tokens and device ID. We may use essential cookies for the operation of the service.
           </p>
           <p className="text-gray-700 leading-relaxed mb-4">
-            <strong>Analytics:</strong> We use Vercel Analytics to understand how the site is used (e.g. page views, interactions). This helps us improve the service. Vercel’s practices are described in their privacy documentation. By using the site, you acknowledge this analytics processing.
+            <strong>Analytics:</strong> We use Vercel Analytics to understand how the site is used (e.g. page views, interactions). This helps us improve the service. Vercel’s practices are described in their privacy documentation. Google Analytics 4 is loaded only if you allow optional analytics. It measures visits and funnel events such as signup, checkout, and confirmed purchases. Analytics events do not include email addresses, recovery links, prompts, or uploaded images. You can reject analytics or withdraw your choice using “Analytics preferences”. Rejecting analytics does not prevent account use or purchases.
           </p>
           </section>
 

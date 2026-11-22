@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef } from 'react'
-import { creditsApi, userApi } from '@/lib/api'
+import { creditsApi, userApi, recoveryApi } from '@/lib/api'
 import { useAuthenticated } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { DynamicBackdropSection } from '@/components/DynamicBackdropSection'
 import { PricingShowcase, type PricingPlan } from '@/components/PricingShowcase'
+import { gaEvent } from '@/lib/ga'
 import { rememberPurchase, trackFunnel } from '@/lib/funnel'
 
 const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
@@ -39,6 +40,8 @@ export default function PricingPage() {
     retry: false,
   })
 
+  const { data: offer } = useQuery({ queryKey: ['recovery-offer', user?.id], queryFn: recoveryApi.offer, enabled: !!user, retry: false })
+
   const sessionId = searchParams.get('session_id')
   const confirmedSession = useRef<string | null>(null)
   const { data: payment, isError: paymentError, refetch: recheckPayment } = useQuery({
@@ -54,7 +57,12 @@ export default function PricingPage() {
       confirmedSession.current = sessionId
       toast.success('Payment confirmed. Your credits are ready!')
       trackFunnel('purchase_credited')
+      if (payment.amount_total != null && payment.currency) gaEvent('purchase', {
+        transaction_id: sessionId, value: payment.amount_total / 100, currency: payment.currency.toUpperCase(),
+        items: [{ item_id: payment.pack_id || 'credits', item_name: 'ProductShotAI credit pack', quantity: 1 }],
+      })
       queryClient.invalidateQueries({ queryKey: ['user'] })
+      queryClient.invalidateQueries({ queryKey: ['recovery-offer'] })
     }
   }, [payment?.credited, sessionId, queryClient])
 
@@ -110,6 +118,7 @@ export default function PricingPage() {
         </div>
       </section>
 
+      {offer?.available && <div role="status" className={`${CONTAINER} pb-6`}><div className="rounded-xl border border-teal-300/40 bg-teal-300/10 p-6 text-white"><p className="text-xl font-semibold">Your personal apology offer: 30% off one credit pack</p><p className="mt-2 text-slate-300">Automatically applied at checkout, only for your account. Valid until {new Date(offer.expires_at!).toLocaleDateString()}. Full prices are shown below; Stripe shows your discounted total before payment.</p></div></div>}
       {sessionId && <div role="status" className={`${CONTAINER} pb-6 text-white`}>
         {payment?.credited ? <p>Your credits are ready. <Link href="/dashboard/create" className="underline">Create your first image →</Link></p>
           : paymentError ? <p>We could not verify this checkout. <button onClick={() => recheckPayment()} className="underline">Check again</button> or contact support if you were charged.</p>

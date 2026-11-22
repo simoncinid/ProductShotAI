@@ -91,7 +91,8 @@ def test_checkout_confirmation_requires_matching_user_and_credit_transaction(set
     session = {"metadata": {"user_id": user.id}, "payment_status": "paid"}
     monkeypatch.setattr(main.stripe.checkout.Session, "retrieve", lambda _: session)
     response = client.get("/api/credits/checkout/cs_test")
-    assert response.json() == {"payment_status": "paid", "credited": False}
+    assert response.json()["payment_status"] == "paid"
+    assert response.json()["credited"] is False
     db.scalar.return_value = "transaction-id"
     assert client.get("/api/credits/checkout/cs_test").json()["credited"] is True
     session["metadata"] = {"user_id": "another-user"}
