@@ -17,13 +17,18 @@ export function GoogleAnalytics() {
     window.dataLayer = window.dataLayer || []
     window.gtag = window.gtag || function () { window.dataLayer!.push(arguments) }
     if (!document.getElementById('productshot-ga')) {
-      window.gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' })
-      window.gtag('consent', 'update', { analytics_storage: 'granted' })
+      window.gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' })
+      // Basic consent mode: nothing is loaded until explicit consent exists.
+      window.gtag('set', 'send_page_view', false)
+      window.gtag('set', 'page_location', window.location.origin + window.location.pathname)
+      window.gtag('set', 'page_referrer', safeReferrer())
       window.gtag('js', new Date())
       window.gtag('config', ID, { send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false, page_location: window.location.origin + window.location.pathname, page_referrer: safeReferrer() })
       const script = document.createElement('script'); script.id='productshot-ga'; script.async=true; script.src=`https://www.googletagmanager.com/gtag/js?id=${ID}`; document.head.appendChild(script)
     }
     // No query strings, fragments, account IDs, emails, prompts or image URLs.
+    window.gtag('set', 'page_location', window.location.origin + path)
+    window.gtag('set', 'page_referrer', safeReferrer())
     gaEvent('page_view', { page_location: window.location.origin + path, page_title: document.title, page_referrer: safeReferrer() })
   }, [choice, path])
   function choose(value: string) {
