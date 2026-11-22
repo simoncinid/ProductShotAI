@@ -82,7 +82,7 @@ export function Navbar() {
               <Link href="/blog" className={`px-3 py-2 text-[14px] font-medium transition hover:text-white ${isActive('/blog') ? 'text-white font-semibold' : 'text-muted'}`}>
                 Blog
               </Link>
-              <Link href="/create" className={`px-3 py-2 text-[14px] font-medium transition hover:text-white ${isActive('/create') ? 'text-white font-semibold' : 'text-muted'}`}>
+              <Link href="/dashboard/create" className={`px-3 py-2 text-[14px] font-medium transition hover:text-white ${isActive('/dashboard/create') ? 'text-white font-semibold' : 'text-muted'}`}>
                 Create
               </Link>
               {user && (
@@ -165,7 +165,7 @@ export function Navbar() {
               <Link href="/pricing" className={`py-3 text-base font-medium ${isActive('/pricing') ? 'text-white font-semibold' : 'text-muted'}`} onClick={() => setIsMenuOpen(false)}>Pricing</Link>
               <Link href="/faq" className={`py-3 text-base font-medium ${isActive('/faq') ? 'text-white font-semibold' : 'text-muted'}`} onClick={() => setIsMenuOpen(false)}>FAQ</Link>
               <Link href="/blog" className={`py-3 text-base font-medium ${isActive('/blog') ? 'text-white font-semibold' : 'text-muted'}`} onClick={() => setIsMenuOpen(false)}>Blog</Link>
-              <Link href="/create" className={`py-3 text-base font-medium ${isActive('/create') ? 'text-white font-semibold' : 'text-muted'}`} onClick={() => setIsMenuOpen(false)}>Create</Link>
+              <Link href="/dashboard/create" className={`py-3 text-base font-medium ${isActive('/dashboard/create') ? 'text-white font-semibold' : 'text-muted'}`} onClick={() => setIsMenuOpen(false)}>Create</Link>
               {user && <span className="py-3 text-base text-muted">Credits: {user.credits_balance}</span>}
               <Link href="/dashboard" className="mt-2 block rounded bg-white px-6 py-3 text-center font-medium text-black" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
               <button onClick={handleLogout} className="py-3 text-left text-base font-medium text-muted">Logout</button>

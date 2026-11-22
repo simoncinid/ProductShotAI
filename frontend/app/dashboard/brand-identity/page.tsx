@@ -38,7 +38,11 @@ export default function BrandIdentityPage() {
     if (authenticated === false) router.push('/login')
   }, [authenticated, router])
 
-  const { data: brand, isLoading, error } = useQuery<BrandData>({
+  const {
+    data: brand,
+    isLoading,
+    error,
+  } = useQuery<BrandData>({
     queryKey: ['brand-identity'],
     queryFn: brandIdentityApi.get,
     enabled: authenticated === true,
@@ -46,15 +50,17 @@ export default function BrandIdentityPage() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: (data: Parameters<typeof brandIdentityApi.createOrUpdate>[0]) => brandIdentityApi.createOrUpdate(data),
+    mutationFn: (data: Parameters<typeof brandIdentityApi.createOrUpdate>[0]) =>
+      brandIdentityApi.createOrUpdate(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brand-identity'] })
-      toast.success('Brand identity saved')
+      toast.success('Brand settings saved')
     },
     onError: (e: unknown) => {
       const msg =
         e && typeof e === 'object' && 'response' in e
-          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data
+              ?.detail
           : null
       toast.error(msg || 'Save failed')
     },
@@ -69,7 +75,8 @@ export default function BrandIdentityPage() {
     onError: (e: unknown) => {
       const msg =
         e && typeof e === 'object' && 'response' in e
-          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data
+              ?.detail
           : null
       toast.error(msg || 'Upload failed')
     },
@@ -84,7 +91,8 @@ export default function BrandIdentityPage() {
     onError: (e: unknown) => {
       const msg =
         e && typeof e === 'object' && 'response' in e
-          ? (e as { response?: { data?: { detail?: string } } }).response?.data?.detail
+          ? (e as { response?: { data?: { detail?: string } } }).response?.data
+              ?.detail
           : null
       toast.error(msg || 'Analysis failed')
     },
@@ -102,16 +110,18 @@ export default function BrandIdentityPage() {
     mutationFn: () => brandIdentityApi.delete(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['brand-identity'] })
-      toast.success('Brand identity deleted')
+      toast.success('Brand settings deleted')
       router.push('/dashboard')
     },
   })
 
   if (!authenticated) return null
-  if (isLoading) return <div className="p-8 text-[#1f1a2a]/70">Loading...</div>
+  if (isLoading) return <div className="p-8 text-[#0f172a]/70">Loading...</div>
 
   const is404 =
-    error && typeof error === 'object' && 'response' in error &&
+    error &&
+    typeof error === 'object' &&
+    'response' in error &&
     (error as { response?: { status?: number } }).response?.status === 404
 
   const images = brand?.images ?? []
@@ -128,24 +138,28 @@ export default function BrandIdentityPage() {
   }
 
   return (
-    <div className="mx-auto h-auto max-w-6xl lg:h-full lg:overflow-auto space-y-6">
-      <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
+    <div className="mx-auto h-auto max-w-6xl   space-y-6">
+      <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5 text-[#0f172a]">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold">Brand identity</h1>
-            <p className="mt-1 text-sm text-[#1f1a2a]/70">
-              Define global visual rules once. They are reused automatically across product flows.
+            <h1 className="text-2xl font-bold">Brand settings</h1>
+            <p className="mt-1 text-sm text-[#0f172a]/70">
+              Optional: save the colours, lighting and style you want to reuse.
+              You can create photos without completing this page.
             </p>
           </div>
           <div className="flex gap-2">
-            <Link href="/dashboard/products" className="rounded-full border border-[#d2c2ea] px-4 py-2 text-sm text-[#1f1a2a] hover:bg-[#fcfaff]">
+            <Link
+              href="/dashboard/products"
+              className="rounded-full border border-[#d2c2ea] px-4 py-2 text-sm text-[#0f172a] hover:bg-[#f8fafc]"
+            >
               Products
             </Link>
             <button
               type="submit"
               form="brand-identity-form"
               disabled={updateMutation.isPending}
-              className="rounded-full bg-[#1f162f] px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
+              className="rounded-full bg-[#115e59] px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
             >
               {updateMutation.isPending ? 'Saving...' : 'Save'}
             </button>
@@ -155,37 +169,52 @@ export default function BrandIdentityPage() {
         <div className="mt-5">
           <BrandIdentityForm
             formId="brand-identity-form"
-            existing={is404 ? undefined : brand ?? undefined}
+            existing={is404 ? undefined : (brand ?? undefined)}
             onSave={(d) => updateMutation.mutate(d)}
           />
         </div>
       </section>
 
-      <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
+      <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5 text-[#0f172a]">
         <div className="mb-3 flex items-center justify-between gap-3 flex-wrap">
-          <h2 className="text-lg font-semibold">Reference images ({images.length}/{maxImages})</h2>
+          <h2 className="text-lg font-semibold">
+            Reference images ({images.length}/{maxImages})
+          </h2>
           <div className="flex gap-2">
             {images.length > 0 && (
               <button
                 type="button"
                 onClick={() => analyzeMutation.mutate()}
                 disabled={analyzeMutation.isPending}
-                className="rounded-md border border-[#d2c2ea] px-3 py-1.5 text-sm text-[#1f1a2a] hover:bg-[#fcfaff] disabled:opacity-50"
+                className="rounded-md border border-[#d2c2ea] px-3 py-1.5 text-sm text-[#0f172a] hover:bg-[#f8fafc] disabled:opacity-50"
               >
                 {analyzeMutation.isPending ? 'Analyzing...' : 'Analyze images'}
               </button>
             )}
-            <label className="cursor-pointer rounded-md border border-[#d2c2ea] px-3 py-1.5 text-sm text-[#1f1a2a] hover:bg-[#fcfaff]">
+            <label className="cursor-pointer rounded-md border border-[#d2c2ea] px-3 py-1.5 text-sm text-[#0f172a] hover:bg-[#f8fafc]">
               Upload
-              <input type="file" accept="image/jpeg,image/png" className="hidden" multiple onChange={handleMultipleUpload} />
+              <input
+                type="file"
+                accept="image/jpeg,image/png"
+                className="hidden"
+                multiple
+                onChange={handleMultipleUpload}
+              />
             </label>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-3">
           {images.map((img) => (
-            <div key={img.id} className="relative h-36 w-36 overflow-hidden rounded-lg border border-[#e2d8f2]">
-              <img src={getAbsoluteImageUrl(img.image_url) ?? img.image_url} alt="Brand reference" className="w-full h-full object-cover" />
+            <div
+              key={img.id}
+              className="relative h-36 w-36 overflow-hidden rounded-lg border border-[#e2d8f2]"
+            >
+              <img
+                src={getAbsoluteImageUrl(img.image_url) ?? img.image_url}
+                alt="Brand reference"
+                className="w-full h-full object-cover"
+              />
               <button
                 type="button"
                 onClick={() => deleteImageMutation.mutate(img.id)}
@@ -202,7 +231,10 @@ export default function BrandIdentityPage() {
         <section className="pb-4">
           <button
             type="button"
-            onClick={() => window.confirm('Delete Brand Identity?') && deleteMutation.mutate()}
+            onClick={() =>
+              window.confirm('Delete Brand Identity?') &&
+              deleteMutation.mutate()
+            }
             disabled={deleteMutation.isPending}
             className="rounded-full border border-red-500 px-5 py-2 text-sm text-red-600 hover:bg-red-500/10"
           >
@@ -231,12 +263,20 @@ function BrandIdentityForm({
   }
   onSave: (data: Record<string, unknown>) => void
 }) {
-  const [averageCustomer, setAverageCustomer] = useState(existing?.average_customer ?? '')
-  const [salesChannels, setSalesChannels] = useState(existing?.sales_channels ?? '')
+  const [averageCustomer, setAverageCustomer] = useState(
+    existing?.average_customer ?? '',
+  )
+  const [salesChannels, setSalesChannels] = useState(
+    existing?.sales_channels ?? '',
+  )
   const [priceRange, setPriceRange] = useState(existing?.price_range ?? '')
-  const [lightingStyle, setLightingStyle] = useState(existing?.lighting_style ?? '')
+  const [lightingStyle, setLightingStyle] = useState(
+    existing?.lighting_style ?? '',
+  )
   const photoStyleRaw =
-    existing?.photo_style && typeof existing.photo_style === 'object' && 'key' in existing.photo_style
+    existing?.photo_style &&
+    typeof existing.photo_style === 'object' &&
+    'key' in existing.photo_style
       ? String((existing.photo_style as { key?: string }).key)
       : ''
   const [photoStyleKey, setPhotoStyleKey] = useState(photoStyleRaw || '')
@@ -249,7 +289,9 @@ function BrandIdentityForm({
     setPriceRange(existing?.price_range ?? '')
     setLightingStyle(existing?.lighting_style ?? '')
     const pr =
-      existing?.photo_style && typeof existing.photo_style === 'object' && 'key' in existing.photo_style
+      existing?.photo_style &&
+      typeof existing.photo_style === 'object' &&
+      'key' in existing.photo_style
         ? String((existing.photo_style as { key?: string }).key)
         : ''
     setPhotoStyleKey(pr || '')
@@ -279,26 +321,42 @@ function BrandIdentityForm({
   }
 
   return (
-    <form id={formId} onSubmit={handleSubmit} className="space-y-4 text-[#1f1a2a]">
+    <form
+      id={formId}
+      onSubmit={handleSubmit}
+      className="space-y-4 text-[#0f172a]"
+    >
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium">What do you sell?</label>
+          <label
+            htmlFor="brand-what-do-you-sell"
+            className="mb-1 block text-sm font-medium"
+          >
+            What do you sell?
+          </label>
           <input
+            id="brand-what-do-you-sell"
             type="text"
             value={salesChannels}
             onChange={(e) => setSalesChannels(e.target.value)}
-            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
+            className="w-full rounded-md border border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-[#0f172a]"
             placeholder="e.g. cosmetics, pet food, tech accessories"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">Target customer</label>
+          <label
+            htmlFor="brand-target-customer"
+            className="mb-1 block text-sm font-medium"
+          >
+            Target customer
+          </label>
           <input
+            id="brand-target-customer"
             type="text"
             value={averageCustomer}
             onChange={(e) => setAverageCustomer(e.target.value)}
-            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
+            className="w-full rounded-md border border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-[#0f172a]"
             placeholder="e.g. women 25-40, premium buyers"
           />
         </div>
@@ -306,22 +364,34 @@ function BrandIdentityForm({
 
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium">Price range</label>
+          <label
+            htmlFor="brand-price-range"
+            className="mb-1 block text-sm font-medium"
+          >
+            Price range
+          </label>
           <input
+            id="brand-price-range"
             type="text"
             value={priceRange}
             onChange={(e) => setPriceRange(e.target.value)}
-            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
-          placeholder="e.g. budget, mid, premium"
+            className="w-full rounded-md border border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-[#0f172a]"
+            placeholder="e.g. budget, mid, premium"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">Preferred photo style</label>
+          <label
+            htmlFor="studio-preferred-photo-style"
+            className="mb-1 block text-sm font-medium"
+          >
+            Preferred photo style
+          </label>
           <select
+            id="studio-preferred-photo-style"
             value={photoStyleKey}
             onChange={(e) => setPhotoStyleKey(e.target.value)}
-            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
+            className="w-full rounded-md border border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-[#0f172a]"
           >
             <option value="">Select...</option>
             {PHOTO_STYLE_OPTIONS.map((opt) => (
@@ -334,35 +404,53 @@ function BrandIdentityForm({
       </div>
 
       <div>
-          <label className="mb-1 block text-sm font-medium">Lighting style</label>
+        <label
+          htmlFor="brand-lighting-style"
+          className="mb-1 block text-sm font-medium"
+        >
+          Lighting style
+        </label>
         <input
+          id="brand-lighting-style"
           type="text"
           value={lightingStyle}
           onChange={(e) => setLightingStyle(e.target.value)}
-          className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
+          className="w-full rounded-md border border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-[#0f172a]"
           placeholder="e.g. soft daylight, high contrast studio"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium">Brand notes</label>
+        <label
+          htmlFor="brand-brand-notes"
+          className="mb-1 block text-sm font-medium"
+        >
+          Brand notes
+        </label>
         <textarea
+          id="brand-brand-notes"
           value={brandNotes}
           onChange={(e) => setBrandNotes(e.target.value)}
           rows={4}
-          className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
+          className="w-full rounded-md border border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-[#0f172a]"
           placeholder="Do / do not, visual rules, mandatory elements"
         />
       </div>
 
       {existing && (
         <div>
-          <label className="mb-1 block text-sm font-medium">Style analysis (editable)</label>
+          <label
+            htmlFor="brand-style-analysis-editable"
+            className="mb-1 block text-sm font-medium"
+          >
+            Style analysis (editable)
+          </label>
           <textarea
+            id="brand-style-analysis-editable"
             value={analysis}
             onChange={(e) => setAnalysis(e.target.value)}
             rows={12}
-            className="w-full rounded-md border border-[#d9caef] bg-[#fcfaff] px-3 py-2 text-[#1f1a2a]"
+            className="w-full rounded-md border border-[#cbd5e1] bg-[#f8fafc] px-3 py-2 text-[#0f172a]"
           />
         </div>
       )}

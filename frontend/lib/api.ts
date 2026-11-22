@@ -405,6 +405,7 @@ export type GenerationStatus = {
 // Generation
 export const generationApi = {
   generatePaid: async (data: {
+    request_id?: string
     prompt: string
     image_url: string
     aspect_ratio?: string

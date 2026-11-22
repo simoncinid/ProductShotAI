@@ -74,15 +74,7 @@ body {
     border-radius: 8px;
   }
 
-  .dashboard-shell,
-  .dashboard-shell * {
-    scrollbar-width: none;
-  }
 
-  .dashboard-shell::-webkit-scrollbar,
-  .dashboard-shell *::-webkit-scrollbar {
-    display: none;
-  }
 }
 
 @keyframes dynamic-backdrop-drift {
@@ -108,3 +100,14 @@ body {
     animation: none;
   }
 }
+
+/* Client studio: readable controls, visible scrolling and comfortable touch targets. */
+.dashboard-shell { color: #0f172a; }
+.dashboard-shell input:not([type="checkbox"]):not([type="radio"]),
+.dashboard-shell textarea, .dashboard-shell select { font-size: 16px; line-height: 1.5; }
+.dashboard-shell button, .dashboard-shell summary, .dashboard-shell a { touch-action: manipulation; }
+.dashboard-shell button:not(.studio-style-thumb), .dashboard-shell select { min-height: 44px; }
+.dashboard-shell .text-xs { font-size: 13px; line-height: 1.5; }
+.dashboard-shell img { max-width: 100%; }
+.dashboard-shell :focus-visible { outline: 3px solid #0f766e; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .studio-flow * { scroll-behavior: auto !important; animation: none !important; } }

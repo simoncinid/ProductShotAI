@@ -1,190 +1,190 @@
 'use client'
-
-import Image from 'next/image'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { brandIdentityApi, productsApi, userApi } from '@/lib/api'
-
-type Product = {
-  id: string
-  name: string
-  category?: string
-  images?: Array<{ id: string; image_url: string }>
-}
-
-const recentShots = [
-  { src: '/images/res1.png', label: 'Catalog hero', meta: '1:1 · 4K' },
-  { src: '/images/res2.png', label: 'Lifestyle set', meta: '4:5 · 4K' },
-  { src: '/images/res3.png', label: 'Campaign frame', meta: '16:9 · 8K' },
-]
-
-const playbooks = [
-  {
-    title: 'Generate one image',
-    label: 'Fastest path',
-    text: 'Upload a reference, choose the intent, generate one production-ready output.',
-    href: '/dashboard/create',
-    action: 'Start single image',
-    image: '/images/res4.png',
-  },
-  {
-    title: 'Run a full shooting',
-    label: 'Best for sets',
-    text: 'Create coherent variations for PDP galleries, Amazon listings and ad tests.',
-    href: '/dashboard/shooting',
-    action: 'Create image set',
-    image: '/images/res5.jpeg',
-  },
-]
+import {
+  ArrowRight,
+  CheckCircle2,
+  ImagePlus,
+  Images,
+  UploadCloud,
+  WandSparkles,
+} from 'lucide-react'
+import { getAbsoluteImageUrl, userApi } from '@/lib/api'
 
 export default function DashboardPage() {
-  const { data: user, isLoading: userLoading } = useQuery({
+  const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: userApi.getMe,
     retry: false,
   })
-
-  const { data: products = [], isLoading: productsLoading } = useQuery<Product[]>({
-    queryKey: ['products'],
-    queryFn: productsApi.list,
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['studio-recent-images'],
+    queryFn: () => userApi.getGenerations(1, 3),
   })
-
-  const { data: brandIdentity, error: brandError, isLoading: brandLoading } = useQuery({
-    queryKey: ['brand-identity'],
-    queryFn: brandIdentityApi.get,
-    retry: false,
-  })
-
-  if (userLoading || productsLoading || brandLoading) {
-    return <p className="px-2 py-3 text-[#767d88]">Loading workspace...</p>
-  }
-
-  const hasBrand = !!brandIdentity && !brandError
-  const hasProducts = products.length > 0
-  const hasCredits = (user?.credits_balance ?? 0) > 0
-  const setupItems = [
-    { title: 'Brand profile (optional)', done: hasBrand, href: '/dashboard/brand-identity', action: hasBrand ? 'Review' : 'Set up' },
-    { title: 'Product catalog (optional)', done: hasProducts, href: '/dashboard/products', action: hasProducts ? 'Manage' : 'Add product' },
-    { title: 'Credits', done: hasCredits, href: '/pricing', action: hasCredits ? 'View balance' : 'Buy credits' },
-  ]
-  const completed = setupItems.filter((item) => item.done).length
-  const primaryProduct = products[0]
-
+  const items =
+    data?.items?.filter(
+      (g: { status: string; output_image_url?: string }) =>
+        g.status === 'completed' && g.output_image_url,
+    ) || []
   return (
-    <div className="grid h-auto min-h-0 lg:h-full lg:grid-rows-[auto_minmax(0,1fr)] gap-4 overflow-visible lg:overflow-auto">
-      <section className="grid min-h-0 gap-4 lg:grid-cols-[minmax(0,1.45fr)_420px]">
-        <div className="relative overflow-visible lg:overflow-auto rounded border border-[#27272a] bg-black p-5 text-white md:p-6">
-          <Image src="/images/res6.jpeg" alt="" fill priority className="object-cover opacity-45" />
-          <div className="absolute inset-0 bg-black/55" aria-hidden />
-          <div className="relative max-w-2xl">
-            <p className="text-[11px] font-medium uppercase tracking-[0.35px] text-[#c9ccd1]">Recommended next step</p>
-            <h1 className="mt-3 text-[34px] font-normal leading-none tracking-[-1.2px] md:text-[44px]">
-              Start with a single image.
-            </h1>
-            <p className="mt-3 max-w-xl text-[15px] leading-snug text-[#e9ecf2]">
-              Use one product reference to generate a clean output, then scale into full shootings once the direction is right.
-            </p>
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <Link href={hasCredits ? '/dashboard/create' : '/pricing'} className="inline-flex justify-center rounded bg-white px-5 py-3 text-[14px] font-semibold text-black transition hover:bg-[#e9ecf2]">
-                {hasCredits ? 'Generate first image' : 'Get credits from $4.95'}
-              </Link>
-              <Link href="/dashboard/products" className="inline-flex justify-center rounded border border-white/35 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-white hover:text-black">
-                Check products
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <aside className="rounded border border-[#d0d4d4] bg-[#fefefe] p-4">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.35px] text-[#767d88]">Setup progress</p>
-              <h2 className="mt-1 text-[28px] font-normal leading-none tracking-[-0.9px]">{completed}/3 ready</h2>
-            </div>
-            <span className="rounded bg-[#e9ecf2] px-2.5 py-1 text-[12px] font-semibold text-[#404040]">
-              {user?.credits_balance ?? 0} credits
-            </span>
-          </div>
-          <div className="mt-4 space-y-2">
-            {setupItems.map((item) => (
-              <div key={item.title} className="flex items-center justify-between gap-3 rounded border border-[#d0d4d4] bg-white p-3">
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className={`grid h-7 w-7 shrink-0 place-items-center rounded text-[12px] font-semibold ${item.done ? 'bg-[#0c0c0c] text-white' : 'bg-[#e9ecf2] text-[#767d88]'}`}>
-                    {item.done ? '✓' : '•'}
-                  </span>
-                  <p className="truncate text-[14px] font-semibold">{item.title}</p>
-                </div>
-                <Link href={item.href} className="shrink-0 text-[13px] font-semibold text-[#404040] underline-offset-4 hover:underline">
-                  {item.action}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </aside>
+    <div className="mx-auto max-w-5xl space-y-7 pb-10 text-slate-900">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-9">
+        <p className="text-sm font-semibold text-teal-800">
+          Welcome to your photo studio
+        </p>
+        <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+          Turn a product photo into something ready to share.
+        </h1>
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
+          You only need a photo of your product. We’ll guide you through the
+          rest — no design skills or product setup required.
+        </p>
+        <Link
+          href="/dashboard/create"
+          className="mt-6 inline-flex min-h-14 items-center justify-center gap-3 rounded-xl bg-teal-800 px-6 py-4 text-base font-semibold text-white hover:bg-teal-900"
+        >
+          Create a product photo <ArrowRight className="h-5 w-5" />
+        </Link>
+        <p className="mt-3 text-sm text-slate-600">
+          {user?.credits_balance ?? 0} credits available · A 4K image uses 1
+          credit. Uploading and choosing a look use no credits.
+        </p>
       </section>
-
-      <section className="grid min-h-0 gap-4 overflow-visible lg:overflow-auto xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="grid min-h-0 lg:grid-rows-[auto_minmax(0,1fr)] gap-4 overflow-visible lg:overflow-auto">
-          <div className="grid gap-4 md:grid-cols-3">
-            <Metric label="Products" value={products.length.toString()} detail={primaryProduct ? primaryProduct.name : 'Add your first product'} />
-            <Metric label="Brand identity" value={hasBrand ? 'Ready' : 'Missing'} detail={hasBrand ? 'Applied to prompts' : 'Set visual rules once'} />
-            <Metric label="Output mode" value="4K / 8K" detail="1 credit for 4K, 2 for 8K" />
-          </div>
-
-          <div className="grid min-h-0 gap-4 overflow-visible lg:overflow-auto lg:grid-cols-2">
-            {playbooks.map((item) => (
-              <article key={item.title} className="overflow-visible lg:overflow-auto rounded border border-[#d0d4d4] bg-[#fefefe]">
-                <div className="relative h-32 bg-[#0c0c0c] 2xl:h-40">
-                  <Image src={item.image} alt="" fill className="object-cover" />
-                </div>
-                <div className="p-4">
-                  <p className="text-[11px] font-medium uppercase tracking-[0.35px] text-[#767d88]">{item.label}</p>
-                  <h3 className="mt-2 text-[24px] font-normal leading-none tracking-[-0.9px]">{item.title}</h3>
-                  <p className="mt-3 text-[14px] leading-snug text-[#767d88]">{item.text}</p>
-                  <Link href={item.href} className="mt-5 inline-flex rounded bg-[#0c0c0c] px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-[#404040]">
-                    {item.action}
-                  </Link>
-                </div>
-              </article>
+      <section aria-labelledby="how-title">
+        <h2 id="how-title" className="text-xl font-semibold">
+          Three simple steps
+        </h2>
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              icon: UploadCloud,
+              title: '1. Add your photo',
+              text: 'Choose a clear JPG or PNG photo from your phone or computer.',
+            },
+            {
+              icon: WandSparkles,
+              title: '2. Choose a look',
+              text: 'Pick a style, image shape and quality. Add instructions only if you want to.',
+            },
+            {
+              icon: CheckCircle2,
+              title: '3. Check, then create',
+              text: 'See the exact credit cost first. Save your finished image to your device.',
+            },
+          ].map(({ icon: Icon, title, text }) => (
+            <article
+              key={title}
+              className="rounded-xl border border-slate-200 bg-white p-5"
+            >
+              <Icon className="h-7 w-7 text-teal-800" />
+              <h3 className="mt-4 font-semibold">{title}</h3>
+              <p className="mt-2 text-base leading-relaxed text-slate-600">
+                {text}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-semibold">Your latest images</h2>
+          <Link
+            href="/dashboard/generations"
+            className="inline-flex min-h-11 items-center gap-2 font-semibold text-teal-800"
+          >
+            View My images <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        {isLoading ? (
+          <p role="status" className="mt-4 text-slate-600">
+            Loading your images…
+          </p>
+        ) : isError ? (
+          <p className="mt-4 text-slate-600">
+            We couldn’t load your latest images.{' '}
+            <Link href="/dashboard/generations" className="underline">
+              Open My images to try again.
+            </Link>
+          </p>
+        ) : items.length ? (
+          <div className="mt-5 grid gap-4 sm:grid-cols-3">
+            {items.map((g: { id: string; output_image_url: string }) => (
+              <Link
+                key={g.id}
+                href={`/dashboard/hub?generation_id=${g.id}`}
+                className="overflow-hidden rounded-xl border border-slate-200"
+              >
+                <img
+                  src={
+                    getAbsoluteImageUrl(g.output_image_url) ||
+                    g.output_image_url
+                  }
+                  alt="Your generated product photo"
+                  className="aspect-square w-full object-contain"
+                />
+                <span className="block min-h-11 px-4 py-3 font-medium text-teal-800">
+                  Open image →
+                </span>
+              </Link>
             ))}
           </div>
-        </div>
-
-        <aside className="min-h-0 overflow-visible lg:overflow-auto rounded border border-[#d0d4d4] bg-[#fefefe] p-4">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.35px] text-[#767d88]">Recent outputs</p>
-              <h2 className="mt-1 text-[24px] font-normal leading-none tracking-[-0.9px]">Library preview</h2>
-            </div>
-            <Link href="/dashboard/generations" className="text-[13px] font-semibold text-[#404040] underline-offset-4 hover:underline">
-              Open
+        ) : (
+          <div className="mt-5 flex flex-col items-center rounded-xl bg-slate-50 px-5 py-8 text-center">
+            <ImagePlus className="h-9 w-9 text-slate-400" />
+            <p className="mt-3 font-medium">
+              Your finished photos will appear here.
+            </p>
+            <p className="mt-2 text-slate-600">
+              Create your first one using a photo you already have.
+            </p>
+            <Link
+              href="/dashboard/create"
+              className="mt-4 min-h-11 rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold"
+            >
+              Create my first photo
             </Link>
           </div>
-          <div className="mt-4 space-y-2 overflow-visible lg:overflow-auto">
-            {recentShots.map((shot) => (
-              <article key={shot.src} className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 rounded border border-[#d0d4d4] bg-white p-2">
-                <div className="relative aspect-square overflow-visible lg:overflow-auto rounded bg-[#e9ecf2]">
-                  <Image src={shot.src} alt="" fill className="object-cover" />
-                </div>
-                <div className="flex min-w-0 flex-col justify-center">
-                  <p className="truncate text-[14px] font-semibold">{shot.label}</p>
-                  <p className="mt-1 text-[12px] text-[#767d88]">{shot.meta}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </aside>
+        )}
       </section>
-    </div>
-  )
-}
-
-function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
-  return (
-    <div className="rounded border border-[#d0d4d4] bg-[#fefefe] p-4">
-      <p className="text-[11px] font-medium uppercase tracking-[0.35px] text-[#767d88]">{label}</p>
-      <p className="mt-2 text-[26px] font-normal leading-none tracking-[-0.9px]">{value}</p>
-      <p className="mt-2 truncate text-[13px] text-[#767d88]">{detail}</p>
+      <details className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
+        <summary className="min-h-9 cursor-pointer text-lg font-semibold">
+          More tools, when you need them
+        </summary>
+        <p className="mt-3 leading-relaxed text-slate-600">
+          These tools are optional. You can create a single photo without
+          setting them up.
+        </p>
+        <div className="mt-5 grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              href: '/dashboard/products',
+              title: 'Saved products',
+              text: 'Save product photos and descriptions to reuse later.',
+            },
+            {
+              href: '/dashboard/shooting',
+              title: 'Create an image set',
+              text: 'Create several photos for one saved product.',
+            },
+            {
+              href: '/dashboard/brand-identity',
+              title: 'Brand settings',
+              text: 'Keep a consistent look across your products.',
+            },
+          ].map((x) => (
+            <Link
+              key={x.href}
+              href={x.href}
+              className="rounded-xl border border-slate-200 p-4 hover:border-teal-700"
+            >
+              <p className="font-semibold text-teal-800">{x.title} →</p>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                {x.text}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </details>
     </div>
   )
 }
