@@ -5,6 +5,9 @@ from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
 from app.config import settings
+from app.mysql_compat import configure_binary_escaping
+
+configure_binary_escaping()
 
 
 def get_ssl_config():
