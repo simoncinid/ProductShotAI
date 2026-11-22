@@ -56,7 +56,7 @@ const HOW_STEPS = [
 function HeroStudioPreview() {
   return (
     <div className="relative overflow-hidden rounded border border-[#27272a] bg-anthracite">
-      <div className="grid grid-cols-[110px,1fr]">
+      <div className="grid grid-cols-[80px_minmax(0,1fr)] sm:grid-cols-[110px_minmax(0,1fr)]">
         <aside className="border-r border-on-dark/10 bg-rich-black/70 p-3">
           <p className="text-[10px] uppercase tracking-[0.2em] text-muted">Studio</p>
           <div className="mt-3 space-y-2">
@@ -71,7 +71,7 @@ function HeroStudioPreview() {
           </div>
         </aside>
         <div className="p-4">
-          <div className="grid gap-3 md:grid-cols-[1.1fr,0.9fr]">
+          <div className="grid gap-3 md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
             <div className="rounded-xl border border-on-dark/15 bg-page-bg/45 p-3">
               <p className="text-[11px] uppercase tracking-[0.15em] text-muted">Reference</p>
               <div className="mt-2 rounded-lg bg-on-dark/5 p-2">
@@ -153,15 +153,15 @@ export default function Home() {
   return (
     <div className="bg-page-bg">
       {/* ——— Hero ——— */}
-      <section className="relative flex h-[calc(100vh-72px)] overflow-hidden bg-page-bg">
+      <section className="relative flex min-h-[calc(100svh-72px)] overflow-hidden bg-page-bg py-10 lg:py-16">
         <Image src="/images/res6.jpeg" alt="" fill priority className="object-cover" />
         <div className="absolute inset-0 bg-black/78" aria-hidden />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.72)_0%,rgba(0,0,0,0.56)_38%,rgba(0,0,0,0.42)_72%,rgba(0,0,0,0.64)_100%)]" aria-hidden />
 
-        <div className={`${CONTAINER} relative flex h-full items-center`}>
+        <div className={`${CONTAINER} relative flex w-full items-center`}>
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1fr_1.15fr] lg:gap-x-16">
             <div className="hidden lg:flex lg:flex-col lg:items-start">
-              <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.35px] text-muted sm:text-xs">Product Photo AI & AI Image Product</p>
+              <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.35px] text-muted sm:text-xs">AI product photography for online stores</p>
               <h1 className="font-normal leading-none text-on-dark [font-size:clamp(36px,5vw,56px)]">
                 Studio Quality
                 <br />
@@ -170,14 +170,14 @@ export default function Home() {
                 in Seconds
               </h1>
               <p className="mt-4 max-w-md text-[14px] leading-snug text-[#c9ccd1] sm:text-[16px] md:text-[18px]">
-                Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
+                Turn a photo of your product into clean catalog images, lifestyle scenes, and ads. Create in 4K or 8K. Packs from $4.95, with no subscription.
               </p>
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <Link
                   href="/signup"
                   className="inline-flex items-center justify-center rounded bg-white px-6 py-3 text-[14px] font-semibold text-black transition-smooth hover:bg-[#e9ecf2] sm:px-8 sm:py-3.5 sm:text-base"
                 >
-                  Get Started
+                  Create product photos
                 </Link>
                 <Link
                   href="/how-it-works"
@@ -192,7 +192,7 @@ export default function Home() {
             </div>
 
             <div className="order-1 flex flex-col items-center text-center lg:hidden">
-              <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.35px] text-muted sm:text-xs">Product Photo AI & AI Image Product</p>
+              <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.35px] text-muted sm:text-xs">AI product photography for online stores</p>
               <h1 className="font-normal leading-none text-on-dark [font-size:clamp(34px,10vw,52px)]">
                 Studio-Quality
                 <br />
@@ -201,23 +201,23 @@ export default function Home() {
                 in Seconds
               </h1>
               <p className="mt-3 max-w-md text-[14px] leading-snug text-[#c9ccd1] sm:text-[16px] md:text-[18px] mx-auto">
-                Create stunning product photo AI in 8K. Works for e‑commerce and Amazon. No photographer. No subscription. Pay per image.
+                Turn a photo of your product into clean catalog images, lifestyle scenes, and ads. Create in 4K or 8K. Packs from $4.95, with no subscription.
               </p>
             </div>
 
-            <div className="order-2 lg:flex lg:items-start lg:min-w-0 lg:self-start">
+            <div className="order-3 lg:order-2 lg:flex lg:items-start lg:min-w-0 lg:self-start">
               <div className="relative w-full min-w-0 max-w-full">
                 <HeroStudioPreview />
               </div>
             </div>
 
-            <div className="order-3 flex flex-col items-center lg:hidden">
+            <div className="order-2 flex flex-col items-center lg:hidden">
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 justify-center">
                 <Link
                   href="/signup"
                   className="inline-flex items-center justify-center rounded bg-white px-6 py-3 text-[14px] font-semibold text-black transition-smooth hover:bg-[#e9ecf2] sm:px-8 sm:py-3.5 sm:text-base"
                 >
-                  Get Started
+                  Create product photos
                 </Link>
                 <Link
                   href="/how-it-works"
@@ -410,7 +410,7 @@ export default function Home() {
             href="/signup"
             className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-base font-semibold text-on-brand shadow-soft-hover transition-smooth hover:scale-[1.03] hover:-translate-y-0.5 hover:shadow-card-hover md:mt-8 md:px-10 md:py-4 md:text-lg"
           >
-            Get Started
+            Create product photos
           </Link>
         </div>
       </section>

@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query'
 import { authApi } from '@/lib/api'
 import { setAuthToken } from '@/lib/auth'
 import toast from 'react-hot-toast'
+import { authDestination, trackFunnel } from '@/lib/funnel'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -20,13 +21,15 @@ export default function SignupPage() {
     mutationFn: () => authApi.signup(email, password, verifyPassword),
     onSuccess: (data) => {
       if (data.require_verification && data.email) {
+        trackFunnel('signup_started')
         toast.success('Check your email for the verification code')
         router.push(`/verifyEmail?email=${encodeURIComponent(data.email)}`)
         return
       }
       setAuthToken(data.access_token)
       toast.success('Account created successfully!')
-      router.push('/dashboard')
+      trackFunnel('signup_completed')
+      router.push(authDestination())
     },
     onError: (error: unknown) => {
       const msg = error && typeof error === 'object' && 'response' in error
@@ -52,7 +55,7 @@ export default function SignupPage() {
   return (
     <div className="flex min-h-[calc(100vh-72px)] items-center justify-center bg-page-bg px-6 py-12 md:py-16">
       <div className="w-full max-w-md">
-        <div className="rounded-[20px] border border-muted/40 bg-cream p-8 shadow-soft md:p-10">
+        <div className="rounded-[20px] border border-muted/40 bg-cream p-5 sm:p-8 shadow-soft md:p-10">
           <div className="flex flex-col items-center text-center">
             <Image src="/logo1.png" alt="" width={48} height={48} className="object-contain" />
             <div className="mt-4 flex items-center gap-4">
@@ -63,7 +66,7 @@ export default function SignupPage() {
             <h1 className="mt-3 text-[24px] font-bold text-primary md:text-[28px]">Create your account</h1>
             <p className="mt-2 text-[15px] text-secondary">
               Or{' '}
-              <Link href="/login" className="font-semibold text-brand hover:underline">sign in to your existing account</Link>
+              <Link href="/login" className="font-semibold text-primary underline underline-offset-4">sign in to your existing account</Link>
             </p>
           </div>
 
@@ -129,16 +132,16 @@ export default function SignupPage() {
               />
               <label htmlFor="terms" className="text-[14px] text-secondary">
                 I agree to the{' '}
-<Link href="/terms" className="font-semibold text-brand hover:underline">Terms</Link>
+<Link href="/terms" className="font-semibold text-primary underline underline-offset-4">Terms</Link>
               {' '}and{' '}
-                <Link href="/privacy" className="font-semibold text-brand hover:underline">Privacy Policy</Link>
+                <Link href="/privacy" className="font-semibold text-primary underline underline-offset-4">Privacy Policy</Link>
               </label>
             </div>
 
             <button
               type="submit"
               disabled={signupMutation.isPending || !acceptedTerms}
-              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
+              className="w-full rounded-full bg-primary py-3.5 text-[15px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
             >
               {signupMutation.isPending ? 'Creating account...' : 'Create account'}
             </button>

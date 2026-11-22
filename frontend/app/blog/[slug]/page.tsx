@@ -174,7 +174,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               day: 'numeric',
             })}
           </div>
-          <h1 className="mb-8 text-5xl font-bold text-primary">
+          <h1 className="mb-8 text-3xl leading-tight sm:text-5xl font-bold text-primary">
             {post.title}
           </h1>
           <div

@@ -66,7 +66,7 @@ export function EditPromptWithAI({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={`text-sm text-vivid-yellow hover:underline font-medium ${className}`}
+        className={`min-h-11 text-sm text-[#5b34a0] hover:underline font-medium ${className}`}
       >
         {buttonLabel}
       </button>
@@ -101,7 +101,7 @@ export function EditPromptWithAI({
           type="button"
           onClick={handleCancel}
           disabled={isLoading}
-          className="px-3 py-1.5 border border-gray-500 rounded-md text-sm text-gray-200 hover:bg-white/10"
+          className="min-h-11 px-3 py-2 border border-gray-500 rounded-md text-sm text-gray-700 hover:bg-gray-100"
         >
           Cancel
         </button>

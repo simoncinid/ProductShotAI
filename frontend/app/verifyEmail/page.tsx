@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query'
 import { authApi } from '@/lib/api'
 import { setAuthToken } from '@/lib/auth'
 import toast from 'react-hot-toast'
+import { authDestination, trackFunnel } from '@/lib/funnel'
 
 export default function VerifyEmailPage() {
   const router = useRouter()
@@ -16,7 +17,7 @@ export default function VerifyEmailPage() {
   const [otp, setOtp] = useState('')
 
   useEffect(() => {
-    if (emailFromQuery) setEmail(decodeURIComponent(emailFromQuery))
+    if (emailFromQuery) setEmail(emailFromQuery)
   }, [emailFromQuery])
 
   const verifyMutation = useMutation({
@@ -24,7 +25,8 @@ export default function VerifyEmailPage() {
     onSuccess: (data) => {
       setAuthToken(data.access_token)
       toast.success('Email verified! Welcome to ProductShotAI.')
-      router.push('/dashboard')
+      trackFunnel('email_verified')
+      router.push(authDestination())
     },
     onError: (error: unknown) => {
       const msg =
@@ -115,7 +117,7 @@ export default function VerifyEmailPage() {
             <button
               type="submit"
               disabled={verifyMutation.isPending || otp.length !== 6 || !email.trim()}
-              className="w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-rich-black shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:opacity-50"
+              className="min-h-12 w-full rounded bg-primary py-3.5 text-[15px] font-semibold text-white transition hover:bg-[#333] disabled:opacity-50"
             >
               {verifyMutation.isPending ? 'Verifying...' : 'Verify'}
             </button>

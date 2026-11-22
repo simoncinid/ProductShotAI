@@ -15,7 +15,7 @@ export function ResultPopup({ imageUrl, onClose }: ResultPopupProps) {
       aria-labelledby="result-title"
     >
       <div
-        className="relative max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-2xl border border-muted/60 bg-cream shadow-xl"
+        className="relative max-h-[90dvh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-muted/60 bg-cream shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button

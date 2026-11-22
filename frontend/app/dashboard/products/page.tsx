@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { productsApi } from '@/lib/api'
-import { isAuthenticated } from '@/lib/auth'
+import { useAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { EditPromptWithAI } from '@/components/EditPromptWithAI'
 
@@ -13,16 +13,16 @@ export default function ProductsPage() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const [showCreate, setShowCreate] = useState(false)
-  const authenticated = isAuthenticated()
+  const authenticated = useAuthenticated()
 
   useEffect(() => {
-    if (!authenticated) router.push('/login')
+    if (authenticated === false) router.push('/login')
   }, [authenticated, router])
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products'],
     queryFn: productsApi.list,
-    enabled: authenticated,
+    enabled: authenticated === true,
   })
 
   const createMutation = useMutation({
@@ -62,7 +62,7 @@ export default function ProductsPage() {
   if (isLoading) return <div className="p-8 text-[#1f1a2a]/70">Loading...</div>
 
   return (
-    <div className="grid h-full min-h-0 gap-4 overflow-hidden xl:grid-cols-[minmax(0,1fr)_420px]">
+    <div className="grid h-auto min-h-0 lg:h-full gap-4 overflow-visible lg:overflow-auto xl:grid-cols-[minmax(0,1fr)_420px]">
       <section className="flex min-h-0 flex-col rounded border border-[#d0d4d4] bg-[#fefefe] text-[#0c0c0c]">
         <div className="flex shrink-0 flex-wrap items-start justify-between gap-3 border-b border-[#d0d4d4] p-4">
           <div>
@@ -122,14 +122,14 @@ export default function ProductsPage() {
         )}
       </section>
 
-      <aside className="min-h-0 overflow-hidden rounded border border-[#d0d4d4] bg-[#fefefe]">
+      <aside className="min-h-0 overflow-visible lg:overflow-auto rounded border border-[#d0d4d4] bg-[#fefefe]">
         <div className="border-b border-[#d0d4d4] p-4">
           <p className="text-[11px] font-medium uppercase tracking-[0.35px] text-[#767d88]">Product setup</p>
           <h2 className="mt-1 text-[24px] font-normal leading-none tracking-[-0.9px]">
             {showCreate ? 'New product' : 'How to use catalog'}
           </h2>
         </div>
-        <div className="h-[calc(100%-73px)] overflow-auto p-4">
+        <div className="lg:h-[calc(100%-73px)] lg:overflow-auto p-4">
           {showCreate ? (
             <CreateProductForm
               onCancel={() => setShowCreate(false)}

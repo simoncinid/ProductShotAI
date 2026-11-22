@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { generationsApi, productsApi, getAbsoluteImageUrl } from '@/lib/api'
-import { isAuthenticated } from '@/lib/auth'
+import { useAuthenticated } from '@/lib/auth'
 
 const PAGE_SIZE = 12
 const NO_PRODUCT_VALUE = ''
@@ -14,16 +14,16 @@ export default function GenerationsPage() {
   const router = useRouter()
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<string>(NO_PRODUCT_VALUE)
-  const authenticated = isAuthenticated()
+  const authenticated = useAuthenticated()
 
   useEffect(() => {
-    if (!authenticated) router.push('/login')
+    if (authenticated === false) router.push('/login')
   }, [authenticated, router])
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
     queryFn: () => productsApi.list(),
-    enabled: authenticated,
+    enabled: authenticated === true,
   })
 
   const isNoProduct = selected === NO_PRODUCT_VALUE
@@ -33,7 +33,7 @@ export default function GenerationsPage() {
       isNoProduct
         ? generationsApi.getNoProduct(page, PAGE_SIZE)
         : productsApi.getGenerations(selected, page, PAGE_SIZE),
-    enabled: authenticated,
+    enabled: authenticated === true,
   })
 
   const items = data?.items ?? []
@@ -49,7 +49,7 @@ export default function GenerationsPage() {
   if (!authenticated) return null
 
   return (
-    <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
+    <div className="mx-auto h-auto max-w-6xl lg:h-full lg:overflow-auto space-y-6">
       <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>

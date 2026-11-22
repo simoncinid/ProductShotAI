@@ -18,7 +18,7 @@ import {
   WandSparkles,
 } from 'lucide-react'
 import { authApi, userApi } from '@/lib/api'
-import { clearAuth, isAuthenticated } from '@/lib/auth'
+import { clearAuth, useAuthenticated } from '@/lib/auth'
 
 const studioNav = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard, hint: 'Start here' },
@@ -43,17 +43,17 @@ export default function DashboardLayout({
 }) {
   const router = useRouter()
   const pathname = usePathname()
-  const authenticated = isAuthenticated()
+  const authenticated = useAuthenticated()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   useEffect(() => {
-    if (!authenticated) router.push('/login')
+    if (authenticated === false) router.replace('/login')
   }, [authenticated, router])
 
   const { data: user, isLoading: userLoading } = useQuery({
     queryKey: ['user'],
     queryFn: userApi.getMe,
-    enabled: authenticated,
+    enabled: authenticated === true,
     retry: false,
   })
 
@@ -74,9 +74,9 @@ export default function DashboardLayout({
   const credits = user?.credits_balance ?? 0
 
   return (
-    <div className="dashboard-shell h-screen overflow-hidden bg-[#e9ecf2] text-[#0c0c0c]">
+    <div className="dashboard-shell min-h-[100dvh] bg-[#e9ecf2] text-[#0c0c0c] lg:h-[100dvh] lg:overflow-hidden">
       <div
-        className="grid h-screen min-h-0 grid-cols-1 overflow-hidden transition-[grid-template-columns] duration-200 lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)]"
+        className="grid min-h-[100dvh] min-w-0 grid-cols-1 transition-[grid-template-columns] duration-200 lg:h-[100dvh] lg:min-h-0 lg:overflow-hidden lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)]"
         style={{ '--sidebar-width': sidebarCollapsed ? '88px' : '280px' } as React.CSSProperties}
       >
         <aside className="hidden min-h-0 border-r border-[#d0d4d4] bg-[#fefefe] lg:flex lg:flex-col">
@@ -180,12 +180,12 @@ export default function DashboardLayout({
           </div>
         </aside>
 
-        <div className="flex min-h-0 min-w-0 flex-col overflow-hidden">
-          <header className="shrink-0 border-b border-[#d0d4d4] bg-[#fefefe]/92 backdrop-blur">
+        <div className="flex min-h-0 min-w-0 flex-col lg:overflow-hidden">
+          <header className="sticky top-0 z-30 shrink-0 border-b border-[#d0d4d4] bg-[#fefefe]">
             <div className="flex min-h-[68px] items-center justify-between gap-4 px-4 md:px-6 lg:px-8">
               <div className="min-w-0">
-                <p className="text-[11px] font-medium uppercase tracking-[0.35px] text-[#767d88]">Workspace</p>
-                <p className="truncate text-[16px] font-semibold text-[#0c0c0c]">AI product photo production</p>
+                <Link href="/" className="text-[13px] font-semibold text-[#0c0c0c]">ProductShotAI</Link>
+                <p className="truncate text-[12px] text-[#767d88]">Photo studio</p>
               </div>
               <div className="flex items-center gap-2">
                 <Link href="/dashboard/create" className="hidden rounded bg-[#0c0c0c] px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-[#404040] sm:inline-flex">
@@ -194,12 +194,21 @@ export default function DashboardLayout({
                 <Link href="/pricing" className="rounded border border-[#d0d4d4] bg-white px-3 py-2.5 text-[13px] font-semibold text-[#404040] transition hover:border-[#0c0c0c]">
                   {credits} credits
                 </Link>
+                <button onClick={handleLogout} className="grid h-11 w-11 place-items-center rounded border border-[#d0d4d4] lg:hidden" aria-label="Log out"><LogOut className="h-4 w-4" /></button>
               </div>
             </div>
+            <nav aria-label="Studio navigation" className="grid grid-cols-6 border-t border-[#d0d4d4] px-2 py-2 lg:hidden">
+              {studioNav.map(({ href, label, icon: Icon }) => (
+                <Link key={href} href={href} aria-current={isActive(pathname, href) ? 'page' : undefined}
+                  className={`flex min-h-12 min-w-0 flex-col items-center justify-center gap-1 rounded px-1 text-[11px] font-medium ${isActive(pathname, href) ? 'bg-[#0c0c0c] text-white' : 'text-[#404040]'}`}>
+                  <Icon className="h-4 w-4" /><span>{label}</span>
+                </Link>
+              ))}
+            </nav>
           </header>
 
-          <main className="min-h-0 min-w-0 flex-1 overflow-hidden">
-            <div className="mx-auto h-full min-h-0 w-full max-w-[1500px] overflow-hidden px-4 py-4 md:px-6 lg:px-8">
+          <main className="min-h-0 min-w-0 flex-1 lg:overflow-auto">
+            <div className="mx-auto min-h-0 w-full max-w-[1500px] px-4 py-4 md:px-6 lg:h-full lg:px-8">
               {children}
             </div>
           </main>

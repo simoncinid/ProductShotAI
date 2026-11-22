@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { DM_Sans, Playfair_Display, Great_Vibes } from 'next/font/google'
+import { DM_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 import { Providers } from './providers'
@@ -13,26 +13,13 @@ const dmSans = DM_Sans({
   variable: '--font-dm-sans',
 })
 
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400'],
-  style: ['italic'],
-  variable: '--font-playfair',
-})
-
-const greatVibes = Great_Vibes({
-  subsets: ['latin'],
-  weight: ['400'],
-  variable: '--font-great-vibes',
-})
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'ProductShotAI – AI Product Photo & Product Photo AI | Image Product AI',
+    default: 'AI Product Photography for Ecommerce | ProductShotAI',
     template: '%s | ProductShotAI',
   },
-  description: 'Create stunning AI product photos and product photo AI in seconds. 8K quality for e‑commerce and Amazon product photos. No subscription. Pay per image.',
+  description: 'Create 4K and 8K product photos for your online store from a reference image. Catalog, lifestyle, and ad images. Credit packs from $4.95. No subscription.',
   keywords: ['ai product photo', 'product photo ai', 'ai image product', 'image product ai', 'amazon product photo', 'AI product photography', 'product image generator', 'ecommerce product photos'],
   authors: [{ name: 'ProductShotAI', url: SITE_URL }],
   creator: 'ProductShotAI',
@@ -41,14 +28,14 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: SITE_URL,
     siteName: 'ProductShotAI',
-    title: 'ProductShotAI – AI Product Photo & Product Photo AI | Image Product AI',
-    description: 'Create stunning AI product photos and product photo AI in seconds. 8K for e‑commerce and Amazon product photos. No subscription. Pay per image.',
+    title: 'AI Product Photography for Ecommerce | ProductShotAI',
+    description: 'Turn a product reference into 4K and 8K catalog images, lifestyle scenes, and ads. Packs from $4.95. No subscription.',
     images: [{ url: '/logo1.png', width: 512, height: 512, alt: 'ProductShotAI - AI product photo and product photo AI' }],
   },
   twitter: {
     card: 'summary',
-    title: 'ProductShotAI – AI Product Photo & Product Photo AI',
-    description: 'Create AI product photos in seconds. Product photo AI, ai image product. 8K quality. Amazon product photos. No subscription.',
+    title: 'AI Product Photography for Ecommerce | ProductShotAI',
+    description: 'Create product photos for your online store in 4K or 8K. One-time credit packs from $4.95.',
   },
   robots: {
     index: true,
@@ -68,12 +55,8 @@ const webSiteJsonLd = {
   '@type': 'WebSite',
   name: 'ProductShotAI',
   url: SITE_URL,
-  description: 'AI product photo and product photo AI tool. Create ai image product and image product ai in seconds. Amazon product photos. 8K quality.',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/create?q={search_term_string}` },
-    'query-input': 'required name=search_term_string',
-  },
+  description: 'AI product photography for ecommerce stores. Create catalog, lifestyle, and advertising images from a product reference.',
+
 }
 
 const organizationJsonLd = {
@@ -82,7 +65,7 @@ const organizationJsonLd = {
   name: 'ProductShotAI',
   url: SITE_URL,
   logo: `${SITE_URL}/logo1.png`,
-  description: 'AI product photo, product photo AI, ai image product, and image product ai generator. Amazon product photo tool.',
+  description: 'AI product photography software for online stores.',
 }
 
 export default function RootLayout({
@@ -91,7 +74,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${playfair.variable} ${greatVibes.variable}`}>
+    <html lang="en" className={dmSans.variable}>
       <body className="font-sans antialiased text-on-dark">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />

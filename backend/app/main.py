@@ -22,6 +22,7 @@ from app.models import User, Generation, CreditTransaction, BrandIdentity, Produ
 from app.storage import get_storage_adapter
 from app import brand_identity, products, shooting, prompt_edit
 from app.prompt_composer import compose_final_prompt, brand_identity_to_snapshot
+from app.time_utils import as_utc
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -142,7 +143,7 @@ async def verify_otp(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already verified")
     if not user.verification_otp_hash or not user.verification_otp_expires_at:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No OTP pending. Request a new one.")
-    if user.verification_otp_expires_at < datetime.now(timezone.utc):
+    if as_utc(user.verification_otp_expires_at) <= datetime.now(timezone.utc):
         user.verification_otp_hash = None
         user.verification_otp_expires_at = None
         await db.commit()
@@ -153,6 +154,7 @@ async def verify_otp(
     user.email_verified = True
     user.verification_otp_hash = None
     user.verification_otp_expires_at = None
+    user.last_login_at = datetime.utcnow()
     await db.commit()
 
     access_token = auth.create_access_token(data={"sub": user.id})
@@ -615,7 +617,7 @@ async def purchase_credits(
             detail="Stripe non configurato per questo pack. Imposta STRIPE_SECRET_KEY e STRIPE_PRICE_*."
         )
     stripe.api_key = settings.stripe_secret_key
-    session = stripe.checkout.Session.create(
+    session = await asyncio.to_thread(stripe.checkout.Session.create,
         line_items=[{"price": price_id, "quantity": 1}],
         mode="payment",
         success_url=request.success_url,
@@ -628,6 +630,31 @@ async def purchase_credits(
     )
     logger.info(f"Checkout session created for user {current_user.id} pack={request.pack_id} session={session.id}")
     return {"checkout_url": session.url}
+
+
+@app.get("/api/credits/checkout/{session_id}")
+async def checkout_status(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Confirm payment AND webhook crediting; never trust a success query parameter."""
+    if not settings.stripe_secret_key:
+        raise HTTPException(status_code=503, detail="Payments are temporarily unavailable")
+    stripe.api_key = settings.stripe_secret_key
+    try:
+        session = await asyncio.to_thread(stripe.checkout.Session.retrieve, session_id)
+    except stripe.StripeError:
+        raise HTTPException(status_code=404, detail="Checkout session not found")
+    metadata = session["metadata"]
+    if not metadata or "user_id" not in metadata or metadata["user_id"] != str(current_user.id):
+        raise HTTPException(status_code=404, detail="Checkout session not found")
+    credited = await db.scalar(select(CreditTransaction.id).where(
+        CreditTransaction.reference_id == session_id,
+        CreditTransaction.user_id == current_user.id,
+        CreditTransaction.type == "purchase",
+    ))
+    return {"payment_status": session["payment_status"], "credited": bool(credited)}
 
 
 # Webhook WaveSpeed: receives completed/failed, returns 2xx immediately, processes in background.
@@ -667,10 +694,12 @@ async def stripe_webhook(raw_request: Request, db: AsyncSession = Depends(get_db
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Payload non valido: {e}")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Firma webhook non valida: {e}")
-    if event["type"] != "checkout.session.completed":
+    if event["type"] not in ("checkout.session.completed", "checkout.session.async_payment_succeeded"):
         return {"received": True}
     # StripeObject: niente .get()/dict(); solo accesso per chiave / "in"
     obj = event["data"]["object"]
+    if obj["payment_status"] != "paid":
+        return {"received": True}
     session_id = obj["id"]
     md = obj["metadata"]
     user_id = md["user_id"] if md is not None and "user_id" in md else None
@@ -684,15 +713,21 @@ async def stripe_webhook(raw_request: Request, db: AsyncSession = Depends(get_db
     if not user_id or not pack_id or credits <= 0:
         logger.error(f"Webhook Stripe: missing or invalid metadata session={session_id} metadata={md}")
         return {"received": True}
+    try:
+        pack = credit_packs.get_credit_pack(pack_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid credit pack")
+    if credits != pack.credits:
+        raise HTTPException(status_code=400, detail="Invalid credit amount")
+    # Serialize purchases for the same user, including concurrent webhook retries.
+    r = await db.execute(select(User).where(User.id == user_id).with_for_update())
+    user = r.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=400, detail="Checkout user not found")
     # Idempotency: avoid crediting twice for the same checkout
     r = await db.execute(select(CreditTransaction).where(CreditTransaction.reference_id == session_id))
     if r.scalar_one_or_none():
         logger.info(f"Webhook Stripe: checkout already processed session={session_id}")
-        return {"received": True}
-    r = await db.execute(select(User).where(User.id == user_id))
-    user = r.scalar_one_or_none()
-    if not user:
-        logger.error(f"Webhook Stripe: user not found user_id={user_id} session={session_id}")
         return {"received": True}
     user.credits_balance += credits
     t = CreditTransaction(

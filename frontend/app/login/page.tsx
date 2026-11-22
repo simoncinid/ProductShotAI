@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query'
 import { authApi } from '@/lib/api'
 import { setAuthToken } from '@/lib/auth'
 import toast from 'react-hot-toast'
+import { authDestination, trackFunnel } from '@/lib/funnel'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -19,12 +20,16 @@ export default function LoginPage() {
     onSuccess: (data) => {
       setAuthToken(data.access_token)
       toast.success('Login successful!')
-      router.push('/dashboard')
+      trackFunnel('login_completed')
+      router.push(authDestination())
     },
     onError: (error: unknown) => {
       const msg = error && typeof error === 'object' && 'response' in error
         ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
         : null
+      if ((error as { response?: { status?: number } })?.response?.status === 403) {
+        router.push(`/verifyEmail?email=${encodeURIComponent(email)}`)
+      }
       toast.error(msg || 'Login failed')
     },
   })
@@ -66,7 +71,7 @@ export default function LoginPage() {
                 Continue to Studio
               </h2>
               <p className="mt-3 text-[14px] leading-snug text-[#767d88]">
-                Use any email and password in local fake mode. The account opens with demo credits.
+                Sign in to create product photos and access your image library.
               </p>
             </div>
 
@@ -83,7 +88,7 @@ export default function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="demo@productshotai.local"
+                  placeholder="you@example.com"
                   className="h-12 w-full rounded border border-[#d0d4d4] bg-white px-3 text-[15px] text-[#0c0c0c] placeholder:text-[#767d88] outline-none transition focus:border-[#0c0c0c]"
                 />
               </div>
@@ -99,7 +104,7 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Any password"
+                  placeholder="Your password"
                   className="h-12 w-full rounded border border-[#d0d4d4] bg-white px-3 text-[15px] text-[#0c0c0c] placeholder:text-[#767d88] outline-none transition focus:border-[#0c0c0c]"
                 />
               </div>

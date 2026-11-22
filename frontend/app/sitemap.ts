@@ -10,24 +10,23 @@ const blogSlugs = [
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
-    { url: BASE_URL, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
-    { url: `${BASE_URL}/create`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${BASE_URL}/pricing`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${BASE_URL}/how-it-works`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${BASE_URL}/use-cases`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${BASE_URL}/use-cases/amazon-fba-product-photos`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${BASE_URL}/use-cases/shopify-product-images`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${BASE_URL}/use-cases/etsy-product-photos`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${BASE_URL}/use-cases/ugc-product-images`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${BASE_URL}/faq`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${BASE_URL}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${BASE_URL}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
+    { url: BASE_URL, changeFrequency: 'weekly', priority: 1 },
+    { url: `${BASE_URL}/create`, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${BASE_URL}/pricing`, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${BASE_URL}/how-it-works`, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BASE_URL}/use-cases`, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${BASE_URL}/use-cases/amazon-fba-product-photos`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/use-cases/shopify-product-images`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/use-cases/etsy-product-photos`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/use-cases/ugc-product-images`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/faq`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/blog`, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE_URL}/privacy`, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE_URL}/terms`, changeFrequency: 'yearly', priority: 0.3 },
   ]
 
   const blogPages: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
     url: `${BASE_URL}/blog/${slug}`,
-    lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.7,
   }))

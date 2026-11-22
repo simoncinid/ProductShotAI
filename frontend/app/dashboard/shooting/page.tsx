@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { productsApi, uploadApi, shootingApi, userApi, getAbsoluteImageUrl } from '@/lib/api'
-import { isAuthenticated } from '@/lib/auth'
+import { isAuthenticated, useAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { EditPromptWithAI } from '@/components/EditPromptWithAI'
 
@@ -18,6 +18,7 @@ const SHOOTING_STYLE_OPTIONS = [
 ]
 
 export default function ShootingWizardPage() {
+  const authenticated = useAuthenticated()
   const router = useRouter()
   const searchParams = useSearchParams()
   const presetProductId = searchParams.get('product_id')
@@ -40,13 +41,13 @@ export default function ShootingWizardPage() {
   const { data: products = [], isLoading: productsLoading } = useQuery({
     queryKey: ['products'],
     queryFn: productsApi.list,
-    enabled: isAuthenticated(),
+    enabled: !!authenticated,
   })
 
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: userApi.getMe,
-    enabled: isAuthenticated(),
+    enabled: !!authenticated,
   })
 
   const { data: productDetail } = useQuery({
@@ -141,7 +142,7 @@ export default function ShootingWizardPage() {
     promptsMutation.mutate({ product_id: productId, shooting_style: shootingStyle, count })
   }
 
-  if (!isAuthenticated()) return null
+  if (!authenticated) return null
   if (productsLoading) return <div className="p-8 text-[#1f1a2a]/70">Loading...</div>
 
   if (products.length === 0) {
@@ -161,11 +162,11 @@ export default function ShootingWizardPage() {
   const stepReferenceDone = !!referenceImageUrl
 
   return (
-    <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[1.2fr,0.8fr]">
+    <div className="grid h-auto min-h-0 lg:h-full gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
       {phase === 'setup' ? (
         <>
           <section className="flex min-h-0 flex-col rounded-2xl border border-[#e8e0f5] bg-white">
-            <div className="flex items-center justify-between border-b border-[#ece4f9] px-4 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ece4f9] px-4 py-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.18em] text-[#6a43ad]/75">Full Shooting</p>
                 <h1 className="text-xl font-semibold">Batch Session</h1>

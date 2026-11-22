@@ -5,7 +5,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { productsApi, getAbsoluteImageUrl } from '@/lib/api'
-import { isAuthenticated } from '@/lib/auth'
+import { useAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { EditPromptWithAI } from '@/components/EditPromptWithAI'
 
@@ -32,10 +32,10 @@ export default function ProductDetailPage() {
   const id = params?.id as string
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
-  const authenticated = isAuthenticated()
+  const authenticated = useAuthenticated()
 
   useEffect(() => {
-    if (!authenticated) router.push('/login')
+    if (authenticated === false) router.push('/login')
   }, [authenticated, router])
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function ProductDetailPage() {
   const { data: product, isLoading, error } = useQuery<ProductData>({
     queryKey: ['product', id],
     queryFn: () => productsApi.get(id),
-    enabled: authenticated && !!id,
+    enabled: !!authenticated && !!id,
   })
 
   const updateMutation = useMutation({
@@ -136,7 +136,7 @@ export default function ProductDetailPage() {
   const maxImages = 3
 
   return (
-    <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
+    <div className="mx-auto h-auto max-w-6xl lg:h-full lg:overflow-auto space-y-6">
       <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>

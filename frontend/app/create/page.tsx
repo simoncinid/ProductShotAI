@@ -217,7 +217,7 @@ export default function CreatePage() {
               Create Your AI Product Photo
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-[16px] text-muted md:text-[18px]">
-              Upload your product image—our product photo AI creates ai image product and image product ai in 8K. Amazon product photo ready.
+              Upload a clear photo of your product and describe the scene. Create catalog, lifestyle, or advertising images in 4K or 8K.
             </p>
             {!authenticated && (
               <p className="mt-3 text-[13px] text-muted">
@@ -276,7 +276,7 @@ export default function CreatePage() {
                         <button
                           type="button"
                           onClick={() => selectedFile && uploadMutation.mutate(selectedFile)}
-                          className="font-semibold text-brand underline hover:no-underline"
+                          className="font-semibold text-primary underline hover:no-underline"
                         >
                           Retry
                         </button>
@@ -401,7 +401,7 @@ export default function CreatePage() {
               <button
                 onClick={handleGenerate}
                 disabled={authenticated && (!imageUrl || (!selectedProductId && !prompt.trim()) || isGenerating || noProductWantsBrandButMissing)}
-                className="mt-6 w-full rounded-full bg-brand py-3.5 text-[15px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-6 w-full rounded-full bg-primary py-3.5 text-[15px] font-semibold text-white shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {!authenticated ? 'Sign Up to Generate' : isGenerating ? 'Generating... (30–90 sec)' : 'Generate Image'}
               </button>

@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { productsApi, generationApi, userApi, getAbsoluteImageUrl, getDeviceId } from '@/lib/api'
-import { isAuthenticated } from '@/lib/auth'
+import { isAuthenticated, useAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
 import { EditPromptWithAI } from '@/components/EditPromptWithAI'
@@ -37,6 +37,7 @@ function startPolling(
 }
 
 export default function HubPage() {
+  const authenticated = useAuthenticated()
   const router = useRouter()
   const searchParams = useSearchParams()
   const generationId = searchParams.get('generation_id')
@@ -56,7 +57,7 @@ export default function HubPage() {
   const { data: generation } = useQuery({
     queryKey: ['generation', generationId],
     queryFn: () => generationApi.getGeneration(generationId!, undefined),
-    enabled: !!generationId && isAuthenticated(),
+    enabled: !!generationId && !!authenticated,
   })
 
   const productIdFromGen = generation && 'product_id' in generation
@@ -68,13 +69,13 @@ export default function HubPage() {
   const { data: product } = useQuery({
     queryKey: ['product', effectiveProductId],
     queryFn: () => productsApi.get(effectiveProductId!),
-    enabled: isAuthenticated() && !!effectiveProductId,
+    enabled: !!authenticated && !!effectiveProductId,
   })
 
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: userApi.getMe,
-    enabled: isAuthenticated(),
+    enabled: !!authenticated,
   })
 
   const credits = user?.credits_balance ?? 0
@@ -225,7 +226,7 @@ export default function HubPage() {
   }
 
   return (
-    <div className="mx-auto h-full max-w-6xl overflow-auto">
+    <div className="mx-auto h-auto max-w-6xl lg:h-full lg:overflow-auto">
       <div className="mb-6 flex items-start justify-between gap-3 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-[#1f1a2a]">Creative Hub</h1>
@@ -248,7 +249,7 @@ export default function HubPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1.05fr,0.95fr]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
         <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
           <img src={displayImageUrl!} alt="Reference" className="max-h-[500px] w-full rounded-xl object-contain bg-[#fcfaff]" />
           {canUseProductContext && (

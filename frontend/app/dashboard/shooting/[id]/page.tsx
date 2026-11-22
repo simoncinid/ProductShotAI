@@ -5,11 +5,12 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
 import { shootingApi, getAbsoluteImageUrl } from '@/lib/api'
-import { isAuthenticated } from '@/lib/auth'
+import { isAuthenticated, useAuthenticated } from '@/lib/auth'
 
 const POLL_INTERVAL_MS = 4000
 
 export default function ShootingResultPage() {
+  const authenticated = useAuthenticated()
   const router = useRouter()
   const params = useParams()
   const id = params?.id as string
@@ -21,7 +22,7 @@ export default function ShootingResultPage() {
   const { data: shooting, isLoading, error } = useQuery({
     queryKey: ['shooting', id],
     queryFn: () => shootingApi.get(id),
-    enabled: isAuthenticated() && !!id,
+    enabled: !!authenticated && !!id,
     refetchInterval: (query) => {
       const data = query.state.data
       if (!data) return false
@@ -30,7 +31,7 @@ export default function ShootingResultPage() {
     },
   })
 
-  if (!id || !isAuthenticated()) return null
+  if (!id || !authenticated) return null
   if (isLoading) return <div className="mx-auto max-w-5xl px-4 py-12 text-[#1f1a2a]/70">Loading...</div>
 
   if (error || !shooting) {
@@ -51,7 +52,7 @@ export default function ShootingResultPage() {
   const completionRate = generations.length ? Math.round((completed.length / generations.length) * 100) : 0
 
   return (
-    <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
+    <div className="mx-auto h-auto max-w-6xl lg:h-full lg:overflow-auto space-y-6">
       <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>

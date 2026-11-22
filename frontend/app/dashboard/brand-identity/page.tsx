@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { brandIdentityApi, getAbsoluteImageUrl } from '@/lib/api'
-import { isAuthenticated } from '@/lib/auth'
+import { useAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 
 const PHOTO_STYLE_OPTIONS = [
@@ -32,16 +32,16 @@ type BrandData = {
 export default function BrandIdentityPage() {
   const router = useRouter()
   const queryClient = useQueryClient()
-  const authenticated = isAuthenticated()
+  const authenticated = useAuthenticated()
 
   useEffect(() => {
-    if (!authenticated) router.push('/login')
+    if (authenticated === false) router.push('/login')
   }, [authenticated, router])
 
   const { data: brand, isLoading, error } = useQuery<BrandData>({
     queryKey: ['brand-identity'],
     queryFn: brandIdentityApi.get,
-    enabled: authenticated,
+    enabled: authenticated === true,
     retry: false,
   })
 
@@ -128,7 +128,7 @@ export default function BrandIdentityPage() {
   }
 
   return (
-    <div className="mx-auto h-full max-w-6xl overflow-auto space-y-6">
+    <div className="mx-auto h-auto max-w-6xl lg:h-full lg:overflow-auto space-y-6">
       <section className="rounded-2xl border border-[#e8e0f5] bg-white p-5 text-[#1f1a2a]">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>

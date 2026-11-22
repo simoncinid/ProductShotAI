@@ -4,10 +4,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { generationApi, getAbsoluteImageUrl, getDeviceId, productsApi, uploadApi, userApi } from '@/lib/api'
-import { isAuthenticated } from '@/lib/auth'
+import { isAuthenticated, useAuthenticated } from '@/lib/auth'
 import toast from 'react-hot-toast'
 import { ResultPopup } from '@/components/ResultPopup'
 import { EditPromptWithAI } from '@/components/EditPromptWithAI'
+import { trackFunnel } from '@/lib/funnel'
 
 const POLL_INTERVAL_MS = 3000
 
@@ -75,6 +76,7 @@ function startPolling(
 }
 
 export default function DashboardCreatePage() {
+  const authenticated = useAuthenticated()
   const router = useRouter()
   const [sourceMode, setSourceMode] = useState<'upload' | 'catalog'>('upload')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -97,19 +99,19 @@ export default function DashboardCreatePage() {
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: userApi.getMe,
-    enabled: isAuthenticated(),
+    enabled: !!authenticated,
   })
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
     queryFn: productsApi.list,
-    enabled: isAuthenticated(),
+    enabled: !!authenticated,
   })
 
   const { data: productDetail } = useQuery<ProductDetail>({
     queryKey: ['product', selectedProductId],
     queryFn: () => productsApi.get(selectedProductId),
-    enabled: isAuthenticated() && !!selectedProductId,
+    enabled: !!authenticated && !!selectedProductId,
   })
 
   const credits = user?.credits_balance ?? 0
@@ -150,6 +152,7 @@ export default function DashboardCreatePage() {
     onSuccess: (data, variables) => {
       if (variables !== selectedFile) return
       setImageUrl(data.image_url)
+      trackFunnel('reference_uploaded')
       toast.success('Reference uploaded')
     },
     onError: (error: unknown) => {
@@ -169,11 +172,13 @@ export default function DashboardCreatePage() {
           data.generation_id,
           (url) => {
             setIsGenerating(false)
+            trackFunnel('generation_completed')
             toast.success('Generation completed')
             setResultImageUrl(url)
           },
           (msg) => {
             setIsGenerating(false)
+            trackFunnel('generation_failed')
             toast.error(msg)
           },
         )
@@ -232,6 +237,7 @@ export default function DashboardCreatePage() {
     }
 
     setIsGenerating(true)
+    trackFunnel('generation_requested', { resolution })
 
     const canUseProductPayload = useProductContext && !!selectedProductId && !!productDetail
 
@@ -267,9 +273,14 @@ export default function DashboardCreatePage() {
   } as const
 
   return (
-    <div className="grid h-full min-h-0 gap-3 lg:grid-cols-[1.2fr,0.8fr]">
+    <div className="grid h-auto min-h-0 lg:h-full gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
       <section className="flex min-h-0 flex-col rounded-2xl border border-[#e8e0f5] bg-white">
-        <div className="flex items-center justify-between border-b border-[#ece4f9] px-4 py-3">
+        {user && credits === 0 && <div className="rounded-t-lg border-b border-[#d0d4d4] bg-[#f3f4f6] p-4 text-sm leading-relaxed">
+          <p className="font-semibold">Your first product photo starts here.</p>
+          <p className="mt-1 text-[#52525b]">Upload a reference and choose a style. You will need a credit pack to generate: $4.95 for 5 credits, with no subscription.</p>
+          <a href="/pricing" className="mt-3 inline-flex min-h-11 items-center rounded bg-black px-4 font-semibold text-white">Get your first credits →</a>
+        </div>}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#ece4f9] px-4 py-3">
           <div>
             <p className="text-xs uppercase tracking-[0.18em] text-[#6a43ad]/75">Generate Image</p>
             <h1 className="text-xl font-semibold">Creative Session</h1>

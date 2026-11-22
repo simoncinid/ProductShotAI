@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { userApi, authApi } from '@/lib/api'
-import { isAuthenticated, clearAuth } from '@/lib/auth'
+import { useAuthenticated, clearAuth } from '@/lib/auth'
 import { useState, useEffect } from 'react'
 
 const navLinks = [
@@ -21,14 +21,14 @@ export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const authenticated = isAuthenticated()
+  const authenticated = useAuthenticated()
 
   const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href))
 
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: userApi.getMe,
-    enabled: authenticated,
+    enabled: authenticated === true,
     retry: false,
   })
 
@@ -37,6 +37,14 @@ export function Navbar() {
     else document.body.style.overflow = ''
     return () => { document.body.style.overflow = '' }
   }, [isMenuOpen])
+
+  useEffect(() => { setIsMenuOpen(false) }, [pathname])
+
+  useEffect(() => {
+    const close = (event: KeyboardEvent) => { if (event.key === 'Escape') setIsMenuOpen(false) }
+    window.addEventListener('keydown', close)
+    return () => window.removeEventListener('keydown', close)
+  }, [])
 
   const handleLogout = async () => {
     await authApi.logout()
@@ -56,7 +64,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop menu */}
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 xl:flex">
           {authenticated ? (
             <>
               <Link href="/how-it-works" className={`px-3 py-2 text-[14px] font-medium transition hover:text-white ${isActive('/how-it-works') ? 'text-white font-semibold' : 'text-muted'}`}>
@@ -125,8 +133,10 @@ export function Navbar() {
         {/* Hamburger */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden flex h-10 w-10 items-center justify-center rounded text-white hover:bg-white/10"
+          className="xl:hidden flex h-11 w-11 items-center justify-center rounded text-white hover:bg-white/10"
           aria-label="Menu"
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-navigation"
         >
           {isMenuOpen ? (
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -142,7 +152,8 @@ export function Navbar() {
 
       {/* Mobile drawer */}
       <div
-        className={`fixed inset-0 top-[72px] z-40 bg-black md:hidden ${
+        id="mobile-navigation"
+        className={`absolute inset-x-0 top-full z-40 h-[calc(100dvh-72px)] overflow-y-auto bg-black xl:hidden ${
           isMenuOpen ? 'visible opacity-100' : 'invisible opacity-0'
         } transition-all duration-200`}
       >

@@ -442,6 +442,10 @@ export const generationApi = {
 
 // Credits
 export const creditsApi = {
+  checkoutStatus: async (sessionId: string): Promise<{ payment_status: string; credited: boolean }> => {
+    const response = await api.get(`/api/credits/checkout/${encodeURIComponent(sessionId)}`)
+    return response.data
+  },
   getPacks: async () => {
     if (FAKE_AUTH) {
       await delay()

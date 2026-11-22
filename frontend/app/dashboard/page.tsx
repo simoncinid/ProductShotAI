@@ -63,17 +63,17 @@ export default function DashboardPage() {
   const hasProducts = products.length > 0
   const hasCredits = (user?.credits_balance ?? 0) > 0
   const setupItems = [
-    { title: 'Brand profile', done: hasBrand, href: '/dashboard/brand-identity', action: hasBrand ? 'Review' : 'Set up' },
-    { title: 'Product catalog', done: hasProducts, href: '/dashboard/products', action: hasProducts ? 'Manage' : 'Add product' },
+    { title: 'Brand profile (optional)', done: hasBrand, href: '/dashboard/brand-identity', action: hasBrand ? 'Review' : 'Set up' },
+    { title: 'Product catalog (optional)', done: hasProducts, href: '/dashboard/products', action: hasProducts ? 'Manage' : 'Add product' },
     { title: 'Credits', done: hasCredits, href: '/pricing', action: hasCredits ? 'View balance' : 'Buy credits' },
   ]
   const completed = setupItems.filter((item) => item.done).length
   const primaryProduct = products[0]
 
   return (
-    <div className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-4 overflow-hidden">
+    <div className="grid h-auto min-h-0 lg:h-full lg:grid-rows-[auto_minmax(0,1fr)] gap-4 overflow-visible lg:overflow-auto">
       <section className="grid min-h-0 gap-4 lg:grid-cols-[minmax(0,1.45fr)_420px]">
-        <div className="relative overflow-hidden rounded border border-[#27272a] bg-black p-5 text-white md:p-6">
+        <div className="relative overflow-visible lg:overflow-auto rounded border border-[#27272a] bg-black p-5 text-white md:p-6">
           <Image src="/images/res6.jpeg" alt="" fill priority className="object-cover opacity-45" />
           <div className="absolute inset-0 bg-black/55" aria-hidden />
           <div className="relative max-w-2xl">
@@ -85,8 +85,8 @@ export default function DashboardPage() {
               Use one product reference to generate a clean output, then scale into full shootings once the direction is right.
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <Link href="/dashboard/create" className="inline-flex justify-center rounded bg-white px-5 py-3 text-[14px] font-semibold text-black transition hover:bg-[#e9ecf2]">
-                Generate first image
+              <Link href={hasCredits ? '/dashboard/create' : '/pricing'} className="inline-flex justify-center rounded bg-white px-5 py-3 text-[14px] font-semibold text-black transition hover:bg-[#e9ecf2]">
+                {hasCredits ? 'Generate first image' : 'Get credits from $4.95'}
               </Link>
               <Link href="/dashboard/products" className="inline-flex justify-center rounded border border-white/35 px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-white hover:text-black">
                 Check products
@@ -123,17 +123,17 @@ export default function DashboardPage() {
         </aside>
       </section>
 
-      <section className="grid min-h-0 gap-4 overflow-hidden xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-4 overflow-hidden">
+      <section className="grid min-h-0 gap-4 overflow-visible lg:overflow-auto xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid min-h-0 lg:grid-rows-[auto_minmax(0,1fr)] gap-4 overflow-visible lg:overflow-auto">
           <div className="grid gap-4 md:grid-cols-3">
             <Metric label="Products" value={products.length.toString()} detail={primaryProduct ? primaryProduct.name : 'Add your first product'} />
             <Metric label="Brand identity" value={hasBrand ? 'Ready' : 'Missing'} detail={hasBrand ? 'Applied to prompts' : 'Set visual rules once'} />
             <Metric label="Output mode" value="4K / 8K" detail="1 credit for 4K, 2 for 8K" />
           </div>
 
-          <div className="grid min-h-0 gap-4 overflow-hidden lg:grid-cols-2">
+          <div className="grid min-h-0 gap-4 overflow-visible lg:overflow-auto lg:grid-cols-2">
             {playbooks.map((item) => (
-              <article key={item.title} className="overflow-hidden rounded border border-[#d0d4d4] bg-[#fefefe]">
+              <article key={item.title} className="overflow-visible lg:overflow-auto rounded border border-[#d0d4d4] bg-[#fefefe]">
                 <div className="relative h-32 bg-[#0c0c0c] 2xl:h-40">
                   <Image src={item.image} alt="" fill className="object-cover" />
                 </div>
@@ -150,7 +150,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <aside className="min-h-0 overflow-hidden rounded border border-[#d0d4d4] bg-[#fefefe] p-4">
+        <aside className="min-h-0 overflow-visible lg:overflow-auto rounded border border-[#d0d4d4] bg-[#fefefe] p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-[11px] font-medium uppercase tracking-[0.35px] text-[#767d88]">Recent outputs</p>
@@ -160,10 +160,10 @@ export default function DashboardPage() {
               Open
             </Link>
           </div>
-          <div className="mt-4 space-y-2 overflow-hidden">
+          <div className="mt-4 space-y-2 overflow-visible lg:overflow-auto">
             {recentShots.map((shot) => (
               <article key={shot.src} className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 rounded border border-[#d0d4d4] bg-white p-2">
-                <div className="relative aspect-square overflow-hidden rounded bg-[#e9ecf2]">
+                <div className="relative aspect-square overflow-visible lg:overflow-auto rounded bg-[#e9ecf2]">
                   <Image src={shot.src} alt="" fill className="object-cover" />
                 </div>
                 <div className="flex min-w-0 flex-col justify-center">

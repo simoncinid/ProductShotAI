@@ -18,6 +18,15 @@ body {
   color: #030303;
 }
 
+@media (max-width: 1023px) {
+  input:not([type='checkbox']):not([type='radio']), textarea, select {
+    font-size: 16px;
+  }
+  .dashboard-shell main > div > div {
+    min-width: 0;
+  }
+}
+
 @layer base {
   h1, h2, h3 {
     font-weight: 400;
@@ -30,6 +39,11 @@ body {
 
   button, a, input, textarea, select {
     outline-color: #c9ccd1;
+  }
+
+  :focus-visible {
+    outline: 2px solid #8f62d7;
+    outline-offset: 3px;
   }
 }
 
