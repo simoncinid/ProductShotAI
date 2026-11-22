@@ -4,6 +4,9 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { CONSENT_KEY, gaEvent } from '@/lib/ga'
 const ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''
+function safeReferrer() {
+  try { const url = new URL(document.referrer); return url.origin + url.pathname } catch { return '' }
+}
 export function GoogleAnalytics() {
   const path = usePathname()
   const [choice, setChoice] = useState<string | null>('loading')
@@ -17,11 +20,11 @@ export function GoogleAnalytics() {
       window.gtag('consent', 'default', { analytics_storage: 'denied', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' })
       window.gtag('consent', 'update', { analytics_storage: 'granted' })
       window.gtag('js', new Date())
-      window.gtag('config', ID, { send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false, page_location: window.location.origin + window.location.pathname, page_referrer: '' })
+      window.gtag('config', ID, { send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false, page_location: window.location.origin + window.location.pathname, page_referrer: safeReferrer() })
       const script = document.createElement('script'); script.id='productshot-ga'; script.async=true; script.src=`https://www.googletagmanager.com/gtag/js?id=${ID}`; document.head.appendChild(script)
     }
     // No query strings, fragments, account IDs, emails, prompts or image URLs.
-    gaEvent('page_view', { page_location: window.location.origin + path, page_title: document.title, page_referrer: '' })
+    gaEvent('page_view', { page_location: window.location.origin + path, page_title: document.title, page_referrer: safeReferrer() })
   }, [choice, path])
   function choose(value: string) {
     try { localStorage.setItem(CONSENT_KEY, value) } catch {}
