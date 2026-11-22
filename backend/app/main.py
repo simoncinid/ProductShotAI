@@ -3,6 +3,7 @@ from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File, R
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -459,6 +460,16 @@ async def _process_wavespeed_webhook_task(
                 pass
 
 
+def _existing_generation_response(generation: Generation, user_id: str):
+    if str(generation.user_id) != str(user_id):
+        raise HTTPException(status_code=404, detail="Generation not found")
+    return JSONResponse(content={
+        "generation_id": str(generation.id), "status": generation.status,
+        "output_image_url": generation.output_image_url,
+        "error_message": generation.error_message,
+    }, status_code=202 if generation.status in ("pending", "processing") else 200)
+
+
 # Paid generation: WaveSpeed con webhook. Supporta product_id, apply_brand_identity, composizione final_prompt.
 @app.post("/api/generate-paid")
 @limiter.limit("10/minute")
@@ -469,6 +480,11 @@ async def generate_paid(
     db: AsyncSession = Depends(get_db)
 ):
     """Generate image for paid users (no watermark). 4k=1 credito, 8k=2 crediti."""
+    request_id = str(generate_request.request_id) if generate_request.request_id else None
+    if request_id:
+        existing = await db.get(Generation, request_id)
+        if existing:
+            return _existing_generation_response(existing, current_user.id)
     resolution = generate_request.resolution or "4k"
     credits_required = 2 if resolution == "8k" else 1
     if current_user.credits_balance < credits_required:
@@ -533,6 +549,7 @@ async def generate_paid(
     }
 
     generation = Generation(
+        id=request_id,
         user_id=current_user.id,
         device_id=generate_request.device_id,
         ip_address=ip_address,
@@ -551,7 +568,15 @@ async def generate_paid(
         input_params=input_params,
     )
     db.add(generation)
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        if request_id:
+            existing = await db.get(Generation, request_id)
+            if existing:
+                return _existing_generation_response(existing, current_user.id)
+        raise
     await db.refresh(generation)
     try:
         image_url = _ensure_absolute_image_url(generate_request.image_url)

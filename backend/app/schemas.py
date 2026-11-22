@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field, validator
 from typing import Optional
+from uuid import UUID
 from datetime import datetime
 
 
@@ -59,6 +60,7 @@ class UploadResponse(BaseModel):
 
 # Generation schemas
 class GenerateRequest(BaseModel):
+    request_id: Optional[UUID] = None  # Durable, account-bound idempotency key for studio retries.
     prompt: str = Field(..., min_length=1, max_length=1000)
     image_url: str
     aspect_ratio: str = Field(default="1:1", pattern="^(1:1|4:5|16:9)$")
