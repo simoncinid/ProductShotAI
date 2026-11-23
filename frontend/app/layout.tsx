@@ -6,7 +6,7 @@ import { Providers } from './providers'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
 import { SiteChrome } from '@/components/SiteChrome'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.productshotai.com'
 
 const dmSans = DM_Sans({
   subsets: ['latin'],

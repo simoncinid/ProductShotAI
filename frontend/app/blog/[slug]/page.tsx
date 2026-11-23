@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.productshotai.com'
 
 const blogPosts: Record<string, { title: string; date: string; excerpt?: string; content: string }> = {
   'amazon-product-images-best-practices': {

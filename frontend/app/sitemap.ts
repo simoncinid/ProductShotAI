@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.productshotai.com'
 
 const blogSlugs = [
   'amazon-product-images-best-practices',
@@ -11,7 +11,6 @@ const blogSlugs = [
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE_URL, changeFrequency: 'weekly', priority: 1 },
-    { url: `${BASE_URL}/create`, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/pricing`, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE_URL}/how-it-works`, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE_URL}/use-cases`, changeFrequency: 'monthly', priority: 0.8 },

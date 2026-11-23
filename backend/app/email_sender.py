@@ -1,5 +1,7 @@
 """Invio email via SMTP Gmail (OTP verifica ProductShotAI)."""
 import smtplib
+from html import escape
+from urllib.parse import urlencode
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -22,7 +24,9 @@ BODY_HTML = """<!DOCTYPE html>
 <div class="wrap">
   <div class="brand">ProductShotAI</div>
   <h1>Verify your email address</h1>
-  <p>Thanks for signing up. Enter this code on the verification page to activate your account:</p>
+  <p>Your photo studio is almost ready. Open the link below, then press Verify to activate your account.</p>
+  <p><a href="{activation_url}" style="display:inline-block;background:#0d9488;color:#ffffff;padding:14px 22px;border-radius:8px;font-weight:600">Activate my account</a></p>
+  <p>Or enter this code on the verification page:</p>
   <div class="otp">{otp}</div>
   <p>This code expires in 15 minutes. If you didn't create an account, you can ignore this email.</p>
   <p class="muted">— The ProductShotAI Team</p>
@@ -33,7 +37,10 @@ BODY_HTML = """<!DOCTYPE html>
 
 BODY_PLAIN = """ProductShotAI - Verify your email
 
-Thanks for signing up. Enter this code on the verification page to activate your account:
+Your photo studio is almost ready. Open this link, then press Verify:
+{activation_url}
+
+Or enter this code on the verification page:
 
   {otp}
 
@@ -53,8 +60,13 @@ def send_verification_otp(to_email: str, otp: str) -> None:
     msg["From"] = settings.gmail_user
     msg["To"] = to_email
 
-    msg.attach(MIMEText(BODY_PLAIN.replace("{otp}", otp), "plain"))
-    msg.attach(MIMEText(BODY_HTML.replace("{otp}", otp), "html"))
+    # Fragment stays out of HTTP requests and referrer logs. Opening the link
+    # only prefills the form; email preview scanners cannot consume the OTP.
+    activation_url = "https://www.productshotai.com/verifyEmail#" + urlencode({"email": to_email, "code": otp})
+    plain = BODY_PLAIN.replace("{otp}", otp).replace("{activation_url}", activation_url)
+    html = BODY_HTML.replace("{otp}", escape(otp)).replace("{activation_url}", escape(activation_url, quote=True))
+    msg.attach(MIMEText(plain, "plain", "utf-8"))
+    msg.attach(MIMEText(html, "html", "utf-8"))
 
     with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as smtp:
         smtp.starttls()

@@ -15,9 +15,17 @@ export default function VerifyEmailPage() {
   const emailFromQuery = searchParams.get('email') || ''
   const [email, setEmail] = useState('')
   const [otp, setOtp] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    if (emailFromQuery) setEmail(emailFromQuery)
+    const fragment = new URLSearchParams(window.location.hash.slice(1))
+    const linkedEmail = fragment.get('email')
+    const linkedCode = fragment.get('code')
+    if (linkedEmail) setEmail(linkedEmail)
+    else if (emailFromQuery) setEmail(emailFromQuery)
+    if (linkedCode && /^\d{6}$/.test(linkedCode)) setOtp(linkedCode)
+    if (window.location.hash) window.history.replaceState(null, '', window.location.pathname)
+    // Verification requires an explicit submit, never a GET or an email preview.
   }, [emailFromQuery])
 
   const verifyMutation = useMutation({
@@ -33,13 +41,14 @@ export default function VerifyEmailPage() {
         error && typeof error === 'object' && 'response' in error
           ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
           : null
+      setError(msg || 'Verification failed. Try again or request a new code.')
       toast.error(msg || 'Verification failed')
     },
   })
 
   const resendMutation = useMutation({
     mutationFn: () => authApi.resendOtp(email),
-    onSuccess: () => toast.success('New code sent to your email'),
+    onSuccess: () => { setOtp(''); setError(''); toast.success('New code sent to your email') },
     onError: (error: unknown) => {
       const msg =
         error && typeof error === 'object' && 'response' in error
@@ -59,13 +68,14 @@ export default function VerifyEmailPage() {
       toast.error('Enter the 6-digit code')
       return
     }
+    setError('')
     verifyMutation.mutate()
   }
 
   return (
     <div className="flex min-h-[calc(100vh-72px)] items-center justify-center bg-page-bg px-6 py-12 md:py-16">
       <div className="w-full max-w-md">
-        <div className="rounded-[20px] border border-gray-100 bg-white p-8 shadow-soft md:p-10">
+        <div className="rounded-[20px] border border-gray-100 bg-white p-5 shadow-soft sm:p-8 md:p-10">
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
               <span className="h-px w-8 bg-gray-300 md:w-12" />
@@ -78,6 +88,7 @@ export default function VerifyEmailPage() {
             </p>
           </div>
 
+          {error && <p role="alert" className="mt-5 rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}{error.includes('already verified') && <> <Link href="/login" className="font-semibold underline">Sign in to your account →</Link></>}</p>}
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="mb-1.5 block text-[14px] font-medium text-primary">

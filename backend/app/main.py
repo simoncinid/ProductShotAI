@@ -118,12 +118,12 @@ async def signup(
     await db.refresh(user)
 
     try:
-        email_sender.send_verification_otp(request.email, otp)
+        await asyncio.to_thread(email_sender.send_verification_otp, request.email, otp)
     except Exception as e:
         logger.exception("Failed to send verification email")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Could not send verification email. Check GMAIL_USER and GMAIL_PASS."
+            detail="Your account was created, but the email could not be sent. Open the verification page to request a new code."
         ) from e
 
     return schemas.SignupResponse(require_verification=True, email=request.email)
@@ -184,7 +184,7 @@ async def resend_otp(
     await db.commit()
 
     try:
-        email_sender.send_verification_otp(body.email, otp)
+        await asyncio.to_thread(email_sender.send_verification_otp, body.email, otp)
     except Exception as e:
         logger.exception("Failed to resend verification email")
         raise HTTPException(

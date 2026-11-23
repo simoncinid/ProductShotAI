@@ -100,6 +100,7 @@ export default function PricingPage() {
   }
 
   const packs = packsData?.packs || []
+  const selectedPack = packs.find((p: { id: string }) => p.id === searchParams.get('pack'))
   const isPopular = (id: string) => (id || '').toLowerCase() === 'standard'
 
   return (
@@ -125,8 +126,8 @@ export default function PricingPage() {
           : <p>{authenticated ? 'Checking your payment and credit balance… This can take a moment.' : 'Sign in to check your payment and credit balance.'}</p>}
       </div>}
       {searchParams.get('cancelled') === '1' && <p role="status" className={`${CONTAINER} pb-6 text-[#c9ccd1]`}>Checkout was cancelled. You can choose a pack and try again.</p>}
-      {searchParams.get('pack') && packs.some((p: { id: string }) => p.id === searchParams.get('pack')) && <div className={`${CONTAINER} pb-6`}>
-        <button onClick={() => handlePurchase(searchParams.get('pack')!)} disabled={purchaseMutation.isPending} className="min-h-12 rounded bg-white px-6 py-3 font-semibold text-black disabled:opacity-50">Continue with your selected pack →</button>
+      {selectedPack && <div className={`${CONTAINER} pb-6`}>
+        <button onClick={() => handlePurchase(searchParams.get('pack')!)} disabled={purchaseMutation.isPending} className="min-h-12 rounded bg-white px-6 py-3 font-semibold text-black disabled:opacity-50">{purchaseMutation.isPending ? 'Opening checkout…' : `Continue with ${selectedPack.name} — $${selectedPack.total_price.toFixed(2)} USD →`}</button>
       </div>}
       {packsLoading && <p role="status" className={`${CONTAINER} py-8 text-white`}>Loading credit packs…</p>}
       {packsError && <div role="alert" className={`${CONTAINER} py-8 text-white`}>Credit packs could not load. <button className="underline" onClick={() => refetchPacks()}>Try again</button></div>}
@@ -150,8 +151,8 @@ export default function PricingPage() {
       />
 
       <DynamicBackdropSection
-        eyebrow="Credit-based production"
-        title="Standard is the cleanest way to validate four visual directions, then scale only what works."
+        eyebrow="Your next step"
+        title="Start with one product. Keep the images you like."
         ctaLabel="Start creating"
         ctaHref="/dashboard/create"
         image="/images/res6.jpeg"
@@ -203,10 +204,10 @@ export default function PricingPage() {
             Sign up, purchase credits, and start creating stunning product photos.
           </p>
           <Link
-            href="/signup"
+            href="/pricing?pack=starter"
             className="mt-8 inline-flex items-center justify-center rounded border border-white bg-white px-8 py-3.5 text-base font-semibold text-black transition hover:bg-black hover:text-white"
           >
-            Sign Up Now
+            Choose Starter — $4.95
           </Link>
         </div>
       </section>

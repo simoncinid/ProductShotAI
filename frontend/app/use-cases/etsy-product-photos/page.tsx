@@ -14,7 +14,7 @@ export const metadata: Metadata = {
       'Generate warm, story-driven Etsy product photos for multi-wick candles and handmade products. Lifestyle, macro and packaging shots from one upload.',
   },
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'}/use-cases/etsy-product-photos`,
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.productshotai.com'}/use-cases/etsy-product-photos`,
   },
 }
 
@@ -161,7 +161,7 @@ export default function EtsyUseCasePage() {
             </p>
             <p className="mt-3 text-[15px] leading-relaxed text-secondary md:text-[16px]">
               Move beyond flat DIY images. Generate image product variations for your multi‑wick candles: cozy living room scenes, stylized flat
-              lays and macro shots that highlight wax texture, fragrance notes and label design. All in 8K resolution, ready for Etsy listings,
+              lays and macro shots that highlight wax texture, fragrance notes and label design. Available in 4K or 8K, ready for Etsy listings,
               Pinterest pins and Instagram posts.
             </p>
             <ul className="mt-5 space-y-3 text-[15px] leading-relaxed text-secondary md:text-[16px]">

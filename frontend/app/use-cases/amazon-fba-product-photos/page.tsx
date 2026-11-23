@@ -14,7 +14,7 @@ export const metadata: Metadata = {
       'Generate compliant Amazon FBA product photos, main images and UGC-style lifestyle images. Product photo AI tailored to Amazon marketplace requirements.',
   },
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'}/use-cases/amazon-fba-product-photos`,
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.productshotai.com'}/use-cases/amazon-fba-product-photos`,
   },
 }
 
@@ -160,7 +160,7 @@ export default function AmazonFbaUseCasePage() {
             </p>
             <p className="mt-3 text-[15px] leading-relaxed text-secondary md:text-[16px]">
               Instead of booking studio time or coordinating photographers, you upload one clear photo and describe your brand. The AI generates
-              image product variations in 8K resolution, ready for your PDP gallery and A+ content. You keep full control over aspect ratios, style
+              image product variations in 4K or 8K resolution, ready for your PDP gallery and A+ content. You keep full control over aspect ratios, style
               and composition, from clean white-background shots to on-brand lifestyle scenes.
             </p>
             <ul className="mt-5 space-y-3 text-[15px] leading-relaxed text-secondary md:text-[16px]">

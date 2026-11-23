@@ -16,6 +16,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [verifyPassword, setVerifyPassword] = useState('')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [signupError, setSignupError] = useState('')
 
   const signupMutation = useMutation({
     mutationFn: () => authApi.signup(email, password, verifyPassword),
@@ -35,6 +36,7 @@ export default function SignupPage() {
       const msg = error && typeof error === 'object' && 'response' in error
         ? (error as { response?: { data?: { detail?: string } } }).response?.data?.detail
         : null
+      setSignupError(msg || 'Signup failed. Please try again.')
       toast.error(msg || 'Signup failed')
     },
   })
@@ -49,6 +51,7 @@ export default function SignupPage() {
       toast.error('Please accept the terms and conditions')
       return
     }
+    setSignupError('')
     signupMutation.mutate()
   }
 
@@ -70,6 +73,10 @@ export default function SignupPage() {
             </p>
           </div>
 
+          {signupError && <div role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-900">
+            <p>{signupError}</p>
+            {(signupError.includes('already registered') || signupError.includes('account was created')) && <p className="mt-3 flex flex-col gap-3"><Link href={`/verifyEmail?email=${encodeURIComponent(email)}`} className="font-semibold underline">Finish activating this account / request a new code →</Link><Link href="/login" className="underline">Already activated? Sign in →</Link></p>}
+          </div>}
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="mb-1.5 block text-[14px] font-medium text-primary">

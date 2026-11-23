@@ -1,211 +1,223 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import Image from 'next/image'
-
-const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { StartPhotoCTA } from "@/components/StartPhotoCTA";
 
 export const metadata: Metadata = {
-  title: 'UGC-Style Product Images – AI Content for Ads & Social',
+  title: "AI UGC-Style Product Images from Your Photo",
   description:
-    'Generate UGC-style product images with AI for ads, TikTok, Instagram and landing pages. In-hand, POV and lifestyle scenes from a single upload.',
-  openGraph: {
-    title: 'UGC-Style Product Images with AI – ProductShotAI',
-    description:
-      'Create scroll-stopping UGC-style product photos for a reusable water bottle: in-hand, desk and outdoor lifestyle scenes generated with AI.',
-  },
+    "Create in-hand, desk and outdoor product photos from one reference image. See before and after examples. Start with 5 credits for $4.95. No subscription.",
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'}/use-cases/ugc-product-images`,
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.productshotai.com"}/use-cases/ugc-product-images`,
   },
-}
-
-const PROMPTS = [
-  'POV shot of a reusable water bottle held in hand in front of a laptop and notebook on a desk, natural window light, casual work-from-home vibe.',
-  'Selfie-style image of person holding the bottle near face, blurred city street background, bright daylight, social-first framing.',
-  'Outdoor lifestyle scene with the bottle on a rock next to backpack and sunglasses, soft sunset light, mountains slightly blurred in distance.',
-  'Overhead shot of the bottle on colored background with stickers and small props around, playful UGC aesthetic, 4:5 aspect ratio for feeds.',
-] as const
-
+  openGraph: {
+    title: "UGC-Style Product Images from Your Photo",
+    description:
+      "One bottle photo, four AI-generated settings. See examples and start with a $4.95 credit pack.",
+    images: [
+      {
+        url: "/images/ugcAfter1.png",
+        width: 1024,
+        height: 1024,
+        alt: "AI-generated water bottle in-hand scene",
+      },
+    ],
+  },
+};
+const scenes = [
+  {
+    name: "In-hand at a desk",
+    image: "ugcAfter1.png",
+    prompt:
+      "Show this bottle held in one hand at a desk, with a laptop softly blurred in the background. Natural window light. Keep the bottle shape, cap and colour.",
+  },
+  {
+    name: "Selfie-style framing",
+    image: "ugcAfter2.png",
+    prompt:
+      "Create a casual scene with an AI-generated person holding this bottle. Bright daylight, soft city background. Keep the bottle clearly visible and preserve its details.",
+  },
+  {
+    name: "Outdoor lifestyle",
+    image: "ugcAfter3.png",
+    prompt:
+      "Place this bottle beside a backpack outdoors. Warm evening light and a soft mountain background. Preserve the bottle colour and proportions.",
+  },
+  {
+    name: "Colourful flat lay",
+    image: "ugcAfter4.png",
+    prompt:
+      "Create an overhead flat lay of this bottle on a colourful background with a few simple props. Keep the product unobstructed. Portrait framing.",
+  },
+];
 export default function UgcUseCasePage() {
   return (
-    <div className="bg-page-bg">
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-page-bg pt-16 pb-14 md:pt-20 md:pb-18 lg:pt-24 lg:pb-20">
-        <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-page-bg/60 to-transparent" aria-hidden />
-        <div className={`${CONTAINER} relative`}>
-          <div className="grid items-center gap-10 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
-            <div>
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-muted sm:text-xs">
-                Use case · UGC-style ads & social
-              </p>
-              <h1 className="text-[28px] font-extrabold leading-tight text-on-dark md:text-[34px] lg:text-[40px]">
-                UGC-style product images with AI
-              </h1>
-              <p className="mt-4 max-w-xl text-[15px] text-muted md:text-[16px]">
-                Start from a simple photo of a reusable water bottle and generate UGC-style content for ads, TikTok, Instagram and landing pages—
-                without coordinating creators.
-              </p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:gap-4">
-                <Link
-                  href="/create"
-                  className="inline-flex items-center justify-center rounded-full bg-brand px-7 py-3 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
-                >
-                  Start UGC shoot
-                </Link>
-                <Link
-                  href="/login"
-                  className="inline-flex items-center justify-center rounded-full bg-on-dark/10 px-7 py-3 text-[14px] font-semibold text-on-dark transition-smooth hover:bg-on-dark/20 hover:shadow-soft-hover"
-                >
-                  Login for full photoshooting
-                </Link>
+    <div className="bg-black text-white">
+      <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 md:py-20">
+        <section className="grid items-center gap-8 md:grid-cols-2">
+          <div>
+            <p className="text-xs uppercase tracking-wider text-slate-400">
+              Product photos for social content
+            </p>
+            <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
+              UGC-style product images, from the photo you already have.
+            </h1>
+            <p className="mt-5 text-lg leading-relaxed text-slate-300">
+              Put your product in an in-hand scene, a desk setup or an outdoor
+              setting. Create still images with a casual, social-first look.
+            </p>
+            <StartPhotoCTA
+              placement="ugc_hero"
+              className="mt-7 w-full sm:w-auto"
+            />
+            <p className="mt-3 text-sm text-slate-400">
+              5 credits · Up to five 4K images · No subscription
+            </p>
+          </div>
+          <figure className="overflow-hidden rounded-2xl border border-white/15 bg-neutral-900 p-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="overflow-hidden rounded-xl bg-white">
+                <Image
+                  src="/images/ugcBefore.png"
+                  alt="Reference photo of a reusable water bottle"
+                  width={512}
+                  height={512}
+                  priority
+                  sizes="(max-width: 767px) 45vw, 260px"
+                  className="aspect-square w-full object-contain"
+                />
+                <p className="p-3 text-xs font-semibold text-black">
+                  Your starting photo
+                </p>
               </div>
-              <p className="mt-3 text-[12px] text-muted">
-                Ideal for e‑commerce owners and media buyers that need fresh creatives every week.
-              </p>
+              <div className="overflow-hidden rounded-xl bg-white">
+                <Image
+                  src="/images/ugcAfter1.png"
+                  alt="AI-generated example: the bottle held in a hand at a desk"
+                  width={512}
+                  height={512}
+                  priority
+                  sizes="(max-width: 767px) 45vw, 260px"
+                  className="aspect-square w-full object-cover"
+                />
+                <p className="p-3 text-xs font-semibold text-black">
+                  AI-generated scene
+                </p>
+              </div>
             </div>
-
-            <div className="relative hidden justify-end md:flex">
-              <div className="relative w-full max-w-[360px]">
-                <div className="absolute -inset-6 rounded-[32px] bg-brand/10 blur-2xl" aria-hidden />
-                <div className="relative rounded-[28px] border border-muted/60 bg-cream p-4 shadow-card-hover">
-                  <div className="rounded-2xl bg-white p-3 shadow-soft">
-                    <p className="text-[11px] font-semibold text-muted-dark">Input bottle photo → AI UGC photoshoot</p>
-                    <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
-                      <div className="rounded-xl bg-page-bg/90 p-2">
-                        <Image
-                          src="/images/ugcBefore.png"
-                          alt="Input reusable water bottle photo"
-                          width={260}
-                          height={200}
-                          className="h-full w-full rounded-lg bg-cream object-contain"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        {['/images/ugcAfter1.png', '/images/ugcAfter2.png', '/images/ugcAfter3.png', '/images/ugcAfter4.png'].map((src) => (
-                          <div key={src} className="overflow-hidden rounded-lg bg-muted/40">
-                            <Image src={src} alt="AI-generated UGC-style product image" width={120} height={120} className="h-full w-full object-cover" />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <p className="mt-4 text-[11px] text-muted-dark">
-                      Mix POV, selfie-style and flat lay scenes to feed your ad account and social calendar without extra shoots.
-                    </p>
-                  </div>
+            <figcaption className="px-1 pb-1 pt-3 text-xs leading-relaxed text-slate-400">
+              Illustrative example. AI can alter details; review your result
+              before publishing.
+            </figcaption>
+          </figure>
+        </section>
+        <section className="mt-14 border-y border-white/15 py-9">
+          <h2 className="text-2xl font-semibold sm:text-3xl">
+            How to create your first scene
+          </h2>
+          <ol className="mt-6 grid gap-5 md:grid-cols-3">
+            {[
+              [
+                "Upload a clear reference",
+                "Use a JPG or PNG up to 10 MB. Make the product and its label easy to see.",
+              ],
+              [
+                "Choose Lifestyle and a format",
+                "Select a style in Create photo. Add one of the scene instructions below to describe the setting.",
+              ],
+              [
+                "Review the cost and create",
+                "Choose 4K for 1 credit or 8K for 2. Review the result, then download it from My images.",
+              ],
+            ].map(([title, text], index) => (
+              <li key={title}>
+                <p className="font-semibold">
+                  {index + 1}. {title}
+                </p>
+                <p className="mt-2 leading-relaxed text-slate-400">{text}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+        <section className="mt-12">
+          <h2 className="text-3xl font-semibold">
+            Four scene ideas to start with
+          </h2>
+          <p className="mt-4 max-w-2xl leading-relaxed text-slate-300">
+            Use these instructions as a starting point in the studio. Replace
+            the setting to suit your product. Each generation creates one still
+            image.
+          </p>
+          <div className="mt-7 grid gap-6 sm:grid-cols-2">
+            {scenes.map((scene) => (
+              <article
+                key={scene.name}
+                className="overflow-hidden rounded-xl border border-white/15 bg-neutral-900"
+              >
+                <Image
+                  src={`/images/${scene.image}`}
+                  alt={`AI-generated product image example: ${scene.name}`}
+                  width={700}
+                  height={700}
+                  sizes="(max-width: 639px) 100vw, 50vw"
+                  className="aspect-square w-full object-cover"
+                />
+                <div className="p-5">
+                  <p className="text-xs uppercase tracking-wide text-slate-400">
+                    AI-generated example
+                  </p>
+                  <h3 className="mt-2 text-xl font-semibold">{scene.name}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                    {scene.prompt}
+                  </p>
                 </div>
-              </div>
-            </div>
+              </article>
+            ))}
           </div>
-        </div>
-      </section>
-
-      {/* Divider */}
-      <div className="relative -mt-px h-10 w-full overflow-hidden bg-cream md:h-14">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute top-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
-          <path d="M0 0v48h1200V0c-200 0-400 24-600 24S200 0 0 0z" fill="currentColor" />
-        </svg>
+        </section>
+        <section className="mt-12 max-w-3xl">
+          <h2 className="text-2xl font-semibold">
+            A social look with clear expectations
+          </h2>
+          <p className="mt-4 leading-relaxed text-slate-300">
+            These are AI-created product illustrations, not photos submitted by
+            customers or real customer endorsements. ProductShotAI generates
+            still images; this workflow does not create videos. Check labels,
+            proportions and colours against your reference.
+          </p>
+          <p className="mt-4 leading-relaxed text-slate-400">
+            When posting realistic AI imagery, use the disclosures required by
+            your platform.{" "}
+            <a
+              href="https://support.tiktok.com/en/using-tiktok/creating-videos/ai-generated-content"
+              target="_blank"
+              rel="noreferrer"
+              className="text-white underline"
+            >
+              TikTok explains its AI-content labels here.
+            </a>
+          </p>
+          <Link
+            href="/how-it-works"
+            className="mt-4 inline-flex min-h-11 items-center underline underline-offset-4"
+          >
+            See the complete photo workflow →
+          </Link>
+        </section>
+        <section className="mt-12 rounded-2xl border border-white/15 bg-neutral-900 p-6 sm:p-8">
+          <h2 className="text-2xl font-semibold">
+            Try a new scene for your own product.
+          </h2>
+          <p className="mt-3 leading-relaxed text-slate-300">
+            Start with 5 credits for $4.95 USD. Choose one scene, check the
+            result, then explore another look.
+          </p>
+          <StartPhotoCTA
+            placement="ugc_bottom"
+            className="mt-6 w-full sm:w-auto"
+          />
+        </section>
       </div>
-
-      {/* Prompts + results */}
-      <section className="bg-cream py-16 md:py-24">
-        <div className={CONTAINER}>
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-            <div>
-              <h2 className="text-[20px] font-semibold text-primary md:text-[24px]">System-generated prompts for UGC-style shots</h2>
-              <p className="mt-3 max-w-2xl text-[14px] text-muted-dark md:text-[15px]">
-                ProductShotAI turns your brand and product info into creator-like prompts: in-hand shots, POV angles and scenes that feel native to
-                feeds and stories.
-              </p>
-              <div className="mt-6 grid gap-4 md:grid-cols-2">
-                {PROMPTS.map((prompt) => (
-                  <div key={prompt} className="rounded-2xl border border-muted/50 bg-white p-4 shadow-soft">
-                    <p className="text-[12px] font-semibold uppercase tracking-wide text-brand">Prompt example</p>
-                    <p className="mt-2 text-[14px] leading-relaxed text-secondary">{prompt}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-4 text-[13px] text-muted-dark">
-                Change channel (TikTok, Reels, Stories, static) directly in the prompt to adapt framing and aspect ratio without new photoshoots.
-              </p>
-            </div>
-
-            <div className="rounded-[24px] border border-muted/50 bg-white p-4 shadow-soft md:p-5">
-              <p className="text-[12px] font-semibold uppercase tracking-wide text-primary">Photoshoot outputs</p>
-              <p className="mt-1 text-[13px] text-muted-dark">
-                Example of four AI-generated UGC-style images from one bottle upload: desk POV, selfie-style, outdoor lifestyle and playful flat lay.
-              </p>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                {['/images/ugcAfter1.png', '/images/ugcAfter2.png', '/images/ugcAfter3.png', '/images/ugcAfter4.png'].map((src) => (
-                  <div key={src} className="overflow-hidden rounded-xl bg-muted/40">
-                    <Image src={src} alt="UGC-style AI product photo result" width={260} height={220} className="h-full w-full object-cover" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SEO section */}
-      <section className="bg-white py-16 md:py-24">
-        <div className={CONTAINER}>
-          <div className="max-w-3xl">
-            <h2 className="text-[22px] font-bold text-primary md:text-[26px]">
-              UGC-style product images without chasing creators
-            </h2>
-            <p className="mt-3 text-[15px] leading-relaxed text-secondary md:text-[16px]">
-              UGC product images work because they feel real. With ProductShotAI you generate that same energy from a single product photo. Our
-              product photo AI creates POV, selfie-style and lifestyle scenes that look like they came from your community, not a studio.
-            </p>
-            <p className="mt-3 text-[15px] leading-relaxed text-secondary md:text-[16px]">
-              Feed your ad account, emails and landing pages with constant new creatives: image product variations in different contexts, outfits
-              and locations. Keep the bottle accurate—logo, colors, shape—while changing everything around it to avoid creative fatigue.
-            </p>
-            <ul className="mt-5 space-y-3 text-[15px] leading-relaxed text-secondary md:text-[16px]">
-              <li>
-                <strong className="font-semibold text-primary">Ideal for paid social</strong> – generate native-feeling images for TikTok, Reels,
-                Stories and feed ads.
-              </li>
-              <li>
-                <strong className="font-semibold text-primary">Fast creative iteration</strong> – swap backgrounds, outfits and locations via
-                prompt instead of new shoots.
-              </li>
-              <li>
-                <strong className="font-semibold text-primary">Scales to any product</strong> – reuse this flow for bottles, gadgets, accessories
-                and more.
-              </li>
-            </ul>
-            <p className="mt-4 text-[15px] leading-relaxed text-secondary md:text-[16px]">
-              ProductShotAI becomes your always‑on UGC engine for product images, ready every time you need a new batch of creatives.
-            </p>
-          </div>
-
-          <div className="mt-10 flex flex-col items-start gap-3 rounded-[20px] border border-muted/50 bg-page-bg px-6 py-6 text-left md:mt-14 md:flex-row md:items-center md:justify-between md:px-8 md:py-7">
-            <div className="max-w-xl">
-              <p className="text-[15px] font-semibold text-on-dark md:text-[16px]">
-                Ready to scale your UGC-style creatives?
-              </p>
-              <p className="mt-1 text-[13px] text-muted md:text-[14px]">
-                Sign up and buy credits to build ongoing UGC-style product photoshoots.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-2.5 text-[14px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
-              >
-                Get Started
-              </Link>
-              <Link
-                href="/login"
-                className="inline-flex items-center justify-center rounded-full bg-on-dark/10 px-6 py-2.5 text-[14px] font-semibold text-on-dark transition-smooth hover:bg-on-dark/20 hover:shadow-soft-hover"
-              >
-                Login for full photoshooting
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
-  )
+  );
 }
-

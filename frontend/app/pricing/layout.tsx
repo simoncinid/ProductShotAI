@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.productshotai.com'
 
 export const metadata: Metadata = {
   title: 'Product Photo Pricing — Credit Packs from $4.95',

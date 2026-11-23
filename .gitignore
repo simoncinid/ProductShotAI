@@ -65,3 +65,4 @@ htmlcov/
 
 # Local UI audit screenshots and galleries
 /artifacts/studio-ux-*/
+/artifacts/sales-*/

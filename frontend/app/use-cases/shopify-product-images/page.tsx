@@ -14,7 +14,7 @@ export const metadata: Metadata = {
       'Create high-converting Shopify product images for cosmetics and skincare: PDP hero, gallery and campaign visuals tailored to your brand.',
   },
   alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://productshotai.com'}/use-cases/shopify-product-images`,
+    canonical: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.productshotai.com'}/use-cases/shopify-product-images`,
   },
 }
 
@@ -165,7 +165,7 @@ export default function ShopifyUseCasePage() {
             </p>
             <p className="mt-3 text-[15px] leading-relaxed text-secondary md:text-[16px]">
               Instead of planning new photoshoots for every campaign, you can generate fresh variants on demand—new backgrounds, props, lighting
-              and crops—without losing your core aesthetic. Image product variations are delivered in 8K and sized for product pages, landing
+              and crops—without losing your core aesthetic. Image product variations are available in 4K or 8K for for product pages, landing
               pages and paid media.
             </p>
             <ul className="mt-5 space-y-3 text-[15px] leading-relaxed text-secondary md:text-[16px]">
