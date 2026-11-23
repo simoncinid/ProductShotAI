@@ -7,7 +7,7 @@ export function publicCampaign(search: string): Record<string, string> | null {
   const source = query.get('utm_source') || ''
   const medium = query.get('utm_medium') || ''
   const name = query.get('utm_campaign') || ''
-  if (!['instagram', 'tiktok', 'reddit', 'linkedin', 'newsletter'].includes(source)
+  if (!['instagram', 'facebook', 'tiktok', 'reddit', 'linkedin', 'newsletter'].includes(source)
     || !['organic_social', 'email', 'referral'].includes(medium)
     || !['free_prompt_builder_launch', 'candle_shot_plan', 'worked_prompt_examples'].includes(name)) return null
   return { campaign_source: source, campaign_medium: medium, campaign_name: name }

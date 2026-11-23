@@ -84,3 +84,23 @@ Queste sono date di revisione suggerite, non esecuzioni programmate. Il lavoro S
 Build e tipi/lint passati. Suite organica Chromium e WebKit a 320/390/768/1440px: prompt/preset/copia o selezione di fallback, nessuna API backend chiamata, input trattato come testo, articoli/metadata/sitemap/404 e arrivo al pacchetto Starter. Suite vendite Chromium ripassata alle quattro larghezze per verificare navigazione, attivazione in nuova scheda e scelta pack dopo la modifica della navigazione comune. Nessun invio marketing o acquisto durante queste prove. Screenshot locali in `artifacts/sales-20261123/organic` e `organic-webkit`, esclusi da Git.
 
 Durante la verifica del tracciamento è emerso che la sanitizzazione degli URL eliminava anche l'attribuzione UTM. Conservati gli URL senza query/frammenti, si passano ora a GA esclusivamente source/medium/campaign appartenenti a elenchi fissi delle tre campagne sopra, e solo dopo il consenso. Valori sconosciuti, email o token nei parametri non vengono inviati. Parametri supportati verificati sulla [documentazione Google](https://developers.google.com/analytics/devguides/collection/ga4/reference/config). Test mirati su valori pubblici, privati, mancanti e non ammessi; non è una prova di ricezione/elaborazione immediata nei report GA4.
+
+## Aggiornamento connessioni social durante la sessione
+
+L'utente ha collegato TikTok e una pagina Facebook e ha autorizzato esplicitamente pubblicazioni e contributi utili nelle community, senza spam e senza testi generici o finti racconti personali. La connessione Metricool in chat continua a leggere il brand `7503173`; il browser dell'utente mostra invece `8319419`. Le letture MCP esplicite su quest'ultimo restituiscono 403. È stata verificata la possibilità di leggere l'URL di Chrome via AppleScript, senza leggere cookie/credenziali. L'interazione DOM è bloccata dall'impostazione Chrome «Consenti JavaScript da Apple Events»; è stato chiesto all'utente di attivarla per usare la sessione corretta. Nessuna pubblicazione o commento ancora riusciti a questo punto. Il connettore Metricool disponibile non espone commenti/inbox; le capacità browser vanno verificate prima di promettere quelle interazioni.
+
+### Primo testo Facebook da adattare al profilo effettivo
+
+Try a simpler prompt for your next product photo.
+
+One setting, one light source, and the details that need to stay.
+For a bottle: “On a desk by a window. Keep the original cap and colour. No new logos.”
+
+Then compare the result with your photo, especially the label and shape.
+
+We made a free builder to put that starting prompt together:
+https://www.productshotai.com/tools/product-photo-prompt-generator?utm_source=facebook&utm_medium=organic_social&utm_campaign=free_prompt_builder_launch
+
+No account needed. It creates text; generating an image in our studio is a separate paid step.
+
+Source `facebook` aggiunta all'elenco consentito e verificata, per il nuovo profilo collegato. Non affermare «link in bio» su TikTok senza aver verificato che sia presente un link cliccabile. Le foto realistiche generate con AI richiedono l'etichetta appropriata della piattaforma. Non inventare test clienti o aumenti di vendite.
