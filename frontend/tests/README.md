@@ -29,3 +29,9 @@ The tests cover the image creation flow, exact visible credit costs, draft resto
 `NODE_PATH=/tmp/productshot-ui-qa/node_modules node frontend/tests/sales-flow.cjs`
 
 Set `STUDIO_ENGINE=webkit` for WebKit, and `STUDIO_BASE` / `STUDIO_OUT` as above. This check covers the public offer at 320, 390, 768 and 1440px, canonical host and sitemap, duplicate-account recovery links, manual OTP confirmation from an email URL fragment, cross-tab preservation of the selected credit pack, and a synthetic checkout request. No real activation emails or charges are generated. QA analytics are blocked. The real SMTP end-to-end check is a separate controlled audit and uses only an alias of our sender mailbox.
+
+## Free acquisition resources
+
+`NODE_PATH=/tmp/productshot-ui-qa/node_modules node frontend/tests/organic-growth.cjs`
+
+The same engine/base/output options apply. Covers two prerendered guides, the free prompt builder with presets and clipboard fallback, no backend API requests from the free tool, safe text input, 600-character maximum, sitemap/canonical, valid article metadata, unknown article 404, four viewport sizes and the paid Starter destination. No social posts, mail or paid API jobs are created.

@@ -213,6 +213,26 @@ export default function HomePage() {
           Walk through the photo studio →
         </Link>
       </section>
+      <section className={`${container} pb-12 md:pb-16`}>
+        <div className="rounded-2xl border border-white/20 bg-neutral-900 p-6 sm:p-8">
+          <p className="text-xs uppercase tracking-wider text-slate-400">
+            Free, no account needed
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold">
+            Need a starting prompt for your product?
+          </h2>
+          <p className="mt-3 max-w-2xl leading-relaxed text-slate-300">
+            Choose a product, setting and format. Our free builder gives you
+            copyable instructions to use with your reference photo.
+          </p>
+          <Link
+            href="/tools/product-photo-prompt-generator"
+            className="mt-5 inline-flex min-h-12 items-center rounded-lg border border-white px-5 py-3 font-semibold"
+          >
+            Build a free product photo prompt →
+          </Link>
+        </div>
+      </section>
       <PricingShowcase
         plans={[
           {
