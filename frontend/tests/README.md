@@ -23,3 +23,9 @@ NODE_PATH=/tmp/productshot-ui-qa/node_modules node frontend/tests/studio-retry.c
 Set `STUDIO_ENGINE=webkit` to run the same checks on WebKit; set `STUDIO_BASE=https://www.productshotai.com` to inspect the deployed UI with the same synthetic API fixtures. WebKit desktop with mobile viewport sizes is not a physical iPhone camera or native Photos test.
 
 The tests cover the image creation flow, exact visible credit costs, draft restoration, one submission for rapid clicks, pending-job restoration, safe same-ID connection retries, result download, modal focus/escape behavior, invalid file handling, insufficient credits, empty/error states, secondary product/image-set forms, and nine routes at five viewport widths.
+
+## Sales and activation regression checks (23 November)
+
+`NODE_PATH=/tmp/productshot-ui-qa/node_modules node frontend/tests/sales-flow.cjs`
+
+Set `STUDIO_ENGINE=webkit` for WebKit, and `STUDIO_BASE` / `STUDIO_OUT` as above. This check covers the public offer at 320, 390, 768 and 1440px, canonical host and sitemap, duplicate-account recovery links, manual OTP confirmation from an email URL fragment, cross-tab preservation of the selected credit pack, and a synthetic checkout request. No real activation emails or charges are generated. QA analytics are blocked. The real SMTP end-to-end check is a separate controlled audit and uses only an alias of our sender mailbox.
