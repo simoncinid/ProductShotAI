@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { CONSENT_KEY, gaEvent } from '@/lib/ga'
+import { CONSENT_KEY, gaEvent, publicCampaign } from '@/lib/ga'
 const ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''
 function safeReferrer() {
   try { const url = new URL(document.referrer); return url.origin + url.pathname } catch { return '' }
@@ -16,6 +16,8 @@ export function GoogleAnalytics() {
     if (!/^G-[A-Z0-9]+$/.test(ID) || choice !== 'granted') return
     window.dataLayer = window.dataLayer || []
     window.gtag = window.gtag || function () { window.dataLayer!.push(arguments) }
+    const campaign = publicCampaign(window.location.search)
+    if (campaign) window.gtag('set', campaign)
     if (!document.getElementById('productshot-ga')) {
       window.gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' })
       // Basic consent mode: nothing is loaded until explicit consent exists.

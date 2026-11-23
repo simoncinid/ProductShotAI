@@ -35,3 +35,5 @@ Set `STUDIO_ENGINE=webkit` for WebKit, and `STUDIO_BASE` / `STUDIO_OUT` as above
 `NODE_PATH=/tmp/productshot-ui-qa/node_modules node frontend/tests/organic-growth.cjs`
 
 The same engine/base/output options apply. Covers two prerendered guides, the free prompt builder with presets and clipboard fallback, no backend API requests from the free tool, safe text input, 600-character maximum, sitemap/canonical, valid article metadata, unknown article 404, four viewport sizes and the paid Starter destination. No social posts, mail or paid API jobs are created.
+
+`node frontend/tests/campaign-attribution.cjs` verifies that only known public campaign labels are retained; unknown values, personal data and missing fields are ignored. Page locations and referrers remain free of query strings and fragments.
