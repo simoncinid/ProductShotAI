@@ -9,6 +9,10 @@ fs.mkdirSync(out, { recursive: true });
     process.env.STUDIO_ENGINE === "webkit" ? webkit : chromium
   ).launch();
   const request = await b.newPage();
+  await request.addInitScript(() =>
+    localStorage.setItem("productshotai.analytics-consent", "denied"),
+  );
+  await request.route("**/_vercel/insights/**", (route) => route.abort());
   for (const route of ["/pricing", "/about"]) {
     const context = await b.newContext({
         javaScriptEnabled: false,
@@ -54,14 +58,26 @@ fs.mkdirSync(out, { recursive: true });
       route + " inherits incorrect canonical",
     );
   }
-  await request.goto(base + '/faq');
-  const faqSchema=(await request.locator('script[type="application/ld+json"]').allTextContents()).map(JSON.parse).find(x=>x['@type']==='FAQPage');
-  assert(faqSchema && faqSchema.mainEntity.length===12);
-  const faqText=await request.locator('main').textContent();
-  for(const item of faqSchema.mainEntity){assert(faqText.includes(item.name));assert(faqText.includes(item.acceptedAnswer.text));}
-  assert.equal(await request.locator('footer a[href="/privacy"]').count(),1);
-  assert.equal(await request.locator('footer a[href="/about"]').count(),1);
-  const dashHtml=await(await request.request.get(base+'/dashboard/create')).text();assert(/name="robots"[^>]*noindex/.test(dashHtml));
+  await request.goto(base + "/faq");
+  const faqSchema = (
+    await request
+      .locator('script[type="application/ld+json"]')
+      .allTextContents()
+  )
+    .map(JSON.parse)
+    .find((x) => x["@type"] === "FAQPage");
+  assert(faqSchema && faqSchema.mainEntity.length === 12);
+  const faqText = await request.locator("main").textContent();
+  for (const item of faqSchema.mainEntity) {
+    assert(faqText.includes(item.name));
+    assert(faqText.includes(item.acceptedAnswer.text));
+  }
+  assert.equal(await request.locator('footer a[href="/privacy"]').count(), 1);
+  assert.equal(await request.locator('footer a[href="/about"]').count(), 1);
+  const dashHtml = await (
+    await request.request.get(base + "/dashboard/create")
+  ).text();
+  assert(/name="robots"[^>]*noindex/.test(dashHtml));
   const robots = await (await request.request.get(base + "/robots.txt")).text();
   for (const agent of [
     "Googlebot",
