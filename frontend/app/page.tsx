@@ -1,3 +1,4 @@
+import { publicPricingPlans, softwareApplication } from "@/lib/product-info";
 import Link from "next/link";
 import Image from "next/image";
 import { StartPhotoCTA } from "@/components/StartPhotoCTA";
@@ -60,6 +61,12 @@ const faqs = [
 export default function HomePage() {
   return (
     <div className="bg-black text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(softwareApplication),
+        }}
+      />
       <section
         className={`${container} grid items-center gap-9 py-10 md:grid-cols-2 md:gap-12 md:py-20`}
       >
@@ -234,37 +241,7 @@ export default function HomePage() {
         </div>
       </section>
       <PricingShowcase
-        plans={[
-          {
-            id: "starter",
-            name: "Starter",
-            price: "$4.95",
-            credits: 5,
-            each: "$0.99",
-          },
-          {
-            id: "standard",
-            name: "Standard",
-            price: "$13.35",
-            credits: 15,
-            each: "$0.89",
-            popular: true,
-          },
-          {
-            id: "pro",
-            name: "Pro",
-            price: "$31.60",
-            credits: 40,
-            each: "$0.79",
-          },
-          {
-            id: "power",
-            name: "Power",
-            price: "$69.00",
-            credits: 100,
-            each: "$0.69",
-          },
-        ]}
+        plans={publicPricingPlans}
         title="Start small. Buy more when you need them."
         description="Try your own product with Starter: 5 credits for $4.95 USD. Payment is handled by Stripe. No monthly fee."
       />

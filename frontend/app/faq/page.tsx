@@ -1,41 +1,35 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { DynamicBackdropSection } from '@/components/DynamicBackdropSection'
+import { productFaqs } from "@/lib/product-faq";
+import { useState } from "react";
+import { DynamicBackdropSection } from "@/components/DynamicBackdropSection";
 
-const CONTAINER = 'mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14'
+const CONTAINER = "mx-auto max-w-[1200px] px-6 md:px-10 lg:px-14";
 
-const faqs = [
-  { q: "How do I get started?", a: "Sign up for an account, purchase a credit pack, and start generating professional product photos right away. No subscription required!" },
-  { q: "Do I need a subscription?", a: "No! We don't offer monthly subscriptions. You only pay for the credits you need, when you need them. Credits never expire, so you can use them at your own pace." },
-  { q: "What image formats do you support?", a: "We accept JPEG and PNG uploads (up to 10MB). Choose 4K for 1 credit per image or 8K for 2 credits. Review generated details before publishing." },
-  { q: "What aspect ratios are available?", a: "You can choose from three aspect ratios: 1:1 (square, perfect for Amazon main images), 4:5 (portrait), and 16:9 (landscape). The default is 1:1 for Amazon compatibility." },
-  { q: "How long does generation take?", a: "Allow a few minutes. Timing varies with resolution and provider demand. Your generation status is visible in the studio. You'll see a progress indicator while waiting." },
-  { q: "Can I use these images on Amazon?", a: "Yes! Our images are specifically optimized for Amazon product listings. However, you should always ensure your images comply with Amazon's current image requirements and policies. We recommend reviewing Amazon's guidelines for your specific category." },
-  { q: "What happens if a generation fails?", a: "If a generation fails, you won't be charged a credit. You can simply try again with a different prompt or image." },
-  { q: "Do credits expire?", a: "No, credits never expire. Once you purchase credits, they remain in your account until you use them. There's no time limit or expiration date." },
-  { q: "Can I get a refund?", a: "We don't offer refunds for credit purchases, but credits never expire so you can use them whenever you need. If you experience technical issues, please contact our support team." },
-  { q: "Is my data secure?", a: "Yes, we take data security seriously. Your images are stored securely and are only used for generation purposes. Your reference is processed by our AI generation providers to create your images. See our Privacy Policy for more details." },
-  { q: "Can I use the images commercially?", a: "Yes, once you generate an image, you have the right to use it for commercial purposes including Amazon listings, marketing materials, and other business uses." },
-]
+const faqs = productFaqs;
 
 export default function FAQPage() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
     <div className="bg-page-bg">
       {/* ——— Hero ——— */}
       <section className="relative overflow-hidden bg-page-bg pt-16 pb-14 md:pt-20 md:pb-16 lg:pt-24 lg:pb-20">
-        <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-page-bg/60 to-transparent" aria-hidden />
+        <div
+          className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-page-bg/60 to-transparent"
+          aria-hidden
+        />
         <div className={`${CONTAINER} relative`}>
           <div className="flex flex-col items-center text-center">
             <div className="flex items-center gap-4">
               <span className="h-px w-8 bg-muted md:w-12" />
-              <p className="font-playfair-italic text-2xl text-on-dark md:text-3xl">Frequently Asked Questions</p>
+              <p className="font-playfair-italic text-2xl text-on-dark md:text-3xl">
+                Frequently Asked Questions
+              </p>
               <span className="h-px w-8 bg-muted md:w-12" />
             </div>
             <h1 className="mt-3 text-[28px] font-bold leading-tight text-on-dark md:text-[34px]">
-              AI Product Photo & Product Photo AI – FAQ
+              ProductShotAI: pricing, photos and account questions
             </h1>
           </div>
         </div>
@@ -43,8 +37,16 @@ export default function FAQPage() {
 
       {/* Divisore curvo ——— */}
       <div className="relative -mt-px h-10 w-full overflow-hidden bg-page-bg md:h-14">
-        <svg viewBox="0 0 1200 48" fill="none" className="absolute bottom-0 left-0 w-full text-page-bg" preserveAspectRatio="none">
-          <path d="M0 48V0h1200v48c-200 0-400-24-600-24S200 48 0 48z" fill="currentColor" />
+        <svg
+          viewBox="0 0 1200 48"
+          fill="none"
+          className="absolute bottom-0 left-0 w-full text-page-bg"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0 48V0h1200v48c-200 0-400-24-600-24S200 48 0 48z"
+            fill="currentColor"
+          />
         </svg>
       </div>
 
@@ -55,24 +57,38 @@ export default function FAQPage() {
             {faqs.map((faq, i) => (
               <div
                 key={i}
-                className={`overflow-hidden rounded-2xl border border-muted/60 bg-cream transition-smooth hover:shadow-soft ${openIndex === i ? 'shadow-soft' : ''}`}
+                className={`overflow-hidden rounded-2xl border border-muted/60 bg-cream transition-smooth hover:shadow-soft ${openIndex === i ? "shadow-soft" : ""}`}
               >
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
                   className="flex w-full items-center justify-between px-6 py-4 text-left text-[16px] font-semibold text-primary"
                 >
                   {faq.q}
-                  <span className={`ml-4 shrink-0 transition-transform duration-200 ${openIndex === i ? 'rotate-45' : ''}`}>
-                    <svg className="h-5 w-5 text-muted-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  <span
+                    className={`ml-4 shrink-0 transition-transform duration-200 ${openIndex === i ? "rotate-45" : ""}`}
+                  >
+                    <svg
+                      className="h-5 w-5 text-muted-dark"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
                     </svg>
                   </span>
                 </button>
                 <div
-                  className={`grid transition-all duration-200 ease-out ${openIndex === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+                  className={`grid transition-all duration-200 ease-out ${openIndex === i ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
                 >
                   <div className="overflow-hidden">
-                    <p className="border-t border-muted/40 px-6 pb-4 pt-0 text-[14px] leading-relaxed text-muted-dark">{faq.a}</p>
+                    <p className="border-t border-muted/40 px-6 pb-4 pt-0 text-[14px] leading-relaxed text-muted-dark">
+                      {faq.a}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -89,19 +105,19 @@ export default function FAQPage() {
         image="/images/res5.jpeg"
         items={[
           {
-            title: 'Credit rules',
-            text: 'Know how every image consumes credits before starting a generation or a full shooting.',
-            href: '/pricing',
+            title: "Credit rules",
+            text: "Know how every image consumes credits before starting a generation or a full shooting.",
+            href: "/pricing",
           },
           {
-            title: 'Commercial use',
-            text: 'Generated images are designed for product pages, ads and marketplace publishing.',
-            href: '/terms',
+            title: "Commercial use",
+            text: "Generated images are designed for product pages, ads and marketplace publishing.",
+            href: "/terms",
           },
           {
-            title: 'Image handling',
-            text: 'Understand what happens to uploads, outputs and production assets inside the platform.',
-            href: '/privacy',
+            title: "Image handling",
+            text: "Understand what happens to uploads, outputs and production assets inside the platform.",
+            href: "/privacy",
           },
         ]}
       />
@@ -112,14 +128,17 @@ export default function FAQPage() {
           <div className="mx-auto max-w-2xl rounded-[20px] border border-muted/40 bg-cream p-8 text-center shadow-soft md:p-10">
             <div className="flex items-center justify-center gap-4">
               <span className="h-px w-8 bg-muted md:w-12" />
-              <p className="font-playfair-italic text-2xl text-primary md:text-3xl">Still have questions?</p>
+              <p className="font-playfair-italic text-2xl text-primary md:text-3xl">
+                Still have questions?
+              </p>
               <span className="h-px w-8 bg-muted md:w-12" />
             </div>
             <p className="mt-4 text-[16px] text-muted-dark">
-              Can&apos;t find the answer you&apos;re looking for? Please reach out to our support team.
+              Can&apos;t find the answer you&apos;re looking for? Please reach
+              out to our support team.
             </p>
             <a
-              href="mailto:support@productshotai.com"
+              href="mailto:reservationwebbitz@gmail.com"
               className="mt-6 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3.5 text-[15px] font-semibold text-on-brand shadow-soft transition-smooth hover:scale-[1.02] hover:shadow-soft-hover"
             >
               Contact Support
@@ -128,5 +147,5 @@ export default function FAQPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

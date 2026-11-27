@@ -1,18 +1,22 @@
-import type { Metadata } from 'next'
-import { FaqJsonLd } from './FaqJsonLd'
+import type { Metadata } from "next";
+import { FaqJsonLd } from "./FaqJsonLd";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.productshotai.com'
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.productshotai.com";
 
 export const metadata: Metadata = {
-  title: 'AI Product Photo & Product Photo AI – FAQ',
-  description: 'FAQ about AI product photo, product photo AI, ai image product, and image product ai. Credits, formats, Amazon product photo, watermark, pricing.',
+  title: "ProductShotAI FAQ — Prices, Credits and Photo Requirements",
+  description:
+    "Answers about ProductShotAI credit packs, 4K and 8K costs, supported photos, optional brand settings and account help.",
   openGraph: {
-    title: 'AI Product Photo & Product Photo AI – FAQ | ProductShotAI',
-    description: 'FAQ: product photo AI, ai image product, image product ai, Amazon product photo. Credits, formats, 8K.',
+    title:
+      "ProductShotAI FAQ — Prices, Credits and Photo Requirements | ProductShotAI",
+    description:
+      "ProductShotAI prices, credits, photo requirements and account help.",
     url: `${SITE_URL}/faq`,
   },
   alternates: { canonical: `${SITE_URL}/faq` },
-}
+};
 
 export default function FAQLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,5 +24,5 @@ export default function FAQLayout({ children }: { children: React.ReactNode }) {
       <FaqJsonLd />
       {children}
     </>
-  )
+  );
 }

@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.productshotai.com'
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: 'Create AI Product Photo | Product Photo AI Tool',
   description: 'Create AI product photos and product photo AI in seconds. Upload your image, describe your vision, get 8K ai image product. Sign up to start. Amazon product photo ready.',
   openGraph: {

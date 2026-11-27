@@ -13,6 +13,12 @@ const blogSlugs = [
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/about`,
+      lastModified: new Date("2026-11-27T00:00:00Z"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
     { url: BASE_URL, changeFrequency: "weekly", priority: 1 },
     {
       url: `${BASE_URL}/tools/product-photo-prompt-generator`,

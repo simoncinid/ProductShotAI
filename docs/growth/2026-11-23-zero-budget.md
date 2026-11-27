@@ -1,5 +1,7 @@
 # ProductShotAI — vendite senza budget
 
+**Aggiornamento 27 novembre: solo SEO e GEO. L’utente ha escluso Metricool e attività social; le sezioni social sottostanti sono storico, non attività da riprendere. Registrazione confermata funzionante anche dalla prova diretta dell’utente.**
+
 Obiettivo esplicito dell'utente: almeno **€100 di vendite entro il 23 dicembre 2026**, senza ads e senza nuovi costi per strumenti o campagne. Le attività avvengono quando l'utente attiva la chat: nessuna automazione periodica.
 
 ## Indicatore che conta

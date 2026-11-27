@@ -1,3 +1,3 @@
 import type { Metadata } from 'next'
-export const metadata: Metadata = { title: 'Welcome back', robots: { index: false, follow: false }, referrer: 'no-referrer' }
+export const metadata: Metadata = { title: 'Email preferences', alternates: { canonical: '/unsubscribe' }, robots: { index: false, follow: false }, referrer: 'no-referrer' }
 export default function Layout({ children }: { children: React.ReactNode }) { return children }

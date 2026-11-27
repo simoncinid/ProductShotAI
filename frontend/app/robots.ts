@@ -1,13 +1,20 @@
-import { MetadataRoute } from 'next'
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.productshotai.com'
-
+import { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/product-info";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: '*', allow: '/', disallow: ['/dashboard', '/dashboard/', '/images/generated/'] },
-      { userAgent: 'Googlebot', allow: '/', disallow: ['/dashboard', '/dashboard/', '/images/generated/'] },
+      {
+        userAgent: [
+          "*",
+          "Googlebot",
+          "bingbot",
+          "OAI-SearchBot",
+          "PerplexityBot",
+        ],
+        allow: "/",
+        disallow: ["/dashboard", "/images/generated/", "/api/"],
+      },
     ],
-    sitemap: `${BASE_URL}/sitemap.xml`,
-  }
+    sitemap: `${SITE_URL}/sitemap.xml`,
+  };
 }

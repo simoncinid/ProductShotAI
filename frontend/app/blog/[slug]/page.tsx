@@ -31,12 +31,13 @@ const blogPosts: Record<
       <h2>1. Follow Amazon's Technical Requirements</h2>
       <p>Amazon has specific technical requirements for product images:</p>
       <ul>
-        <li>Main image must be at least 1000 pixels on the longest side</li>
-        <li>Images should be in JPEG format</li>
-        <li>Use 1:1 aspect ratio for main images</li>
-        <li>Maximum file size of 10MB</li>
+        <li>Amazon lists 500–10,000 pixels on the longest side; 1,000+ enables zoom</li>
+        <li>JPEG is recommended; TIFF, PNG and non-animated GIF are also listed as supported</li>
+        <li>Check the image and category guide before choosing your main-image framing</li>
+        <li>The ProductShotAI upload limit is 10 MB; this is separate from Amazon’s file requirements</li>
       </ul>
       
+      <p>Checked against <a href="https://sellercentral.amazon.com/gp/help/external/G1881?language=en_US" target="_blank" rel="noreferrer">Amazon’s product image requirements</a> on 27 November 2026. Rules can differ by image role and category; verify them before publishing.</p>
       <h2>2. Use Clean, White Backgrounds</h2>
       <p>Amazon requires main product images to have a pure white background (RGB 255, 255, 255). This ensures consistency across the marketplace and helps your product stand out. The product should fill at least 85% of the image frame.</p>
       

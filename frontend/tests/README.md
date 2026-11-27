@@ -37,3 +37,11 @@ Set `STUDIO_ENGINE=webkit` for WebKit, and `STUDIO_BASE` / `STUDIO_OUT` as above
 The same engine/base/output options apply. Covers two prerendered guides, the free prompt builder with presets and clipboard fallback, no backend API requests from the free tool, safe text input, 600-character maximum, sitemap/canonical, valid article metadata, unknown article 404, four viewport sizes and the paid Starter destination. No social posts, mail or paid API jobs are created.
 
 `node frontend/tests/campaign-attribution.cjs` verifies that only known public campaign labels are retained; unknown values, personal data and missing fields are ignored. Page locations and referrers remain free of query strings and fragments.
+
+## Search and AI-search accessibility
+
+`NODE_PATH=/tmp/productshot-ui-qa/node_modules node frontend/tests/seo-geo.cjs`
+
+Checks that commercial facts and all pack prices are visible with JavaScript disabled; structured data has the real prices and no invented ratings; auth routes have noindex and their own canonical; search bots share private-route exclusions; About is present in the sitemap. Engine/base/output overrides work as above.
+
+`node frontend/scripts/notify-indexnow.cjs` verifies the live key and URL HTTP status without submitting. Add `--submit` only after deployment to notify participating search engines once. The receipt is not proof of indexing; Google does not use this submission endpoint. No scheduling or paid service is involved.
